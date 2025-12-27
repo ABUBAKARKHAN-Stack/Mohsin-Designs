@@ -4,7 +4,6 @@ import CustomCursor from '@/components/CustomCursor'
 import FloatingContactBadge from '@/components/FloatingContactBadge'
 import LoadingScreen from '@/components/LoadingScreen'
 import { Toaster } from '@/components/ui/sonner'
-import { TooltipProvider } from '@/components/ui/tooltip'
 import { AnimatePresence } from 'motion/react'
 import { ThemeProvider } from 'next-themes'
 import  { FC, ReactNode, useEffect, useState } from 'react'
@@ -25,7 +24,6 @@ const RootProvider: FC<Props> = ({
 
     return (
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="mohsin-theme" disableTransitionOnChange>
-            <TooltipProvider>
                 <Toaster />
                 {mounted && <CustomCursor />}
                 <AnimatePresence mode="wait">
@@ -39,7 +37,6 @@ const RootProvider: FC<Props> = ({
                         {children}
                     </>
                 )}
-            </TooltipProvider>
         </ThemeProvider>
     )
 }

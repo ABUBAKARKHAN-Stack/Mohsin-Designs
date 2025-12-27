@@ -1,7 +1,7 @@
 "use client"
 
 import { stats } from "@/constants/stats.constants";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { ContainerLayout } from "@/components/layout";
 import { cn } from "@/lib/utils";

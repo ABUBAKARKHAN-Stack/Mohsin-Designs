@@ -2,7 +2,6 @@
 
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import logo from "@/assets/logo.webp";
 
 const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);

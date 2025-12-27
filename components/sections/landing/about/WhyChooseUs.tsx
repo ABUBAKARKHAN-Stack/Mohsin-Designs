@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import SplitText from "@/components/ui/SplitText";
 import { reasons } from "@/constants/about.constants";
 import { ContainerLayout } from "@/components/layout";

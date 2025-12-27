@@ -1,10 +1,6 @@
 "use client"
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { serviceItems } from '@/constants/services.constants'
-import { navLinks } from "@/constants/navlinks.constants";
-import Link from "next/link";
 import DesktopNav from "./DesktopNav";
 import { MobileMenu } from "./MobileMenu";
 

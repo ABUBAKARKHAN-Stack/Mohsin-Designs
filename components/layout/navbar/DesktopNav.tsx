@@ -1,10 +1,9 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
 import ThemeToggle from "@/components/ui/ThemeToggle";
-import logo from "@/assets/logo.webp";
 import { serviceItems } from '@/constants/services.constants'
 import { navLinks } from "@/constants/navlinks.constants";
 import { APP_NAME } from "@/constants/app.constants";

@@ -1,6 +1,7 @@
 "use client"
 
 import { servicesPreview } from "@/constants/services.constants";
+import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import { useMotionValue, useSpring, useTransform, motion } from "motion/react";
 import Image from "next/image";
@@ -96,15 +97,15 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
                 <div className="relative z-10" style={{ transform: "translateZ(30px)" }}>
                     {/* Header */}
                     <div className="flex items-start justify-between mb-8">
-                        <div className="flex items-center gap-5">
+                        <div className="flex flex-wrap items-center gap-5">
                             <motion.div
-                                className="relative w-16 h-16 flex shrink-0 items-center justify-center"
+                                className="relative size-10 sm:size-16 flex shrink-0 items-center justify-center"
                                 whileHover={{ scale: 1.1 }}
                                 transition={{ duration: 0.3 }}
                             >
                                 {/* Icon background */}
                                 <div className="absolute inset-0 bg-accent/10 border border-accent/20 rotate-45 transition-transform duration-300 group-hover:rotate-50" />
-                                <service.icon className="relative z-10 w-7 h-7 text-accent" />
+                                <service.icon className="relative z-10 size-4 sm:size-7 text-accent" />
                             </motion.div>
                             <div>
                                 <span className="block text-[10px] tracking-[0.4em] text-accent font-semibold mb-1">{service.number}</span>
@@ -118,7 +119,7 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
                             </div>
                         </div>
                         <motion.div
-                            className="w-10 h-10 border border-border flex items-center justify-center transition-colors duration-300 group-hover:border-accent group-hover:bg-accent"
+                            className="size-10 border border-border hidden min-[370px]:flex items-center justify-center transition-colors duration-300 group-hover:border-accent group-hover:bg-accent"
                             animate={{
                                 x: isHovered ? 3 : 0,
                                 y: isHovered ? -3 : 0,
@@ -143,7 +144,10 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: index * 0.1 + i * 0.05 }}
-                                className="text-xs tracking-wider px-4 py-2 bg-muted/50 text-muted-foreground border border-border/50 transition-all duration-300 group-hover:border-accent/30 group-hover:text-foreground"
+                                className={cn(
+                                    "text-[10px] tracking-wider  px-2 py-1 bg-muted/50 text-muted-foreground border border-border/50 transition-all duration-300 group-hover:border-accent/30 group-hover:text-foreground",
+                                    "min-[350px]:text-xs min-[350px]:px-4 min-[350px]:py-2  "
+                                )}
                             >
                                 {feature}
                             </motion.span>

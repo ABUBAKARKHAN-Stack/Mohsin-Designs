@@ -65,7 +65,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
         className="relative z-10 mb-8 sm:mb-12 md:mb-16"
       >
         <motion.img 
-          src={logo.src} 
+          src={"/assets/logo.webp"} 
           alt="Mohsin Designs" 
           className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 object-contain drop-shadow-2xl"
         />

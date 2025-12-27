@@ -54,7 +54,7 @@ const DesktopNav: FC<Props> = ({
                         <MagneticButton strength={0.2}>
                             <Link href="/" className="relative z-50">
                                 <motion.img
-                                    src={logo.src}
+                                    src={"/assets/logo.webp"}
                                     alt={APP_NAME}
                                     className="h-12.5 w-auto object-contain drop-shadow-[0_6px_16px_hsl(var(--foreground)/0.18)] dark:drop-shadow-none"
                                     whileHover={{ scale: 1.05 }}

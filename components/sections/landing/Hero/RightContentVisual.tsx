@@ -3,7 +3,6 @@ import { CheckCircle2, Star } from 'lucide-react'
 import { useScroll, motion, useTransform } from 'motion/react'
 import Link from 'next/link'
 import { FC, RefObject } from 'react'
-import logo from "@/assets/logo.webp";
 
 
 type Props = {
@@ -42,7 +41,7 @@ const RightContentVisual: FC<Props> = ({ containerRef }) => {
               className="absolute w-40 h-40 bg-accent/15 rounded-full blur-3xl"
             />
             <img
-              src={logo.src}
+              src={'/assets/logo.webp'}
               alt="Mohsin Designs"
               className="w-36 h-36 object-contain relative z-10 drop-shadow-[0_10px_22px_hsl(var(--foreground)/0.16)] dark:drop-shadow-none"
             />

@@ -1,7 +1,15 @@
 import {
   Hero,
   ServiceHighlightsMarquee,
-  TrustedByBrands
+  TrustedByBrands,
+  AboutPreview,
+   ServicesPreview,
+   WhyChooseUs,
+   PortfolioPreview,
+   Testimonials,
+   Stats,
+   FAQs,
+   CTA
 } from "@/components/sections/landing/";
 
 const HomePage = () => {
@@ -10,7 +18,14 @@ const HomePage = () => {
       <Hero />
       <ServiceHighlightsMarquee />
       <TrustedByBrands />
-
+      <AboutPreview />
+      <ServicesPreview />
+      <WhyChooseUs />
+      <PortfolioPreview />
+      <Testimonials />
+      <Stats />
+      <FAQs />
+      <CTA />
     </>
   );
 };

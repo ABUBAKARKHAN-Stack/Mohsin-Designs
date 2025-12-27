@@ -36,7 +36,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                         <MagneticButton strength={0.2}>
                             <Link href="/" className="relative z-50">
                                 <motion.img
-                                    src={logo.src}
+                                    src={"/assets/logo.webp"}
                                     alt={APP_NAME}
                                     className="h-16 sm:h-20 w-auto object-contain "
                                     whileHover={{ scale: 1.05 }}

@@ -17,22 +17,9 @@ const ThemeToggle = ({ className = "" }) => {
   }, []);
 
   const toggleTheme = () => {
-    //* Hard-disable transitions/animations during theme switch to avoid repaint jank.
-    const style = document.createElement("style");
-    style.setAttribute("data-theme-switch", "true");
-    style.appendChild(
-      document.createTextNode(`
-        *,*::before,*::after{transition:none!important;animation:none!important;filter:none!important;backdrop-filter:none!important}
-        .custom-cursor{opacity:0!important}
-      `)
-    );
 
-    document.head.appendChild(style);
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
 
-    window.setTimeout(() => {
-      style.remove();
-    }, 180);
   };
 
   if (!mounted) {

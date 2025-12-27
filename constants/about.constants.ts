@@ -1,27 +1,52 @@
-import adamsRepipe from "@/assets/brands/adams-repipe.jpg";
-import allStarExteriors from "@/assets/brands/all-star-exteriors.jpg";
-import americanStoneSealer from "@/assets/brands/american-stone-sealer.jpg";
-import burksWoodMilling from "@/assets/brands/burks-wood-milling.jpg";
-import cooperLandManagement from "@/assets/brands/cooper-land-management.jpg";
-import desertPerformance from "@/assets/brands/desert-performance.jpg";
-import precisionGutters from "@/assets/brands/precision-gutters.jpg";
-import raisedUpYouth from "@/assets/brands/raised-up-youth.jpg";
-import redtailRoofing from "@/assets/brands/redtail-roofing.jpg";
+import { Award, Clock, Shield, TrendingUp, Users, Zap } from "lucide-react";
 
 const trustedBrands = [
-  { name: "Adams Repipe & Plumbing", logo: adamsRepipe },
-  { name: "All Star Exteriors", logo: allStarExteriors },
-  { name: "American Stone Sealer", logo: americanStoneSealer },
-  { name: "Burks Wood Milling", logo: burksWoodMilling },
-  { name: "Cooper Land Management", logo: cooperLandManagement },
-  { name: "Desert Performance Part", logo: desertPerformance },
-  { name: "Precision Gutters", logo: precisionGutters },
-  { name: "Raised Up Youth", logo: raisedUpYouth },
-  { name: "Redtail Roofing", logo: redtailRoofing },
+  { name: "Adams Repipe & Plumbing", logo: "/assets/brands/adams-repipe.jpg" },
+  { name: "All Star Exteriors", logo: "/assets/brands/all-star-exteriors.jpg" },
+  { name: "American Stone Sealer", logo: "/assets/brands/american-stone-sealer.jpg" },
+  { name: "Burks Wood Milling", logo: "/assets/brands/burks-wood-milling.jpg" },
+  { name: "Cooper Land Management", logo: "/assets/brands/cooper-land-management.jpg" },
+  { name: "Desert Performance Part", logo: "/assets/brands/desert-performance.jpg" },
+  { name: "Precision Gutters", logo: "/assets/brands/precision-gutters.jpg" },
+  { name: "Raised Up Youth", logo: "/assets/brands/raised-up-youth.jpg" },
+  { name: "Redtail Roofing", logo: "/assets/brands/redtail-roofing.jpg" },
+];
+
+const reasons = [
+  {
+    icon: Zap,
+    title: "Lightning Fast",
+    description: "We deliver projects on time without compromising quality. Our agile approach ensures rapid iteration.",
+  },
+  {
+    icon: Shield,
+    title: "Secure & Reliable",
+    description: "Enterprise-grade security and 99.9% uptime guarantee. Your data and users are always protected.",
+  },
+  {
+    icon: Users,
+    title: "Client-Centric",
+    description: "We treat your business as our own. Direct communication with senior team members throughout.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Results Driven",
+    description: "Our solutions are designed to drive measurable business outcomes and sustainable growth.",
+  },
+  {
+    icon: Award,
+    title: "Award Winning",
+    description: "Recognized globally for excellence in design and development. 50+ industry awards.",
+  },
+  {
+    icon: Clock,
+    title: "24/7 Support",
+    description: "Round-the-clock support and maintenance. We're here whenever you need us.",
+  },
 ];
 
 
-
 export {
-    trustedBrands
+    trustedBrands,
+    reasons
 }

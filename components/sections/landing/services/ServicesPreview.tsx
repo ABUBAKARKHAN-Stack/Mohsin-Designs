@@ -22,7 +22,7 @@ const ServicesPreview = () => {
   const rotate = useTransform(scrollYProgress, [0, 1], [0, 15]);
 
   return (
-    <section ref={containerRef} className="py-28 lg:py-40 bg-background relative overflow-hidden">
+    <section ref={containerRef} className="py-28 lg:py-32 bg-background relative overflow-hidden">
       {/* Animated background elements */}
       <motion.div 
         style={{ y: y1, rotate }}

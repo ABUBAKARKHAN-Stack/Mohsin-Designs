@@ -18,7 +18,7 @@ const CTA = () => {
   const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
   return (
-    <section ref={containerRef} className="py-32 bg-primary text-primary-foreground relative overflow-hidden">
+    <section ref={containerRef} className="py-28 lg:py-32 bg-primary text-primary-foreground relative overflow-hidden">
 
       <motion.div
         style={{ y }}

@@ -84,7 +84,8 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="py-32 relative overflow-hidden bg-muted/30">
+    <section className="py-28 lg:py-32 relative overflow-hidden bg-muted/30">
+
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent" />
 
       <ContainerLayout className="relative">
@@ -93,7 +94,7 @@ const Testimonials = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-8"
+          className="text-center"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -202,7 +203,7 @@ const Testimonials = () => {
         </motion.div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-center gap-6 mt-8">
+        <div className="flex items-center justify-center gap-6 ">
           <motion.button
             onClick={prev}
             whileHover={{ scale: 1.1 }}

@@ -19,7 +19,7 @@ const PortfolioPreview = () => {
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
   return (
-    <section ref={containerRef} className="py-32 bg-card relative overflow-hidden">
+    <section ref={containerRef} className="py-28 lg:py-32  bg-card relative overflow-hidden">
       <motion.div
         style={{ y }}
         className="absolute -left-40 bottom-0 w-150 h-150 bg-accent/5 rounded-full blur-3xl"
@@ -91,6 +91,7 @@ const PortfolioPreview = () => {
         </div>
 
         {/* Mobile CTA */}
+
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -106,6 +107,7 @@ const PortfolioPreview = () => {
             <ArrowUpRight className="size-4.5" />
           </Link>
         </motion.div>
+
       </ContainerLayout>
     </section>
   );

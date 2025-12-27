@@ -1,4 +1,4 @@
-import { useScroll, useTransform, MotionValue } from "motion/react";
+import { useScroll, useTransform, MotionValue } from "motion/react"";
 import { useRef } from "react";
 
 export const useParallax = (speed: number = 0.5) => {

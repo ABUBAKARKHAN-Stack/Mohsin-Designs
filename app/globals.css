@@ -20,6 +20,9 @@
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
 
+  --breakpoint-xsm: 550px;
+
+
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));

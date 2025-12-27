@@ -1,3 +1,4 @@
+import ContainerLayout from "../ContainerLayout";
 import FooterBottomBar from "./FooterBottomBar";
 import FooterCTA from "./FooterCTA";
 import FooterMainGrid from "./FooterMainGrid";
@@ -6,17 +7,18 @@ const Footer = () => {
 
   return (
     <footer className="border-t border-border">
-      <div className="container mx-auto px-6 py-24">
+      <ContainerLayout className="py-24">
 
-      {/* Footer CTA */}
+        {/* Footer CTA */}
         <FooterCTA />
-       
+
         {/* Footer grid */}
-       <FooterMainGrid />
+        <FooterMainGrid />
 
         {/* Bottom bar */}
         <FooterBottomBar />
-      </div>
+
+      </ContainerLayout>
     </footer>
   );
 };

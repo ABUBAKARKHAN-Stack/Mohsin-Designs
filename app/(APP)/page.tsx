@@ -1,9 +1,16 @@
-import Hero from "@/components/sections/landing/Hero/Hero";
+import {
+  Hero,
+  ServiceHighlightsMarquee,
+  TrustedByBrands
+} from "@/components/sections/landing/";
 
 const HomePage = () => {
   return (
     <>
       <Hero />
+      <ServiceHighlightsMarquee />
+      <TrustedByBrands />
+
     </>
   );
 };

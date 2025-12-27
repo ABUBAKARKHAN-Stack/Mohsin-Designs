@@ -1,5 +1,5 @@
-
 "use client"
+
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState } from "react";
 
@@ -13,7 +13,7 @@ const CustomCursor = () => {
   //* Smoother, more refined spring configs
   const dotSpringConfig = { damping: 30, stiffness: 500, mass: 0.5 };
   const ringSpringConfig = { damping: 20, stiffness: 150, mass: 0.8 };
-  
+
   const dotXSpring = useSpring(cursorX, dotSpringConfig);
   const dotYSpring = useSpring(cursorY, dotSpringConfig);
   const ringXSpring = useSpring(cursorX, ringSpringConfig);
@@ -31,7 +31,7 @@ const CustomCursor = () => {
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const interactive = target.closest('a, button, [data-cursor="pointer"], input, textarea, [role="button"]');
-      
+
       if (interactive) {
         setIsHovering(true);
       }
@@ -40,7 +40,7 @@ const CustomCursor = () => {
     const handleMouseOut = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const interactive = target.closest('a, button, [data-cursor="pointer"], input, textarea, [role="button"]');
-      
+
       if (interactive) {
         setIsHovering(false);
       }

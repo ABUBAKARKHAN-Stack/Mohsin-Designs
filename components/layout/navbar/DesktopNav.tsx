@@ -56,7 +56,7 @@ const DesktopNav: FC<Props> = ({
                                 <motion.img
                                     src={logo.src}
                                     alt={APP_NAME}
-                                    className="h-12 w-auto object-contain drop-shadow-[0_6px_16px_hsl(var(--foreground)/0.18)] dark:drop-shadow-none"
+                                    className="h-12.5 w-auto object-contain drop-shadow-[0_6px_16px_hsl(var(--foreground)/0.18)] dark:drop-shadow-none"
                                     whileHover={{ scale: 1.05 }}
                                 />
                             </Link>
@@ -151,7 +151,7 @@ const DesktopNav: FC<Props> = ({
                                 <Link
                                     href="/contact"
                                     data-cursor-text="Go"
-                                    className="group inline-flex items-center gap-2 text-sm font-medium bg-foreground text-background px-6 py-3 hover:bg-accent hover:text-accent-foreground transition-all duration-300"
+                                    className="group inline-flex h-10 items-center gap-2 text-sm font-medium bg-foreground text-background px-6 py-3 hover:bg-accent hover:text-accent-foreground transition-all duration-300"
                                 >
                                     Start a Project
                                     <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

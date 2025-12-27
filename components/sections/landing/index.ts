@@ -1,6 +1,10 @@
 import Hero from "./Hero/Hero";
+import ServiceHighlightsMarquee from "./ServiceHighlightsMarquee";
+import TrustedByBrands from "./TrustedByBrands";
 
 
 export {
-    Hero
+    Hero,
+    ServiceHighlightsMarquee,
+    TrustedByBrands
 }

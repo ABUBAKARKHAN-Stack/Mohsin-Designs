@@ -45,6 +45,7 @@ const MagneticButton = forwardRef<HTMLDivElement, MagneticButtonProps>(
       <motion.div
         ref={ref}
         style={{ x: xSpring, y: ySpring }}
+        whileTap={{scale:.95}}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         className={className}

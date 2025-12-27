@@ -25,7 +25,12 @@ const faqs = [
   },
 ];
 
+const contactInfo = {
+  mail: "hello@mohsindesigns.com"
+}
+
 
 export {
-  faqs
+  faqs,
+  contactInfo
 }

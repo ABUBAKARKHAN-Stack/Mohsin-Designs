@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { Dispatch, FC, SetStateAction } from 'react';
 import logo from "@/assets/logo.webp";
-import ThemeToggle from '@/components/ui/ThemeToggle';
+import ThemeToggle from '@/components/ui/theme-toggle';
 
 type Props = {
     isOpen: boolean;

@@ -3,13 +3,13 @@ import {
   ServiceHighlightsMarquee,
   TrustedByBrands,
   AboutPreview,
-   ServicesPreview,
-   WhyChooseUs,
-   PortfolioPreview,
-   Testimonials,
-   Stats,
-   FAQs,
-   CTA
+  ServicesPreview,
+  WhyChooseUs,
+  PortfolioPreview,
+  Testimonials,
+  Stats,
+  FAQs,
+  CTA
 } from "@/components/sections/landing/";
 
 const HomePage = () => {

@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "motion/react";
-import SplitText from "@/components/ui/SplitText";
+import SplitText from "@/components/ui/split-text";
 import { reasons } from "@/constants/about.constants";
 import { ContainerLayout } from "@/components/layout";
 import { APP_NAME } from "@/constants/app.constants";

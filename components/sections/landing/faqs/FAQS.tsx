@@ -7,7 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import SectionHeading from "@/components/ui/SectionHeading";
+import SectionHeading from "@/components/ui/section-heading";
 import { faqs } from "@/constants/contact&help.constants";
 import { ArrowRight } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";

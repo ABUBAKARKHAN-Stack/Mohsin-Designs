@@ -6,7 +6,7 @@ import LoadingScreen from '@/components/LoadingScreen'
 import { Toaster } from '@/components/ui/sonner'
 import { AnimatePresence } from 'motion/react'
 import { ThemeProvider } from 'next-themes'
-import  { FC, ReactNode, useEffect, useState } from 'react'
+import { FC, ReactNode, useEffect, useState } from 'react'
 
 type Props = {
     children: ReactNode
@@ -23,20 +23,20 @@ const RootProvider: FC<Props> = ({
     }, []);
 
     return (
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="mohsin-theme" disableTransitionOnChange>
-                <Toaster />
-                {mounted && <CustomCursor />}
-                <AnimatePresence mode="wait">
-                    {isLoading && (
-                        <LoadingScreen onComplete={() => setIsLoading(false)} />
-                    )}
-                </AnimatePresence>
-                {!isLoading && (
-                    <>
-                        <FloatingContactBadge />
-                        {children}
-                    </>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="mohsin-desings-theme" disableTransitionOnChange>
+            <Toaster />
+            {mounted && <CustomCursor />}
+            <AnimatePresence mode="wait">
+                {isLoading && (
+                    <LoadingScreen onComplete={() => setIsLoading(false)} />
                 )}
+            </AnimatePresence>
+            {!isLoading && (
+                <>
+                    <FloatingContactBadge />
+                    {children}
+                </>
+            )}
         </ThemeProvider>
     )
 }

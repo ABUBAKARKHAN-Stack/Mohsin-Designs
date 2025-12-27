@@ -3,7 +3,7 @@
 import { motion, useMotionValue, useSpring, animate, PanInfo } from "motion/react";
 import { Star, Quote } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
-import SplitText from "@/components/ui/SplitText";
+import SplitText from "@/components/ui/split-text";
 import { testimonials } from "@/constants/testimonials.constants";
 import { ContainerLayout } from "@/components/layout";
 

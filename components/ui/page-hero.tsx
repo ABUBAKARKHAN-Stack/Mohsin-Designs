@@ -20,14 +20,14 @@ interface PageHeroProps {
 
 const PageHero = ({ title, titleAccent = ".", subtitle, description, breadcrumbs }: PageHeroProps) => {
   return (
-    <section className="pt-32 pb-16 md:pt-40 md:pb-20 relative overflow-hidden">
-      
+    <section className="pt-15 pb-10 md:pt-20 md:pb-15 relative overflow-hidden">
+
       {/* Background elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 -right-1/4 w-125 h-125 rounded-full border border-accent/10" />
         <div className="absolute bottom-1/4 -left-1/4 w-75 h-75 rounded-full border border-border/20" />
       </div>
-      
+
       <ContainerLayout className=" relative z-10">
         {/* Breadcrumb */}
         <motion.nav
@@ -39,8 +39,8 @@ const PageHero = ({ title, titleAccent = ".", subtitle, description, breadcrumbs
         >
           <ol className="flex items-center gap-2 text-sm">
             <li>
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="text-muted-foreground hover:text-accent transition-colors flex items-center gap-1"
               >
                 <Home className="w-3.5 h-3.5" />
@@ -51,7 +51,7 @@ const PageHero = ({ title, titleAccent = ".", subtitle, description, breadcrumbs
               <li key={index} className="flex items-center gap-2">
                 <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50" />
                 {item.href ? (
-                  <Link 
+                  <Link
                     href={item.href}
                     className="text-muted-foreground hover:text-accent transition-colors"
                   >

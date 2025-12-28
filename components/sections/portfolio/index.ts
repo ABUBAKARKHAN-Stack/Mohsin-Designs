@@ -3,5 +3,6 @@ import MainContent from './MainContent'
 
 
 export {
-    PortfolioPageHero
+    PortfolioPageHero,
+    MainContent
 }

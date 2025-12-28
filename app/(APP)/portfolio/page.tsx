@@ -1,7 +1,11 @@
 import { PageWrapper } from "@/components/layout";
-import { PortfolioPageHero } from "@/components/sections/portfolio";
-import MainContent from "@/components/sections/portfolio/MainContent";
+import { PortfolioPageHero, MainContent } from "@/components/sections/portfolio";
+import { Metadata } from "next";
 
+
+export const metadata: Metadata = {
+  title: "Our Work"
+}
 
 const Portfolio = () => {
 

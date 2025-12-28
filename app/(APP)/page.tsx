@@ -1,3 +1,4 @@
+import { PageWrapper } from "@/components/layout";
 import {
   Hero,
   ServiceHighlightsMarquee,
@@ -14,7 +15,7 @@ import {
 
 const HomePage = () => {
   return (
-    <>
+    <PageWrapper>
       <Hero />
       <ServiceHighlightsMarquee />
       <TrustedByBrands />
@@ -26,7 +27,7 @@ const HomePage = () => {
       <Stats />
       <FAQs />
       <CTA />
-    </>
+    </PageWrapper>
   );
 };
 

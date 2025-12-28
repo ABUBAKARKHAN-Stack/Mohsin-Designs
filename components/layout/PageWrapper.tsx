@@ -1,41 +1,49 @@
-"use client"
+"use client";
 
-import { AnimatePresence, motion } from "motion/react";
-import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
+interface Props {
+  children: ReactNode;
+}
 
-const PageWrapper = ({ children }: { children: ReactNode }) => {
-  
-  const pathname = usePathname()
+export default function PageWrapper({ children }: Props) {
+  const pathname = usePathname();
+
   return (
-    <AnimatePresence mode="wait">
-      <div key={pathname}>
-        <motion.div
-          initial={{ scaleY: 1 }}
-          animate={{ scaleY: 0 }}
-          exit={{ scaleY: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 bg-primary origin-top z-50 pointer-events-none"
-        />
-        <motion.div
-          initial={{ scaleY: 1 }}
-          animate={{ scaleY: 0 }}
-          exit={{ scaleY: 1 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 bg-primary origin-bottom z-50 pointer-events-none"
-        />
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
-          {children}
-        </motion.div>
-      </div>
-    </AnimatePresence>
-  );
-};
+    <motion.div
+      key={pathname} 
+      className="relative z-0"
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
+      <motion.div
+        className="fixed inset-0 bg-primary origin-top z-50 pointer-events-none"
+        initial={{ scaleY: 1 }}
+        animate={{ scaleY: 0 }}
+        exit={{ scaleY: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      />
 
-export default PageWrapper;
+      <motion.div
+        className="fixed inset-0 bg-primary origin-bottom z-50 pointer-events-none"
+        initial={{ scaleY: 1 }}
+        animate={{ scaleY: 0 }}
+        exit={{ scaleY: 1 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      />
+
+      <motion.div
+        className="relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
+        {children}
+      </motion.div>
+    </motion.div>
+  );
+}

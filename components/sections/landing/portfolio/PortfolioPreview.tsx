@@ -82,7 +82,7 @@ const PortfolioPreview = () => {
 
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project, index) => (
+          {projects.slice(0,4).map((project, index) => (
             <PortfolioCard
               project={project}
               index={index}

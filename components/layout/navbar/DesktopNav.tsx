@@ -10,7 +10,7 @@ import { APP_NAME } from "@/constants/app.constants";
 import Link from "next/link";
 import ContainerLayout from "../ContainerLayout";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
     isOpen: boolean
@@ -37,6 +37,8 @@ const DesktopNav: FC<Props> = ({
     useEffect(() => {
         setServicesOpen(false);
     }, [pathname]);
+
+    const router = useRouter()
 
     return (
         <motion.header

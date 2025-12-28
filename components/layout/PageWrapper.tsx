@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 
 
 const PageWrapper = ({ children }: { children: ReactNode }) => {
+  
   const pathname = usePathname()
   return (
     <AnimatePresence mode="wait">

@@ -84,7 +84,7 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="py-28 lg:py-32 relative overflow-hidden bg-muted/30">
+    <section className="lg:py-12.5 py-6.25 relative overflow-hidden bg-muted/30">
 
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent" />
 

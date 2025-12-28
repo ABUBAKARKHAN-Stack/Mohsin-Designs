@@ -15,7 +15,7 @@ import { ContainerLayout } from "@/components/layout";
 
 const FAQs = () => {
   return (
-    <section className="py-28 lg:py-32 bg-secondary/1">
+    <section className="lg:py-12.5 py-6.25  bg-secondary/1">
       <ContainerLayout>
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Left side - Heading */}

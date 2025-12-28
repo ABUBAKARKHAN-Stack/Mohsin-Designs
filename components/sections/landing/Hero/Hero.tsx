@@ -10,12 +10,12 @@ const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section ref={containerRef} className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-24 pb-12">
+    <section ref={containerRef} className="relative min-h-screen flex flex-col justify-center overflow-hidden lg:py-12.5 py-6.25 ">
 
       {/* Background elements */}
       <BgElements />
 
-      <ContainerLayout className="py-16 relative z-10">
+      <ContainerLayout className="relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
           {/* Left content */}

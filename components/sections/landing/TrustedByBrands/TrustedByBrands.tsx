@@ -10,7 +10,7 @@ const brandsRow2 = [...trustedBrands].reverse();
 
 const TrustedByBrands = () => {
   return (
-    <section className="py-20 border-y border-border bg-muted/30 overflow-hidden">
+    <section className="lg:py-12.5 py-6.25  border-y border-border bg-muted/30 overflow-hidden">
 
       <ContainerLayout className="mb-12">
         <motion.div

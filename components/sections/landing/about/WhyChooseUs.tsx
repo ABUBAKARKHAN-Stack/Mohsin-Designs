@@ -10,7 +10,7 @@ import { APP_NAME } from "@/constants/app.constants";
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-28 lg:py-32  relative overflow-hidden">
+    <section className="lg:py-12.5 py-6.25  relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent" />
 
       <ContainerLayout className="relative">

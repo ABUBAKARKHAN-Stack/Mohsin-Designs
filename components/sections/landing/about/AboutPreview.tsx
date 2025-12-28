@@ -18,7 +18,7 @@ const AboutPreview = () => {
   const imageY = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
   return (
-    <section ref={containerRef} className="py-28 lg:py-32 relative overflow-hidden">
+    <section ref={containerRef} className="lg:py-12.5 py-6.25  relative overflow-hidden">
       <motion.div
         style={{ y }}
         className="absolute -right-40 top-20 w-125 h-125 bg-accent/5 rounded-full blur-3xl"

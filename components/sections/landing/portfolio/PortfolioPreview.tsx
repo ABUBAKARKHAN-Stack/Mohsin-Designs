@@ -19,7 +19,7 @@ const PortfolioPreview = () => {
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
   return (
-    <section ref={containerRef} className="py-28 lg:py-32  bg-card relative overflow-hidden">
+    <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-card relative overflow-hidden">
       <motion.div
         style={{ y }}
         className="absolute -left-40 bottom-0 w-150 h-150 bg-accent/5 rounded-full blur-3xl"

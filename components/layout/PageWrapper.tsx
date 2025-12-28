@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
@@ -14,25 +14,24 @@ export default function PageWrapper({ children }: Props) {
   return (
     <motion.div
       key={pathname} 
-      className="relative z-0"
       initial="initial"
       animate="animate"
       exit="exit"
     >
       <motion.div
-        className="fixed inset-0 bg-primary origin-top z-50 pointer-events-none"
+        className="fixed inset-0 bg-primary origin-top z-999 pointer-events-none"
         initial={{ scaleY: 1 }}
         animate={{ scaleY: 0 }}
         exit={{ scaleY: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
       />
 
       <motion.div
-        className="fixed inset-0 bg-primary origin-bottom z-50 pointer-events-none"
+        className="fixed inset-0 bg-primary origin-bottom z-999 pointer-events-none"
         initial={{ scaleY: 1 }}
         animate={{ scaleY: 0 }}
         exit={{ scaleY: 1 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
       />
 
       <motion.div

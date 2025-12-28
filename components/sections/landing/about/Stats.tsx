@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const Stats = () => {
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
 
       {/* Background decoration */}
       <div className="absolute inset-0 bg-linear-to-b from-muted/50 via-background to-muted/30" />

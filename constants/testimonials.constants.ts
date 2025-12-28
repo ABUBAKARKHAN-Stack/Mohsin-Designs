@@ -1,7 +1,7 @@
 const testimonials = [
   {
     id: 1,
-    quote: "Nexus transformed our digital presence completely. Their strategic approach and attention to detail exceeded all expectations. The results speak for themselves.",
+    quote: "Mohsin Designs transformed our digital presence completely. Their strategic approach and attention to detail exceeded all expectations. The results speak for themselves.",
     author: "Sarah Johnson",
     role: "CEO, TechFlow Inc.",
     rating: 5,
@@ -9,7 +9,7 @@ const testimonials = [
   },
   {
     id: 2,
-    quote: "Working with Nexus was seamless from start to finish. They delivered a platform that increased our conversions by 150% within the first quarter.",
+    quote: "Working with Mohsin Designs was seamless from start to finish. They delivered a platform that increased our conversions by 150% within the first quarter.",
     author: "Michael Chen",
     role: "Founder, EcoShop",
     rating: 5,

@@ -43,7 +43,7 @@ const Testimonials = () => {
 
   const handleDragStart = () => {
     setIsDragging(true);
-    // setIsAutoPlaying(false);
+    setIsAutoPlaying(false);
   };
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {

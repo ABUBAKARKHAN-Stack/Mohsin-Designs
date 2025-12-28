@@ -43,7 +43,7 @@ const Stats = () => {
               className={
                 cn(
                   "group text-center p-8 md:p-10 bg-card border border-border hover:border-secondary/40 hover:shadow-lg hover:shadow-secondary/5 transition-all duration-300",
-                  index === 1 ? "col-span-2" : "col-span-1"
+                  index === 1 ? "lg:col-span-2" : "col-span-1"
                 )
               }
             >

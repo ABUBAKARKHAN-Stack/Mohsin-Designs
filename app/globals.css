@@ -3,13 +3,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
 @theme inline {
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
 
   --breakpoint-xsm: 550px;
-
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -75,16 +73,11 @@
       height: 0;
     }
   }
-
   @keyframes marquee {
-    0% {
-      transform: translateX(0%);
-    }
-
-    100% {
-      transform: translateX(-50%);
-    }
-  }
+  from {
+    transform: translateX(0);}
+  to {
+    transform: translateX(calc(-100% - var(--gap)));}}
 
   @keyframes marquee-reverse {
     0% {
@@ -95,7 +88,14 @@
       transform: translateX(0%);
     }
   }
-}
+
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite
+;
+  @keyframes marquee-vertical {
+  from {
+    transform: translateY(0);}
+  to {
+    transform: translateY(calc(-100% - var(--gap)));}}}
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -150,8 +150,6 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-
 
 @layer base {
   :root {

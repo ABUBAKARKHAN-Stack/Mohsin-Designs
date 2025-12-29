@@ -10,9 +10,11 @@ const CustomCursor = () => {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  //* Smoother, more refined spring configs
-  const dotSpringConfig = { damping: 30, stiffness: 500, mass: 0.5 };
-  const ringSpringConfig = { damping: 20, stiffness: 150, mass: 0.8 };
+  //* Dot & Ring Config
+  // const dotSpringConfig = { damping: 30, stiffness: 500, mass: 0.5 };
+  // const ringSpringConfig = { damping: 20, stiffness: 150, mass: 0.8 };
+  const dotSpringConfig = { damping: 38, stiffness: 900, mass: 0.4 };
+  const ringSpringConfig = { damping: 32, stiffness: 360, mass: 0.7 };
 
   const dotXSpring = useSpring(cursorX, dotSpringConfig);
   const dotYSpring = useSpring(cursorY, dotSpringConfig);

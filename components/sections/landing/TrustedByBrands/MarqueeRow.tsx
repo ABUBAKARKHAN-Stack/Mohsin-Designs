@@ -24,7 +24,7 @@ const MarqueeRow = ({ items, direction, duration = 25 }: MarqueeRowProps) => {
             {items.map((brand, i) => (
               <MagneticButton key={`${dup}-${i}`} strength={0.15}>
                 <motion.div
-                  className="shrink-0 h-24 w-44 sm:h-28 sm:w-52 md:h-36 md:w-60 flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300"
+                  className="shrink-0 h-24 w-44 sm:h-28 sm:w-52 md:h-36 md:w-60 flex items-center justify-center grayscale-0 opacity-100 transition-all duration-300"
                   whileHover={{ scale: 1.1 }}
                 >
                   <Image

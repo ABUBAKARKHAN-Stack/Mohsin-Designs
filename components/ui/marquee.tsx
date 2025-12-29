@@ -1,29 +1,74 @@
-"use client"
+import { ComponentPropsWithoutRef } from "react"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-const Marquee = ({
-  items,
-  className = ""
-}: { items: string[], className?: string }) => {
+interface MarqueeProps extends ComponentPropsWithoutRef<"div"> {
+  /**
+   * Optional CSS class name to apply custom styles
+   */
+  className?: string
+  /**
+   * Whether to reverse the animation direction
+   * @default false
+   */
+  reverse?: boolean
+  /**
+   * Whether to pause the animation on hover
+   * @default false
+   */
+  pauseOnHover?: boolean
+  /**
+   * Content to be displayed in the marquee
+   */
+  children: React.ReactNode
+  /**
+   * Whether to animate vertically instead of horizontally
+   * @default false
+   */
+  vertical?: boolean
+  /**
+   * Number of times to repeat the content
+   * @default 4
+   */
+  repeat?: number
+}
 
+export function Marquee({
+  className,
+  reverse = false,
+  pauseOnHover = false,
+  children,
+  vertical = false,
+  repeat = 4,
+  ...props
+}: MarqueeProps) {
   return (
-    <section className={cn(
-      "py-8 border-y border-border overflow-hidden",
-      className
-    )}>
-      <div className="flex animate-marquee duration-[20s]">
-        {[...items, ...items].map((item, i) => (
-          <div key={i} className="flex items-center gap-8 px-8 whitespace-nowrap">
-            <span className="text-4xl md:text-6xl font-display font-bold tracking-tight text-muted-foreground/30 hover:text-accent transition-colors">
-              {item}
-            </span>
-            <span className="w-3 h-3 rounded-full bg-accent" />
+    <div
+      {...props}
+      className={cn(
+        "group flex [gap:var(--gap)] overflow-hidden p-2 [--duration:40s] [--gap:1rem]",
+        {
+          "flex-row": !vertical,
+          "flex-col": vertical,
+        },
+        className
+      )}
+    >
+      {Array(repeat)
+        .fill(0)
+        .map((_, i) => (
+          <div
+            key={i}
+            className={cn("flex shrink-0 justify-around [gap:var(--gap)]", {
+              "animate-marquee flex-row": !vertical,
+              "animate-marquee-vertical flex-col": vertical,
+              "group-hover:[animation-play-state:paused]": pauseOnHover,
+              "[animation-direction:reverse]": reverse,
+            })}
+          >
+            {children}
           </div>
         ))}
-      </div>
-    </section>
-  );
-};
-
-export default Marquee;
+    </div>
+  )
+}

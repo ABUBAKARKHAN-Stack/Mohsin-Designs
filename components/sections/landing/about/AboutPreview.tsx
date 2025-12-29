@@ -76,7 +76,7 @@ const AboutPreview = () => {
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                 />
               </div>
-              <div className="absolute -bottom-8 -left-8 bg-accent text-primary p-8">
+              <div className="absolute -bottom-8 -left-8 bg-accent text-accent-foreground p-8">
                 <div className="text-5xl font-bold">6+</div>
                 <div className="text-sm mt-1 font-medium">Years of excellence</div>
               </div>

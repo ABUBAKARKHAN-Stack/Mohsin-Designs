@@ -130,18 +130,32 @@
   -webkit-text-fill-color: transparent;
 }
 
+@utility dark {
+  .gradient-text {
+    background: linear-gradient(135deg,
+        hsl(48 100% 55%) 0%,
+        hsl(40 100% 60%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+}
+
 @utility gradient-text {
   background: linear-gradient(135deg,
-      hsl(48 100% 55%) 0%,
-      hsl(40 100% 60%) 100%);
+      hsl(236, 100%, 32%) 0%,
+      hsl(236, 100%, 37%) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+
+
 @layer base {
   :root {
-    /* Light mode - Warm cream base with bold accents */
+    /* Light mode  */
     --background: 45 30% 99%;
     --foreground: 220 25% 10%;
 
@@ -151,21 +165,21 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 25% 10%;
 
-    /* Primary: Deep Navy Blue */
-    --primary: 230 65% 15%;
-    --primary-foreground: 45 30% 97%;
+    /* Primary: text-heavy on background */
+    --primary: 220 25% 10%;
+    --primary-foreground: 45 30% 99%;
 
-    /* Secondary: Golden Yellow */
-    --secondary: 48 100% 55%;
-    --secondary-foreground: 230 65% 15%;
+    /* Secondary: accent color with proper contrast */
+    --secondary: 236, 100%, 32%;
+    --secondary-foreground: 45 30% 99%;
 
-    /* Muted: Warm gray */
+    /* Muted: low emphasis, background-friendly */
     --muted: 45 15% 92%;
     --muted-foreground: 220 15% 45%;
 
-    /* Accent: Golden Yellow */
-    --accent: 48 100% 55%;
-    --accent-foreground: 230 65% 15%;
+    /* Accent: action color with strong contrast */
+    --accent: 236, 100%, 32%;
+    --accent-foreground: 45 30% 99%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -176,12 +190,13 @@
 
     --radius: 0px;
 
+    /* Sidebar mirrors dark mode relationships */
     --sidebar-background: 45 30% 97%;
     --sidebar-foreground: 220 25% 10%;
-    --sidebar-primary: 230 65% 15%;
-    --sidebar-primary-foreground: 45 30% 97%;
+    --sidebar-primary: 236, 100%, 32%;
+    --sidebar-primary-foreground: 45 30% 99%;
     --sidebar-accent: 48 100% 55%;
-    --sidebar-accent-foreground: 230 65% 15%;
+    --sidebar-accent-foreground: 236, 100%, 32%;
     --sidebar-border: 45 20% 88%;
     --sidebar-ring: 48 100% 55%;
   }

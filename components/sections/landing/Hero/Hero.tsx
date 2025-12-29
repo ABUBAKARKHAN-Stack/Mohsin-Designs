@@ -10,7 +10,7 @@ const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section ref={containerRef} className="relative min-h-screen flex flex-col justify-center overflow-hidden lg:py-12.5 py-6.25 ">
+    <section ref={containerRef} className="relative  flex flex-col justify-center overflow-hidden lg:py-12.5 py-6.25 ">
 
       {/* Background elements */}
       <BgElements />

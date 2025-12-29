@@ -8,6 +8,7 @@ import { navLinks } from "@/constants/navlinks.constants";
 import { socials } from "@/constants/social.constants";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Logo from "@/components/ui/logo";
 
 const FooterMainGrid = () => {
     return (
@@ -15,7 +16,10 @@ const FooterMainGrid = () => {
 
             {/* Brand */}
             <div className="md:col-span-1">
-                <img src={"/assets/logo.webp"} alt="Mohsin Designs" className="h-16 w-auto object-contain mb-6 drop-shadow-[0_6px_16px_hsl(var(--foreground)/0.18)] dark:drop-shadow-none" />
+                
+                <Logo
+                className="h-16 w-auto mb-6"
+                />
                 <p className="text-sm text-muted-foreground leading-relaxed">
                     A creative design agency crafting memorable brands and digital experiences that drive results.
                 </p>

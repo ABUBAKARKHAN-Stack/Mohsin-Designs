@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+import Logo from "./ui/logo";
 
 const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
@@ -9,7 +10,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
 
   useEffect(() => {
     setTimeout(() => setShowLogo(true), 200);
-    
+
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -63,11 +64,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-10 mb-8 sm:mb-12 md:mb-16"
       >
-        <motion.img 
-          src={"/assets/logo.webp"} 
-          alt="Mohsin Designs" 
-          className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 object-contain drop-shadow-2xl"
-        />
+        <Logo className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 drop-shadow-2xl" />
       </motion.div>
 
       {/* Progress bar */}

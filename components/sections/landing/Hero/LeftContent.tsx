@@ -2,7 +2,9 @@
 
 import MagneticButton from "@/components/MagneticButton";
 import { BorderBeam } from "@/components/ui/border-beam";
+import HighlightedBrandname from "@/components/ui/highlighted-brandname";
 import { NumberTicker } from "@/components/ui/number-ticker";
+import { APP_NAME } from "@/constants/app.constants";
 import { stats } from "@/constants/stats.constants";
 import { ArrowRight, ArrowUpRight, Star } from "lucide-react";
 import { motion } from "motion/react";
@@ -75,15 +77,39 @@ export const LeftContent = () => {
                 </div>
             </div>
 
-            <motion.p
+            <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
-                className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed mb-10"
+                className="max-w-xl space-y-6 mb-10"
             >
-                A creative design agency crafting bold logos, stunning websites, and
-                memorable brand identities that help businesses grow faster.
-            </motion.p>
+                <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed">
+                    We are a creative design agency helping ambitious businesses build brands
+                    that are clear, confident, and impossible to ignore.
+                </p>
+
+                <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                    At <HighlightedBrandname  />, we don’t believe in surface-level design or short-term
+                    trends. We believe in thoughtful branding, strategic creativity, and
+                    digital experiences that support real business growth.
+                </p>
+
+                <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                    In a world where businesses compete for attention across countless
+                    platforms, standing out requires more than good visuals. It requires a
+                    brand that communicates clearly, connects emotionally, and performs
+                    consistently. That’s where we come in.
+                </p>
+
+                <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                    We partner with startups, growing companies, and established brands to
+                    create logos, digital platforms, and brand identities that feel
+                    intentional, professional, and future-ready. Every project we take on
+                    is shaped by research, guided by strategy, and refined through creative
+                    execution.
+                </p>
+            </motion.div>
+
 
             {/* CTA buttons */}
             <motion.div

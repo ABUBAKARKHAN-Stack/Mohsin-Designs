@@ -1,6 +1,6 @@
 import MagneticButton from '@/components/MagneticButton';
 import { APP_NAME } from '@/constants/app.constants';
-import { contactInfo } from '@/constants/contact&help.constants';
+import { contactInfo } from '@/constants/contact-and-help.constants';
 import { navLinks } from '@/constants/navlinks.constants';
 import { serviceItems } from '@/constants/services.constants';
 import { X } from 'lucide-react';

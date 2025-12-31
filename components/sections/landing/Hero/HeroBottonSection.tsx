@@ -65,31 +65,6 @@ const HeroBottonSection = () => {
               </Link>
             </MagneticButton>
           </motion.div>
-
-          {/* Quick stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-            className="flex flex-wrap gap-10 md:gap-14 pt-8 border-t border-border/50"
-          >
-            {stats.map((stat, i) => (
-              <motion.div
-                key={i}
-                className="space-y-1"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9 + i * 0.1 }}
-              >
-                <NumberTicker
-                  className="text-3xl md:text-4xl font-display font-bold text-accent dark:text-accent"
-                  value={stat.value}
-                  suffix={stat.suffix}
-                />
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium">{stat.label}</p>
-              </motion.div>
-            ))}
-          </motion.div>
         </div>
   )
 }

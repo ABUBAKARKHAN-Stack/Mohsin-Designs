@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import SplitText from "@/components/ui/split-text";
 import { testimonials } from "@/constants/testimonials.constants";
 import { ContainerLayout } from "@/components/layout";
+import SectionHeading from "@/components/ui/section-heading";
 
 
 const CARD_WIDTH = 400;
@@ -89,42 +90,20 @@ const Testimonials = () => {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent" />
 
       <ContainerLayout className="relative">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="text-center"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center justify-center gap-3 mb-6"
-          >
-            <span className="text-sm tracking-[0.3em] text-accent uppercase font-medium">Testimonials</span>
-          </motion.div>
-          <SplitText
-            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight"
-            animation="slide"
-          >
-            Client stories
-          </SplitText>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="text-muted-foreground text-lg mt-6 max-w-xl mx-auto"
-          >
-            Don't just take our word for it. Here's what our clients have to say about working with us.
-          </motion.p>
-        </motion.div>
+
+        <SectionHeading
+          eyebrow="Testimonials"
+          title="Client stories"
+          description="Our clients value more than just design output. They value the process, the collaboration, and the confidence that comes from working with a team that understands their goals."
+          align="center"
+          splitText
+        />
+
 
         {/* Coverflow Carousel with Drag */}
         <motion.div
           ref={containerRef}
-          className="relative h-112.5 md:h-125 cursor-grab active:cursor-grabbing select-none touch-pan-y"
+          className="relative h-112.5  md:h-125 cursor-grab active:cursor-grabbing select-none touch-pan-y"
           style={{ perspective: "1200px" }}
         >
           <motion.div
@@ -158,8 +137,8 @@ const Testimonials = () => {
                 >
                   <motion.div
                     className={`p-6 md:p-8 rounded-2xl border bg-card shadow-2xl transition-all duration-500 ${index === current
-                        ? "border-accent/50 shadow-accent/20"
-                        : "border-border/50"
+                      ? "border-accent/50 shadow-accent/20"
+                      : "border-border/50"
                       }`}
                     whileHover={index === current ? { scale: 1.02 } : {}}
                   >
@@ -224,8 +203,8 @@ const Testimonials = () => {
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
                 className={`h-2 rounded-full transition-all duration-300 ${current === index
-                    ? "bg-accent w-8"
-                    : "bg-border hover:bg-accent/50 w-2"
+                  ? "bg-accent w-8"
+                  : "bg-border hover:bg-accent/50 w-2"
                   }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />

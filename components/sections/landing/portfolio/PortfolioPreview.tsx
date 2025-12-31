@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ContainerLayout } from "@/components/layout";
 import { projects } from "@/constants/portfolio.constants";
 import PortfolioCard from "./PortfolioCard";
+import SectionHeading from "@/components/ui/section-heading";
 
 
 const PortfolioPreview = () => {
@@ -30,37 +31,12 @@ const PortfolioPreview = () => {
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 lg:mb-20 gap-8">
 
-          <div className="max-w-2xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center gap-4 mb-6"
-            >
-              <span className="text-sm tracking-[0.3em] text-accent uppercase font-semibold">Portfolio</span>
-            </motion.div>
-
-            <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6"
-            >
-              Selected <span className="text-accent">Work</span>
-            </motion.h2>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="text-muted-foreground text-lg max-w-lg"
-            >
-              A curated collection of our projects showcasing creativity, technical skill, and design excellence.
-            </motion.p>
-          </div>
+          <SectionHeading
+            eyebrow="Portfolio"
+            title="Selected Work"
+            description="Our portfolio reflects the diversity of brands we’ve worked with and the depth of challenges we’ve solved. Each project represents a balance between creativity and purpose."
+            className="mb-0"
+          />
 
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -82,7 +58,7 @@ const PortfolioPreview = () => {
 
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 gap-8">
-          {projects.slice(0,4).map((project, index) => (
+          {projects.slice(0, 4).map((project, index) => (
             <PortfolioCard
               project={project}
               index={index}

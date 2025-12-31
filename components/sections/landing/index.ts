@@ -9,6 +9,10 @@ import Testimonials from "./testimonials/Testimonials";
 import Stats from "./about/Stats";
 import FAQs from "./faqs/FAQS";
 import CTA from "./cta/CTA";
+import BlogPreview from "./blogs/BlogPreview";
+import OurApproach from "./about/OurApproach";
+import Leadership from "./about/LeaderShip";
+import CaseStudiesPreview from "./portfolio/CaseStudiesPreview";
 export {
     Hero,
     ServiceHighlightsMarquee,
@@ -20,5 +24,9 @@ export {
     Testimonials,
     Stats,
     FAQs,
-    CTA
+    CTA,
+    BlogPreview,
+    OurApproach,
+    Leadership,
+    CaseStudiesPreview
 }

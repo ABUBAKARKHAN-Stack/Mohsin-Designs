@@ -29,7 +29,7 @@ const PortfolioCard = ({ project, index }: Props) => {
                     alt={project.title}
                     fill
                     className="w-full h-full object-cover transition-all duration-700 
-                     md:grayscale group-hover:md:grayscale-0 group-hover:md:scale-105"
+                      group-hover:md:scale-105"
                     loading="lazy"
                 />
 

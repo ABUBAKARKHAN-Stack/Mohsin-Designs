@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import SectionHeading from "@/components/ui/section-heading";
-import { faqs } from "@/constants/contact&help.constants";
+import { faqs } from "@/constants/contact-and-help.constants";
 import { ArrowRight } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
 
@@ -28,7 +28,7 @@ const FAQs = () => {
           >
             <SectionHeading
               eyebrow="FAQs"
-              title="Questions? We've got answers"
+              title="Frequently Asked Questions"
               align="left"
             />
             <p className="text-muted-foreground mt-6 max-w-md">
@@ -62,7 +62,8 @@ const FAQs = () => {
                 >
                   <AccordionItem
                     value={`item-${index}`}
-                    className="border border-border bg-background px-6 data-[state=open]:bg-card"
+                    
+                    className="border! border-border bg-background px-6 data-[state=open]:bg-card"
                   >
                     <AccordionTrigger className="text-left font-display font-medium text-lg hover:text-accent hover:no-underline py-6">
                       {faq.question}

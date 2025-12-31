@@ -10,7 +10,11 @@ import {
   Testimonials,
   Stats,
   FAQs,
-  CTA
+  CTA,
+  BlogPreview,
+  OurApproach,
+  Leadership,
+  CaseStudiesPreview
 } from "@/components/sections/landing/";
 
 const HomePage = () => {
@@ -20,11 +24,14 @@ const HomePage = () => {
       <ServiceHighlightsMarquee />
       <TrustedByBrands />
       <AboutPreview />
+      <OurApproach />
       <ServicesPreview />
       <WhyChooseUs />
       <PortfolioPreview />
+      <CaseStudiesPreview />
       <Testimonials />
-      <Stats />
+      <Leadership />
+      <BlogPreview />
       <FAQs />
       <CTA />
     </PageWrapper>

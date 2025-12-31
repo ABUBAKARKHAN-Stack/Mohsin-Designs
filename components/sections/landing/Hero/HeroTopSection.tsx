@@ -1,10 +1,12 @@
 
 import { motion, MotionValue, } from "motion/react";
-import { CheckCircle2, Star } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CheckCircle2, Star } from "lucide-react";
 import { BorderBeam } from "@/components/ui/border-beam";
 import Link from "next/link";
 import { serviceItems } from "@/constants/services.constants";
 import Logo from "@/components/ui/logo";
+import MagneticButton from "@/components/MagneticButton";
+import HighlightedBrandname from "@/components/ui/highlighted-brandname";
 
 type Props = {
     y: MotionValue<number>
@@ -92,6 +94,65 @@ const HeroTopSection = ({
                         that are clear, confident, and impossible to ignore.
                     </p>
                 </motion.div>
+
+<div className="my-8">
+                   {/* Description paragraphs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.65 }}
+            className="space-y-4 max-w-3xl mb-8"
+          >
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+              At <HighlightedBrandname />, we don't believe in surface-level design or short-term
+              trends. We believe in thoughtful branding, strategic creativity, and
+              digital experiences that support real business growth.
+            </p>
+
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+              In a world where businesses compete for attention across countless
+              platforms, standing out requires more than good visuals. It requires a
+              brand that communicates clearly, connects emotionally, and performs
+              consistently. That's where we come in.
+            </p>
+
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+              We partner with startups, growing companies, and established brands to
+              create logos, digital platforms, and brand identities that feel
+              intentional, professional, and future-ready. Every project we take on
+              is shaped by research, guided by strategy, and refined through creative
+              execution.
+            </p>
+          </motion.div>
+
+          {/* CTA buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+            className="flex flex-wrap gap-4"
+          >
+            <MagneticButton strength={0.12}>
+              <Link
+                href="/contact"
+                className="group inline-flex items-center gap-3 border-2 border-transparent bg-accent text-accent-foreground px-8 py-4 font-semibold text-sm uppercase tracking-wider hover:bg-foreground hover:text-background transition-all duration-300 shadow-lg shadow-accent/20"
+              >
+                Start Your Project
+                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </MagneticButton>
+
+            <MagneticButton strength={0.12}>
+              <Link
+                href="/portfolio"
+                className="group inline-flex items-center gap-3 border-2 border-border hover:border-accent px-8 py-4 font-semibold text-sm uppercase tracking-wider hover:text-accent transition-all duration-300"
+              >
+                View Our Work
+                <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+            </MagneticButton>
+          </motion.div>
+          </div>
             </div>
 
             {/* Right Column - Visual showcase */}

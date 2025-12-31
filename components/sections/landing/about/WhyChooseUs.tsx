@@ -1,36 +1,58 @@
 "use client"
 
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
+import { Lightbulb, MessageSquare, Award, Handshake, Target, Layers } from "lucide-react";
 import SplitText from "@/components/ui/split-text";
-import { reasons } from "@/constants/about.constants";
 import { ContainerLayout } from "@/components/layout";
-import { APP_NAME } from "@/constants/app.constants";
+import SectionHeading from "@/components/ui/section-heading";
 
-
+const reasons = [
+  {
+    icon: Lightbulb,
+    title: "Creativity Grounded in Strategy",
+    description: "Every design decision is backed by thoughtful strategy. We understand your brand's purpose, audience, and positioning before creating visuals.",
+  },
+  {
+    icon: MessageSquare,
+    title: "Clear Communication",
+    description: "Clear project scopes, direct access to senior team members, regular updates, and transparent decision-making throughout the process.",
+  },
+  {
+    icon: Award,
+    title: "Quality Without Compromise",
+    description: "We deliver efficiently without cutting corners. Every project goes through structured review and refinement to ensure consistency and integrity.",
+  },
+  {
+    icon: Handshake,
+    title: "Built on Reliability & Trust",
+    description: "We deliver what's promised, respect timelines, stay honest in recommendations, and stand behind our work as an extension of your team.",
+  },
+  {
+    icon: Target,
+    title: "Design That Communicates",
+    description: "Great design should do more than look good — it should tell a story, create trust, and guide users effortlessly with clear visual hierarchy.",
+  },
+  {
+    icon: Layers,
+    title: "Integrated Agency Model",
+    description: "We handle branding, design, development, and growth services together, ensuring consistent messaging, unified identity, and faster execution.",
+  },
+];
 
 const WhyChooseUs = () => {
   return (
-    <section className="lg:py-12.5 py-6.25  relative overflow-hidden">
+    <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent" />
 
       <ContainerLayout className="relative">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-20"
-        >
-          <span className="text-sm tracking-[0.3em] text-accent uppercase">Why Us</span>
-          <SplitText
-            className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mt-4"
-          >
-            {`Why choose ${APP_NAME}`}
-          </SplitText>
-          <p className="text-muted-foreground text-lg mt-6 max-w-2xl mx-auto">
-            We combine creativity, technology, and strategy to deliver exceptional digital experiences that drive real business results.
-          </p>
-        </motion.div>
+
+        <SectionHeading
+          splitText
+          align="center"
+          title="Why choose Mohsin Designs"
+          eyebrow="why us"
+          description="Choosing the right creative agency is about finding a partner who understands your business,respects your vision, and knows how to translate ideas into results."
+        />
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {reasons.map((reason, index) => (

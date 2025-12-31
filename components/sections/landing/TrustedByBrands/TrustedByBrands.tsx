@@ -3,10 +3,14 @@
 import { motion } from "motion/react";
 import { trustedBrands } from "@/constants/about.constants";
 import { ContainerLayout } from "@/components/layout";
-import MarqueeRow from "./MarqueeRow";
+import { Marquee } from "@/components/ui/marquee";
+import TrustedByBrandsCard from "./TrustedByBrandsCard";
 
 
-const brandsRow2 = [...trustedBrands].reverse();
+
+const firstRow = trustedBrands.slice(0, trustedBrands.length / 2)
+const secondRow = trustedBrands.slice(trustedBrands.length / 2)
+
 
 const TrustedByBrands = () => {
   return (
@@ -36,12 +40,22 @@ const TrustedByBrands = () => {
         <div className="absolute right-0 top-0 bottom-0 md:w-6 w-2 bg-linear-to-l from-muted/95 to-transparent z-10 pointer-events-none" />
 
         {/* Row 1 - Left direction */}
-        <MarqueeRow items={trustedBrands} direction="left" duration={35} />
+
+        <Marquee pauseOnHover className="[--duration:25s] [--gap:0rem] md:[--gap:1.5rem]">
+          {firstRow.map((brand, i) => (
+            <TrustedByBrandsCard key={brand.name + i + Math.random()} brand={brand} />
+          ))}
+        </Marquee>
 
         {/* Row 2 - Right direction (opposite) */}
-        <MarqueeRow items={brandsRow2} direction="right" duration={25} />
+        <Marquee reverse pauseOnHover className="[--duration:20s] [--gap:0rem] md:[--gap:1.5rem]">
+          {secondRow.map((brand, i) => (
+            <TrustedByBrandsCard key={brand.name + i + Math.random()} brand={brand} />
+          ))}
+        </Marquee>
+
       </div>
-      
+
     </section>
   );
 };

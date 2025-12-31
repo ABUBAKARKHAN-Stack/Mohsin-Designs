@@ -156,7 +156,7 @@ export const LeftContent = () => {
                     >
                         <NumberTicker
                             className="text-3xl md:text-4xl font-display font-bold text-accent dark:text-accent"
-                            value={stat.value}
+                            value={+stat.value}
                             suffix={stat.suffix}
                         />
                         <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium">{stat.label}</p>

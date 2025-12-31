@@ -1,4 +1,4 @@
-import { Award, Clock, Shield, TrendingUp, Users, Zap } from "lucide-react";
+import { Award, Clock, Code, Megaphone, Palette, Shield, TrendingUp, Users, Zap } from "lucide-react";
 
 const trustedBrands = [
   { name: "Adams Repipe & Plumbing", logo: "/assets/brands/adams-repipe.jpg" },
@@ -45,8 +45,27 @@ const reasons = [
   },
 ];
 
+const teamStructure = [
+  {
+    icon: Palette,
+    title: "Design Team",
+    description: "Expert designers crafting visual identities and user experiences",
+  },
+  {
+    icon: Code,
+    title: "Development Team",
+    description: "Skilled developers building performant websites and applications",
+  },
+  {
+    icon: Megaphone,
+    title: "Marketing Team",
+    description: "Strategic marketers driving growth through SEO and paid campaigns",
+  },
+];
+
 
 export {
     trustedBrands,
-    reasons
+    reasons,
+    teamStructure
 }

@@ -29,7 +29,7 @@ const Hero = () => {
         <HeroTopSection y={y} />
 
         {/* Bottom Section: Description paragraphs, CTA buttons, and Stats */}
-        <HeroBottonSection />
+        {/* <HeroBottonSection /> */}
 
       </ContainerLayout>
     </section>

@@ -10,6 +10,7 @@ interface NumberTickerProps extends ComponentPropsWithoutRef<"span"> {
   delay?: number
   decimalPlaces?: number
   suffix?: string
+  once?: boolean
 }
 
 export function NumberTicker({
@@ -20,38 +21,51 @@ export function NumberTicker({
   className,
   decimalPlaces = 0,
   suffix,
+  once = true,
   ...props
 }: NumberTickerProps) {
   const ref = useRef<HTMLSpanElement>(null)
   const motionValue = useMotionValue(direction === "down" ? value : startValue)
   const springValue = useSpring(motionValue, {
-    damping: 60,
-    stiffness: 100,
-    duration:2
+    damping: 40, // faster animation
+    stiffness: 150,
   })
-  const isInView = useInView(ref, { once: true, margin: "-50px" })
+  const isInView = useInView(ref, { once, margin: "-50px" })
 
+  // Trigger animation
   useEffect(() => {
     if (isInView) {
       const timer = setTimeout(() => {
         motionValue.set(direction === "down" ? startValue : value)
       }, delay * 1000)
       return () => clearTimeout(timer)
+    } else if (!once) {
+      // reset when leaving viewport to allow replay
+      motionValue.set(direction === "down" ? value : startValue)
     }
-  }, [motionValue, isInView, delay, value, direction, startValue])
+  }, [isInView, motionValue, delay, value, direction, startValue, once])
 
-  useEffect(
-    () =>
-      springValue.on("change", (latest) => {
-        if (ref.current) {
-          ref.current.textContent = Intl.NumberFormat("en-US", {
-            minimumFractionDigits: decimalPlaces,
-            maximumFractionDigits: decimalPlaces,
-          }).format(Number(latest.toFixed(decimalPlaces))) + suffix
-        } 
-      }),
-    [springValue, decimalPlaces]
-  )
+  // Update DOM with formatted number
+  useEffect(() => {
+    return springValue.on("change", (latest) => {
+      if (ref.current) {
+        let number = Number(latest.toFixed(decimalPlaces))
+
+        // Format with decimals
+        let formatted = number.toLocaleString("en-US", {
+          minimumFractionDigits: decimalPlaces,
+          maximumFractionDigits: decimalPlaces,
+        })
+
+        // Add leading 0 if < 10 and no 0 yet
+        if (number < 10 && !formatted.startsWith("0")) {
+          formatted = "0" + formatted
+        }
+
+        ref.current.textContent = formatted + (suffix || "")
+      }
+    })
+  }, [springValue, decimalPlaces, suffix])
 
   return (
     <span
@@ -62,7 +76,9 @@ export function NumberTicker({
       )}
       {...props}
     >
-      {startValue}{suffix}
+      {/* Initial display */}
+      {startValue < 10 ? "0" + startValue : startValue}
+      {suffix}
     </span>
   )
 }

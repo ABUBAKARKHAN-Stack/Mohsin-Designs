@@ -68,7 +68,7 @@ const ServicesPreview = () => {
         </div>
 
         {/* Services Grid */}
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
           {servicesPreview.map((service, index) => (
             <ServiceCard key={service.number} service={service} index={index} />
           ))}

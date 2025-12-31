@@ -8,6 +8,7 @@ import { ContainerLayout } from "@/components/layout";
 import { projects } from "@/constants/portfolio.constants";
 import PortfolioCard from "./PortfolioCard";
 import SectionHeading from "@/components/ui/section-heading";
+import { Marquee } from "@/components/ui/marquee";
 
 
 const PortfolioPreview = () => {
@@ -19,8 +20,12 @@ const PortfolioPreview = () => {
 
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
+  const firstRow = projects.slice(0, projects.length / 2)
+  const secondRow = projects.slice(projects.length / 2)
+
+
   return (
-    <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-card relative overflow-hidden">
+    <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-card relative overflow-hidden ">
       <motion.div
         style={{ y }}
         className="absolute -left-40 bottom-0 w-150 h-150 bg-accent/5 rounded-full blur-3xl"
@@ -55,36 +60,48 @@ const PortfolioPreview = () => {
           </motion.div>
         </div>
 
+      </ContainerLayout>
 
-        {/* Projects Grid */}
-        <div className="grid md:grid-cols-2 gap-8">
-          {projects.slice(0, 4).map((project, index) => (
+      <div className="space-y-2">
+        <Marquee pauseOnHover className="[--duration:15s] w-full">
+         
+          {firstRow.map((project, index) => (
             <PortfolioCard
+              key={index}
               project={project}
-              index={index}
             />
           ))}
-        </div>
+        </Marquee>
 
-        {/* Mobile CTA */}
+        <Marquee reverse pauseOnHover className="[--duration:15s] ">
+          {secondRow.map((project, index) => (
+            <PortfolioCard
+              key={index}
+              project={project}
+            />
+          ))}
+        </Marquee>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-12 lg:hidden text-center"
+      </div>
+
+      {/* Mobile CTA */}
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="mt-12 lg:hidden text-center"
+      >
+        <Link
+          href="/portfolio"
+          className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300"
         >
-          <Link
-            href="/portfolio"
-            className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300"
-          >
-            View all Projects
-            <ArrowUpRight className="size-4.5" />
-          </Link>
-        </motion.div>
+          View all Projects
+          <ArrowUpRight className="size-4.5" />
+        </Link>
+      </motion.div>
 
-      </ContainerLayout>
     </section>
   );
 };

@@ -1,5 +1,6 @@
 "use client"
 
+import { useIsTouchDevice } from "@/hooks/useIsTouchDevice";
 import { motion, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useState } from "react";
 
@@ -64,11 +65,10 @@ const CustomCursor = () => {
   }, [cursorX, cursorY]);
 
   //* Hide on touch devices
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-  useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window);
-  }, []);
+  const isTouchDevice = useIsTouchDevice()
+ 
 
+  
   if (isTouchDevice) return null;
 
   return (

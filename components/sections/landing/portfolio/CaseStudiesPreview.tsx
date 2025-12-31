@@ -1,52 +1,14 @@
 "use client"
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight, TrendingUp, Eye, MousePointerClick } from "lucide-react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { ArrowUpRight} from "lucide-react";
 import { useRef, useState } from "react";
 import SectionHeading from "@/components/ui/section-heading";
 import Link from "next/link";
 import { ContainerLayout } from "@/components/layout";
+import { projects } from "@/constants/portfolio.constants";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
-const caseStudies = [
-    {
-        id: 1,
-        title: "Redtail Roofing",
-        category: "Brand Identity + Web",
-        beforeImage: "https://images.unsplash.com/photo-1504615755583-2916b52192a3?w=800&auto=format&fit=crop",
-        afterImage: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop",
-        results: [
-            { icon: TrendingUp, value: "+340%", label: "Organic Traffic" },
-            { icon: MousePointerClick, value: "2.5x", label: "Lead Conversion" },
-        ],
-        testimonial: "Mohsin Designs completely transformed our online presence.",
-        slug: "redtail-roofing",
-    },
-    {
-        id: 2,
-        title: "Adams Repipe",
-        category: "Website + SEO",
-        beforeImage: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop",
-        afterImage: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&auto=format&fit=crop",
-        results: [
-            { icon: Eye, value: "15K+", label: "Monthly Visitors" },
-            { icon: TrendingUp, value: "+280%", label: "Revenue Growth" },
-        ],
-        testimonial: "The results exceeded our expectations in every way.",
-        slug: "adams-repipe",
-    },
-    {
-        id: 3,
-        title: "Desert Performance",
-        category: "Full Rebrand",
-        beforeImage: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop",
-        afterImage: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&auto=format&fit=crop",
-        results: [
-            { icon: TrendingUp, value: "+425%", label: "Brand Recognition" },
-            { icon: MousePointerClick, value: "3x", label: "Customer Inquiries" },
-        ],
-        testimonial: "They understood our vision and brought it to life.",
-        slug: "desert-performance",
-    },
-];
 
 const BeforeAfterSlider = ({ beforeImage, afterImage }: { beforeImage: string; afterImage: string }) => {
     const [sliderPosition, setSliderPosition] = useState(50);
@@ -65,12 +27,13 @@ const BeforeAfterSlider = ({ beforeImage, afterImage }: { beforeImage: string; a
     return (
         <div
             ref={containerRef}
-            className="relative aspect-[16/10] overflow-hidden rounded-2xl cursor-ew-resize group"
+            className="relative aspect-16/10 overflow-hidden rounded-2xl cursor-ew-resize group"
             onMouseMove={handleMouseMove}
             onTouchMove={handleTouchMove}
         >
             {/* After Image (Background) */}
-            <img
+            <Image
+                fill
                 src={afterImage}
                 alt="After"
                 className="absolute inset-0 w-full h-full object-cover"
@@ -81,7 +44,8 @@ const BeforeAfterSlider = ({ beforeImage, afterImage }: { beforeImage: string; a
                 className="absolute inset-0 overflow-hidden"
                 style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
             >
-                <img
+                <Image
+                    fill
                     src={beforeImage}
                     alt="Before"
                     className="absolute inset-0 w-full h-full object-cover grayscale"
@@ -124,6 +88,8 @@ const CaseStudiesPreview = () => {
 
     const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
+    const caseStudies = projects.filter((p) => p.caseStudy !== null).map(p => p.caseStudy)
+
     return (
         <section ref={containerRef} className="py-24 md:py-32 bg-muted/30 relative overflow-hidden">
             <motion.div
@@ -165,38 +131,46 @@ const CaseStudiesPreview = () => {
 
                 {/* Case Studies Grid */}
                 <div className="space-y-8">
-                    {caseStudies.map((project, index) => (
+                    {caseStudies.map((caseStudy, index) => (
                         <motion.div
-                            key={project.id}
+                            key={caseStudy.id}
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-50px" }}
                             transition={{ duration: 0.7, delay: index * 0.1 }}
                             className="group"
                         >
-                            <div className={`grid lg:grid-cols-2 gap-8 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+                            <div className={cn(
+                                'grid lg:grid-cols-2 gap-8 items-center',
+                                index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                            )}>
                                 {/* Before/After Slider */}
-                                <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
+                                <div className={cn(
+                                    index % 2 === 1 ? 'lg:order-2' : ''
+                                )}>
                                     <BeforeAfterSlider
-                                        beforeImage={project.beforeImage}
-                                        afterImage={project.afterImage}
+                                        beforeImage={caseStudy.beforeImage}
+                                        afterImage={caseStudy.afterImage}
                                     />
                                 </div>
 
                                 {/* Content */}
-                                <div className={`space-y-6 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                                <div className={cn(
+                                    "space-y-6",
+                                    index % 2 === 1 ? 'lg:order-1' : ''
+                                )}>
                                     <div>
                                         <span className="text-sm text-accent font-medium uppercase tracking-wider">
-                                            {project.category}
+                                            {caseStudy.category}
                                         </span>
                                         <h3 className="text-3xl md:text-4xl font-display font-bold mt-2 group-hover:text-accent transition-colors">
-                                            {project.title}
+                                            {caseStudy.title}
                                         </h3>
                                     </div>
 
                                     {/* Results */}
                                     <div className="flex gap-6">
-                                        {project.results.map((result, i) => (
+                                        {caseStudy.results.map((result, i) => (
                                             <div key={i} className="flex items-center gap-3">
                                                 <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
                                                     <result.icon className="w-5 h-5 text-accent" />
@@ -215,11 +189,11 @@ const CaseStudiesPreview = () => {
 
                                     {/* Testimonial */}
                                     <blockquote className="text-muted-foreground italic border-l-2 border-accent/30 pl-4">
-                                        "{project.testimonial}"
+                                        "{caseStudy.testimonial}"
                                     </blockquote>
 
                                     <Link
-                                        href={`/portfolio/${project.slug}`}
+                                        href={`/portfolio/${caseStudy.slug}`}
                                         className="inline-flex items-center gap-2 text-foreground font-medium hover:text-accent transition-colors group/link"
                                     >
                                         View full case study

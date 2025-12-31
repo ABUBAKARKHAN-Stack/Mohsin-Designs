@@ -35,7 +35,7 @@ const DecorativeElements = ({
           rotate: [360, 0],
         }}
         transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-32 left-[15%] w-12 h-12 border border-accent/30 rounded-lg"
+        className="absolute bottom-32 left-[15%] w-12 h-12 border border-accent/5 z-0 rounded-lg"
       />
       </>
 

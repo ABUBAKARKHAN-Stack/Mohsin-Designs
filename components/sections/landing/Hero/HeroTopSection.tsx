@@ -7,6 +7,7 @@ import { serviceItems } from "@/constants/services.constants";
 import Logo from "@/components/ui/logo";
 import MagneticButton from "@/components/MagneticButton";
 import HighlightedBrandname from "@/components/ui/highlighted-brandname";
+import AnimatedBadge from "@/components/ui/animated-badge";
 
 type Props = {
     y: MotionValue<number>
@@ -27,8 +28,8 @@ const HeroTopSection = ({
                     transition={{ duration: 0.5, delay: 0.2 }}
                     className="inline-flex items-center gap-3 mb-8"
                 >
-                    <div className="flex relative items-center gap-2.5 px-4 py-2.5 rounded-full bg-accent/10">
-                        <div className="flex">
+                    <AnimatedBadge>
+                         <div className="flex">
                             {[...Array(5)].map((_, i) => (
                                 <motion.div
                                     key={i}
@@ -41,12 +42,7 @@ const HeroTopSection = ({
                             ))}
                         </div>
                         <span className="text-sm font-medium text-foreground/80">Trusted by 3,000+ Businesses</span>
-                        <BorderBeam
-                            className="from-accent/60 via-accent to-transparent"
-                            duration={6}
-                            size={50}
-                        />
-                    </div>
+                    </AnimatedBadge>
                 </motion.div>
 
                 {/* Main heading */}

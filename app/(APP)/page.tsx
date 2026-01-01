@@ -16,6 +16,8 @@ import {
   Leadership,
   CaseStudiesPreview
 } from "@/components/sections/landing/";
+import AreasWeServe from "@/components/sections/landing/about/AreasWeServe";
+import IndustriesWeServe from "@/components/sections/landing/about/IndustriesWeServe";
 
 const HomePage = () => {
   return (
@@ -29,6 +31,8 @@ const HomePage = () => {
       <WhyChooseUs />
       <PortfolioPreview />
       <CaseStudiesPreview />
+      <AreasWeServe />
+      <IndustriesWeServe />
       <Testimonials />
       <Leadership />
       <BlogPreview />

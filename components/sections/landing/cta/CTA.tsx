@@ -225,6 +225,7 @@ const CTA = () => {
                     )}
                   />
 
+                </FieldGroup>
 
                   <MagneticButton strength={0.05} className="w-full">
                     <Button
@@ -245,7 +246,6 @@ const CTA = () => {
                       )}
                     </Button>
                   </MagneticButton>
-                </FieldGroup>
 
 
               </form>

@@ -91,7 +91,7 @@ const CaseStudiesPreview = () => {
     const caseStudies = projects.filter((p) => p.caseStudy !== null).map(p => p.caseStudy)
 
     return (
-        <section ref={containerRef} className="py-24 md:py-32 bg-muted/30 relative overflow-hidden">
+        <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-muted/30 relative overflow-hidden">
             <motion.div
                 style={{ y }}
                 className="absolute -right-40 top-0 -z-50 w-150 h-150 bg-accent/5 rounded-full blur-3xl"

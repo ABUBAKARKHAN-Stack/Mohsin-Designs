@@ -22,7 +22,8 @@ const IndustriesWeServe = () => {
     const y2 = useTransform(scrollYProgress, [0, 1], [0, 60]);
 
     return (
-        <section ref={containerRef} className="py-24 md:py-32 relative overflow-hidden">
+        <section ref={containerRef} className="lg:py-12.5 py-6.25 relative overflow-hidden">
+            
             {/* Background Elements */}
             <motion.div
                 style={{ y: y1 }}

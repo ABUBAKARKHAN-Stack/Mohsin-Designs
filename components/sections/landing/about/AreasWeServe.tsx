@@ -22,7 +22,7 @@ const AreasWeServe = () => {
     const globeRotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
 
     return (
-        <section ref={containerRef} className="py-24 md:py-32 bg-muted/30 relative overflow-hidden">
+        <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-muted/30 relative overflow-hidden">
             {/* Animated Grid Background */}
             <div className="absolute inset-0 opacity-[0.02]">
                 <div className="absolute inset-0" style={{

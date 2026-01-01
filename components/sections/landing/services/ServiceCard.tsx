@@ -74,12 +74,14 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
         >
             <motion.div
                 className={cn(
-                    "relative h-90 p-8 overflow-hidden",
+                    "relative p-8 overflow-hidden",
                     "bg-card/80 backdrop-blur-sm",
                     "border border-border/50 transition-all duration-500",
-                    isHovered &&
-                    "border-accent shadow-[0_25px_70px_-20px_hsl(var(--accent)/0.35)]"
+                    isHovered && "border-accent shadow-[0_25px_70px_-20px_hsl(var(--accent)/0.35)]",
+                    isTouchDevice && "h-92"
                 )}
+                animate={!isTouchDevice ? (isHovered ? { height: "23rem" } : { height: "18rem" }) : undefined}
+                transition={{ duration: 0.1 }}
             >
                 {/* Background */}
                 <div className="absolute inset-0 opacity-15 group-hover:opacity-25 transition-opacity duration-500">

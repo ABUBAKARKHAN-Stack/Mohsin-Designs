@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 
 const HighlightedBrandname = ({ className = "" }) => {
     return (
-        <div className='relative w-fit inline-block  px-0.5 py-px'>
+        <span className='relative w-fit inline-block  px-0.5 py-px'>
 
             <span className={
                 cn(
@@ -13,7 +13,7 @@ const HighlightedBrandname = ({ className = "" }) => {
             }>{APP_NAME}</span>
             <span className='absolute inset-0 -z-10 bg-muted rounded-md block' />
           
-        </div>
+        </span>
     )
 }
 

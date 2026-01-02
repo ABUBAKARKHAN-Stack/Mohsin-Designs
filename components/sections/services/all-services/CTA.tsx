@@ -1,5 +1,6 @@
 "use client"
 
+import { ContainerLayout } from "@/components/layout";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react"
@@ -20,9 +21,9 @@ const CTA = () => {
         <motion.div
             ref={ctaRef}
             style={{ y: ctaY, opacity: ctaOpacity }}
-            className="lg:mt-12.5 mt-6.25"
+            className="lg:py-12.5 py-6.25"
         >
-            <div className="relative">
+            <ContainerLayout className="relative">
 
                 {/* CTA Background Card */}
                 <div className="relative bg-linear-to-br from-card via-card to-muted/30 border border-border/50 rounded-3xl p-8 md:p-12 lg:p-16 overflow-hidden">
@@ -103,7 +104,7 @@ const CTA = () => {
 
                     </div>
                 </div>
-            </div>
+            </ContainerLayout>
         </motion.div>
     )
 }

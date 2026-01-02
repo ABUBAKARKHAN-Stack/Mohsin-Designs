@@ -1,19 +1,29 @@
 import { PageWrapper } from '@/components/layout'
+import { BlogPreview } from '@/components/sections/landing'
 import {
     AllServices,
-    ServicesPageHero
+    CTA,
+    ProcessTimeline,
+    ServicesIntro,
+    ServicesPageHero,
+    WhyWorkWithUs
 } from '@/components/sections/services'
 import { Metadata } from 'next'
 
-export const metadata:Metadata = {
-    
+export const metadata: Metadata = {
+    title: "Our Services"
 }
 
 const ServicesPage = () => {
     return (
         <PageWrapper>
             <ServicesPageHero />
+            <ServicesIntro />
             <AllServices />
+            <ProcessTimeline />
+            <WhyWorkWithUs />
+            <CTA />
+            <BlogPreview />
         </PageWrapper>
     )
 }

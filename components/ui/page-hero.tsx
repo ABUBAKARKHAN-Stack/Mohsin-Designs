@@ -83,7 +83,7 @@ const PageHero = ({ title, titleAccent = ".", subtitle, description, breadcrumbs
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h1 className="text-[12vw] md:text-[10vw] font-display font-bold tracking-tighter leading-[0.85]">
+          <h1 className="text-5xl xsm:text-6xl lg:text-8xl xl:text-9xl font-display font-bold tracking-tighter leading-[0.85]">
             {title}
             <span className="text-accent">{titleAccent}</span>
           </h1>

@@ -18,7 +18,7 @@ const MainContent = () => {
     const filtered = filter === "All" ? projects : projects.filter(p => p.category === filter);
 
     return (
-        <section className=" pb-15  md:pb-20">
+        <section className="pb-15 md:pb-20">
             <ContainerLayout>
 
                 {/* Filter Buttons */}

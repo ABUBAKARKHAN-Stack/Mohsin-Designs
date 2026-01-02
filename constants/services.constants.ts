@@ -20,12 +20,12 @@ const coreServices = [
 ];
 
 
-const servicesPreview = [
+const services = [
   {
     number: "01",
     title: "Logo Design",
     description: "Creating distinctive logos that define your brand identity and make a lasting impression.",
-    features: ["Custom Logos", "Brand Marks", "Visual Identity"],
+    features: ["Custom Logo Creation", "Brand Mark Design", "Typography Selection", "Color Palette", "Logo Variations"],
     icon: Palette,
     image: "/assets/services/logo-design.jpg",
     path: "/services/logo-design",
@@ -34,7 +34,7 @@ const servicesPreview = [
     number: "02",
     title: "Logo Animation",
     description: "Bringing your logo to life with captivating motion graphics and dynamic animations.",
-    features: ["Intro Animations", "Motion Graphics", "Brand Reveals"],
+    features: ["Intro Animations", "Social Media Assets", "Video Intros", "Motion Graphics", "Brand Reveals"],
     icon: Play,
     image: "/assets/services/logo-animation.jpg",
     path: "/services/logo-animation",
@@ -43,7 +43,7 @@ const servicesPreview = [
     number: "03",
     title: "SEO Services",
     description: "Boosting your visibility in search results to drive organic traffic and growth.",
-    features: ["Keyword Research", "On-Page SEO", "Technical SEO"],
+    features: ["Keyword Research", "On-Page SEO", "Technical SEO", "Content Optimization", "Link Building"],
     icon: Search,
     image: "/assets/services/seo-services.jpg",
     path: "/services/seo-services",
@@ -52,7 +52,7 @@ const servicesPreview = [
     number: "04",
     title: "Google Ads",
     description: "Strategic advertising campaigns that drive targeted traffic and maximize ROI.",
-    features: ["Campaign Strategy", "Ad Creation", "Performance Tracking"],
+    features: ["Campaign Strategy", "Ad Creation", "Bid Management", "Conversion Tracking", "Performance Reports"],
     icon: Target,
     image: "/assets/services/google-ads.jpg",
     path: "/services/google-ads",
@@ -62,7 +62,7 @@ const servicesPreview = [
     number: "05",
     title: "Web Development",
     description: "Building modern, high-performance websites that deliver exceptional user experiences.",
-    features: ["Custom Websites", "E-commerce", "CMS Integration"],
+    features: ["Custom Websites", "E-commerce", "CMS Integration", "Responsive Design", "Performance Optimization"],
     icon: Code,
     image: "/assets/services/web-development.jpg",
     path: "/services/web-development",
@@ -71,7 +71,7 @@ const servicesPreview = [
     number: "06",
     title: "App Development",
     description: "Creating powerful mobile applications for iOS and Android platforms.",
-    features: ["iOS Apps", "Android Apps", "Cross-Platform"],
+    features: ["iOS Apps", "Android Apps", "Cross-Platform", "UI/UX Design", "App Maintenance"],
     icon: Smartphone,
     image: "/assets/services/app-development.jpg",
     path: "/services/app-development",
@@ -80,8 +80,9 @@ const servicesPreview = [
 
 
 
+
 export {
   serviceItems,
   coreServices,
-  servicesPreview
+  services
 }

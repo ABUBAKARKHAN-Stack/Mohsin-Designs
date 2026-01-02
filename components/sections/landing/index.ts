@@ -13,6 +13,8 @@ import BlogPreview from "./blogs/BlogPreview";
 import OurApproach from "./about/OurApproach";
 import Leadership from "./about/LeaderShip";
 import CaseStudiesPreview from "./portfolio/CaseStudiesPreview";
+import IndustriesWeServe from "./about/IndustriesWeServe";
+import AreasWeServe from "./about/AreasWeServe";
 export {
     Hero,
     ServiceHighlightsMarquee,
@@ -28,5 +30,7 @@ export {
     BlogPreview,
     OurApproach,
     Leadership,
-    CaseStudiesPreview
+    CaseStudiesPreview,
+    AreasWeServe,
+    IndustriesWeServe
 }

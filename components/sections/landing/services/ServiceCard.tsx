@@ -1,4 +1,4 @@
-import { servicesPreview } from "@/constants/services.constants";
+import { services } from "@/constants/services.constants";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import {
@@ -12,7 +12,7 @@ import Image from "next/image";
 import { useIsTouchDevice } from "@/hooks/useIsTouchDevice";
 
 interface ServiceCardProps {
-    service: (typeof servicesPreview)[0];
+    service: (typeof services)[0];
     index: number;
 }
 

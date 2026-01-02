@@ -8,16 +8,15 @@ import {
   WhyChooseUs,
   PortfolioPreview,
   Testimonials,
-  Stats,
   FAQs,
   CTA,
   BlogPreview,
   OurApproach,
   Leadership,
-  CaseStudiesPreview
+  CaseStudiesPreview,
+  AreasWeServe,
+  IndustriesWeServe
 } from "@/components/sections/landing/";
-import AreasWeServe from "@/components/sections/landing/about/AreasWeServe";
-import IndustriesWeServe from "@/components/sections/landing/about/IndustriesWeServe";
 
 const HomePage = () => {
   return (

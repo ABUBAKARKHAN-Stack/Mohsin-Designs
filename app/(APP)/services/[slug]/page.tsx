@@ -1,4 +1,5 @@
 import { PageWrapper } from "@/components/layout";
+import { CTA } from "@/components/sections/services/all-services";
 import {
     ServiceDetailsPageHero,
     HeroImage,
@@ -34,7 +35,7 @@ const ServiceDetailPage = async ({
 
     return (
         <PageWrapper>
-            
+
             {/* Service Page Hero Section */}
 
             <ServiceDetailsPageHero
@@ -105,7 +106,7 @@ const ServiceDetailPage = async ({
             />
 
             {/* Service CTA Section */}
-            <ServiceCTA
+            <CTA
             />
 
             {/* Other Services Section */}

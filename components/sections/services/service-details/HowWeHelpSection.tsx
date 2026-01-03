@@ -1,6 +1,6 @@
 "use client"
 import { motion } from "motion/react";
-import { ArrowRight, Target, Layers, Sparkles } from "lucide-react";
+import {  Target, Layers, Sparkles } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
 
 interface HowWeHelpSectionProps {

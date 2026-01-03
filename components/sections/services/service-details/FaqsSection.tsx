@@ -8,7 +8,6 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ContainerLayout } from "@/components/layout";
-import SectionHeading from "@/components/ui/section-heading";
 
 interface FAQ {
     question: string;

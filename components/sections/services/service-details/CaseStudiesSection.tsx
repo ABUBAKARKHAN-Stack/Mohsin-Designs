@@ -3,7 +3,6 @@
 import { motion } from "motion/react";
 import { ArrowUpRight, AlertCircle, Lightbulb, TrendingUp } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
-import SectionHeading from "@/components/ui/section-heading";
 
 interface CaseStudy {
   title: string;

@@ -2,7 +2,6 @@
 import { motion } from "motion/react";
 import { Building2, ShoppingBag, Briefcase, Stethoscope, Plane, Code } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
-import SectionHeading from "@/components/ui/section-heading";
 
 interface Industry {
   name: string;
@@ -25,7 +24,7 @@ const IndustriesSection = ({ industries }: IndustriesSectionProps) => {
       </div>
       
       <ContainerLayout className="relative">
-        
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

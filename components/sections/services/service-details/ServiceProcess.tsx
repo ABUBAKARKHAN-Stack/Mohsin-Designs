@@ -1,7 +1,6 @@
 "use client"
 
 import { ContainerLayout } from "@/components/layout";
-import SectionHeading from "@/components/ui/section-heading";
 import { motion, MotionValue, useScroll, useTransform } from "motion/react"
 import { useRef } from "react";
 

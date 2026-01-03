@@ -7,7 +7,7 @@ import {
     ServicesIntro,
     ServicesPageHero,
     WhyWorkWithUs
-} from '@/components/sections/services'
+} from '@/components/sections/services/all-services'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {

@@ -20,6 +20,65 @@ const coreServices = [
 ];
 
 
+const processSteps = [
+  {
+    icon: MessageSquare,
+    title: "Discovery Call",
+    description: "We start with a conversation to understand your business, goals, and vision for success.",
+    duration: "Day 1",
+  },
+  {
+    icon: Lightbulb,
+    title: "Strategy & Planning",
+    description: "Our team develops a tailored strategy and roadmap aligned with your objectives.",
+    duration: "Week 1",
+  },
+  {
+    icon: Palette,
+    title: "Design & Concept",
+    description: "We create stunning designs and concepts for your approval before development.",
+    duration: "Week 2-3",
+  },
+  {
+    icon: Code,
+    title: "Development",
+    description: "Our experts bring your vision to life with clean, efficient, and scalable solutions.",
+    duration: "Week 3-6",
+  },
+  {
+    icon: Rocket,
+    title: "Launch & Deploy",
+    description: "We ensure a smooth launch with thorough testing and seamless deployment.",
+    duration: "Week 6-7",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Ongoing Support",
+    description: "We provide continued support, maintenance, and optimization for lasting success.",
+    duration: "Ongoing",
+  },
+];
+
+const benefits = [
+  {
+    icon: Target,
+    title: "Results-Driven Approach",
+    description: "Every decision is backed by data and focused on achieving measurable outcomes.",
+  },
+  {
+    icon: Users,
+    title: "Dedicated Team",
+    description: "Work with a consistent team that understands your brand inside and out.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Continuous Improvement",
+    description: "We don't just deliver—we iterate and optimize based on real-world performance.",
+  },
+];
+
+
+
 const services = [
   {
     number: "01",
@@ -79,65 +138,6 @@ const services = [
 ];
 
 
-const processSteps = [
-  {
-    icon: MessageSquare,
-    title: "Discovery Call",
-    description: "We start with a conversation to understand your business, goals, and vision for success.",
-    duration: "Day 1",
-  },
-  {
-    icon: Lightbulb,
-    title: "Strategy & Planning",
-    description: "Our team develops a tailored strategy and roadmap aligned with your objectives.",
-    duration: "Week 1",
-  },
-  {
-    icon: Palette,
-    title: "Design & Concept",
-    description: "We create stunning designs and concepts for your approval before development.",
-    duration: "Week 2-3",
-  },
-  {
-    icon: Code,
-    title: "Development",
-    description: "Our experts bring your vision to life with clean, efficient, and scalable solutions.",
-    duration: "Week 3-6",
-  },
-  {
-    icon: Rocket,
-    title: "Launch & Deploy",
-    description: "We ensure a smooth launch with thorough testing and seamless deployment.",
-    duration: "Week 6-7",
-  },
-  {
-    icon: HeartHandshake,
-    title: "Ongoing Support",
-    description: "We provide continued support, maintenance, and optimization for lasting success.",
-    duration: "Ongoing",
-  },
-];
-
-// Why Choose Us
-const benefits = [
-  {
-    icon: Target,
-    title: "Results-Driven Approach",
-    description: "Every decision is backed by data and focused on achieving measurable outcomes.",
-  },
-  {
-    icon: Users,
-    title: "Dedicated Team",
-    description: "Work with a consistent team that understands your brand inside and out.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Continuous Improvement",
-    description: "We don't just deliver—we iterate and optimize based on real-world performance.",
-  },
-];
-
-
 
 
 export {
@@ -145,5 +145,5 @@ export {
   coreServices,
   services,
   processSteps,
-  benefits
+  benefits,
 }

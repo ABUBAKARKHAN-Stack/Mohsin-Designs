@@ -6,13 +6,13 @@ import {
     ServiceOverview,
     OtherServices,
     ServiceBenefits,
-    ServiceCTA,
     ServiceProcess,
     HowWeHelpSection,
     CaseStudiesSection,
     FAQSection,
     IndustriesSection,
     IntroSection,
+    ServiceBlogs,
 } from "@/components/sections/services/service-details/";
 import { servicesData } from "@/data/service.data";
 import { redirect } from "next/navigation";
@@ -107,6 +107,10 @@ const ServiceDetailPage = async ({
 
             {/* Service CTA Section */}
             <CTA
+            />
+
+            <ServiceBlogs
+            slug={slug}
             />
 
             {/* Other Services Section */}

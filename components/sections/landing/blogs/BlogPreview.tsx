@@ -4,36 +4,9 @@ import { ArrowUpRight, Clock } from "lucide-react";
 import SectionHeading from "@/components/ui/section-heading";
 import Link from "next/link";
 import { ContainerLayout } from "@/components/layout";
+import { blogPosts } from "@/constants/blog.constants";
+import BlogCard from "@/components/cards/BlogCard";
 
-const blogPosts = [
-  {
-    id: 1,
-    title: "The Future of Digital Branding in 2025",
-    excerpt: "Exploring emerging trends and technologies that will shape how brands connect with their audiences.",
-    category: "Insights",
-    date: "Dec 2024",
-    readTime: "8 min",
-    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=600&fit=crop",
-  },
-  {
-    id: 2,
-    title: "Designing for Impact: Creating Memorable User Experiences",
-    excerpt: "How thoughtful design choices can transform ordinary interactions into extraordinary moments.",
-    category: "Design",
-    date: "Nov 2024",
-    readTime: "6 min",
-    image: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800&h=600&fit=crop",
-  },
-  {
-    id: 3,
-    title: "Building Brands That Last: A Strategic Approach",
-    excerpt: "The essential elements of brand building that stand the test of time.",
-    category: "Strategy",
-    date: "Oct 2024",
-    readTime: "5 min",
-    image: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800&h=600&fit=crop",
-  },
-];
 
 const BlogPreview = () => {
   return (
@@ -51,53 +24,7 @@ const BlogPreview = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
           {blogPosts.map((post, index) => (
-            <motion.article
-              key={post.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="group cursor-pointer"
-            >
-              <Link href="/blog">
-                {/* Image */}
-                <div className="aspect-16/12 overflow-hidden mb-6 relative">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
-                  />
-                  <div className="absolute inset-0 bg-foreground/10 group-hover:bg-transparent transition-colors duration-500" />
-                </div>
-
-                {/* Meta */}
-                <div className="flex items-center gap-3 text-xs text-muted-foreground uppercase tracking-widest mb-3">
-                  <span className="text-accent">{post.category}</span>
-                  <span className="w-1 h-1 rounded-full bg-border" />
-                  <span>{post.date}</span>
-                </div>
-
-                {/* Title */}
-                <h3 className="text-xl font-display font-bold tracking-tight group-hover:text-accent transition-colors mb-3 line-clamp-1">
-                  {post.title}
-                </h3>
-
-                {/* Excerpt */}
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{post.excerpt}</p>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between text-sm pt-4 border-t border-border/50">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>{post.readTime}</span>
-                  </div>
-                  <span className="inline-flex items-center gap-1 text-xs uppercase tracking-widest group-hover:text-accent transition-colors">
-                    Read{" "}
-                    <ArrowUpRight className="h-3 w-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </span>
-                </div>
-              </Link>
-            </motion.article>
+            <BlogCard post={post} index={index} />
           ))}
         </div>
 

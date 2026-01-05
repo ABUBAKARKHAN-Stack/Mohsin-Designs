@@ -27,7 +27,7 @@ const SectionHeading = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.6 }}
-      className={cn("mb-16", align === "center" && "text-center", className)}
+      className={cn("mb-16 max-w-3xl", align === "center" && "text-center mx-auto", className)}
     >
       {eyebrow && (
         <span className="text-sm block tracking-[0.3em] text-accent uppercase font-medium mb-4">

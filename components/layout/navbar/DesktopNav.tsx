@@ -6,7 +6,6 @@ import MagneticButton from "@/components/MagneticButton";
 import ThemeToggle from "@/components/ui/theme-toggle";
 import { serviceItems } from '@/constants/services.constants'
 import { navLinks } from "@/constants/navlinks.constants";
-import { APP_NAME } from "@/constants/app.constants";
 import Link from "next/link";
 import ContainerLayout from "../ContainerLayout";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";

@@ -11,6 +11,7 @@ import {
     CaseStudiesSection,
     FAQSection,
     IndustriesSection,
+    AreasWeServeSection,
     IntroSection,
     ServiceBlogs,
 } from "@/components/sections/services/service-details/";
@@ -80,6 +81,13 @@ const ServiceDetailPage = async ({
                 process={service.process}
             />
 
+            {/* Areas We Serve Section */}
+
+            <AreasWeServeSection
+                areas={service.areas}
+            />
+
+
             {/* Industries Section */}
 
             <IndustriesSection
@@ -110,7 +118,7 @@ const ServiceDetailPage = async ({
             />
 
             <ServiceBlogs
-            slug={slug}
+                slug={slug}
             />
 
             {/* Other Services Section */}

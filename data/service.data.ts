@@ -9,17 +9,17 @@ export const servicesData: Record<string, ServiceData> = {
     subtitle: "Create Your Unique Identity",
     description: "Creating distinctive logos that define your brand identity and make a lasting impression.",
     heroImage: '/assets/services/logo-design.jpg',
-    
+
     introTitle: "Why a Custom Logo is Vital for Your Business",
     introContent: "When it comes to branding, a logo is often the first thing your customers notice. In today's competitive market, a strong, memorable logo can make all the difference in creating a lasting first impression. With businesses competing in diverse sectors, including real estate, hospitality, retail, and technology, your logo plays a critical role in standing out from the crowd and building brand recognition.",
-    
+
     roleTitle: "The Role of a Logo in Building Brand Identity",
     roleContent: [
       "Your logo is much more than a graphic. It represents your brand's personality, values, and the quality of your products or services. In a competitive market where businesses are constantly evolving, having a logo that connects with your audience is essential.",
       "A well-designed logo creates trust, instills confidence, and communicates professionalism to your target audience. Your logo is often the first point of contact with potential customers, and first impressions count.",
       "Whether you're a new business or an established company looking to refresh your brand, a custom logo helps set the tone for how your audience perceives you. It's not just about aesthetics; it's about creating a visual identity that aligns with your business vision and mission."
     ],
-    
+
     howWeHelpTitle: "How Our Logo Design Services Help Your Business Stand Out",
     howWeHelpPoints: [
       {
@@ -35,10 +35,10 @@ export const servicesData: Record<string, ServiceData> = {
         description: "A logo should be easy to recognize and understand. We focus on creating logos that are both simple and powerful, using appropriate colors, fonts, and graphics that make an impact while remaining memorable."
       }
     ],
-    
+
     overview: "Your logo is the cornerstone of your brand identity. We craft custom logos that capture your essence, communicate your values, and stand out in a crowded marketplace.",
     items: ["Custom Logo Creation", "Brand Mark Design", "Typography Selection", "Color Palette", "Logo Variations", "Brand Guidelines"],
-    
+
     benefits: [
       "Distinctive visual identity",
       "Professional brand perception",
@@ -46,7 +46,7 @@ export const servicesData: Record<string, ServiceData> = {
       "Versatile across all media",
       "Timeless design approach"
     ],
-    
+
     whyChooseUsPoints: [
       {
         title: "Expert Designers",
@@ -65,7 +65,7 @@ export const servicesData: Record<string, ServiceData> = {
         description: "We understand the importance of deadlines and ensure that your logo is delivered on time without compromising on quality."
       }
     ],
-    
+
     process: [
       { step: "01", title: "Discovery", desc: "Understanding your brand vision, values, and goals through in-depth consultation" },
       { step: "02", title: "Research", desc: "Analyzing industry trends, competitors, and your target audience" },
@@ -73,7 +73,7 @@ export const servicesData: Record<string, ServiceData> = {
       { step: "04", title: "Refinement", desc: "Perfecting the chosen direction with your feedback" },
       { step: "05", title: "Delivery", desc: "Final files in all required formats with brand guidelines" },
     ],
-    
+
     industries: [
       { name: "Real Estate", description: "Elegant logos that evoke trust, luxury, and exclusivity for property businesses." },
       { name: "Hospitality & Tourism", description: "Warm, inviting designs that communicate world-class service and experiences." },
@@ -82,7 +82,7 @@ export const servicesData: Record<string, ServiceData> = {
       { name: "Healthcare", description: "Professional logos that build trust and convey care and expertise." },
       { name: "Finance & Legal", description: "Sophisticated designs that represent stability and credibility." }
     ],
-    
+
     caseStudies: [
       {
         title: "Luxury Real Estate Company",
@@ -103,7 +103,38 @@ export const servicesData: Record<string, ServiceData> = {
         result: "The startup successfully raised funding and the logo became instantly recognizable in their industry, helping establish a strong market presence from day one."
       }
     ],
-    
+
+    areas: [
+      {
+        region: "North America",
+        locations: ["United States", "Canada", "Mexico"],
+        featured: true,
+        clients: 120,
+        flag: "🇺🇸",
+      },
+      {
+        region: "Europe",
+        locations: ["United Kingdom", "Germany", "France", "Netherlands"],
+        featured: false,
+        clients: 85,
+        flag: "🇬🇧",
+      },
+      {
+        region: "Middle East",
+        locations: ["UAE", "Saudi Arabia", "Qatar", "Kuwait"],
+        featured: true,
+        clients: 65,
+        flag: "🇦🇪",
+      },
+      {
+        region: "Asia Pacific",
+        locations: ["Australia", "Singapore", "India", "Japan"],
+        featured: false,
+        clients: 95,
+        flag: "🇦🇺",
+      },
+    ],
+
     faqs: [
       {
         question: "How much does a custom logo design cost?",
@@ -127,24 +158,24 @@ export const servicesData: Record<string, ServiceData> = {
       }
     ]
   },
-  
+
   "logo-animation": {
     number: "02",
     title: "Logo Animation",
     subtitle: "Bring Your Brand to Life",
     description: "Bringing your logo to life with captivating motion graphics and dynamic animations.",
     heroImage: '/assets/services/logo-animation.jpg',
-    
+
     introTitle: "Why Animated Logos Are Essential in Today's Digital World",
     introContent: "In an era where video content dominates social media and digital platforms, static logos are no longer enough to capture attention. An animated logo transforms your brand identity into a dynamic, memorable experience that engages viewers and leaves a lasting impression across all digital touchpoints.",
-    
+
     roleTitle: "The Power of Motion in Brand Recognition",
     roleContent: [
       "Motion naturally draws the human eye. An animated logo leverages this psychological principle to ensure your brand gets noticed in crowded digital spaces, from social media feeds to video intros.",
       "Animation adds personality and emotion to your brand. The way your logo moves tells a story about your company's character—whether it's playful, professional, innovative, or elegant.",
       "Animated logos are versatile assets that work across multiple platforms: website headers, social media content, video productions, presentations, and digital advertisements."
     ],
-    
+
     howWeHelpTitle: "How Our Logo Animation Services Elevate Your Brand",
     howWeHelpPoints: [
       {
@@ -160,10 +191,10 @@ export const servicesData: Record<string, ServiceData> = {
         description: "Our animations are designed to work seamlessly with your existing brand assets, maintaining consistency across all touchpoints."
       }
     ],
-    
+
     overview: "Static logos are just the beginning. We create stunning logo animations that captivate your audience, enhance brand recognition, and make your content more engaging across digital platforms.",
     items: ["Intro Animations", "Social Media Assets", "Video Intros", "Motion Graphics", "Brand Reveals", "Loading Animations"],
-    
+
     benefits: [
       "Enhanced brand recognition",
       "Professional video content",
@@ -171,7 +202,7 @@ export const servicesData: Record<string, ServiceData> = {
       "Increased engagement",
       "Modern brand perception"
     ],
-    
+
     whyChooseUsPoints: [
       {
         title: "Motion Expertise",
@@ -190,7 +221,7 @@ export const servicesData: Record<string, ServiceData> = {
         description: "We work with you through revisions to ensure the final animation perfectly represents your brand."
       }
     ],
-    
+
     process: [
       { step: "01", title: "Concept", desc: "Defining animation style, mood, and approach based on your brand" },
       { step: "02", title: "Storyboard", desc: "Planning the motion sequence and key animation frames" },
@@ -198,7 +229,7 @@ export const servicesData: Record<string, ServiceData> = {
       { step: "04", title: "Review", desc: "Refining the animation based on your feedback" },
       { step: "05", title: "Export", desc: "Optimized files for all platforms and use cases" },
     ],
-    
+
     industries: [
       { name: "Content Creators", description: "Eye-catching intros and outros for YouTube and streaming content." },
       { name: "Corporate", description: "Professional animations for presentations and company videos." },
@@ -207,7 +238,39 @@ export const servicesData: Record<string, ServiceData> = {
       { name: "Social Media", description: "Scroll-stopping animated content for all platforms." },
       { name: "Events", description: "Spectacular visual introductions for conferences and launches." }
     ],
-    
+
+    areas: [
+      {
+        region: "North America",
+        locations: ["United States", "Canada", "Mexico"],
+        featured: true,
+        clients: 120,
+        flag: "🇺🇸",
+      },
+      {
+        region: "Europe",
+        locations: ["United Kingdom", "Germany", "France", "Netherlands"],
+        featured: false,
+        clients: 85,
+        flag: "🇬🇧",
+      },
+      {
+        region: "Middle East",
+        locations: ["UAE", "Saudi Arabia", "Qatar", "Kuwait"],
+        featured: true,
+        clients: 65,
+        flag: "🇦🇪",
+      },
+      {
+        region: "Asia Pacific",
+        locations: ["Australia", "Singapore", "India", "Japan"],
+        featured: false,
+        clients: 95,
+        flag: "🇦🇺",
+      },
+    ],
+
+
     caseStudies: [
       {
         title: "YouTube Content Creator",
@@ -228,7 +291,7 @@ export const servicesData: Record<string, ServiceData> = {
         result: "Customer surveys showed a significant increase in perceived brand value and the animation helped establish a luxury positioning."
       }
     ],
-    
+
     faqs: [
       {
         question: "What length should my logo animation be?",
@@ -252,24 +315,24 @@ export const servicesData: Record<string, ServiceData> = {
       }
     ]
   },
-  
+
   "seo-services": {
     number: "03",
     title: "SEO Services",
     subtitle: "Dominate Search Results",
     description: "Boosting your visibility in search engine results to drive organic traffic and growth.",
     heroImage: '/assets/services/seo-services.jpg',
-    
+
     introTitle: "Why SEO is Critical for Business Success",
     introContent: "In today's digital-first world, your potential customers are searching for products and services online. If your business doesn't appear on the first page of search results, you're invisible to the vast majority of your target audience. SEO is not just about rankings—it's about being discovered by the right people at the right time.",
-    
+
     roleTitle: "The Role of SEO in Sustainable Business Growth",
     roleContent: [
       "SEO builds the foundation for long-term, sustainable traffic. Unlike paid advertising that stops when you stop paying, organic search visibility continues to deliver results over time, providing an exceptional return on investment.",
       "Search rankings signal trust and authority. Businesses that appear at the top of search results are perceived as industry leaders, building credibility before a customer even visits your website.",
       "SEO aligns your business with user intent. By optimizing for the terms your customers actually search, you attract qualified leads who are actively looking for what you offer."
     ],
-    
+
     howWeHelpTitle: "How Our SEO Services Drive Real Results",
     howWeHelpPoints: [
       {
@@ -285,10 +348,10 @@ export const servicesData: Record<string, ServiceData> = {
         description: "We optimize existing content and create new content that ranks, engages users, and converts visitors into customers."
       }
     ],
-    
+
     overview: "Visibility is everything in the digital world. Our SEO strategies are designed to improve your search rankings, drive qualified traffic, and establish your authority in your industry.",
     items: ["Keyword Research", "On-Page SEO", "Technical SEO", "Content Optimization", "Link Building", "Local SEO"],
-    
+
     benefits: [
       "Higher search rankings",
       "Increased organic traffic",
@@ -296,7 +359,7 @@ export const servicesData: Record<string, ServiceData> = {
       "Long-term growth",
       "Competitive advantage"
     ],
-    
+
     whyChooseUsPoints: [
       {
         title: "Proven Track Record",
@@ -315,7 +378,7 @@ export const servicesData: Record<string, ServiceData> = {
         description: "You'll have direct access to our SEO experts who understand your business and goals."
       }
     ],
-    
+
     process: [
       { step: "01", title: "Audit", desc: "Comprehensive analysis of your current SEO performance and opportunities" },
       { step: "02", title: "Research", desc: "In-depth keyword and competitor research to inform strategy" },
@@ -323,7 +386,7 @@ export const servicesData: Record<string, ServiceData> = {
       { step: "04", title: "Optimize", desc: "On-page, technical, and content improvements implementation" },
       { step: "05", title: "Monitor", desc: "Ongoing tracking, reporting, and strategy refinement" },
     ],
-    
+
     industries: [
       { name: "E-commerce", description: "Product page optimization and category SEO for online stores." },
       { name: "Professional Services", description: "Local SEO and thought leadership content for service businesses." },
@@ -332,7 +395,39 @@ export const servicesData: Record<string, ServiceData> = {
       { name: "Technology", description: "Technical content SEO for SaaS and tech companies." },
       { name: "Hospitality", description: "Local and travel SEO for hotels, restaurants, and tourism." }
     ],
-    
+
+    areas: [
+      {
+        region: "North America",
+        locations: ["United States", "Canada", "Mexico"],
+        featured: true,
+        clients: 120,
+        flag: "🇺🇸",
+      },
+      {
+        region: "Europe",
+        locations: ["United Kingdom", "Germany", "France", "Netherlands"],
+        featured: false,
+        clients: 85,
+        flag: "🇬🇧",
+      },
+      {
+        region: "Middle East",
+        locations: ["UAE", "Saudi Arabia", "Qatar", "Kuwait"],
+        featured: true,
+        clients: 65,
+        flag: "🇦🇪",
+      },
+      {
+        region: "Asia Pacific",
+        locations: ["Australia", "Singapore", "India", "Japan"],
+        featured: false,
+        clients: 95,
+        flag: "🇦🇺",
+      },
+    ],
+
+
     caseStudies: [
       {
         title: "E-commerce Growth",
@@ -353,7 +448,7 @@ export const servicesData: Record<string, ServiceData> = {
         result: "Organic leads increased by 180% and the company established themselves as a thought leader in their space."
       }
     ],
-    
+
     faqs: [
       {
         question: "How long does it take to see SEO results?",
@@ -377,24 +472,24 @@ export const servicesData: Record<string, ServiceData> = {
       }
     ]
   },
-  
+
   "google-ads": {
     number: "04",
     title: "Google Ads",
     subtitle: "Targeted Advertising Excellence",
     description: "Driving targeted traffic through strategic Google advertising campaigns.",
     heroImage: '/assets/services/google-ads.jpg',
-    
+
     introTitle: "Why Google Ads is Essential for Immediate Business Growth",
     introContent: "While SEO builds long-term organic visibility, Google Ads delivers immediate results by placing your business in front of customers actively searching for your products or services. With billions of searches happening daily, Google Ads provides unmatched reach and precision targeting to drive qualified traffic and conversions.",
-    
+
     roleTitle: "The Power of Intent-Based Advertising",
     roleContent: [
       "Google Ads captures customers at their moment of highest intent. When someone searches for your product or service, they're actively looking to buy—and you can be right there with a compelling message.",
       "Unlike traditional advertising, every aspect of Google Ads is measurable. You know exactly how many people saw your ad, clicked it, and converted, allowing for continuous optimization.",
       "With flexible budgeting and bidding strategies, Google Ads works for businesses of all sizes. You can start small, prove ROI, and scale your investment as results grow."
     ],
-    
+
     howWeHelpTitle: "How Our Google Ads Management Maximizes Your ROI",
     howWeHelpPoints: [
       {
@@ -410,10 +505,10 @@ export const servicesData: Record<string, ServiceData> = {
         description: "We monitor performance daily and make data-driven adjustments to improve results and reduce wasted spend."
       }
     ],
-    
+
     overview: "Reach your ideal customers at the moment they're searching. Our Google Ads strategies combine data-driven targeting with compelling creative to maximize your advertising ROI.",
     items: ["Campaign Strategy", "Ad Creation", "Bid Management", "Conversion Tracking", "Performance Reports", "A/B Testing"],
-    
+
     benefits: [
       "Immediate visibility",
       "Targeted audience reach",
@@ -421,7 +516,7 @@ export const servicesData: Record<string, ServiceData> = {
       "Flexible budgeting",
       "Higher conversion rates"
     ],
-    
+
     whyChooseUsPoints: [
       {
         title: "Certified Experts",
@@ -440,7 +535,7 @@ export const servicesData: Record<string, ServiceData> = {
         description: "We don't set and forget. Your campaigns receive ongoing attention and optimization."
       }
     ],
-    
+
     process: [
       { step: "01", title: "Research", desc: "Market analysis, competitor review, and keyword research" },
       { step: "02", title: "Strategy", desc: "Campaign structure, targeting, and budget planning" },
@@ -448,7 +543,7 @@ export const servicesData: Record<string, ServiceData> = {
       { step: "04", title: "Launch", desc: "Go live with optimized campaigns and close monitoring" },
       { step: "05", title: "Optimize", desc: "Continuous improvement based on performance data" },
     ],
-    
+
     industries: [
       { name: "E-commerce", description: "Shopping campaigns and dynamic remarketing for online stores." },
       { name: "Lead Generation", description: "Search and display campaigns for service businesses." },
@@ -457,7 +552,39 @@ export const servicesData: Record<string, ServiceData> = {
       { name: "App Promotion", description: "App install and engagement campaigns." },
       { name: "Real Estate", description: "Property listing and buyer/seller lead campaigns." }
     ],
-    
+
+    areas: [
+      {
+        region: "North America",
+        locations: ["United States", "Canada", "Mexico"],
+        featured: true,
+        clients: 120,
+        flag: "🇺🇸",
+      },
+      {
+        region: "Europe",
+        locations: ["United Kingdom", "Germany", "France", "Netherlands"],
+        featured: false,
+        clients: 85,
+        flag: "🇬🇧",
+      },
+      {
+        region: "Middle East",
+        locations: ["UAE", "Saudi Arabia", "Qatar", "Kuwait"],
+        featured: true,
+        clients: 65,
+        flag: "🇦🇪",
+      },
+      {
+        region: "Asia Pacific",
+        locations: ["Australia", "Singapore", "India", "Japan"],
+        featured: false,
+        clients: 95,
+        flag: "🇦🇺",
+      },
+    ],
+
+
     caseStudies: [
       {
         title: "E-commerce Revenue Boost",
@@ -478,7 +605,7 @@ export const servicesData: Record<string, ServiceData> = {
         result: "Store visits increased by 45% and the cost per visit was 70% lower than traditional advertising channels."
       }
     ],
-    
+
     faqs: [
       {
         question: "How much should I budget for Google Ads?",
@@ -502,24 +629,24 @@ export const servicesData: Record<string, ServiceData> = {
       }
     ]
   },
-  
+
   "web-development": {
     number: "05",
     title: "Web Development",
     subtitle: "Build Your Digital Presence",
     description: "Building modern, high-performance websites that deliver exceptional user experiences.",
     heroImage: '/assets/services/web-development.jpg',
-    
+
     introTitle: "Why Your Website is Your Most Important Business Asset",
     introContent: "Your website is your digital storefront, working 24/7 to attract, engage, and convert customers. In an age where first impressions happen online, a professionally designed and developed website isn't just nice to have—it's essential for business success. A great website builds trust, showcases your value, and drives measurable business results.",
-    
+
     roleTitle: "The Impact of Professional Web Development",
     roleContent: [
       "Your website often provides the first impression of your business. Studies show that users form opinions about a website in just 0.05 seconds, and 94% of first impressions are design-related.",
       "A well-developed website is a conversion machine. From clear calls-to-action to optimized user journeys, every element should guide visitors toward becoming customers.",
       "Modern websites must perform flawlessly across all devices. With mobile traffic exceeding desktop, responsive design and fast loading speeds are non-negotiable."
     ],
-    
+
     howWeHelpTitle: "How Our Web Development Services Transform Your Business",
     howWeHelpPoints: [
       {
@@ -535,10 +662,10 @@ export const servicesData: Record<string, ServiceData> = {
         description: "We create scalable solutions that grow with your business, with easy content management and room to expand functionality."
       }
     ],
-    
+
     overview: "Your website is your digital storefront. We build fast, responsive, and visually stunning websites that not only look great but convert visitors into customers.",
     items: ["Custom Websites", "E-commerce", "CMS Integration", "Responsive Design", "Performance Optimization", "Maintenance & Support"],
-    
+
     benefits: [
       "Modern, professional design",
       "Fast loading speeds",
@@ -546,7 +673,7 @@ export const servicesData: Record<string, ServiceData> = {
       "SEO-friendly structure",
       "Easy content management"
     ],
-    
+
     whyChooseUsPoints: [
       {
         title: "Full-Service Development",
@@ -565,7 +692,7 @@ export const servicesData: Record<string, ServiceData> = {
         description: "Our relationship doesn't end at launch. We provide maintenance, updates, and support to keep your site running smoothly."
       }
     ],
-    
+
     process: [
       { step: "01", title: "Discovery", desc: "Understanding your goals, audience, and requirements" },
       { step: "02", title: "Planning", desc: "Information architecture and technical specifications" },
@@ -573,7 +700,7 @@ export const servicesData: Record<string, ServiceData> = {
       { step: "04", title: "Development", desc: "Clean, scalable code with performance in mind" },
       { step: "05", title: "Launch", desc: "Testing, optimization, and go-live support" },
     ],
-    
+
     industries: [
       { name: "Corporate", description: "Professional websites that establish authority and trust." },
       { name: "E-commerce", description: "Online stores built for conversions and easy management." },
@@ -582,7 +709,39 @@ export const servicesData: Record<string, ServiceData> = {
       { name: "Healthcare", description: "HIPAA-aware websites for medical practices." },
       { name: "Hospitality", description: "Booking-integrated websites for hotels and restaurants." }
     ],
-    
+
+    areas: [
+      {
+        region: "North America",
+        locations: ["United States", "Canada", "Mexico"],
+        featured: true,
+        clients: 120,
+        flag: "🇺🇸",
+      },
+      {
+        region: "Europe",
+        locations: ["United Kingdom", "Germany", "France", "Netherlands"],
+        featured: false,
+        clients: 85,
+        flag: "🇬🇧",
+      },
+      {
+        region: "Middle East",
+        locations: ["UAE", "Saudi Arabia", "Qatar", "Kuwait"],
+        featured: true,
+        clients: 65,
+        flag: "🇦🇪",
+      },
+      {
+        region: "Asia Pacific",
+        locations: ["Australia", "Singapore", "India", "Japan"],
+        featured: false,
+        clients: 95,
+        flag: "🇦🇺",
+      },
+    ],
+
+
     caseStudies: [
       {
         title: "E-commerce Launch",
@@ -603,7 +762,7 @@ export const servicesData: Record<string, ServiceData> = {
         result: "The site helped the startup validate their market, attract initial customers, and secure seed funding."
       }
     ],
-    
+
     faqs: [
       {
         question: "How long does it take to build a website?",
@@ -627,24 +786,24 @@ export const servicesData: Record<string, ServiceData> = {
       }
     ]
   },
-  
+
   "app-development": {
     number: "06",
     title: "App Development",
     subtitle: "Mobile Solutions That Scale",
     description: "Creating powerful mobile applications for iOS and Android platforms.",
     heroImage: '/assets/services/app-development.jpg',
-    
+
     introTitle: "Why Mobile Apps Are Essential for Modern Businesses",
     introContent: "Mobile apps have transformed how businesses connect with customers. With users spending over 4 hours daily on mobile apps, having a presence in their pocket provides unprecedented access to your audience. A well-designed app can increase customer engagement, streamline operations, and open new revenue streams.",
-    
+
     roleTitle: "The Business Value of Mobile Application Development",
     roleContent: [
       "Mobile apps create a direct channel to your customers. Push notifications, personalized experiences, and always-available access build stronger relationships and drive repeat engagement.",
       "Apps can transform your business operations. From customer-facing solutions to internal tools, mobile applications streamline processes and improve efficiency.",
       "A mobile app positions your business as modern and customer-focused. In competitive markets, having an app can be a key differentiator that attracts and retains customers."
     ],
-    
+
     howWeHelpTitle: "How Our App Development Services Deliver Results",
     howWeHelpPoints: [
       {
@@ -660,10 +819,10 @@ export const servicesData: Record<string, ServiceData> = {
         description: "We support you through app store submission and provide ongoing maintenance to keep your app performing at its best."
       }
     ],
-    
+
     overview: "Mobile is where your customers are. We develop intuitive, high-performance apps that provide seamless experiences and drive engagement on both iOS and Android platforms.",
     items: ["iOS Apps", "Android Apps", "Cross-Platform", "UI/UX Design", "App Maintenance", "API Integration"],
-    
+
     benefits: [
       "Native performance",
       "Intuitive user experience",
@@ -671,7 +830,7 @@ export const servicesData: Record<string, ServiceData> = {
       "Scalable architecture",
       "Ongoing support"
     ],
-    
+
     whyChooseUsPoints: [
       {
         title: "Full Lifecycle Support",
@@ -690,7 +849,7 @@ export const servicesData: Record<string, ServiceData> = {
         description: "We use iterative development processes that allow for flexibility and regular progress visibility."
       }
     ],
-    
+
     process: [
       { step: "01", title: "Discovery", desc: "Requirements gathering and user research" },
       { step: "02", title: "Design", desc: "Wireframes, prototypes, and UI design" },
@@ -698,7 +857,7 @@ export const servicesData: Record<string, ServiceData> = {
       { step: "04", title: "Testing", desc: "Thorough QA across devices and scenarios" },
       { step: "05", title: "Launch", desc: "App store submission and deployment" },
     ],
-    
+
     industries: [
       { name: "Retail & E-commerce", description: "Shopping apps that drive sales and customer loyalty." },
       { name: "Healthcare", description: "Patient apps, telehealth, and health tracking solutions." },
@@ -707,7 +866,39 @@ export const servicesData: Record<string, ServiceData> = {
       { name: "Fitness", description: "Workout, tracking, and wellness applications." },
       { name: "On-Demand Services", description: "Delivery, booking, and marketplace apps." }
     ],
-    
+
+    areas: [
+      {
+        region: "North America",
+        locations: ["United States", "Canada", "Mexico"],
+        featured: true,
+        clients: 120,
+        flag: "🇺🇸",
+      },
+      {
+        region: "Europe",
+        locations: ["United Kingdom", "Germany", "France", "Netherlands"],
+        featured: false,
+        clients: 85,
+        flag: "🇬🇧",
+      },
+      {
+        region: "Middle East",
+        locations: ["UAE", "Saudi Arabia", "Qatar", "Kuwait"],
+        featured: true,
+        clients: 65,
+        flag: "🇦🇪",
+      },
+      {
+        region: "Asia Pacific",
+        locations: ["Australia", "Singapore", "India", "Japan"],
+        featured: false,
+        clients: 95,
+        flag: "🇦🇺",
+      },
+    ],
+
+
     caseStudies: [
       {
         title: "Retail Loyalty App",
@@ -728,7 +919,7 @@ export const servicesData: Record<string, ServiceData> = {
         result: "Administrative time reduced by 50%, data accuracy improved, and technicians could focus on their core work."
       }
     ],
-    
+
     faqs: [
       {
         question: "Should I build for iOS, Android, or both?",

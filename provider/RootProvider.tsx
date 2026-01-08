@@ -33,7 +33,6 @@ const RootProvider: FC<Props> = ({
             </AnimatePresence>
             {!isLoading && (
                 <>
-                    <FloatingContactBadge />
                     {children}
                 </>
             )}

@@ -8,6 +8,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Reset Password",
+    description: "Reset your account password securely and regain access to your account in just a few steps.",
     robots: { index: false, follow: false }
 }
 
@@ -23,7 +24,7 @@ const ResetPasswordPage = async (
 
     const { token } = await searchParams
 
-    // Fallback 
+    //! Invalid Token Fallback 
     if (!token) return <ResetPasswordFallback />
 
 

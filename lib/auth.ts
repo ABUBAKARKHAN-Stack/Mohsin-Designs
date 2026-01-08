@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client, db } from "./db";
 import { sendEmail } from "./sendEmail";
+import { admin } from "better-auth/plugins"
 
 
 export const auth = betterAuth({
@@ -11,7 +12,7 @@ export const auth = betterAuth({
 
     emailAndPassword: {
         enabled: true,
-        requireEmailVerification:false,
+        requireEmailVerification: false,
 
         //* ResetPassword Configurations
         resetPasswordTokenExpiresIn: 600, //? 10 Mins Token Expiry
@@ -22,6 +23,26 @@ export const auth = betterAuth({
                 text: `Click the link to reset your password: ${url}`,
             });
         },
-
     },
+
+    user: {
+        additionalFields: {
+            role: {
+                type: "string",
+            },
+            permissions: {
+                type: "json"
+            }
+        },
+    },
+
+    rateLimit: {
+        enabled: true,
+    },
+
+    plugins: [
+        admin()
+    ]
 });
+
+export type Session = typeof auth.$Infer.Session

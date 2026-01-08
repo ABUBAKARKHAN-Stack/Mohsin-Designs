@@ -141,7 +141,7 @@ const Signinform = () => {
                                 control={form.control}
                                 name="rememberMe"
                                 render={({ field }) => (
-                                    <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormItem className="flex items-center ">
                                         <FormControl>
                                             <Checkbox
                                                 checked={field.value}
@@ -181,16 +181,6 @@ const Signinform = () => {
                     </form>
                 </Form>
 
-                {/* Sign Up Link */}
-                <p className="mt-8 text-center text-sm text-muted-foreground">
-                    Don't have an account?{" "}
-                    <Link
-                        href="/auth/signup"
-                        className="text-accent hover:text-accent/80 font-medium hover:underline transition-colors"
-                    >
-                        Sign up
-                    </Link>
-                </p>
             </motion.div>
         </div>
     )

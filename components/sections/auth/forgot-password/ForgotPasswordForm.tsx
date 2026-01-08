@@ -135,16 +135,7 @@ const ForgotPasswordForm = () => {
                             </form>
                         </Form>
 
-                        {/* Sign Up Link */}
-                        <p className="mt-8 text-center text-sm text-muted-foreground">
-                            Don't have an account?{" "}
-                            <Link
-                                href="/auth/signup"
-                                className="text-accent hover:text-accent/80 font-medium transition-colors hover:underline"
-                            >
-                                Sign up
-                            </Link>
-                        </p>
+                       
                     </>
                 ) : (
                     /* Success State */

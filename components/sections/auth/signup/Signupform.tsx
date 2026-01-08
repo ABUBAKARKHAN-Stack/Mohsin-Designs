@@ -14,6 +14,8 @@ import { useForm } from 'react-hook-form';
 import { motion } from 'motion/react';
 import { errorToast, successToast } from '@/lib/toastNotifications';
 import { Spinner } from '@/components/ui/spinner';
+import { Roles } from '@/types/auth.types';
+import { seedAdmin } from '@/scripts/seed-admin';
 
 const Signupform = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -38,6 +40,7 @@ const Signupform = () => {
             email: formValues.email,
             password: formValues.password,
             name: formValues.fullName,
+            role: Roles.ADMIN,
             callbackURL: "/dashboard"
         }, {
             onSuccess(_context) {

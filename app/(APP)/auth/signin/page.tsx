@@ -4,10 +4,15 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Sign In",
-    robots: { index: false, follow: false }
-}
+    description: "Sign in to your account to access your dashboard, and operate securely.",
+    robots: {
+        index: false,
+        follow: false,
+    },
+};
 
-const SignUp = () => {
+
+const SignInPage = () => {
 
 
     return (
@@ -22,4 +27,4 @@ const SignUp = () => {
     );
 };
 
-export default SignUp;
+export default SignInPage;

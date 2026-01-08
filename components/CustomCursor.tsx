@@ -75,7 +75,7 @@ const CustomCursor = () => {
     <>
       {/* Main cursor dot - follows closely */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-9999 custom-cursor"
+        className="fixed top-0 left-0 pointer-events-none z-999 custom-cursor"
         style={{
           x: dotXSpring,
           y: dotYSpring,

@@ -34,6 +34,7 @@ const Signupform = () => {
         isSubmitting
     } = form.formState
 
+    //! Will fix permissions later when use
     const onSubmit = async (formValues: SignUpFormValues) => {
         await authClient.signUp.email({
             email: formValues.email,

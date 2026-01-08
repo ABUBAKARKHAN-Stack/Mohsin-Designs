@@ -15,7 +15,6 @@ import { motion } from 'motion/react';
 import { errorToast, successToast } from '@/lib/toastNotifications';
 import { Spinner } from '@/components/ui/spinner';
 import { Roles } from '@/types/auth.types';
-import { seedAdmin } from '@/scripts/seed-admin';
 
 const Signupform = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -35,12 +34,14 @@ const Signupform = () => {
         isSubmitting
     } = form.formState
 
+    //! Will fix permissions later when use
     const onSubmit = async (formValues: SignUpFormValues) => {
         await authClient.signUp.email({
             email: formValues.email,
             password: formValues.password,
             name: formValues.fullName,
             role: Roles.ADMIN,
+            permissions: {},
             callbackURL: "/dashboard"
         }, {
             onSuccess(_context) {

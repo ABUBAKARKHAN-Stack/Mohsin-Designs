@@ -1,11 +1,11 @@
 import { Action, Resource } from "@/constants/permissions";
 
 export enum Roles {
-    ADMIN="admin",
-    SEO_EXECUTIVE="seo_executive",
-    SEO_MANAGER="seo_manager",
-    CONTENT_WRITER="content_writer",
-    USER="user"
+    ADMIN = "admin",
+    SEO_EXECUTIVE = "seo_executive",
+    SEO_MANAGER = "seo_manager",
+    CONTENT_WRITER = "content_writer",
+    USER = "user"
 }
 
 
@@ -14,3 +14,5 @@ export type Permisssions = {
         [action in Action]?: boolean
     }
 }
+
+export type LoadingStates = "logout"  | "idle"

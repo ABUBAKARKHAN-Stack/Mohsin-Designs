@@ -9,10 +9,12 @@ export enum Roles {
 }
 
 
-export type Permisssions = {
-    [key in Resource]?: {
-        [action in Action]?: boolean
+export type Permissions = {
+    [key in Resource]: {
+        [action in Action]: boolean
     }
 }
 
-export type LoadingStates = "logout"  | "idle"
+export type LoadingStates = "change_role"| "delete_user" | "add_user" | "logout" | "list_users" | "idle"
+
+export type ErrorStates = "list_user" | "idle"

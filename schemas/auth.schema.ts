@@ -1,3 +1,4 @@
+import { Roles } from "@/types/auth.types";
 import z from "zod";
 
 export const signUpSchema = z
@@ -50,3 +51,12 @@ export const resetPasswordSchema = z.object({
 });
 
 export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
+
+
+export const addUserSchema = signUpSchema.extend({
+    role: z.enum(Roles, {
+        error: "Role is required",
+    }),
+})
+
+export type AddUserFormValues = z.infer<typeof addUserSchema>;

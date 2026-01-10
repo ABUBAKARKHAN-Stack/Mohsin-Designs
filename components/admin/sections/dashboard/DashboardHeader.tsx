@@ -1,5 +1,5 @@
 "use client"
-import { Badge } from '@/components/ui/badge';
+
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -21,8 +21,6 @@ const DashboardHeader = () => {
 
   const pathname = usePathname()
 
-
-
   const currentTitle = routeTitles[pathname] || "Page";
 
   return (
@@ -33,7 +31,7 @@ const DashboardHeader = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink href="/">Website</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
@@ -43,12 +41,7 @@ const DashboardHeader = () => {
         </Breadcrumb>
       </div>
       <div className="flex items-center gap-3">
-        <ThemeToggle className='size-8' />
-        <Badge variant="secondary" className="hidden  sm:flex">
-          Admin
-        </Badge>
-
-
+        <ThemeToggle  />
       </div>
     </header>
   )

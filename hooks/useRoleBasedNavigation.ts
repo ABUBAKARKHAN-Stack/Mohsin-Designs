@@ -1,67 +1,97 @@
 import { Roles } from "@/types/auth.types";
-import { FileText, Home, Image, Layers, LayoutDashboard, Search, Settings, User, Users } from "lucide-react";
+import {
+    FileText,
+    Globe,
+    Image,
+    Layers,
+    LayoutDashboard,
+    Search,
+    Settings,
+    User,
+    Users,
+} from "lucide-react";
 
 export const useRoleBasedNavigation = (role: Roles) => {
-
     const baseNavigationItems = [
-        { title: "Home", url: "/", icon: Home },
+        { title: "Website", url: "/", icon: Globe },
         { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
     ];
 
+    const adminNavigation = [
+        ...baseNavigationItems,
+        { title: "Users", url: "/users", icon: Users },
 
-    const getRoleBasedNavItems = () => {
-        switch (role) {
+        //* Pages & Content
+        { title: "Pages", url: "/pages", icon: FileText },
+        { title: "Services", url: "/services", icon: Layers },
+        { title: "Blogs", url: "/blogs", icon: FileText },
+        { title: "Portfolio", url: "/portfolio", icon: Image },
 
-            //* Admin Navigation Items
-            case Roles.ADMIN:
-                return [
-                    ...baseNavigationItems,
-                    { title: "Users", url: "/users", icon: Users },
-                    { title: "Pages", url: "/pages", icon: FileText },
-                    { title: "Sections", url: "/sections", icon: Layers },
-                    { title: "SEO", url: "/seo", icon: Search },
-                    { title: "Media", url: "/media", icon: Image, },
-                    { title: "Profile", url: "/profile", icon: User },
-                    { title: "Settings", url: "/settings", icon: Settings, },
-                ]
+        //* Reusable
+        { title: "Sections", url: "/sections", icon: Layers },
 
-            //* Content Writer Navigation Items
-            case Roles.CONTENT_WRITER:
-                return [
-                    ...baseNavigationItems,
-                    { title: "Pages", url: "/pages", icon: FileText },
-                    { title: "Sections", url: "/sections", icon: Layers },
-                    { title: "Media", url: "/media", icon: Image, },
-                    { title: "Profile", url: "/profile", icon: User },
+        //* SEO & Media
+        { title: "SEO", url: "/seo", icon: Search },
+        { title: "Media", url: "/media", icon: Image },
 
-                ]
+        //* System
+        { title: "Settings", url: "/settings", icon: Settings },
+        { title: "Profile", url: "/profile", icon: User },
+    ];
 
-            //* SEO Manager/Executive Navigation Items
-            case Roles.SEO_EXECUTIVE:
-            case Roles.SEO_MANAGER:
-                return [
-                    ...baseNavigationItems,
-                    { title: "SEO", url: "/seo", icon: Search },
-                    { title: "Profile", url: "/profile", icon: User },
+    const contentWriterNavigation = [
+        ...baseNavigationItems,
 
-                ]
+        //* Content Editing (Draft Only)
+        { title: "Pages", url: "/pages", icon: FileText },
+        { title: "Services", url: "/services", icon: Layers },
+        { title: "Blogs", url: "/blogs", icon: FileText },
+        { title: "Portfolio", url: "/portfolio", icon: Image },
 
-            //* User Navigation Items (He Can Navigate But All Read ONLY!)
-            case Roles.USER:
-                return [
-                    ...baseNavigationItems,
-                    { title: "Pages", url: "/pages", icon: FileText },
-                    { title: "Sections", url: "/sections", icon: Layers },
-                    { title: "SEO", url: "/seo", icon: Search },
-                    { title: "Media", url: "/media", icon: Image, },
-                ]
+        //* Reusable Sections
+        { title: "Sections", url: "/sections", icon: Layers },
 
-            default:
-                return baseNavigationItems;
-        }
+        //* Limited Media
+        { title: "Media", url: "/media", icon: Image },
 
+        { title: "Profile", url: "/profile", icon: User },
+    ];
+
+    const seoNavigation = [
+        ...baseNavigationItems,
+
+        //* SEO only (UI will handle basic vs advanced)
+        { title: "SEO", url: "/seo", icon: Search },
+
+        { title: "Profile", url: "/profile", icon: User },
+    ];
+
+    const userNavigation = [
+        ...baseNavigationItems,
+
+        //* View-only access
+        { title: "Pages", url: "/pages", icon: FileText },
+        { title: "Services", url: "/services", icon: Layers },
+        { title: "Blogs", url: "/blogs", icon: FileText },
+        { title: "Portfolio", url: "/portfolio", icon: Image },
+        { title: "Sections", url: "/sections", icon: Layers },
+    ];
+
+    switch (role) {
+        case Roles.ADMIN:
+            return adminNavigation;
+
+        case Roles.CONTENT_WRITER:
+            return contentWriterNavigation;
+
+        case Roles.SEO_MANAGER:
+        case Roles.SEO_EXECUTIVE:
+            return seoNavigation;
+
+        case Roles.USER:
+            return userNavigation;
+
+        default:
+            return baseNavigationItems;
     }
-
-    return getRoleBasedNavItems()
-
-}
+};

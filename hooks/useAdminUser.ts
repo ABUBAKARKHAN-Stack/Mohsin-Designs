@@ -4,23 +4,40 @@ import {
     createUser,
     deleteUser,
     changeUserRole,
+    getUser,
+    adminUpdateUser,
+    adminUpdateUserPassword,
+    adminBanUser,
+    adminUnbanUser,
 } from "@/helpers/adminUser";
-import { AddUserFormValues } from "@/schemas/auth.schema";
-import { AdminUserKeys, Roles } from "@/types/auth.types";
+import { AddUserFormValues, ChangePasswordFormValues, ChangeRoleFormValues, EditUserFormValues } from "@/schemas/auth.schema";
+import { Permissions, Roles } from "@/types/auth.types";
 import { errorToast, successToast } from "@/lib/toastNotifications";
 import { Dispatch, SetStateAction } from "react";
+import { queryClient } from "@/lib/query-client";
+import { AdminUserKeys } from "@/constants/admin.constants";
 
 export const useAdminUsers = () => {
     return useQuery({
-        queryKey: [AdminUserKeys.all],
+        queryKey: AdminUserKeys.all,
         queryFn: listUsers,
         staleTime: 10 * 60 * 1000,
         gcTime: 10 * 60 * 1000
     });
 };
 
-export const useCreateUser = (setOpen:Dispatch<SetStateAction<boolean>>) => {
-    const queryClient = useQueryClient();
+export const useAdminUser = (userId: string) => {
+    return useQuery({
+        queryKey: AdminUserKeys.single(userId),
+        queryFn: () => getUser(userId),
+        enabled: !!userId,
+        staleTime: 10 * 60 * 1000,
+        gcTime: 10 * 60 * 1000
+    });
+};
+
+
+export const useCreateUser = (setOpen: Dispatch<SetStateAction<boolean>>) => {
 
     return useMutation({
         mutationFn: (values: AddUserFormValues) => createUser(values),
@@ -28,7 +45,7 @@ export const useCreateUser = (setOpen:Dispatch<SetStateAction<boolean>>) => {
             successToast("User created successfully!");
             setOpen(false)
             queryClient.invalidateQueries({
-                queryKey: [AdminUserKeys.all],
+                queryKey: AdminUserKeys.all,
             });
         },
         onError: (error: any) => {
@@ -38,14 +55,13 @@ export const useCreateUser = (setOpen:Dispatch<SetStateAction<boolean>>) => {
 };
 
 export const useDeleteUser = () => {
-    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: (userId: string) => deleteUser(userId),
         onSuccess: () => {
             successToast("User deleted successfully!");
             queryClient.invalidateQueries({
-                queryKey: [AdminUserKeys.all],
+                queryKey: AdminUserKeys.all,
             });
         },
         onError: (error: any) => {
@@ -55,24 +71,109 @@ export const useDeleteUser = () => {
 };
 
 export const useChangeUserRole = () => {
-    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: ({
             userId,
-            role,
+            values
         }: {
             userId: string;
-            role: Roles;
-        }) => changeUserRole({ userId, role }),
+            values: ChangeRoleFormValues
+        }) => changeUserRole({ userId, values }),
         onSuccess: () => {
             successToast("User role has been changed successfully!");
             queryClient.invalidateQueries({
-                queryKey: [AdminUserKeys.all],
+                queryKey: AdminUserKeys.all,
             });
+
         },
         onError: (error: any) => {
             errorToast(error?.message || "Failed to change user role.");
+        },
+    });
+};
+
+
+export const useUpdateUser = () => {
+
+    return useMutation({
+        mutationFn: ({
+            userId,
+            values
+        }: {
+            userId: string;
+            values: ChangeRoleFormValues
+        }) => adminUpdateUser({ userId, values }),
+        onSuccess: () => {
+            successToast("User updated successfully!");
+            queryClient.invalidateQueries({
+                queryKey: AdminUserKeys.all,
+            });
+
+        },
+        onError: (error: any) => {
+            errorToast(error?.message || "Failed to update user.");
+        },
+    });
+};
+
+
+
+export const useUpdateUserPassword = () => {
+
+    return useMutation({
+        mutationFn: ({
+            userId,
+            values
+        }: {
+            userId: string;
+            values: ChangePasswordFormValues
+        }) => adminUpdateUserPassword({ userId, values }),
+        onSuccess: () => {
+            successToast("Password updated successfully!");
+            queryClient.invalidateQueries({
+                queryKey: AdminUserKeys.all,
+            });
+
+        },
+        onError: (error: any) => {
+            errorToast(error?.message || "Failed to change user password.");
+        },
+    });
+};
+
+
+export const useBanUser = () => {
+
+    return useMutation({
+        mutationFn: (userId: string) => adminBanUser(userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: AdminUserKeys.all,
+            });
+
+        },
+        onError: (error: any) => {
+            errorToast(error?.message || "Something went wrong while updating user status."
+            );
+        },
+    });
+};
+
+
+export const useUnbanUser = () => {
+
+    return useMutation({
+        mutationFn: (userId: string) => adminUnbanUser(userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: AdminUserKeys.all,
+            });
+
+        },
+        onError: (error: any) => {
+            errorToast(error?.message || "Something went wrong while updating user status."
+            );
         },
     });
 };

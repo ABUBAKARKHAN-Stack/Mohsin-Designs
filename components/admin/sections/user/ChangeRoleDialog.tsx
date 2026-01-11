@@ -20,30 +20,39 @@ import {
 } from "@/components/ui/select";
 import { ReactNode, useState } from "react";
 import { Roles } from "@/types/auth.types";
-import { roleLabels, roleDescriptions } from '@/constants/admin.constants';
+import { roleLabels, roleDescriptions, rolePermissions } from '@/constants/admin.constants';
 import { useForm } from "react-hook-form";
-import { useChangeUserRole } from "@/hooks/useAdminUser";
+import { useAdminUser, useChangeUserRole } from "@/hooks/useAdminUser";
 import { Spinner } from "@/components/ui/spinner";
+import { ChangeRoleFormValues } from "@/schemas/auth.schema";
+import { errorToast } from "@/lib/toastNotifications";
 
 interface ChangeUserRoleProps {
     userId: string;
     currentRole: Roles;
-    children: ReactNode
+    children: ReactNode;
+    userBanned: boolean,
+
 }
 
-export default function ChangeUserRoleModal({ userId, currentRole, children }: ChangeUserRoleProps) {
+export default function ChangeUserRoleModal({ userId, currentRole, children, userBanned = false }: ChangeUserRoleProps) {
     const [open, setOpen] = useState(false);
 
     const changeRoleMutation = useChangeUserRole();
 
-    const form = useForm<{ role: Roles }>({
+    const form = useForm<ChangeRoleFormValues>({
         defaultValues: {
             role: currentRole,
         },
     });
-
     const onSubmit = (values: { role: Roles }) => {
-        changeRoleMutation.mutate({ userId, role: values.role }, {
+
+        if (userBanned) {
+            errorToast("Cannot change role of a banned user. Please unban first.");
+            return;
+        }
+
+        changeRoleMutation.mutate({ userId, values: { role: values.role }, }, {
             onSuccess() {
                 setOpen(false);
             }

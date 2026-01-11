@@ -1,7 +1,8 @@
-import { AddUserFormValues } from "@/schemas/auth.schema";
+import { AddUserFormValues, ChangePasswordFormValues, ChangeRoleFormValues, EditUserFormValues } from "@/schemas/auth.schema";
 import { Roles } from "@/types/auth.types";
 import { authClient } from "@/lib/auth-client";
 import { rolePermissions } from "@/constants/admin.constants";
+import { UserWithRole } from "better-auth/plugins";
 
 export const listUsers = async () => {
     const { data, error } = await authClient.admin.listUsers({
@@ -14,6 +15,16 @@ export const listUsers = async () => {
     if (error) return []
     return data?.users ?? [];
 };
+
+export const getUser = async (userId: string) => {
+    const { data, error } = await authClient.admin.getUser({
+        query: { id: userId }
+    });
+    if (error) return null
+
+    return data as UserWithRole
+
+}
 
 export const createUser = async (values: AddUserFormValues) => {
     const permissions = rolePermissions[values.role];
@@ -44,16 +55,81 @@ export const deleteUser = async (userId: string) => {
 
 export const changeUserRole = async ({
     userId,
-    role,
+    values
 }: {
     userId: string;
-    role: Roles;
+    values: ChangeRoleFormValues
+
 }) => {
-    const { error } = await authClient.admin.setRole({
+    const permissions = rolePermissions[values.role]
+    const { error } = await authClient.admin.updateUser({
         userId,
-        role: role as any,
+        data: {
+            role: values.role,
+            permissions
+        }
     });
     if (error) {
         throw error
     }
 };
+
+
+export const adminUpdateUser = async ({
+    userId,
+    values
+}: {
+    userId: string;
+    values: EditUserFormValues
+
+}) => {
+    const permissions = rolePermissions[values.role]
+    const { error } = await authClient.admin.updateUser({
+        userId,
+        data: {
+            name: values.fullName,
+            ...values,
+            permissions
+        }
+    });
+    if (error) {
+        throw error
+    }
+};
+
+
+export const adminUpdateUserPassword = async ({
+    userId,
+    values
+}: {
+    userId: string;
+    values: ChangePasswordFormValues
+
+}) => {
+    const { error } = await authClient.admin.setUserPassword({
+        userId,
+        newPassword: values.newPassword
+    });
+    if (error) {
+        throw error
+    }
+};
+
+
+export const adminBanUser = async (userId:string) => {
+    const { error } = await authClient.admin.banUser({
+        userId,
+    });
+    if (error) {
+        throw error
+    }
+}
+
+export const adminUnbanUser = async (userId:string) => {
+    const { error } = await authClient.admin.unbanUser({
+        userId,
+    });
+    if (error) {
+        throw error
+    }
+}

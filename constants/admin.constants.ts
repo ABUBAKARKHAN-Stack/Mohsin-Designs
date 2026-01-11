@@ -44,3 +44,8 @@ export const roleDescriptions: Record<Roles, string> = {
     content_writer: "Content editing, draft only",
     user: "View-only access",
 };
+
+export const AdminUserKeys = {
+    all: ['admin-users'],
+    single: (id: string) => ['admin-users', id],
+};

@@ -18,7 +18,3 @@ export type Permissions = {
 export type LoadingStates = "change_role" | "delete_user" | "add_user" | "logout" | "list_users" | "idle"
 
 export type ErrorStates = "list_user" | "idle"
-
-export enum AdminUserKeys  {
-    all = "admin-users"
-};

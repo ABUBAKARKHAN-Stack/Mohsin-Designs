@@ -23,7 +23,7 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
 
     const session = await getServerSession()
 
-
+   
     if (!session) redirect("/")
 
     return (

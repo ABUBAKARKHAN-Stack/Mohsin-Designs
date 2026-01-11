@@ -1,6 +1,6 @@
+"use client"
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -23,20 +23,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddUserFormValues, addUserSchema } from "@/schemas/auth.schema";
 import { Roles } from "@/types/auth.types";
-import { roleLabels, roleDescriptions, rolePermissions, useSession } from "@/context/SessionContext";
+import { roleLabels, roleDescriptions } from '@/constants/admin.constants'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { useCreateUser } from "@/hooks/useAdminUser";
 
 
 export default function AddUserDialog() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [open, setOpen] = useState(false)
-  const {
-    createUser,
-    loading
-  } = useSession()
+  const createUser = useCreateUser(setOpen)
 
   const form = useForm<AddUserFormValues>({
     resolver: zodResolver(addUserSchema),
@@ -49,8 +47,7 @@ export default function AddUserDialog() {
     },
   });
 
-  const onSubmit = async (values: AddUserFormValues) => await createUser(values,setOpen)
-  const createUserLoading = loading === "add_user";
+  const onSubmit = async (values: AddUserFormValues) => createUser.mutate(values)
 
 
   return (
@@ -62,7 +59,7 @@ export default function AddUserDialog() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New User</DialogTitle>
           <DialogDescription>
@@ -215,10 +212,10 @@ export default function AddUserDialog() {
             <DialogFooter>
               <Button
                 type="submit"
-                disabled={createUserLoading}
+                disabled={createUser.isPending}
               >
 
-                Create New User {createUserLoading && <Spinner />}
+                Create New User {createUser.isPending && <Spinner />}
               </Button>
 
             </DialogFooter>

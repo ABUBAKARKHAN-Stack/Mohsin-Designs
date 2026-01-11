@@ -1,23 +1,35 @@
 "use client"
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
-import { roleDescriptions, roleLabels, useSession } from '@/context/SessionContext';
 import { Roles } from '@/types/auth.types';
+import { roleDescriptions, roleLabels, } from '@/constants/admin.constants'
+import { useAdminUsers } from '@/hooks/useAdminUser';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const RoleOverview = () => {
     const {
-        users
-    } = useSession()
+        data: users,
+        isLoading
+    } = useAdminUsers();
+
     return (
         <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-5">
             {(Object.keys(roleLabels) as Roles[]).map((role) => {
-                const count = users.filter((u) => u.role === role).length;
+                const count = users?.filter((u) => u.role === role).length;
                 return (
                     <Card key={role}>
                         <CardHeader className="pb-2">
                             <CardDescription>{roleLabels[role]}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{count}</div>
+                            <p className="text-2xl font-bold">
+                                {
+                                    isLoading ?
+                                        <Skeleton className='size-8  mb-2' />
+                                        :
+                                        count
+                                }
+
+                            </p>
                             <p className="text-xs text-muted-foreground truncate">
                                 {roleDescriptions[role]}
                             </p>

@@ -4,7 +4,7 @@ import { ArrowRight, FileText, Layers, Search, Users } from 'lucide-react';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { usePermissions } from '@/context/SessionContext';
+import { usePermissions } from '@/hooks/usePermissions';
 
 
 const QuickActions = () => {

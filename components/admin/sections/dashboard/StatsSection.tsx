@@ -1,7 +1,9 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { roleLabels, usePermissions, useSession } from '@/context/SessionContext'
+import { roleLabels } from '@/constants/admin.constants'
+import {  useSession } from '@/context/SessionContext'
+import { usePermissions } from '@/hooks/usePermissions'
 import { Roles } from '@/types/auth.types'
 import { FileText, Layers, Users } from 'lucide-react'
 

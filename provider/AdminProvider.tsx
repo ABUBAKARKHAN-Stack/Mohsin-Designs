@@ -1,3 +1,4 @@
+"use client"
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { SessionProvider } from '@/context/SessionContext'
 import { Session } from '@/lib/auth'

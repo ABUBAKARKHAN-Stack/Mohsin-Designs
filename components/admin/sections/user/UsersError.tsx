@@ -1,12 +1,16 @@
+"use client"
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { useSession } from '@/context/SessionContext'
+import { useAdminUsers } from '@/hooks/useAdminUser'
+import { cn } from '@/lib/utils'
 import { AlertTriangle, RotateCcw } from 'lucide-react'
 
 const UsersError = () => {
     const {
-        getAllUsers
-    } = useSession()
+        refetch,
+        isRefetching
+    } = useAdminUsers()
+
     return (
         <TableRow>
             <TableCell colSpan={3} className="py-12 text-center">
@@ -19,11 +23,15 @@ const UsersError = () => {
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={async () => await getAllUsers()}
+                        disabled={isRefetching}
+                        onClick={async () => await refetch()}
                         className="mt-2"
                     >
-                        <RotateCcw className="h-4 w-4 mr-2" />
-                        Retry
+                        <RotateCcw className={cn(
+                            
+                            isRefetching && "animate-spin"
+                        )} />
+                        {isRefetching ? "Retrying..." : "Retry"}
                     </Button>
                 </div>
             </TableCell>

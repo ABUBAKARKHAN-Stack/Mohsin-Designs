@@ -3,8 +3,9 @@
 import { motion } from "motion/react";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
-import { roleLabels, useSession } from "@/context/SessionContext";
+import {  useSession } from "@/context/SessionContext";
 import { Roles } from "@/types/auth.types";
+import { roleLabels } from "@/constants/admin.constants";
 
 
 

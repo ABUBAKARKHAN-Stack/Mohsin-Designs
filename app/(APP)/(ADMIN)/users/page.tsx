@@ -4,9 +4,9 @@ import { Badge } from "@/components/ui/badge";
 
 
 import { Shield } from "lucide-react";
-import { usePermissions } from "@/context/SessionContext";
 
 import { AddUserDialog, RoleOverview, UsersTable } from "@/components/admin/sections/user";
+import { usePermissions } from "@/hooks/usePermissions";
 
 
 

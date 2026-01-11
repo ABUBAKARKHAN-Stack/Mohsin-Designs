@@ -3,8 +3,10 @@ import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { Check, X } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { roleLabels, usePermissions, useSession } from "@/context/SessionContext";
+import { useSession } from "@/context/SessionContext";
 import { Roles } from "@/types/auth.types";
+import { usePermissions } from "@/hooks/usePermissions";
+import { roleLabels } from "@/constants/admin.constants";
 
 
 interface PermissionItemProps {

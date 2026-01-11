@@ -3,8 +3,7 @@ import { getSessionCookie } from "better-auth/cookies";
 
 export async function proxy(request: NextRequest) {
    	const sessionCookie = getSessionCookie(request);
-
-
+ 
     const {
         pathname
     } = request.nextUrl

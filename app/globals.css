@@ -36,18 +36,15 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
-  --color-sidebar: hsl(var(--sidebar-background));
-  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
-  --color-sidebar-primary: hsl(var(--sidebar-primary));
-  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
-  --color-sidebar-accent: hsl(var(--sidebar-accent));
-  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
-  --color-sidebar-border: hsl(var(--sidebar-border));
-  --color-sidebar-ring: hsl(var(--sidebar-ring));
+ --color-sidebar: hsl(var(--sidebar));
+--color-sidebar-foreground: hsl(var(--sidebar-foreground));
+--color-sidebar-primary: hsl(var(--sidebar-primary));
+--color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+--color-sidebar-accent: hsl(var(--sidebar-accent));
+--color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+--color-sidebar-border: hsl(var(--sidebar-border));
+--color-sidebar-ring: hsl(var(--sidebar-ring));
 
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -73,11 +70,16 @@
       height: 0;
     }
   }
+
   @keyframes marquee {
-  from {
-    transform: translateX(0);}
-  to {
-    transform: translateX(calc(-100% - var(--gap)));}}
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
 
   @keyframes marquee-reverse {
     0% {
@@ -90,11 +92,17 @@
   }
 
   --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+
   @keyframes marquee-vertical {
-  from {
-    transform: translateY(0);}
-  to {
-    transform: translateY(calc(-100% - var(--gap)));}}}
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+}
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -188,14 +196,19 @@
     --radius: 0px;
 
     /* Sidebar mirrors dark mode relationships */
-    --sidebar-background: 45 30% 97%;
+
+    --sidebar: 45 30% 97%;
     --sidebar-foreground: 220 25% 10%;
-    --sidebar-primary: 236, 100%, 32%;
+
+    --sidebar-primary: 236 100% 32%;
     --sidebar-primary-foreground: 45 30% 99%;
-    --sidebar-accent: 48 100% 55%;
-    --sidebar-accent-foreground: 236, 100%, 32%;
+
+    --sidebar-accent: 236 100% 32%;
+    --sidebar-accent-foreground: 45 30% 99%;
+
     --sidebar-border: 45 20% 88%;
-    --sidebar-ring: 48 100% 55%;
+    --sidebar-ring: 236 100% 32%;
+
   }
 
   .dark {
@@ -232,14 +245,19 @@
     --input: 220 15% 20%;
     --ring: 48 100% 55%;
 
-    --sidebar-background: 220 20% 8%;
+    --sidebar: 220 20% 10%;
     --sidebar-foreground: 45 20% 95%;
-    --sidebar-primary: 45 20% 95%;
+
+    --sidebar-primary: 48 100% 55%;
     --sidebar-primary-foreground: 220 20% 8%;
+
     --sidebar-accent: 48 100% 55%;
     --sidebar-accent-foreground: 220 20% 8%;
+
     --sidebar-border: 220 15% 20%;
     --sidebar-ring: 48 100% 55%;
+
+
   }
 }
 
@@ -255,7 +273,6 @@
 
   body {
     @apply bg-background text-foreground;
-    cursor: none;
 
   }
 
@@ -266,15 +283,6 @@
 
   :root:not(.dark) {
     color-scheme: light;
-  }
-
-  a,
-  button,
-  [role="button"],
-  input,
-  textarea,
-  select {
-    cursor: none;
   }
 
   ::selection {

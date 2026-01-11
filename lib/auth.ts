@@ -3,6 +3,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client, db } from "./db";
 import { sendEmail } from "./sendEmail";
 import { admin } from "better-auth/plugins"
+import { Roles } from "@/types/auth.types";
 
 
 export const auth = betterAuth({
@@ -28,7 +29,9 @@ export const auth = betterAuth({
     user: {
         additionalFields: {
             role: {
-                type: "string",
+                type: Object.values(Roles),
+                required: false,
+                defaultValue: Roles.USER,
             },
             permissions: {
                 type: "json"

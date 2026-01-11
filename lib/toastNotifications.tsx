@@ -9,7 +9,7 @@ const successToast = (message: string) => {
       border: "1px solid #16A34A",
       height: "auto",
       borderRadius: "8px",
-      padding: "12px 16px",
+      padding: "4px 16px",
       boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
       fontSize: "12px",
     },
@@ -27,7 +27,7 @@ const errorToast = (message: string) => {
       border: isDark ? "1px solid #472625" : "1px solid #FEDAD9",
       height: "auto",
       borderRadius: "8px",
-      padding: "12px 16px",
+      padding: "4px 16px",
       boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
       fontSize: "12px",
       width: "fit-content",
@@ -55,7 +55,7 @@ const infoToast = (message: string) => {
       border: isDark ? "1px solid #6B7280" : "1px solid #A0AEC0", // Darker Gray border in Dark Mode, Lighter Gray border in Light Mode
       height: "auto", // Allow dynamic height based on content
       borderRadius: "8px", // Rounded corners to match ShopNex UI
-      padding: "12px 16px", // Consistent padding
+      padding: "4px 16px",
       boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
       fontSize: "12px", // Consistent font size with other toasts and UI
     },

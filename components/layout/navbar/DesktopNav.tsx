@@ -9,8 +9,9 @@ import { navLinks } from "@/constants/navlinks.constants";
 import Link from "next/link";
 import ContainerLayout from "../ContainerLayout";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import Logo from "@/components/ui/logo";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type Props = {
     isOpen: boolean
@@ -38,7 +39,9 @@ const DesktopNav: FC<Props> = ({
         setServicesOpen(false);
     }, [pathname]);
 
-    const router = useRouter()
+    const { lang }: { lang: string } = useParams()
+
+
 
     return (
         <motion.header
@@ -65,92 +68,97 @@ const DesktopNav: FC<Props> = ({
 
                         {/* Center nav links */}
                         <div className="hidden lg:flex items-center gap-1">
-                            {navLinks.map((link) => (
-                                <div
-                                    key={link.path}
-                                    className="relative"
-                                    onMouseEnter={() => link.hasDropdown && setServicesOpen(true)}
-                                    onMouseLeave={() => link.hasDropdown && setServicesOpen(false)}
-                                >
-                                    <MagneticButton strength={0.1}>
-                                        <Link
-                                            href={link.path}
-                                            className={`relative px-5 py-2 text-sm tracking-wide transition-colors group inline-flex items-center gap-1 ${pathname === link.path || (link.hasDropdown && pathname.startsWith('/services'))
-                                                ? "text-accent"
-                                                : "text-foreground/70 hover:text-foreground"
-                                                }`}
-                                        >
-                                            <span className="relative z-10">{link.name}</span>
-                                            {link.hasDropdown && (
-                                                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`} />
-                                            )}
-                                            {(pathname === link.path || (link.hasDropdown && pathname.startsWith('/services'))) && (
-                                                <motion.div
-                                                    layoutId="activeNav"
-                                                    className="absolute inset-0 bg-accent/10 border border-accent/20"
-                                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                                />
-                                            )}
-                                        </Link>
-                                    </MagneticButton>
+                            {navLinks.map((link) => {
+                                const path = `/${lang}${link.path}`
+                                return (
+                                    <div
+                                        key={link.path}
+                                        className="relative"
+                                        onMouseEnter={() => link.hasDropdown && setServicesOpen(true)}
+                                        onMouseLeave={() => link.hasDropdown && setServicesOpen(false)}
+                                    >
+                                        <MagneticButton strength={0.1}>
+                                            <Link
+                                                href={path}
+                                                className={`relative px-5 py-2 text-sm tracking-wide transition-colors group inline-flex items-center gap-1 ${pathname === path || (link.hasDropdown && pathname.startsWith(`/${lang}/services`))
+                                                    ? "text-accent"
+                                                    : "text-foreground/70 hover:text-foreground"
+                                                    }`}
+                                            >
+                                                <span className="relative z-10">{link.name}</span>
+                                                {link.hasDropdown && (
+                                                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`} />
+                                                )}
+                                                {(pathname === path || (link.hasDropdown && pathname.startsWith(`/${lang}/services`))) && (
+                                                    <motion.div
+                                                        layoutId="activeNav"
+                                                        className="absolute inset-0 bg-accent/10 border border-accent/20"
+                                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                    />
+                                                )}
+                                            </Link>
+                                        </MagneticButton>
 
-                                    {/* Services Dropdown */}
-                                    {link.hasDropdown && (
-                                        <AnimatePresence>
-                                            {servicesOpen && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: 10 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    exit={{ opacity: 0, y: 10 }}
-                                                    transition={{ duration: 0.2 }}
-                                                    className="absolute top-full left-0 pt-2 w-64"
-                                                >
-                                                    <div className="bg-background/95 backdrop-blur-xl border border-border shadow-xl">
-                                                        {serviceItems.map((service, i) => (
-                                                            <motion.div
-                                                                key={service.path}
-                                                                initial={{ opacity: 0, x: -10 }}
-                                                                animate={{ opacity: 1, x: 0 }}
-                                                                transition={{ delay: i * 0.05 }}
-                                                            >
+                                        {/* Services Dropdown */}
+                                        {link.hasDropdown && (
+                                            <AnimatePresence>
+                                                {servicesOpen && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: 10 }}
+                                                        transition={{ duration: 0.2 }}
+                                                        className="absolute top-full left-0 pt-2 w-64"
+                                                    >
+                                                        <div className="bg-background/95 backdrop-blur-xl border border-border shadow-xl">
+                                                            {serviceItems.map((service, i) => {
+                                                                const servicePath = `/${lang}${service.path}`
+                                                                return (
+                                                                    <motion.div
+                                                                        key={servicePath}
+                                                                        initial={{ opacity: 0, x: -10 }}
+                                                                        animate={{ opacity: 1, x: 0 }}
+                                                                        transition={{ delay: i * 0.05 }}
+                                                                    >
+                                                                        <Link
+                                                                            href={servicePath}
+                                                                            className={`block px-5 py-4 group transition-colors border-b border-border/50 last:border-b-0 hover:bg-accent/10 ${pathname === servicePath ? 'bg-accent/10' : ''
+                                                                                }`}
+                                                                        >
+                                                                            <span className={`block text-sm font-medium group-hover:text-accent transition-colors ${pathname === servicePath ? 'text-accent' : ''
+                                                                                }`}>
+                                                                                {service.name}
+                                                                            </span>
+                                                                            <span className="block text-xs text-muted-foreground mt-0.5">
+                                                                                {service.desc}
+                                                                            </span>
+                                                                        </Link>
+                                                                    </motion.div>
+                                                                )
+                                                            })}
+                                                            <div className="p-3 border-t border-border/50 bg-muted/30">
                                                                 <Link
-                                                                    href={service.path}
-                                                                    className={`block px-5 py-4 group transition-colors border-b border-border/50 last:border-b-0 hover:bg-accent/10 ${pathname === service.path ? 'bg-accent/10' : ''
-                                                                        }`}
+                                                                    href={`/${lang}/services`}
+                                                                    className="flex items-center justify-between text-xs font-medium text-muted-foreground hover:text-accent transition-colors"
                                                                 >
-                                                                    <span className={`block text-sm font-medium group-hover:text-accent transition-colors ${pathname === service.path ? 'text-accent' : ''
-                                                                        }`}>
-                                                                        {service.name}
-                                                                    </span>
-                                                                    <span className="block text-xs text-muted-foreground mt-0.5">
-                                                                        {service.desc}
-                                                                    </span>
+                                                                    View all services
+                                                                    <ArrowUpRight className="h-3 w-3" />
                                                                 </Link>
-                                                            </motion.div>
-                                                        ))}
-                                                        <div className="p-3 border-t border-border/50 bg-muted/30">
-                                                            <Link
-                                                                href="/services"
-                                                                className="flex items-center justify-between text-xs font-medium text-muted-foreground hover:text-accent transition-colors"
-                                                            >
-                                                                View all services
-                                                                <ArrowUpRight className="h-3 w-3" />
-                                                            </Link>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    )}
-                                </div>
-                            ))}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        )}
+                                    </div>
+                                )
+                            })}
                         </div>
 
-                        <div className="hidden lg:flex items-center gap-6">
-                            <ThemeToggle />
+                        <div className="hidden lg:flex items-center gap-4">
                             <MagneticButton strength={0.25}>
                                 <Link
-                                    href="/contact"
+                                    href={`/${lang}/contact`}
                                     data-cursor-text="Go"
                                     className="group inline-flex h-10 items-center gap-2 text-sm font-medium bg-foreground text-background px-6 py-3 hover:bg-accent hover:text-accent-foreground transition-all duration-300"
                                 >
@@ -158,6 +166,9 @@ const DesktopNav: FC<Props> = ({
                                     <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                 </Link>
                             </MagneticButton>
+                            <ThemeToggle />
+
+                            <LanguageSwitcher currentLang={lang} />
                         </div>
 
                         <div className="lg:hidden flex items-center gap-4">

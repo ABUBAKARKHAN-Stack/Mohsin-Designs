@@ -15,9 +15,7 @@ const RootProvider: FC<Props> = ({
     return (
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="mohsin-desings-theme" disableTransitionOnChange>
             <Toaster />
-
             {children}
-
         </ThemeProvider>
     )
 }

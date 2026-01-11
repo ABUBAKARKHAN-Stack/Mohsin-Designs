@@ -1,3 +1,5 @@
+"use client"
+
 import MagneticButton from '@/components/MagneticButton';
 import { APP_NAME } from '@/constants/app.constants';
 import { contactInfo } from '@/constants/contact-and-help.constants';
@@ -7,8 +9,9 @@ import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { Dispatch, FC, SetStateAction } from 'react';
-import logo from "@/assets/logo.webp";
 import ThemeToggle from '@/components/ui/theme-toggle';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useParams } from 'next/navigation';
 
 type Props = {
     isOpen: boolean;
@@ -16,6 +19,8 @@ type Props = {
 };
 
 export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
+    const { lang }: { lang: string } = useParams()
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -38,7 +43,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                                 <motion.img
                                     src={"/assets/logo.webp"}
                                     alt={APP_NAME}
-                                    className="h-16 sm:h-20 w-auto object-contain "
+                                    className="h-16 sm:h-20 w-auto object-contain dark:invert invert-0 "
                                     whileHover={{ scale: 1.05 }}
                                 />
                             </Link>
@@ -56,6 +61,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                             </MagneticButton>
                         </div>
                     </motion.div>
+                    <LanguageSwitcher currentLang={lang} />
 
                     {/* Navigation */}
                     <nav className="flex flex-col items-center gap-6">
@@ -67,7 +73,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                                     transition={{ delay: 0.1 + i * 0.08 }}
                                 >
                                     <Link
-                                        href={link.path}
+                                        href={`/${lang}${link.path}`}
                                         onClick={() => setIsOpen(false)}
                                         className="
                                             font-display
@@ -98,7 +104,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                                         {serviceItems.map(service => (
                                             <Link
                                                 key={service.path}
-                                                href={service.path}
+                                                href={`/${lang}${service.path}`}
                                                 onClick={() => setIsOpen(false)}
                                                 className="
                                                     text-xs
@@ -124,7 +130,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                             transition={{ delay: 0.1 + navLinks.length * 0.08 }}
                         >
                             <Link
-                                href="/contact"
+                                href={`/${lang}/contact`}
                                 onClick={() => setIsOpen(false)}
                                 className="
                                     font-display

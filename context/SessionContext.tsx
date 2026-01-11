@@ -5,7 +5,7 @@ import { authClient } from "@/lib/auth-client";
 import { errorToast, successToast } from "@/lib/toastNotifications";
 import { LoadingStates } from "@/types/auth.types";
 import { useRouter } from "next/navigation";
-import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction, useEffect } from "react";
+import { createContext, useContext, ReactNode, useState } from "react";
 
 interface SessionContextType {
     session: Session;

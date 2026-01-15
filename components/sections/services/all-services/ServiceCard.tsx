@@ -1,12 +1,15 @@
 "use client"
 
-import { services } from "@/constants/services.constants";
+import { urlFor } from "@/sanity/lib/image";
+import { ServiceData } from "@/types/services.types";
 import { ArrowUpRight } from "lucide-react";
 import { useScroll, useTransform, motion } from "motion/react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useRef } from "react";
 
-const ServiceCard = ({ service, index }: { service: typeof services[0]; index: number }) => {
+const ServiceCard = ({ service, index }: { service: ServiceData; index: number }) => {
+    const {lang}: LanguageType = useParams()
     const ref = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: ref,
@@ -17,9 +20,11 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
     const y = useTransform(scrollYProgress, [0, 0.3], [30, 0]);
     const imageScale = useTransform(scrollYProgress, [0, 0.5], [1.1, 1]);
 
+    const imageSrc = urlFor(service.heroImage.source).url()
+    
 
     return (
-        <Link href={service.path}>
+        <Link href={`/${lang}/services/${service.slug}`}>
             <motion.div
                 ref={ref}
                 style={{ opacity, y }}
@@ -35,7 +40,7 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
 
                         {/* Service Number - Mobile Only */}
                         <div className="md:hidden flex items-center gap-3 mb-2">
-                            <span className="text-accent font-mono text-sm font-semibold tracking-wider">{service.number}</span>
+                            <span className="text-accent font-mono text-sm font-semibold tracking-wider">{index++}</span>
                             <span className="h-px w-8 bg-accent/50" />
                         </div>
 
@@ -44,8 +49,8 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
                             <div className="relative aspect-4/3 overflow-hidden rounded-xl shadow-lg group-hover:shadow-2xl group-hover:shadow-accent/10 transition-all duration-500">
                                 <motion.img
                                     style={{ scale: imageScale }}
-                                    src={service.image}
-                                    alt={service.title}
+                                    src={imageSrc}
+                                    alt={service.heroImage.alt}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
 
@@ -55,7 +60,7 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
                                 {/* Number badge - Desktop Only */}
                                 <div className="hidden md:flex absolute bottom-4 left-4 items-center gap-2">
                                     <span className="text-sm tracking-widest text-accent font-mono font-bold bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-accent/20">
-                                        {service.number}
+                                        {index++}
                                     </span>
                                 </div>
 
@@ -80,7 +85,7 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
                         {/* Items */}
                         <div className="md:col-span-3">
                             <ul className="grid grid-cols-2 md:grid-cols-1 gap-2 md:gap-3">
-                                {service.features.map((item, i) => (
+                                {service.items.map((item, i) => (
                                     <motion.li
                                         key={item}
                                         initial={{ opacity: 0, x: 20 }}

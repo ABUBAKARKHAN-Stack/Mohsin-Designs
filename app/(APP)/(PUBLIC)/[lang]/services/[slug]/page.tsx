@@ -15,22 +15,101 @@ import {
     IntroSection,
     ServiceBlogs,
 } from "@/components/sections/services/service-details/";
-import { servicesData } from "@/data/service.data";
-import { redirect } from "next/navigation";
+import { APP_NAME, BASE_URL } from "@/constants/app.constants";
+import { SUPPORTED_LANGS } from "@/constants/lang";
+import { getServiceByLocale, getServicesCTA, getServiceSeoByLocale, getServicesForSSG } from "@/helpers/service.helpers";
+import { urlFor } from "@/sanity/lib/image";
+import { Metadata, ResolvingMetadata } from "next";
+import { notFound } from "next/navigation";
 
 
 type Props = {
-    params: Promise<{ slug: string }>
+    params: Promise<{ lang: string, slug: string }>
+}
+
+export async function generateStaticParams() {
+    const services = await getServicesForSSG()
+    return services.flatMap((s) => SUPPORTED_LANGS.map(lang => ({ lang, slug: s.slug })))
+}
+
+export async function generateMetadata(
+    { params }: Props,
+    _parent: ResolvingMetadata,
+): Promise<Metadata> {
+    const { slug, lang } = await params;
+    const service = await getServiceSeoByLocale(lang, slug);
+
+    if (!service) {
+        return {
+            title: "Service Not Found",
+            description: "The requested service does not exist.",
+            robots: { index: false },
+        };
+    }
+
+    const title = service.seo.metaTitle;
+    const description =
+        service.seo.metaDescription;
+    const imageUrl = urlFor(service.heroImage.source)
+        .quality(85)
+        .width(1200)
+        .fit("clip")
+        .format("jpg")
+        .url();
+    const imageAlt = service.heroImage.alt;
+    const servicesBaseUrl = `/${lang}/services/${slug}`;
+
+    return {
+        title,
+        description,
+        keywords: service.seo.keywords,
+        publisher: APP_NAME,
+        openGraph: {
+            title,
+            description,
+            images: [
+                {
+                    url: imageUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: imageAlt || title,
+                },
+            ],
+            type: "article",
+            siteName: APP_NAME,
+            url: servicesBaseUrl,
+        },
+        twitter: {
+            title,
+            description,
+            images: [
+                {
+                    url: imageUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: imageAlt || title,
+                },
+            ],
+            card: "summary_large_image",
+            site: BASE_URL,
+            creator: APP_NAME,
+        },
+        alternates: {
+            canonical: servicesBaseUrl,
+        },
+    };
 }
 
 const ServiceDetailPage = async ({
     params
 }: Props) => {
-    const { slug } = await params;
-    const service = slug ? servicesData[slug as keyof typeof servicesData] : null;
+    const { slug, lang } = await params;
+    const service = await getServiceByLocale(lang, slug);
+     const cta = await getServicesCTA(lang)
+
 
     if (!service) {
-        return redirect("/services",);
+        return notFound();
     }
 
 
@@ -49,12 +128,12 @@ const ServiceDetailPage = async ({
 
             <HeroImage
                 heroImage={service.heroImage}
-                title={service.title}
             />
 
             {/* Introduction of service Section */}
 
             <IntroSection
+                introTagLine={service.introTagLine}
                 introTitle={service.introTitle}
                 introContent={service.introContent}
                 roleTitle={service.roleTitle}
@@ -64,26 +143,28 @@ const ServiceDetailPage = async ({
             {/* How we help  Section */}
 
             <HowWeHelpSection
-                title={service.howWeHelpTitle}
                 points={service.howWeHelpPoints}
+                howWeHelpSectionHeader={service.howWeHelpSection}
             />
 
             {/* Overview Of Service Section */}
 
             <ServiceOverview
-                serviceOverview={service.overview}
+                serviceOverviewSectionHeader={service.overviewSection}
                 features={service.items}
             />
 
             {/* Service Process TIMELINE Section */}
 
             <ServiceProcess
+                processSectionHeader={service.processSection}
                 process={service.process}
             />
 
             {/* Areas We Serve Section */}
 
             <AreasWeServeSection
+                areasWeServeSectionHeader={service.areasSection}
                 areas={service.areas}
             />
 
@@ -91,30 +172,36 @@ const ServiceDetailPage = async ({
             {/* Industries Section */}
 
             <IndustriesSection
+                industriesSectionHeader={service.industriesSection}
                 industries={service.industries}
             />
 
 
-            {/* Service Benifits Section  (Why Choose US)*/}
+            {/* Service Benifits  & Why Choose US Section*/}
 
             <ServiceBenefits
-                points={service.howWeHelpPoints}
+                whyChooseUsSectionHeading={service.whyChooseUsSection}
+                whyChooseUsPoints={service.whyChooseUsPoints}
+                benifitsSectionHeading={service.benifitsSection}
                 benefits={service.benefits}
             />
 
             {/* Case Studies Section */}
 
             <CaseStudiesSection
+                caseStudiesSectionHeader={service.caseStudiesSection}
                 caseStudies={service.caseStudies}
             />
 
             {/* FAQ Section */}
             <FAQSection
+                faqsSectionHeader={service.faqsSection}
                 faqs={service.faqs}
             />
 
             {/* Service CTA Section */}
             <CTA
+            cta={cta}
             />
 
             <ServiceBlogs

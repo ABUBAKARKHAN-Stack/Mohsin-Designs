@@ -43,16 +43,20 @@ export const localizedText = defineType({
       name: 'ur',
       type: 'text',
       title: 'Urdu',
+        rows: 3,
     }),
     defineField({
       name: 'es',
       type: 'text',
       title: 'Spanish',
+        rows: 3,
     }),
     defineField({
       name: 'ar',
       type: 'text',
       title: 'Arabic',
+        rows: 3,
     }),
   ],
+  
 })

@@ -12,6 +12,8 @@ import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import Logo from "@/components/ui/logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { uiT } from "@/i18n";
+import { useServices } from "@/context/ServiceContext";
 
 type Props = {
     isOpen: boolean
@@ -39,8 +41,8 @@ const DesktopNav: FC<Props> = ({
         setServicesOpen(false);
     }, [pathname]);
 
-    const { lang }: { lang: string } = useParams()
-
+    const { lang }: LanguageType = useParams();
+    const { lightWeightServices } = useServices()
 
 
     return (
@@ -56,7 +58,7 @@ const DesktopNav: FC<Props> = ({
                     <div className="flex items-center justify-between">
 
                         <MagneticButton strength={0.2}>
-                            <Link href="/" className="relative z-50">
+                            <Link href={`/${lang}`} className="relative z-50">
                                 <motion.div
                                     whileHover={{ scale: 1.05 }}
                                 >
@@ -85,7 +87,7 @@ const DesktopNav: FC<Props> = ({
                                                     : "text-foreground/70 hover:text-foreground"
                                                     }`}
                                             >
-                                                <span className="relative z-10">{link.name}</span>
+                                                <span className="relative z-10">{uiT(lang, `navigation.${link.name.toLowerCase().trim()}`)}</span>
                                                 {link.hasDropdown && (
                                                     <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`} />
                                                 )}
@@ -111,8 +113,8 @@ const DesktopNav: FC<Props> = ({
                                                         className="absolute top-full left-0 pt-2 w-64"
                                                     >
                                                         <div className="bg-background/95 backdrop-blur-xl border border-border shadow-xl">
-                                                            {serviceItems.map((service, i) => {
-                                                                const servicePath = `/${lang}${service.path}`
+                                                            {lightWeightServices.map((service, i) => {
+                                                                const servicePath = `/${lang}/services/${service.slug}`
                                                                 return (
                                                                     <motion.div
                                                                         key={servicePath}
@@ -127,10 +129,10 @@ const DesktopNav: FC<Props> = ({
                                                                         >
                                                                             <span className={`block text-sm font-medium group-hover:text-accent transition-colors ${pathname === servicePath ? 'text-accent' : ''
                                                                                 }`}>
-                                                                                {service.name}
+                                                                                {service.title}
                                                                             </span>
                                                                             <span className="block text-xs text-muted-foreground mt-0.5">
-                                                                                {service.desc}
+                                                                                {service.items.slice(0, 2).join(" ")}
                                                                             </span>
                                                                         </Link>
                                                                     </motion.div>
@@ -141,7 +143,7 @@ const DesktopNav: FC<Props> = ({
                                                                     href={`/${lang}/services`}
                                                                     className="flex items-center justify-between text-xs font-medium text-muted-foreground hover:text-accent transition-colors"
                                                                 >
-                                                                    View all services
+                                                                    {uiT(lang, "common.viewAllServices")}
                                                                     <ArrowUpRight className="h-3 w-3" />
                                                                 </Link>
                                                             </div>
@@ -162,7 +164,7 @@ const DesktopNav: FC<Props> = ({
                                     data-cursor-text="Go"
                                     className="group inline-flex h-10 items-center gap-2 text-sm font-medium bg-foreground text-background px-6 py-3 hover:bg-accent hover:text-accent-foreground transition-all duration-300"
                                 >
-                                    Start a Project
+                                    {uiT(lang, "common.startProject")}
                                     <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                 </Link>
                             </MagneticButton>

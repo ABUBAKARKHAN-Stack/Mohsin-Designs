@@ -6,6 +6,8 @@ import SectionHeading from "@/components/ui/section-heading";
 import { ContainerLayout } from "@/components/layout";
 import { cn } from "@/lib/utils";
 import { areas } from "@/constants/stats.constants";
+import { uiT } from "@/i18n";
+import { useParams } from "next/navigation";
 
 
 
@@ -20,6 +22,7 @@ const AreasWeServe = () => {
 
     const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
     const globeRotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
+    const { lang }: LanguageType = useParams()
 
     return (
         <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-muted/30 relative overflow-hidden">
@@ -190,17 +193,19 @@ const AreasWeServe = () => {
                                     <Globe className="w-7 h-7 text-accent" />
                                 </div>
                                 <div>
-                                    <h4 className="text-lg font-display font-bold">Don't see your location?</h4>
-                                    <p className="text-muted-foreground text-sm">We work with clients worldwide. Let's connect!</p>
+                                    <h4 className="text-lg font-display font-bold">{uiT(lang, 'common.areasCta.title')}</h4>
+                                    <p className="text-muted-foreground text-sm">
+                                        {uiT(lang, 'common.areasCta.description')}
+                                    </p>
                                 </div>
                             </div>
                             <motion.a
-                                href="/contact"
+                                href={`/${lang}/contact`}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="px-8 py-3 bg-accent text-accent-foreground font-medium rounded-full flex items-center gap-2 shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-shadow"
                             >
-                                <span>Get in Touch</span>
+                                <span>{uiT(lang, 'common.getInTouch')}</span>
                                 <ArrowRight className="w-4 h-4" />
                             </motion.a>
                         </div>

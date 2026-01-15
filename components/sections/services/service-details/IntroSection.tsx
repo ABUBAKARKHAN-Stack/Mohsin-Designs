@@ -3,13 +3,14 @@ import { ContainerLayout } from "@/components/layout";
 import { motion } from "motion/react";
 
 interface IntroSectionProps {
+    introTagLine:string
     introTitle: string;
     introContent: string;
     roleTitle: string;
     roleContent: string[];
 }
 
-const IntroSection = ({ introTitle, introContent, roleTitle, roleContent }: IntroSectionProps) => {
+const IntroSection = ({ introTitle, introContent, roleTitle, roleContent, introTagLine }: IntroSectionProps) => {
     return (
         <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
 
@@ -30,7 +31,7 @@ const IntroSection = ({ introTitle, introContent, roleTitle, roleContent }: Intr
                     className="max-w-4xl mx-auto mb-20"
                 >
                     <span className="inline-block text-accent text-xs tracking-[0.3em] font-medium mb-6 uppercase">
-                        Why It Matters
+                        {introTagLine}
                     </span>
                     <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-8">
                         {introTitle}<span className="text-accent">.</span>

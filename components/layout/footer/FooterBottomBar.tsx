@@ -8,10 +8,6 @@ const FooterBottomBar = () => {
             <p className="text-xs text-muted-foreground">
                 © {currentYear} Mohsin Designs. All rights reserved.
             </p>
-            <div className="flex items-center gap-6 text-xs text-muted-foreground">
-                <a href="#" className="hover:text-accent transition-colors">Privacy Policy</a>
-                <a href="#" className="hover:text-accent transition-colors">Terms of Service</a>
-            </div>
         </div>
     )
 }

@@ -2,23 +2,26 @@
 
 import { ArrowUpRight, Mail, Phone, MapPin } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
-import logo from "@/assets/logo.webp";
-import { serviceItems } from "@/constants/services.constants";
 import { navLinks } from "@/constants/navlinks.constants";
 import { socials } from "@/constants/social.constants";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Logo from "@/components/ui/logo";
+import { useServices } from "@/context/ServiceContext";
+import { useParams } from "next/navigation";
+import { uiT } from "@/i18n";
 
 const FooterMainGrid = () => {
+    const { lightWeightServices } = useServices()
+    const { lang }: LanguageType = useParams()
     return (
         <div className="grid lg:grid-cols-4 grid-cols-1 gap-12 mb-16">
 
             {/* Brand */}
             <div className="md:col-span-1">
-                
+
                 <Logo
-                className="h-16 w-auto mb-6"
+                    className="h-16 w-auto mb-6"
                 />
                 <p className="text-sm text-muted-foreground leading-relaxed">
                     A creative design agency crafting memorable brands and digital experiences that drive results.
@@ -27,7 +30,7 @@ const FooterMainGrid = () => {
 
             {/* Navigation */}
             <div>
-                <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Navigation</h4>
+                <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">{uiT(lang, "common.navigation")}</h4>
                 <ul className="space-y-4">
                     {[
                         ...navLinks,
@@ -35,10 +38,10 @@ const FooterMainGrid = () => {
                     ].map((item) => (
                         <li key={item.name}>
                             <Link
-                                href={item.path}
+                                href={`/${lang}${item.path}`}
                                 className="text-sm text-foreground/70 hover:text-accent transition-colors inline-flex items-center gap-2 group"
                             >
-                                {item.name}
+                                {uiT(lang, `navigation.${item.name.toLowerCase().trim()}`)}
                                 <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                             </Link>
                         </li>
@@ -48,15 +51,15 @@ const FooterMainGrid = () => {
 
             {/* Services */}
             <div>
-                <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Services</h4>
+                <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">{uiT(lang, "common.services")}</h4>
                 <ul className="space-y-4">
-                    {serviceItems.map((item) => (
-                        <li key={item.name}>
+                    {lightWeightServices.map((item) => (
+                        <li key={item.slug}>
                             <Link
-                                href={item.path}
+                                href={`/${lang}/services/${item.slug}`}
                                 className="text-sm text-foreground/70 hover:text-accent transition-colors inline-flex items-center gap-2 group"
                             >
-                                {item.name}
+                                {item.title}
                                 <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                             </Link>
                         </li>
@@ -66,7 +69,7 @@ const FooterMainGrid = () => {
 
             {/* Contact */}
             <div>
-                <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Get in Touch</h4>
+                <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">{uiT(lang, "common.getInTouch")}</h4>
                 <ul className="space-y-4">
                     <li>
                         <a href="mailto:hello@mohsindesigns.com" className="flex items-center gap-3 text-sm text-foreground/70 hover:text-accent transition-colors">

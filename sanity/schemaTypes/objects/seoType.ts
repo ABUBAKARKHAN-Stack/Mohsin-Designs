@@ -24,7 +24,7 @@ export const seoType = defineType({
       name: 'keywords',
       type: 'array',
       title: 'Keywords',
-      of: [{ type: 'string' }],
+      of: [{ type: 'localizedString' }],
       options: {
         layout: 'tags',
       },

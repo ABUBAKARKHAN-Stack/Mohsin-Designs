@@ -3,8 +3,11 @@
 import { motion } from "motion/react";
 import { Phone } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { uiT } from "@/i18n";
 
 const FloatingContactBadge = () => {
+  const { lang }: LanguageType = useParams()
   return (
     <motion.div
       initial={{ x: 100, opacity: 0 }}
@@ -12,23 +15,23 @@ const FloatingContactBadge = () => {
       transition={{ delay: 1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden lg:block"
     >
-        <Link
-          href="/contact"
-          className="group flex flex-col items-center gap-3 hover:bg-foreground hover:text-secondary-foreground px-3 py-6 shadow-lg bg-accent text-accent-foreground transition-colors duration-300"
+      <Link
+        href="/contact"
+        className="group flex flex-col items-center gap-3 hover:bg-foreground hover:text-secondary-foreground px-3 py-6 shadow-lg bg-accent text-accent-foreground transition-colors duration-300"
+      >
+        <motion.div
+          animate={{ y: [0, -3, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
         >
-          <motion.div
-            animate={{ y: [0, -3, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          >
-            <Phone className="h-5 w-5" />
-          </motion.div>
-          <span 
-            className="text-xs font-bold uppercase tracking-widest"
-            style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
-          >
-            Get in Touch
-          </span>
-        </Link>
+          <Phone className="h-5 w-5" />
+        </motion.div>
+        <span
+          className="text-xs font-bold uppercase tracking-widest"
+          style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
+        >
+          {uiT(lang,"common.getInTouch")}
+        </span>
+      </Link>
     </motion.div>
   );
 };

@@ -8,6 +8,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ContainerLayout } from "@/components/layout";
+import { SectionHeadingType } from "@/types/services.types";
 
 interface FAQ {
     question: string;
@@ -16,9 +17,12 @@ interface FAQ {
 
 interface FAQSectionProps {
     faqs: FAQ[];
+    faqsSectionHeader: SectionHeadingType
+
+
 }
 
-const FAQSection = ({ faqs }: FAQSectionProps) => {
+const FAQSection = ({ faqs, faqsSectionHeader }: FAQSectionProps) => {
     return (
         <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
 
@@ -35,13 +39,13 @@ const FAQSection = ({ faqs }: FAQSectionProps) => {
                     className="max-w-3xl mx-auto text-center mb-16"
                 >
                     <span className="inline-block text-accent text-xs tracking-[0.3em] font-medium mb-6 uppercase">
-                        FAQs
+                        {faqsSectionHeader.eyebrow}
                     </span>
                     <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight">
-                        Frequently Asked Questions<span className="text-accent">.</span>
+                        {faqsSectionHeader.title}<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-                        Got questions? We've got answers. Here's what you need to know.
+                        {faqsSectionHeader.description}
                     </p>
                 </motion.div>
 

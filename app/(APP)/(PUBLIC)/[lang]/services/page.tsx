@@ -8,13 +8,25 @@ import {
     ServicesPageHero,
     WhyWorkWithUs
 } from '@/components/sections/services/all-services'
+import { getServicesCTA } from '@/helpers/service.helpers'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
     title: "Our Services"
 }
 
-const ServicesPage = () => {
+type Props = {
+    params: Promise<LanguageType>
+}
+
+const ServicesPage = async ({
+    params
+}: Props) => {
+
+    const { lang } = await params;
+    const cta = await getServicesCTA(lang);
+
+
     return (
         <PageWrapper>
             <ServicesPageHero />
@@ -22,7 +34,7 @@ const ServicesPage = () => {
             <AllServices />
             <ProcessTimeline />
             <WhyWorkWithUs />
-            <CTA />
+            <CTA cta={cta} />
             <BlogPreview />
         </PageWrapper>
     )

@@ -29,14 +29,25 @@ export interface Areas {
   flag: string;
 }
 
+export interface SanityImage {
+  alt: string;
+  source: string
+}
+
+export interface SectionHeadingType {
+  eyebrow?: string;
+  title: string;
+  description?: string
+}
 export interface ServiceData {
-  number: string;
+  slug: string;
   title: string;
   subtitle: string;
   description: string;
-  heroImage: string;
+  heroImage: SanityImage;
 
   // Intro Section
+  introTagLine: string
   introTitle: string;
   introContent: string;
 
@@ -45,29 +56,51 @@ export interface ServiceData {
   roleContent: string[];
 
   // How We Help Section
-  howWeHelpTitle: string;
+
+  howWeHelpSection: SectionHeadingType;
   howWeHelpPoints: { title: string; description: string }[];
 
   // Overview
-  overview: string;
+  overviewSection: SectionHeadingType;
   items: string[];
 
   // Benefits/Why Choose Us
+  benifitsSection: SectionHeadingType;
   benefits: string[];
+  whyChooseUsSection: SectionHeadingType;
   whyChooseUsPoints: { title: string; description: string }[];
 
   // Process
+  processSection: SectionHeadingType;
   process: ServiceProcess[];
 
   // Industries
+  industriesSection: SectionHeadingType
   industries: Industry[];
 
   // Areas 
+  areasSection: SectionHeadingType
   areas: Areas[]
 
   // Case Studies
+  caseStudiesSection: SectionHeadingType;
   caseStudies: CaseStudy[];
 
   // FAQs
+  faqsSection: SectionHeadingType
   faqs: FAQ[];
+}
+
+export interface ServiceCTA {
+  badgeText:string;
+  title:string;
+  description:string;
+  url:string;
+  buttonText:string
+}
+
+export interface ServiceLightWeight {
+title:string;
+items:string[];
+slug:string
 }

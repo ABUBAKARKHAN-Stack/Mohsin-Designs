@@ -10,6 +10,9 @@ import { heroSectionType } from './document/heroSection'
 import { whatWeDoSectionType } from './document/whatWeDoSection'
 import { pageType } from './document/pageType'
 import { serviceType } from './document/serviceType'
+import { sectionHeadingType } from './objects/sectionHeadingType'
+import { serviceCtaType } from './document/serviceCtaType'
+import { localizedUrl } from './objects/localizedUrlType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -19,10 +22,13 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     authorType,
     localizedString,
     localizedText,
+    localizedUrl,
+    sectionHeadingType,
     seoType,
     heroSectionType,
     whatWeDoSectionType,
     pageType,
-    serviceType
+    serviceType,
+    serviceCtaType
   ],
 }

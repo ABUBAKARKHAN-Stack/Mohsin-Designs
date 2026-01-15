@@ -1,13 +1,14 @@
 "use client"
 
-import { services } from "@/constants/services.constants";
 import { ContainerLayout } from "../../../layout";
 import ServiceCard from "./ServiceCard";
 import BGDecorations from "./BG-Decorations";
 import SectionHeading from "@/components/ui/section-heading";
+import { useServices } from "@/context/ServiceContext";
 
 
 const AllServices = () => {
+  const { services } = useServices()
 
   return (
 
@@ -27,9 +28,12 @@ const AllServices = () => {
 
         {/* Services List */}
         <div className="space-y-0">
-          {services.map((service, i) => (
-            <ServiceCard key={service.number} service={service} index={i} />
-          ))}
+          {services.map((service, i) => {
+
+            return (
+              <ServiceCard key={`${service.title}-${i}`} service={service} index={i} />
+            )
+          })}
         </div>
 
       </ContainerLayout>

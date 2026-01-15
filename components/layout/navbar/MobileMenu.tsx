@@ -12,6 +12,8 @@ import { Dispatch, FC, SetStateAction } from 'react';
 import ThemeToggle from '@/components/ui/theme-toggle';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useParams } from 'next/navigation';
+import { uiT } from '@/i18n';
+import { useServices } from '@/context/ServiceContext';
 
 type Props = {
     isOpen: boolean;
@@ -19,7 +21,8 @@ type Props = {
 };
 
 export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
-    const { lang }: { lang: string } = useParams()
+    const { lang }: LanguageType = useParams();
+    const { lightWeightServices } = useServices()
 
     return (
         <AnimatePresence>
@@ -39,7 +42,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                         className="flex justify-between items-center w-full text-background/50 text-xs sm:text-sm tracking-[0.2em]"
                     >
                         <MagneticButton strength={0.2}>
-                            <Link href="/" className="relative z-50">
+                            <Link href={`/${lang}`} className="relative z-50">
                                 <motion.img
                                     src={"/assets/logo.webp"}
                                     alt={APP_NAME}
@@ -89,7 +92,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                                             transition-colors
                                         "
                                     >
-                                        {link.name}
+                                        {uiT(lang, `navigation.${link.name.toLowerCase().trim()}`)}
                                     </Link>
                                 </motion.div>
 
@@ -101,10 +104,10 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                                         transition={{ delay: 0.2 + i * 0.08 }}
                                         className="flex flex-wrap justify-center gap-x-4 gap-y-2 max-w-sm mt-4"
                                     >
-                                        {serviceItems.map(service => (
+                                        {lightWeightServices.map(service => (
                                             <Link
-                                                key={service.path}
-                                                href={`/${lang}${service.path}`}
+                                                key={service.slug}
+                                                href={`/${lang}/${service.slug}`}
                                                 onClick={() => setIsOpen(false)}
                                                 className="
                                                     text-xs
@@ -115,7 +118,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                                                     transition-colors
                                                 "
                                             >
-                                                {service.name}
+                                                {service.title}
                                             </Link>
                                         ))}
                                     </motion.div>
@@ -146,7 +149,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                                     transition-colors
                                 "
                             >
-                                Contact
+                                {uiT(lang, 'common.startProject')}
                             </Link>
                         </motion.div>
                     </nav>
@@ -163,8 +166,8 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                             sm:text-xs
                             tracking-[0.25em]
                             uppercase
-                               hover:text-accent/50
-                                    transition-colors
+                            hover:text-accent/50
+                            transition-colors
                         "
                     >
                         {contactInfo.mail}

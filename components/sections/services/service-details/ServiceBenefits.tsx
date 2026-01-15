@@ -3,15 +3,23 @@
 import { motion } from "motion/react";
 import { Check, Award, Users, Clock, Shield } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
+import { SectionHeadingType } from "@/types/services.types";
 
 interface ServiceBenefitsProps {
+  benifitsSectionHeading: SectionHeadingType;
   benefits: string[];
-  points: { title: string; description: string }[];
+  whyChooseUsSectionHeading: SectionHeadingType;
+  whyChooseUsPoints: { title: string; description: string }[];
 }
 
 const icons = [Award, Users, Clock, Shield];
 
-const ServiceBenefitsSection = ({ benefits, points }: ServiceBenefitsProps) => {
+const ServiceBenefitsSection = ({
+  benefits,
+  benifitsSectionHeading,
+  whyChooseUsPoints,
+  whyChooseUsSectionHeading
+}: ServiceBenefitsProps) => {
   return (
     <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
 
@@ -19,7 +27,7 @@ const ServiceBenefitsSection = ({ benefits, points }: ServiceBenefitsProps) => {
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-150 h-150 bg-accent/5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
       </div>
-      
+
       <ContainerLayout className="relative">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
 
@@ -31,12 +39,15 @@ const ServiceBenefitsSection = ({ benefits, points }: ServiceBenefitsProps) => {
             transition={{ duration: 0.6 }}
           >
             <span className="inline-block text-accent text-xs tracking-[0.3em] font-medium mb-6 uppercase">
-              The Benefits
+              {benifitsSectionHeading.eyebrow}
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-10">
-              What You Get<span className="text-accent">.</span>
+              {benifitsSectionHeading.title}<span className="text-accent">.</span>
             </h2>
-            
+            <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
+              {benifitsSectionHeading.description}
+            </p>
+
             <div className="space-y-4">
               {benefits.map((benefit, index) => (
                 <motion.div
@@ -57,7 +68,7 @@ const ServiceBenefitsSection = ({ benefits, points }: ServiceBenefitsProps) => {
               ))}
             </div>
           </motion.div>
-          
+
           {/* Why Choose Us Points */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
@@ -66,14 +77,18 @@ const ServiceBenefitsSection = ({ benefits, points }: ServiceBenefitsProps) => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <span className="inline-block text-accent text-xs tracking-[0.3em] font-medium mb-6 uppercase">
-              Why Choose Us
+              {whyChooseUsSectionHeading.eyebrow}
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-10">
-              Our Difference<span className="text-accent">.</span>
+              {whyChooseUsSectionHeading.title}<span className="text-accent">.</span>
             </h2>
-            
+            <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
+              {whyChooseUsSectionHeading.description}
+            </p>
+
+
             <div className="space-y-6">
-              {points.map((point, index) => {
+              {whyChooseUsPoints.map((point, index) => {
                 const Icon = icons[index % icons.length];
                 return (
                   <motion.div

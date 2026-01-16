@@ -13,6 +13,7 @@ import { serviceType } from './document/serviceType'
 import { sectionHeadingType } from './objects/sectionHeadingType'
 import { serviceCtaType } from './document/serviceCtaType'
 import { localizedUrl } from './objects/localizedUrlType'
+import { siteSettings } from './document/siteSettingsType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -29,6 +30,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     whatWeDoSectionType,
     pageType,
     serviceType,
-    serviceCtaType
+    serviceCtaType,
+    siteSettings,
   ],
 }

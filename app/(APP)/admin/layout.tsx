@@ -5,6 +5,7 @@ import { SessionProvider } from '@/context/SessionContext'
 import { getServerSession } from '@/helpers/getServerSession'
 import { auth } from '@/lib/auth'
 import AdminProvider from '@/provider/AdminProvider'
+import { SanityLive } from '@/sanity/lib/live'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Metadata } from 'next'
 import { headers } from 'next/headers'
@@ -23,7 +24,7 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
 
     const session = await getServerSession()
 
-   
+
     if (!session) redirect("/")
 
     return (
@@ -37,6 +38,7 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
                     </main>
                 </SidebarInset>
             </div>
+            <SanityLive />
         </AdminProvider>
     )
 }

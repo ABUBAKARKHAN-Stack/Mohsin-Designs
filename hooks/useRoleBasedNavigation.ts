@@ -9,72 +9,138 @@ import {
     Settings,
     User,
     Users,
+    Briefcase,
+    FolderOpen,
+    Wrench,
 } from "lucide-react";
 
-export const useRoleBasedNavigation = (role: Roles) => {
-    const baseNavigationItems = [
-        { title: "Website", url: "/", icon: Globe },
-        { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+export interface NavigationGroup {
+    label: string;
+    items: {
+        title: string;
+        url: string;
+        icon: any;
+    }[];
+}
+
+export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
+    const baseNavigationItems: NavigationGroup[] = [
+        {
+            label: "Navigation",
+            items: [
+                { title: "Website", url: "/", icon: Globe },
+                { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+            ]
+        }
     ];
 
-    const adminNavigation = [
-        ...baseNavigationItems,
-        { title: "Users", url: "/users", icon: Users },
-
-        //* Pages & Content
-        { title: "Pages", url: "/pages", icon: FileText },
-        { title: "Services", url: "/services", icon: Layers },
-        { title: "Blogs", url: "/blogs", icon: FileText },
-        { title: "Portfolio", url: "/portfolio", icon: Image },
-
-        //* Reusable
-        { title: "Sections", url: "/sections", icon: Layers },
-
-        //* SEO & Media
-        { title: "SEO", url: "/seo", icon: Search },
-        { title: "Media", url: "/media", icon: Image },
-
-        //* System
-        { title: "Settings", url: "/settings", icon: Settings },
-        { title: "Profile", url: "/profile", icon: User },
+    const adminNavigation: NavigationGroup[] = [
+        {
+            label: "Navigation",
+            items: [
+                { title: "Website", url: "/", icon: Globe },
+                { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "Content Management",
+            items: [
+                { title: "Pages", url: "/admin/pages", icon: FileText },
+                { title: "Blogs", url: "/admin/blogs", icon: FileText },
+                { title: "Portfolio", url: "/admin/portfolio", icon: Image },
+                { title: "Sections", url: "/admin/sections", icon: Layers },
+            ]
+        },
+        {
+            label: "Services",
+            items: [
+                { title: "Services", url: "/admin/services", icon: Briefcase },
+            ]
+        },
+        {
+            label: "Media & SEO",
+            items: [
+                { title: "Media", url: "/admin/media", icon: FolderOpen },
+                { title: "SEO", url: "/admin/seo", icon: Search },
+            ]
+        },
+        {
+            label: "Settings",
+            items: [
+                { title: "Users", url: "/admin/users", icon: Users },
+                { title: "Site Settings", url: "/admin/settings", icon: Wrench },
+                { title: "Profile", url: "/admin/profile", icon: User },
+            ]
+        },
     ];
 
-    const contentWriterNavigation = [
-        ...baseNavigationItems,
-
-        //* Content Editing (Draft Only)
-        { title: "Pages", url: "/pages", icon: FileText },
-        { title: "Services", url: "/services", icon: Layers },
-        { title: "Blogs", url: "/blogs", icon: FileText },
-        { title: "Portfolio", url: "/portfolio", icon: Image },
-
-        //* Reusable Sections
-        { title: "Sections", url: "/sections", icon: Layers },
-
-        //* Limited Media
-        { title: "Media", url: "/media", icon: Image },
-
-        { title: "Profile", url: "/profile", icon: User },
+    const contentWriterNavigation: NavigationGroup[] = [
+        {
+            label: "Navigation",
+            items: [
+                { title: "Website", url: "/", icon: Globe },
+                { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "Content Management",
+            items: [
+                { title: "Pages", url: "/admin/pages", icon: FileText },
+                { title: "Services", url: "/admin/services", icon: Briefcase },
+                { title: "Blogs", url: "/admin/blogs", icon: FileText },
+                { title: "Portfolio", url: "/admin/portfolio", icon: Image },
+                { title: "Sections", url: "/admin/sections", icon: Layers },
+                { title: "Media", url: "/admin/media", icon: FolderOpen },
+            ]
+        },
+        {
+            label: "Account",
+            items: [
+                { title: "Profile", url: "/admin/profile", icon: User },
+            ]
+        },
     ];
 
-    const seoNavigation = [
-        ...baseNavigationItems,
-
-        //* SEO only (UI will handle basic vs advanced)
-        { title: "SEO", url: "/seo", icon: Search },
-
-        { title: "Profile", url: "/profile", icon: User },
+    const seoNavigation: NavigationGroup[] = [
+        {
+            label: "Navigation",
+            items: [
+                { title: "Website", url: "/", icon: Globe },
+                { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "SEO",
+            items: [
+                { title: "SEO", url: "/admin/seo", icon: Search },
+            ]
+        },
+        {
+            label: "Account",
+            items: [
+                { title: "Profile", url: "/admin/profile", icon: User },
+            ]
+        },
     ];
 
-    const userNavigation = [
-        ...baseNavigationItems,
-
-        //* View-only access
-        { title: "Pages", url: "/pages", icon: FileText },
-        { title: "Services", url: "/services", icon: Layers },
-        { title: "Blogs", url: "/blogs", icon: FileText },
-        { title: "Portfolio", url: "/portfolio", icon: Image },
-        { title: "Sections", url: "/sections", icon: Layers },
+    const userNavigation: NavigationGroup[] = [
+        {
+            label: "Navigation",
+            items: [
+                { title: "Website", url: "/", icon: Globe },
+                { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "Content",
+            items: [
+                { title: "Pages", url: "/admin/pages", icon: FileText },
+                { title: "Services", url: "/admin/services", icon: Briefcase },
+                { title: "Blogs", url: "/admin/blogs", icon: FileText },
+                { title: "Portfolio", url: "/admin/portfolio", icon: Image },
+                { title: "Sections", url: "/admin/sections", icon: Layers },
+            ]
+        },
     ];
 
     switch (role) {

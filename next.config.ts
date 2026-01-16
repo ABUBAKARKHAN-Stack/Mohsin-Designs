@@ -5,13 +5,18 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-      hostname: "images.unsplash.com",
+        hostname: "images.unsplash.com",
+      },
+      {
+        hostname: "cdn.sanity.io"
+      }
+    ]
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
     },
-    {
-      hostname: "cdn.sanity.io"
-    }
-  ]
-  }
+  },
 };
 
 export default nextConfig;

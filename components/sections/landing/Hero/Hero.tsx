@@ -4,8 +4,7 @@ import { useRef } from "react";
 import ContainerLayout from "@/components/layout/ContainerLayout";
 import BgElements from "./BgElements";
 import { useScroll, useTransform } from "motion/react";
-import HeroTopSection from "./HeroTopSection";
-import HeroBottonSection from "./HeroBottonSection";
+import HeroMainSection from "./HeroMainSection";
 
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -26,10 +25,8 @@ const Hero = () => {
       <ContainerLayout className="relative z-10">
 
         {/* Top Section: Badge, Heading, Description, Visual */}
-        <HeroTopSection y={y} />
+        <HeroMainSection y={y} />
 
-        {/* Bottom Section: Description paragraphs, CTA buttons, and Stats */}
-        {/* <HeroBottonSection /> */}
 
       </ContainerLayout>
     </section>

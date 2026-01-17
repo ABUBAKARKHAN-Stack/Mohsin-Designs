@@ -8,14 +8,16 @@ import Logo from "@/components/ui/logo";
 import MagneticButton from "@/components/MagneticButton";
 import HighlightedBrandname from "@/components/ui/highlighted-brandname";
 import AnimatedBadge from "@/components/ui/animated-badge";
+import { useServices } from "@/context/ServiceContext";
 
 type Props = {
     y: MotionValue<number>
 }
 
-const HeroTopSection = ({
+const HeroMainSection = ({
     y
 }: Props) => {
+    const {lightWeightServices} = useServices()
     return (
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start mb-12 lg:mb-16">
 
@@ -29,7 +31,7 @@ const HeroTopSection = ({
                     className="inline-flex items-center gap-3 mb-8"
                 >
                     <AnimatedBadge>
-                         <div className="flex">
+                        <div className="flex">
                             {[...Array(5)].map((_, i) => (
                                 <motion.div
                                     key={i}
@@ -91,64 +93,64 @@ const HeroTopSection = ({
                     </p>
                 </motion.div>
 
-<div className="my-8">
-                   {/* Description paragraphs */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.65 }}
-            className="space-y-4 max-w-3xl mb-8"
-          >
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              At <HighlightedBrandname />, we don't believe in surface-level design or short-term
-              trends. We believe in thoughtful branding, strategic creativity, and
-              digital experiences that support real business growth.
-            </p>
+                <div className="my-8">
+                    {/* Description paragraphs */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.65 }}
+                        className="space-y-4 max-w-3xl mb-8"
+                    >
+                        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                            At <HighlightedBrandname />, we don't believe in surface-level design or short-term
+                            trends. We believe in thoughtful branding, strategic creativity, and
+                            digital experiences that support real business growth.
+                        </p>
 
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              In a world where businesses compete for attention across countless
-              platforms, standing out requires more than good visuals. It requires a
-              brand that communicates clearly, connects emotionally, and performs
-              consistently. That's where we come in.
-            </p>
+                        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                            In a world where businesses compete for attention across countless
+                            platforms, standing out requires more than good visuals. It requires a
+                            brand that communicates clearly, connects emotionally, and performs
+                            consistently. That's where we come in.
+                        </p>
 
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              We partner with startups, growing companies, and established brands to
-              create logos, digital platforms, and brand identities that feel
-              intentional, professional, and future-ready. Every project we take on
-              is shaped by research, guided by strategy, and refined through creative
-              execution.
-            </p>
-          </motion.div>
+                        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                            We partner with startups, growing companies, and established brands to
+                            create logos, digital platforms, and brand identities that feel
+                            intentional, professional, and future-ready. Every project we take on
+                            is shaped by research, guided by strategy, and refined through creative
+                            execution.
+                        </p>
+                    </motion.div>
 
-          {/* CTA buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            className="flex flex-wrap gap-4"
-          >
-            <MagneticButton strength={0.12}>
-              <Link
-                href="/contact"
-                className="group inline-flex items-center gap-3 border-2 border-transparent bg-accent text-accent-foreground px-8 py-4 font-semibold text-sm uppercase tracking-wider hover:bg-foreground hover:text-background transition-all duration-300 shadow-lg shadow-accent/20"
-              >
-                Start Your Project
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </MagneticButton>
+                    {/* CTA buttons */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.7 }}
+                        className="flex flex-wrap gap-4"
+                    >
+                        <MagneticButton strength={0.12}>
+                            <Link
+                                href="/contact"
+                                className="group inline-flex items-center gap-3 border-2 border-transparent bg-accent text-accent-foreground px-8 py-4 font-semibold text-sm uppercase tracking-wider hover:bg-foreground hover:text-background transition-all duration-300 shadow-lg shadow-accent/20"
+                            >
+                                Start Your Project
+                                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                        </MagneticButton>
 
-            <MagneticButton strength={0.12}>
-              <Link
-                href="/portfolio"
-                className="group inline-flex items-center gap-3 border-2 border-border hover:border-accent px-8 py-4 font-semibold text-sm uppercase tracking-wider hover:text-accent transition-all duration-300"
-              >
-                View Our Work
-                <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Link>
-            </MagneticButton>
-          </motion.div>
-          </div>
+                        <MagneticButton strength={0.12}>
+                            <Link
+                                href="/portfolio"
+                                className="group inline-flex items-center gap-3 border-2 border-border hover:border-accent px-8 py-4 font-semibold text-sm uppercase tracking-wider hover:text-accent transition-all duration-300"
+                            >
+                                View Our Work
+                                <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                            </Link>
+                        </MagneticButton>
+                    </motion.div>
+                </div>
             </div>
 
             {/* Right Column - Visual showcase */}
@@ -178,21 +180,21 @@ const HeroTopSection = ({
 
                         {/* Services list */}
                         <div className="space-y-2.5">
-                            {serviceItems.map((service, i) => (
+                            {lightWeightServices.map((service, i) => (
                                 <motion.div
-                                    key={service.name}
+                                    key={service.title}
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.7 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                                 >
                                     <Link
-                                        href={service.path}
+                                        href={service.slug}
                                         className="flex items-center gap-3 p-3.5 bg-muted/50 border border-border hover:border-accent/30 hover:bg-accent/5 transition-all group"
                                     >
                                         <div className="w-7 h-7 bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
                                             <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
                                         </div>
-                                        <span className="text-sm font-medium tracking-wide">{service.name}</span>
+                                        <span className="text-sm font-medium tracking-wide">{service.title}</span>
                                     </Link>
                                 </motion.div>
                             ))}
@@ -233,4 +235,4 @@ const HeroTopSection = ({
     )
 }
 
-export default HeroTopSection
+export default HeroMainSection

@@ -37,6 +37,7 @@ export const auth = betterAuth({
                 type: "json"
             }
         },
+        
     },
 
     rateLimit: {

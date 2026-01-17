@@ -14,13 +14,20 @@ import {
     Wrench,
 } from "lucide-react";
 
-export interface NavigationGroup {
-    label: string;
-    items: {
+export interface NavigationItem {
+    title: string;
+    url: string;
+    icon: any;
+    subItems?: {
         title: string;
         url: string;
-        icon: any;
     }[];
+    isOpenByDefault?: boolean;
+}
+
+export interface NavigationGroup {
+    label: string;
+    items: NavigationItem[];
 }
 
 export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
@@ -30,6 +37,22 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
             items: [
                 { title: "Website", url: "/", icon: Globe },
                 { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "Content Management",
+            items: [
+                {
+                    title: "Pages",
+                    url: "/admin/pages",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "Home", url: "/admin/pages/home" },
+                        { title: "About", url: "/admin/pages/about" },
+                        { title: "Contact", url: "/admin/pages/contact" },
+                    ]
+                }
             ]
         }
     ];
@@ -45,7 +68,17 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
         {
             label: "Content Management",
             items: [
-                { title: "Pages", url: "/admin/pages", icon: FileText },
+                {
+                    title: "Pages",
+                    url: "/admin/pages",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "Home", url: "/admin/pages/home" },
+                        { title: "About", url: "/admin/pages/about" },
+                        { title: "Contact", url: "/admin/pages/contact" },
+                    ]
+                },
                 { title: "Blogs", url: "/admin/blogs", icon: FileText },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
                 { title: "Sections", url: "/admin/sections", icon: Layers },
@@ -68,7 +101,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
             label: "Settings",
             items: [
                 { title: "Users", url: "/admin/users", icon: Users },
-                { title: "Site Settings", url: "/admin/settings", icon: Wrench },
+                { title: "Site Settings", url: "/admin/site-settings", icon: Wrench },
                 { title: "Profile", url: "/admin/profile", icon: User },
             ]
         },
@@ -85,7 +118,17 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
         {
             label: "Content Management",
             items: [
-                { title: "Pages", url: "/admin/pages", icon: FileText },
+                {
+                    title: "Pages",
+                    url: "/admin/pages",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "Home", url: "/admin/pages/home" },
+                        { title: "About", url: "/admin/pages/about" },
+                        { title: "Contact", url: "/admin/pages/contact" },
+                    ]
+                },
                 { title: "Services", url: "/admin/services", icon: Briefcase },
                 { title: "Blogs", url: "/admin/blogs", icon: FileText },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
@@ -107,6 +150,22 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
             items: [
                 { title: "Website", url: "/", icon: Globe },
                 { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "Content Management",
+            items: [
+                {
+                    title: "Pages",
+                    url: "/admin/pages",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "Home", url: "/admin/pages/home" },
+                        { title: "About", url: "/admin/pages/about" },
+                        { title: "Contact", url: "/admin/pages/contact" },
+                    ]
+                }
             ]
         },
         {
@@ -134,7 +193,17 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
         {
             label: "Content",
             items: [
-                { title: "Pages", url: "/admin/pages", icon: FileText },
+                {
+                    title: "Pages",
+                    url: "/admin/pages",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "Home", url: "/admin/pages/home" },
+                        { title: "About", url: "/admin/pages/about" },
+                        { title: "Contact", url: "/admin/pages/contact" },
+                    ]
+                },
                 { title: "Services", url: "/admin/services", icon: Briefcase },
                 { title: "Blogs", url: "/admin/blogs", icon: FileText },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },

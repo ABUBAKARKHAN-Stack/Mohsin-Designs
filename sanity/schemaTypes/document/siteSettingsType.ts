@@ -28,8 +28,8 @@ export const siteSettings = defineType({
       name: "logo",
       title: "Logo",
       type: "image",
-      validation: Rule => Rule.required(),
       options: { hotspot: true },
+      validation: Rule => Rule.required(),
     }),
 
     defineField({

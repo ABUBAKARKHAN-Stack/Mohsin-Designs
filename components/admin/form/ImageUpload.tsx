@@ -14,6 +14,7 @@ import { MediaPicker } from "@/components/admin/media/MediaPicker"
 
 interface ImageUploadProps {
     value?: {
+        url?: string
         asset?: {
             _ref?: string
             url?: string
@@ -25,12 +26,14 @@ interface ImageUploadProps {
 
 export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
     const [isUploading, setIsUploading] = useState(false)
-    const [preview, setPreview] = useState<string | null>(value?.asset?.url || null)
+    const [preview, setPreview] = useState<string | null>(value?.url || value?.asset?.url || null)
     const [isDragging, setIsDragging] = useState(false)
 
     // Sync preview with value changes
     useEffect(() => {
-        if (value?.asset?.url) {
+        if (value?.url) {
+            setPreview(value.url)
+        } else if (value?.asset?.url) {
             setPreview(value.asset.url)
         } else if (!value) {
             setPreview(null)
@@ -65,13 +68,10 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
             const result = await uploadImage(formData)
 
             if (result.success && result.asset) {
-                // Update form value with asset reference
+                // Update form value with raw asset info
                 onChange({
-                    _type: 'image',
-                    asset: {
-                        _type: 'reference',
-                        _ref: result.asset._ref,
-                    }
+                    _id: result.asset._ref,
+                    url: result.asset.url,
                 })
                 successToast('Image uploaded and saved to media library!')
             } else {
@@ -152,13 +152,7 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
                                 </Button>
                                 <MediaPicker
                                     onSelect={(asset) => {
-                                        onChange({
-                                            _type: 'image',
-                                            asset: {
-                                                _type: 'reference',
-                                                _ref: asset._id,
-                                            }
-                                        })
+                                        onChange({ _id: asset._id, url: asset.url })
                                         setPreview(asset.url)
                                     }}
                                     trigger={
@@ -224,13 +218,7 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
                                     <div className="text-xs font-semibold uppercase text-muted-foreground italic">OR</div>
                                     <MediaPicker
                                         onSelect={(asset) => {
-                                            onChange({
-                                                _type: 'image',
-                                                asset: {
-                                                    _type: 'reference',
-                                                    _ref: asset._id,
-                                                }
-                                            })
+                                            onChange({ _id: asset._id, url: asset.url })
                                             setPreview(asset.url)
                                         }}
                                     />

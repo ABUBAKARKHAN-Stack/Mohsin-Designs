@@ -19,7 +19,6 @@ export const metadata: Metadata = {
     }
 }
 
-
 const AdminLayout = async ({ children }: { children: ReactNode }) => {
 
     const session = await getServerSession()

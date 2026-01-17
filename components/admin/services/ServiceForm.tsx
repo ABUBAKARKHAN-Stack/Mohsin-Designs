@@ -28,6 +28,7 @@ import { errorToast, successToast } from "@/lib/toastNotifications"
 import { slugify } from "@/lib/utils"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Spinner } from "@/components/ui/spinner"
+import { SEOKeywordsInput } from "@/components/admin/form/SEOKeywordsInput"
 
 interface ServiceFormProps {
     initialData?: ServiceFormValues
@@ -155,7 +156,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-8">
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between sticky top-0 bg-background/95 backdrop-blur-sm z-10 py-3 px-1 border-b gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between sticky top-0 bg-background/95 backdrop-blur-sm z-10 py-2 sm:py-3 px-1 border-b gap-3">
                     <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-2">
                         <Button variant="ghost" size="sm" asChild className="h-9">
                             <Link href="/admin/services">
@@ -202,9 +203,9 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                 <FormLabel>Slug</FormLabel>
                                                 <div className="flex flex-col sm:flex-row gap-2">
                                                     <FormControl className="flex-1">
-                                                        <Input {...field} value={field.value || ""} 
-                                                        disabled
-                                                        placeholder="auto-generated" className="font-mono text-sm" />
+                                                        <Input {...field} value={field.value || ""}
+                                                            disabled
+                                                            placeholder="auto-generated" className="font-mono text-sm" />
                                                     </FormControl>
                                                     <Button
                                                         type="button"
@@ -228,16 +229,23 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                     />
                                 </div>
 
-                                <FormField
-                                    control={formControl}
-                                    name="heroImage"
-                                    render={({ field }) => (
-                                        <ImageUpload
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                            label="Hero Image"
-                                        />
-                                    )}
+                                <ImageUpload
+                                    value={form.getValues('heroImage') as any}
+                                    onChange={(asset) => {
+                                        if (!asset) {
+                                            form.setValue('heroImage', undefined)
+                                            return
+                                        }
+                                        form.setValue('heroImage', {
+                                            _type: 'image',
+                                            asset: {
+                                                _type: 'reference',
+                                                _ref: asset._id || asset.id,
+                                            },
+                                            url: asset.url
+                                        })
+                                    }}
+                                    label="Hero Image"
                                 />
 
                                 <LocalizedInput control={formControl} name="heroImageAlt" label="Hero Image Alt Text" />
@@ -633,6 +641,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             <CardContent className="space-y-4">
                                 <LocalizedInput control={formControl} name="seo.metaTitle" label="Meta Title" />
                                 <LocalizedInput control={formControl} name="seo.metaDescription" label="Meta Description" isTextarea />
+                                <SEOKeywordsInput control={formControl} name="seo.keywords" label="Focus Keywords" />
                                 <FormField
                                     control={formControl}
                                     name="seo.schema"

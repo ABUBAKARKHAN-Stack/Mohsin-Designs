@@ -1,58 +1,13 @@
 import { z } from "zod";
 
-const localizedStringSchema = z.object({
-    _key: z.string().optional(),
-    en: z.string().optional(),
-    ur: z.string().optional(),
-    es: z.string().optional(),
-    ar: z.string().optional(),
-}).refine(data => {
-    const values = [data.en, data.ur, data.es, data.ar].filter(v => v && v.trim() !== "");
-    // Either all are empty or all are filled
-    return values.length === 0 || values.length === 4;
-}, {
-    message: "Missing translations. Please provide all 4 languages (EN, UR, ES, AR).",
-    path: ["en"]
-});
-
-const localizedTextSchema = z.object({
-    _key: z.string().optional(),
-    en: z.string().optional(),
-    ur: z.string().optional(),
-    es: z.string().optional(),
-    ar: z.string().optional(),
-}).refine(data => {
-    const values = [data.en, data.ur, data.es, data.ar].filter(v => v && v.trim() !== "");
-    return values.length === 0 || values.length === 4;
-}, {
-    message: "Missing translations. Please provide all 4 languages (EN, UR, ES, AR).",
-    path: ["en"]
-});
-
-// For strictly required fields, we add another refinement
-const requiredLocalizedStringSchema = localizedStringSchema.refine(data => !!data.en && data.en.trim() !== "", {
-    message: "English translation is required as the primary language",
-    path: ["en"]
-});
-
-const requiredLocalizedTextSchema = localizedTextSchema.refine(data => !!data.en && data.en.trim() !== "", {
-    message: "English translation is required as the primary language",
-    path: ["en"]
-});
-
-const sectionHeadingSchema = z.object({
-    _key: z.string().optional(),
-    eyebrow: localizedStringSchema.optional(),
-    title: requiredLocalizedStringSchema,
-    description: localizedTextSchema.optional(),
-});
-
-export const seoSchema = z.object({
-    metaTitle: localizedStringSchema.optional(),
-    metaDescription: localizedTextSchema.optional(),
-    schema: z.string().optional(),
-    keywords: z.array(localizedStringSchema).optional(),
-});
+import {
+    localizedStringSchema,
+    localizedTextSchema,
+    requiredLocalizedStringSchema,
+    requiredLocalizedTextSchema,
+    sectionHeadingSchema,
+    seoSchema
+} from "./common";
 
 export const serviceFormSchema = z.object({
     title: requiredLocalizedStringSchema,
@@ -67,6 +22,7 @@ export const serviceFormSchema = z.object({
             _type: z.literal('reference').optional(),
             _ref: z.string(),
         }).optional(),
+        url: z.string().optional(),
     }).optional(),
     heroImageAlt: requiredLocalizedStringSchema,
 

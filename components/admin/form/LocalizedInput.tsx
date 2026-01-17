@@ -54,7 +54,7 @@ export function LocalizedInput({ control, name, label, isTextarea = false, class
                 )}
             </div>
             <Tabs defaultValue="en" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
                     {LANGUAGES.map((lang) => {
                         const hasError = getTabHasError(lang.code)
                         return (

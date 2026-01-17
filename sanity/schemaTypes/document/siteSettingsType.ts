@@ -53,12 +53,13 @@ export const siteSettings = defineType({
       name: "social",
       title: "Social Profiles",
       type: "object",
+      validation: Rule => Rule.required(),
       fields: [
-        defineField({ name: "facebook", type: "url" }),
-        defineField({ name: "twitter", type: "url" }),
-        defineField({ name: "linkedin", type: "url" }),
-        defineField({ name: "instagram", type: "url" }),
-        defineField({ name: "youtube", type: "url" }),
+        defineField({ name: "facebook", type: "url", validation: Rule => Rule.required() }),
+        defineField({ name: "twitter", type: "url", validation: Rule => Rule.required() }),
+        defineField({ name: "linkedin", type: "url", validation: Rule => Rule.required() }),
+        defineField({ name: "instagram", type: "url", validation: Rule => Rule.required() }),
+
       ],
     }),
 
@@ -67,10 +68,11 @@ export const siteSettings = defineType({
       name: "contact",
       title: "Contact Information",
       type: "object",
+      validation: Rule => Rule.required(),
       fields: [
-        defineField({ name: "email", type: "string" }),
-        defineField({ name: "phone", type: "string" }),
-        defineField({ name: "address", type: "localizedText" }),
+        defineField({ name: "email", type: "string", validation: Rule => Rule.required() }),
+        defineField({ name: "phone", type: "string", validation: Rule => Rule.required() }),
+        defineField({ name: "address", type: "localizedText", validation: Rule => Rule.required() }),
       ],
     }),
 
@@ -79,12 +81,14 @@ export const siteSettings = defineType({
       name: "footerText",
       title: "Footer Text",
       type: "localizedText",
+      validation: Rule => Rule.required(),
     }),
 
     defineField({
       name: "copyright",
       title: "Copyright Text",
       type: "localizedString",
+      validation: Rule => Rule.required(),
     }),
   ],
 

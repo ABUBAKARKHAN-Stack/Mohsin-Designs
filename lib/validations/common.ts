@@ -19,15 +19,21 @@ export const localizedTextSchema = z.object({
 });
 
 // For strictly required fields
-export const requiredLocalizedStringSchema = localizedStringSchema.refine(data => !!data.en && data.en.trim() !== "", {
-    message: "English translation is required as the primary language",
-    path: ["en"]
-});
+export const requiredLocalizedStringSchema = localizedStringSchema.refine(
+    (data) => [data.en, data.ur, data.es, data.ar].every(val => val && val.trim() !== ""),
+    {
+        message: "All languages (English, Urdu, Spanish, Arabic) are required",
+        path: ["en"]
+    }
+);
 
-export const requiredLocalizedTextSchema = localizedTextSchema.refine(data => !!data.en && data.en.trim() !== "", {
-    message: "English translation is required as the primary language",
-    path: ["en"]
-});
+export const requiredLocalizedTextSchema = localizedTextSchema.refine(
+    (data) => [data.en, data.ur, data.es, data.ar].every(val => val && val.trim() !== ""),
+    {
+        message: "All languages (English, Urdu, Spanish, Arabic) are required",
+        path: ["en"]
+    }
+);
 
 export const sectionHeadingSchema = z.object({
     _key: z.string().optional(),

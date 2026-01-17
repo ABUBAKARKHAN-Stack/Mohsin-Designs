@@ -6,7 +6,8 @@ import {
     localizedTextSchema,
     strictMultiLanguageSchema,
     strictMultiLanguageTextSchema,
-    seoSchema
+    seoSchema,
+    baseLocalizedStringSchema
 } from "./common";
 
 export const siteSettingsSchema = z.object({
@@ -31,24 +32,30 @@ export const siteSettingsSchema = z.object({
         url: z.string().optional(),
     }).optional().nullable(),
 
-    seo: seoSchema,
+    // Local strict SEO schema to enforce requirements
+    seo: z.object({
+        metaTitle: requiredLocalizedStringSchema,
+        metaDescription: requiredLocalizedTextSchema,
+        schema: z.string().optional(),
+        keywords: z.array(baseLocalizedStringSchema).optional().default([]),
+    }),
 
     social: z.object({
-        facebook: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-        twitter: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-        linkedin: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-        instagram: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-        youtube: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-    }).optional(),
+        facebook: z.string().url("Must be a valid URL"),
+        twitter: z.string().url("Must be a valid URL"),
+        linkedin: z.string().url("Must be a valid URL"),
+        instagram: z.string().url("Must be a valid URL"),
+
+    }),
 
     contact: z.object({
-        email: z.string().email("Must be a valid email").optional().or(z.literal("")),
-        phone: z.string().optional().or(z.literal("")),
-        address: strictMultiLanguageTextSchema.optional(),
-    }).optional(),
+        email: z.string().email("Must be a valid email"),
+        phone: z.string().min(1, "Phone number is required"),
+        address: requiredLocalizedTextSchema,
+    }),
 
-    footerText: strictMultiLanguageTextSchema.optional(),
-    copyright: strictMultiLanguageSchema.optional(),
+    footerText: requiredLocalizedTextSchema,
+    copyright: requiredLocalizedStringSchema,
 });
 
 export type SiteSettingsValues = z.infer<typeof siteSettingsSchema>;

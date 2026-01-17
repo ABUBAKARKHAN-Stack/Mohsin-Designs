@@ -34,15 +34,20 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
     const form = useForm<SiteSettingsValues>({
         resolver: zodResolver(siteSettingsSchema) as any,
         defaultValues: initialData || {
-            siteName: {},
-            tagline: {},
+            siteName: { en: "", ur: "", es: "", ar: "" },
+            tagline: { en: "", ur: "", es: "", ar: "" },
             logo: undefined as any,
             favicon: undefined as any,
-            seo: { keywords: [] },
-            social: { facebook: "", twitter: "", linkedin: "", instagram: "", youtube: "" },
-            contact: { email: "", phone: "", address: {} },
-            footerText: {},
-            copyright: {},
+            seo: {
+                metaTitle: { en: "", ur: "", es: "", ar: "" },
+                metaDescription: { en: "", ur: "", es: "", ar: "" },
+                keywords: [],
+                schema: ""
+            },
+            social: { facebook: "", twitter: "", linkedin: "", instagram: "" },
+            contact: { email: "", phone: "", address: { en: "", ur: "", es: "", ar: "" } },
+            footerText: { en: "", ur: "", es: "", ar: "" },
+            copyright: { en: "", ur: "", es: "", ar: "" },
         } as SiteSettingsValues,
     })
 
@@ -328,19 +333,7 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
                                             </FormItem>
                                         )}
                                     />
-                                    <FormField
-                                        control={formControl}
-                                        name="social.youtube"
-                                        render={({ field }) => (
-                                            <FormItem className="md:col-span-2">
-                                                <FormLabel>YouTube Channel URL</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="https://youtube.com/..." />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+
                                 </div>
                             </CardContent>
                         </Card>

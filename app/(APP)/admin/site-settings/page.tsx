@@ -12,7 +12,7 @@ export default async function SiteSettingsPage() {
         logo: siteSettings.logo,
         favicon: siteSettings.favicon,
         seo: siteSettings.seo || { keywords: [] },
-        social: siteSettings.social || { facebook: "", twitter: "", linkedin: "", instagram: "", youtube: "" },
+        social: siteSettings.social || { facebook: "", twitter: "", linkedin: "", instagram: "" },
         contact: siteSettings.contact || { email: "", phone: "", address: {} },
         footerText: siteSettings.footerText || {},
         copyright: siteSettings.copyright || {},

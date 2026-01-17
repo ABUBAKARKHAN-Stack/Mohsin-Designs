@@ -3,10 +3,10 @@ import { requiredLocalizedStringSchema, requiredLocalizedTextSchema } from "./co
 
 // Helper for required URL validation in all languages
 const requiredUrlSchema = z.object({
-    en: z.string().url("Must be a valid URL").min(1, "Required"),
-    ur: z.string().url("Must be a valid URL").min(1, "Required"),
-    es: z.string().url("Must be a valid URL").min(1, "Required"),
-    ar: z.string().url("Must be a valid URL").min(1, "Required"),
+    en: z.url("Must be a valid URL").min(1, "Required"),
+    ur: z.url("Must be a valid URL").min(1, "Required"),
+    es: z.url("Must be a valid URL").min(1, "Required"),
+    ar: z.url("Must be a valid URL").min(1, "Required"),
 });
 
 export const serviceCtaSchema = z.object({
@@ -30,10 +30,10 @@ export const serviceCtaFormSchema = z.object({
     ctaDescription: requiredLocalizedTextSchema,
     ctaButtonText: requiredLocalizedStringSchema,
     ctaButtonUrl: z.object({
-        en: z.string().url("Invalid URL").optional().or(z.literal("")),
-        ur: z.string().url("Invalid URL").optional().or(z.literal("")),
-        es: z.string().url("Invalid URL").optional().or(z.literal("")),
-        ar: z.string().url("Invalid URL").optional().or(z.literal("")),
+        en: z.url("Invalid URL").optional().or(z.literal("")),
+        ur: z.url("Invalid URL").optional().or(z.literal("")),
+        es: z.url("Invalid URL").optional().or(z.literal("")),
+        ar: z.url("Invalid URL").optional().or(z.literal("")),
     }).optional(),
 });
 

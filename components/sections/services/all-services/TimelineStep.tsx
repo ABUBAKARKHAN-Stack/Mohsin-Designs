@@ -1,7 +1,7 @@
 "use client"
 
-import { processSteps } from "@/constants/services.constants";
 import { useScroll, useTransform, motion } from "motion/react";
+import { getIconByName } from "@/lib/icon-mapper";
 
 const TimelineStep = ({
     step,
@@ -11,13 +11,20 @@ const TimelineStep = ({
     scrollProgress,
     stepProgress
 }: {
-    step: typeof processSteps[0];
+    step: {
+        title: string;
+        description: string;
+        duration: string;
+        iconName: string;
+    };
     index: number;
     isEven: boolean;
     isLast: boolean;
     scrollProgress: ReturnType<typeof useScroll>['scrollYProgress'];
     stepProgress: number;
 }) => {
+    const Icon = getIconByName(step.iconName);
+
     // Calculate if this step is active based on scroll
     const isActive = useTransform(
         scrollProgress,
@@ -85,7 +92,7 @@ const TimelineStep = ({
 
                     {/* Inner content container */}
                     <div className="relative bg-card/95 m-px rounded-[23px] p-6 md:p-8">
-                    
+
                         {/* Large step number watermark */}
                         <div className={`absolute ${isEven ? 'left-6' : 'right-6'} top-4 text-8xl md:text-9xl font-display font-bold text-muted/5 select-none pointer-events-none`}>
                             {String(index + 1).padStart(2, '0')}
@@ -105,7 +112,7 @@ const TimelineStep = ({
                             <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-accent to-accent/70 flex items-center justify-center shadow-lg shadow-accent/25">
                                 <span className="text-accent-foreground font-display font-bold">{String(index + 1).padStart(2, '0')}</span>
                             </div>
-                            
+
                         </div>
 
                         {/* Duration badge */}
@@ -132,7 +139,7 @@ const TimelineStep = ({
                             >
                                 {/* Icon background gradient */}
                                 <div className="absolute inset-0 bg-linear-to-br from-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                <step.icon className="w-8 h-8 text-accent relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                                <Icon className="w-8 h-8 text-accent relative z-10 group-hover:scale-110 transition-transform duration-300" />
                             </motion.div>
                             <div className={`${isEven ? 'lg:text-right' : ''}`}>
                                 <motion.h3

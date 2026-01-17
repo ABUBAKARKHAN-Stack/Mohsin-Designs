@@ -31,6 +31,31 @@ const en = {
         blog: "Blog",
         faqs: "FAQs"
     },
+
+    footer: {
+        cta: {
+            eyebrow: "Have a project in mind?",
+            heading: "Let's work",
+            headingAccent: "together"
+        }
+    },
+
+    servicesPage: {
+        hero: {
+            badge: "WHAT WE OFFER"
+        },
+        allServices: {
+            eyebrow: "What We Offer",
+            title: "Our Services",
+            description: "Comprehensive solutions tailored to elevate your brand and drive results."
+        },
+        blog: {
+            badge: "LATEST INSIGHTS",
+            heading: "From the Journal.",
+            description: "Thoughts, ideas, and perspectives on design, technology, and building brands that matter.",
+            viewAllArticles: "View All Articles"
+        }
+    }
 };
 
 export default en;

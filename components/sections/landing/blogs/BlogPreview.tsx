@@ -6,9 +6,14 @@ import Link from "next/link";
 import { ContainerLayout } from "@/components/layout";
 import { blogPosts } from "@/constants/blog.constants";
 import BlogCard from "@/components/cards/BlogCard";
+import { useParams } from "next/navigation";
+import { uiT } from "@/i18n";
 
 
 const BlogPreview = () => {
+  const params = useParams()
+  const lang = params.lang as string
+
   return (
     <section className="lg:py-12.5 py-6.25 bg-background relative overflow-hidden">
 
@@ -17,9 +22,9 @@ const BlogPreview = () => {
 
       <ContainerLayout className=" relative z-10">
         <SectionHeading
-          eyebrow="Latest Insights"
-          title="From the Journal"
-          description="Thoughts, ideas, and perspectives on design, technology, and building brands that matter."
+          eyebrow={uiT(lang, 'servicesPage.blog.badge')}
+          title={uiT(lang, 'servicesPage.blog.heading')}
+          description={uiT(lang, 'servicesPage.blog.description')}
         />
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
@@ -36,9 +41,9 @@ const BlogPreview = () => {
           transition={{ delay: 0.4 }}
           className="mt-16 text-center"
         >
-          <Link href="/blog" className="inline-flex items-center gap-3 group">
+          <Link href={`/${lang}/blog`} className="inline-flex items-center gap-3 group">
             <span className="text-sm uppercase tracking-widest group-hover:text-accent transition-colors">
-              View All Articles
+              {uiT(lang, 'servicesPage.blog.viewAllArticles')}
             </span>
             <span className="w-12 h-12 rounded-full border border-border flex items-center justify-center group-hover:bg-accent group-hover:border-accent group-hover:text-accent-foreground transition-all duration-300">
               <ArrowUpRight className="h-5 w-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

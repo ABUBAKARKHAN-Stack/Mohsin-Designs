@@ -4,8 +4,12 @@ import { motion } from "motion/react";
 import MagneticButton from '@/components/MagneticButton';
 import { ArrowUpRight } from 'lucide-react';
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { uiT } from "@/i18n";
 
 const FooterCTA = () => {
+  const params = useParams()
+  const lang = params.lang as string
 
   const hoverVariants = {
     hovered: { rotate: 45, backgroundColor: "var(--color-foreground)" },
@@ -25,7 +29,7 @@ const FooterCTA = () => {
       viewport={{ once: true }}
       className="mb-24"
     >
-      <Link href="/contact">
+      <Link href={`/${lang}/contact`}>
         <motion.div
           className="flex flex-col md:flex-row md:items-end md:justify-between gap-8"
           initial="rest"
@@ -34,16 +38,16 @@ const FooterCTA = () => {
         >
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-4">
-              Have a project in mind?
+              {uiT(lang, 'footer.cta.eyebrow')}
             </p>
             <h2 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight leading-none">
-              Let's work
+              {uiT(lang, 'footer.cta.heading')}
               <br />
               <motion.span
                 variants={textVariants}
                 className="text-stroke"
               >
-                together
+                {uiT(lang, 'footer.cta.headingAccent')}
               </motion.span>
             </h2>
           </div>

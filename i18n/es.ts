@@ -32,6 +32,32 @@ const es = {
         blog: "Blog",
         faqs: "Preguntas Frecuentes"
 
+
+    },
+
+    footer: {
+        cta: {
+            eyebrow: "¿Tienes un proyecto en mente?",
+            heading: "Trabajemos",
+            headingAccent: "juntos"
+        }
+    },
+
+    servicesPage: {
+        hero: {
+            badge: "LO QUE OFRECEMOS"
+        },
+        allServices: {
+            eyebrow: "Lo Que Ofrecemos",
+            title: "Nuestros Servicios",
+            description: "Soluciones integrales diseñadas para elevar tu marca e impulsar resultados."
+        },
+        blog: {
+            badge: "ÚLTIMAS PERSPECTIVAS",
+            heading: "Del Diario.",
+            description: "Pensamientos, ideas y perspectivas sobre diseño, tecnología y construcción de marcas que importan.",
+            viewAllArticles: "Ver Todos los Artículos"
+        }
     }
 };
 

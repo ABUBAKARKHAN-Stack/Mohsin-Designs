@@ -1,9 +1,16 @@
 "use client"
 import { ContainerLayout } from "@/components/layout";
-import { CheckCircle2, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 
-const ServicesIntro = () => {
+type ServicesIntroProps = {
+  badgeText: string
+  heading: string
+  headingAccent: string
+  description: string
+}
+
+const ServicesIntro = ({ badgeText, heading, headingAccent, description }: ServicesIntroProps) => {
   return (
     <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
 
@@ -13,7 +20,7 @@ const ServicesIntro = () => {
         <div className="absolute top-0 left-0 w-75 h-75 bg-primary/5 rounded-full blur-2xl" />
         <div className="absolute bottom-0 right-0 w-100 h-100 bg-accent/3 rounded-full blur-3xl" />
       </div>
-      
+
       <ContainerLayout className="relative">
         <div className="max-w-5xl mx-auto">
 
@@ -33,13 +40,13 @@ const ServicesIntro = () => {
                   <span className="w-1 h-1 rounded-full bg-accent/30" />
                 </div>
                 <span className="text-accent text-sm font-semibold tracking-wider uppercase">
-                  Full-Service Agency
+                  {badgeText}
                 </span>
                 <Sparkles className="w-4 h-4 text-accent" />
               </div>
             </div>
           </motion.div>
-          
+
           {/* Main heading */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -49,11 +56,11 @@ const ServicesIntro = () => {
             className="text-center mb-8"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-bold leading-[1.1] tracking-tight">
-              Everything you need to
+              {heading}
               <br />
               <span className="relative inline-block mt-2">
                 <span className="relative z-10 bg-linear-to-r from-accent via-accent to-accent/80 bg-clip-text text-transparent">
-                  build a powerful brand
+                  {headingAccent}
                 </span>
                 {/* Underline accent */}
                 <motion.svg
@@ -81,7 +88,7 @@ const ServicesIntro = () => {
               </span>
             </h2>
           </motion.div>
-          
+
           {/* Description */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -90,8 +97,7 @@ const ServicesIntro = () => {
             transition={{ delay: 0.2 }}
             className="text-muted-foreground text-lg md:text-xl lg:text-2xl leading-relaxed text-center max-w-3xl mx-auto mb-12"
           >
-            From initial concept to final launch, we provide end-to-end solutions that help businesses 
-            stand out, connect with their audience, and achieve measurable growth.
+            {description}
           </motion.p>
 
         </div>

@@ -5,10 +5,14 @@ import ServiceCard from "./ServiceCard";
 import BGDecorations from "./BG-Decorations";
 import SectionHeading from "@/components/ui/section-heading";
 import { useServices } from "@/context/ServiceContext";
+import { useParams } from "next/navigation";
+import { uiT } from "@/i18n";
 
 
 const AllServices = () => {
   const { services } = useServices()
+  const params = useParams()
+  const lang = params.lang as string
 
   return (
 
@@ -19,9 +23,9 @@ const AllServices = () => {
       <ContainerLayout className="relative">
 
         <SectionHeading
-          eyebrow="What We Offer"
-          title="Our Services"
-          description="Comprehensive solutions tailored to elevate your brand and drive results."
+          eyebrow={uiT(lang, 'servicesPage.allServices.eyebrow')}
+          title={uiT(lang, 'servicesPage.allServices.title')}
+          description={uiT(lang, 'servicesPage.allServices.description')}
           align="center"
           splitText
         />

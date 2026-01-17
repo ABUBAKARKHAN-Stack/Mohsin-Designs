@@ -88,6 +88,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
             label: "Services",
             items: [
                 { title: "Services", url: "/admin/services", icon: Briefcase },
+                { title: "Services Setting", url: "/admin/services/settings", icon: Wrench },
             ]
         },
         {
@@ -130,6 +131,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                     ]
                 },
                 { title: "Services", url: "/admin/services", icon: Briefcase },
+                { title: "Services Setting", url: "/admin/services/settings", icon: Wrench },
                 { title: "Blogs", url: "/admin/blogs", icon: FileText },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
                 { title: "Sections", url: "/admin/sections", icon: Layers },

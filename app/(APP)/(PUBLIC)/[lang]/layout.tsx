@@ -8,6 +8,8 @@ import { SUPPORTED_LANGS } from "@/constants/lang";
 import { ServicesProvider } from "@/context/ServiceContext";
 import { getLightWeightServicesByLocale, getServicesByLocale } from "@/helpers/service.helpers";
 import { SanityLive } from "@/sanity/lib/live";
+import { getSiteSettingsByLocale } from "@/helpers/site-settings.helpers";
+import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 
 
 
@@ -25,29 +27,33 @@ export default async function LangLayout({ children, params }: Props) {
         redirect("/en");
     }
 
+
     const services = await getServicesByLocale(lang)
     const lightWeightServices = await getLightWeightServicesByLocale(lang)
+    const siteSettings = await getSiteSettingsByLocale(lang)
 
 
     return (
 
-        <PublicProvider>
-            <div lang={lang} className="min-h-screen flex flex-col">
-                <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
-                    <SanityLive />
-                    <Navbar />
+        <SiteSettingsProvider settings={siteSettings}>
+            <PublicProvider>
+                <div lang={lang} className="min-h-screen flex flex-col">
+                    <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
+                        <SanityLive />
+                        <Navbar />
 
-                    <main className="flex-1 pt-20">
-                        <AnimatePresence mode="wait">
-                            {children}
-                        </AnimatePresence>
-                    </main>
+                        <main className="flex-1 pt-20">
+                            <AnimatePresence mode="wait">
+                                {children}
+                            </AnimatePresence>
+                        </main>
 
-                    <FloatingContactBadge />
-                    <Footer />
-                </ServicesProvider>
-            </div>
-        </PublicProvider>
+                        <FloatingContactBadge />
+                        <Footer />
+                    </ServicesProvider>
+                </div>
+            </PublicProvider>
+        </SiteSettingsProvider>
 
     );
 }

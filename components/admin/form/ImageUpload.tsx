@@ -137,7 +137,7 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
                                 src={preview}
                                 alt="Preview"
                                 fill
-                                className="object-cover"
+                                className="object-contain bg-muted"
                             />
                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                 <Button

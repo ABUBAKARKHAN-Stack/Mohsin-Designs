@@ -4,14 +4,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
 import { Control } from "react-hook-form"
 import { cn } from "@/lib/utils"
+import { Link } from "lucide-react"
 
 interface LocalizedInputProps {
     control: Control<any>
     name: string
     label: string
     isTextarea?: boolean
+    isUrl?: boolean
     className?: string
 }
 
@@ -24,8 +27,8 @@ const LANGUAGES = [
 
 import { useFormContext } from "react-hook-form"
 
-export function LocalizedInput({ control, name, label, isTextarea = false, className }: LocalizedInputProps) {
-    const { formState: { errors }, watch, trigger } = useFormContext()
+export function LocalizedInput({ control, name, label, isTextarea = false, isUrl = false, className }: LocalizedInputProps) {
+    const { formState: { errors }, watch, trigger, setValue } = useFormContext()
     const fieldValues = watch(name)
 
     // Helper to get nested error
@@ -45,13 +48,36 @@ export function LocalizedInput({ control, name, label, isTextarea = false, class
         return false
     }
 
+    // Auto-fill URLs with base URL + language prefix
+    const handleAutoFillUrls = () => {
+        const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://mohsindesigns.com'
+        LANGUAGES.forEach(lang => {
+            setValue(`${name}.${lang.code}`, `${baseUrl}/${lang.code}`)
+        })
+        trigger(name)
+    }
+
     return (
         <div className={cn("space-y-2 border p-4 rounded-md", className)}>
             <div className="flex justify-between items-center">
                 <FormLabel className={cn(hasAnyError && "text-destructive")}>{label}</FormLabel>
-                {hasAnyError && (
-                    <span className="text-xs text-destructive font-medium">Missing translations</span>
-                )}
+                <div className="flex items-center gap-2">
+                    {isUrl && (
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={handleAutoFillUrls}
+                            className="h-7 text-xs"
+                        >
+                            <Link className="h-3 w-3 mr-1" />
+                            Auto-fill URLs
+                        </Button>
+                    )}
+                    {hasAnyError && (
+                        <span className="text-xs text-destructive font-medium">Missing translations</span>
+                    )}
+                </div>
             </div>
             <Tabs defaultValue="en" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
@@ -96,7 +122,7 @@ export function LocalizedInput({ control, name, label, isTextarea = false, class
                                             <Input
                                                 {...field}
                                                 value={field.value || ""}
-                                                dir={lang.dir}
+                                                dir={isUrl ? "ltr" : lang.dir}
                                                 placeholder={`Enter ${label.toLowerCase()} in ${lang.label}...`}
                                                 onChange={(e) => {
                                                     field.onChange(e)

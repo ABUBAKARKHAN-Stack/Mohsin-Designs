@@ -38,10 +38,13 @@ const allIcons: IconOption[] = getAllIconNames().map(name => {
 
 const processRecommended = ['MessageSquare', 'Lightbulb', 'Palette', 'Code', 'Rocket', 'HeartHandshake']
 const benefitRecommended = ['Target', 'Users', 'TrendingUp', 'Zap', 'Shield', 'Award']
+const stepRecommended = ['Lightbulb', 'Rocket', 'CheckCircle2', 'Settings', 'Users', 'TrendingUp']
+const industryRecommended = ['Briefcase', 'ShoppingCart', 'Stethoscope', 'GraduationCap', 'Home', 'Cpu']
+const teamRecommended = ['Palette', 'Code', 'Megaphone', 'Users', 'BarChart', 'Rocket']
 
 type IconSelectProps = {
     field: ControllerRenderProps<any, any>
-    type: "process" | "benefit"
+    type: "process" | "benefit" | "step" | "industry" | "team"
     label?: string
 }
 
@@ -49,7 +52,12 @@ export function IconSelect({ field, type, label = "Icon" }: IconSelectProps) {
     const [searchQuery, setSearchQuery] = useState("")
     const [isOpen, setIsOpen] = useState(false)
 
-    const recommended = type === "process" ? processRecommended : benefitRecommended
+    const recommended =
+        type === "process" ? processRecommended :
+            type === "benefit" ? benefitRecommended :
+                type === "step" ? stepRecommended :
+                    type === "industry" ? industryRecommended :
+                        teamRecommended
 
     // Filter icons based on search
     const filteredIcons = allIcons.filter(icon =>

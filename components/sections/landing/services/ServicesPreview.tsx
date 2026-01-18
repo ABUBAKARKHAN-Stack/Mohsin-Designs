@@ -4,11 +4,10 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
 import Link from "next/link";
-import { services } from "@/constants/services.constants";
 import ServiceCard from "./ServiceCard";
 import { ContainerLayout } from "@/components/layout";
 import SectionHeading from "@/components/ui/section-heading";
-
+import { useServices } from "@/context/ServiceContext";
 
 
 const ServicesPreview = () => {
@@ -17,6 +16,8 @@ const ServicesPreview = () => {
     target: containerRef,
     offset: ["start end", "end start"],
   });
+
+  const { services } = useServices()
 
   const y1 = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const y2 = useTransform(scrollYProgress, [0, 1], [-40, 80]);
@@ -70,7 +71,7 @@ const ServicesPreview = () => {
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
           {services.map((service, index) => (
-            <ServiceCard key={service.number} service={service} index={index} />
+            <ServiceCard key={service.slug} service={service} index={index} />
           ))}
         </div>
 

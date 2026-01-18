@@ -12,9 +12,6 @@ export async function getServerSession() {
     return session;
   } catch (error) {
 
-    if (error instanceof APIError) {
-      console.log(error.statusCode);
-    }
     
     console.error("Better Auth session failed:", error);
     return null;

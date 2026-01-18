@@ -37,10 +37,22 @@ const LANDING_PAGE_CONTENT_QUERY_BY_LOCALE = `{
       "description": aboutPreview.sectionHeading.description[$lang]
     }
   },
-  "stats": stats[]{
-    "value": value[$lang],
-    "label": label[$lang],
-    iconName
+  "stats": {
+    "projectsDelivered": {
+      "value": stats.projectsDelivered.value[$lang],
+      "label": stats.projectsDelivered.label[$lang],
+      "suffix": stats.projectsDelivered.suffix
+    },
+    "yearsExperience": {
+      "value": stats.yearsExperience.value[$lang],
+      "label": stats.yearsExperience.label[$lang],
+      "suffix": stats.yearsExperience.suffix
+    },
+    "clientSatisfaction": {
+      "value": stats.clientSatisfaction.value[$lang],
+      "label": stats.clientSatisfaction.label[$lang],
+      "suffix": stats.clientSatisfaction.suffix
+    }
   },
   "whyChooseUs": {
     "sectionHeading": {
@@ -68,15 +80,15 @@ const LANDING_PAGE_CONTENT_QUERY_BY_LOCALE = `{
 }`;
 
 export async function getLandingPageContent(lang: string) {
-    try {
-        const { data } = await sanityFetch({
-            query: `*[_type == "landingPageContent"][0] ${LANDING_PAGE_CONTENT_QUERY_BY_LOCALE}`,
-            params: { lang },
-            perspective: "published"
-        });
-        return data;
-    } catch (error) {
-        console.error("Failed to fetch landing page content:", error);
-        throw error;
-    }
+  try {
+    const { data } = await sanityFetch({
+      query: `*[_type == "landingPageContent"][0] ${LANDING_PAGE_CONTENT_QUERY_BY_LOCALE}`,
+      params: { lang },
+      perspective: "published"
+    });
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch landing page content:", error);
+    throw error;
+  }
 }

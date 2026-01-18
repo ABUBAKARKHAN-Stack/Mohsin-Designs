@@ -98,10 +98,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         name: "hero.ctaButtons",
     })
 
-    const { fields: statFields, append: appendStat, remove: removeStat } = useFieldArray({
-        control: formControl,
-        name: "stats",
-    })
 
     const { fields: benefitFields, append: appendBenefit, remove: removeBenefit } = useFieldArray({
         control: formControl,
@@ -386,40 +382,15 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
                     {/* STATS */}
                     <TabsContent value="stats">
-                        <Card>
-                            <CardHeader><CardTitle>Stats Section</CardTitle></CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <h3 className="font-semibold">Stats (At least 1 required)</h3>
-                                    <Button type="button" size="sm" variant="outline" onClick={() => appendStat({ value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" })}>
-                                        <Plus className="h-4 w-4 mr-2" /> Add Stat
-                                    </Button>
-                                </div>
-                                {statFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Stat {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeStat(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`stats.${index}.value`} label="Value (e.g., 3,000+)" />
-                                        <LocalizedInput control={formControl} name={`stats.${index}.label`} label="Label (e.g., Clients)" />
-                                        <FormField control={formControl} name={`stats.${index}.suffix`} render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Suffix (Optional)</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="e.g., +, %, K, M" />
-                                                </FormControl>
-                                                <FormDescription>Add a suffix like +, %, K, or M</FormDescription>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )} />
-                                    </div>
-                                ))}
-                                {statFields.length === 0 && (
-                                    <p className="text-sm text-muted-foreground text-center py-4">No stats added yet. Click "Add Stat" to create one.</p>
-                                )}
+                        <Card className="border-2 shadow-sm">
+                            <CardHeader className="bg-muted/30 pb-4 border-b">
+                                <CardTitle className="text-xl">Statistics Section</CardTitle>
+                                <p className="text-sm text-muted-foreground">Manage the three core metrics displayed on your landing page.</p>
+                            </CardHeader>
+                            <CardContent className="p-6 space-y-8">
+                                <StatItemCard control={formControl} name="stats.projectsDelivered" title="Projects Delivered" />
+                                <StatItemCard control={formControl} name="stats.yearsExperience" title="Years Experience" />
+                                <StatItemCard control={formControl} name="stats.clientSatisfaction" title="Client Satisfaction" />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -504,8 +475,14 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                     </TabsContent>
 
                     {/* SERVICES */}
-                    <TabsContent value="services">
+                    <TabsContent value="services" className="space-y-6">
                         <SectionHeadingCard control={formControl} baseName="servicesPreview.sectionHeading" title="Services Preview" />
+                        <Card>
+                            <CardHeader><CardTitle>Services List</CardTitle></CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground">Individual services are managed separately in the Services section and are automatically added dynamically to this section.</p>
+                            </CardContent>
+                        </Card>
                     </TabsContent>
 
                     {/* WHY US */}
@@ -539,13 +516,25 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                     </TabsContent>
 
                     {/* PORTFOLIO */}
-                    <TabsContent value="portfolio">
+                    <TabsContent value="portfolio" className="space-y-6">
                         <SectionHeadingCard control={formControl} baseName="portfolioPreview.sectionHeading" title="Portfolio Preview" />
+                        <Card>
+                            <CardHeader><CardTitle>Portfolio Projects</CardTitle></CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground">Portfolio projects are managed separately and are automatically added dynamically as you create them.</p>
+                            </CardContent>
+                        </Card>
                     </TabsContent>
 
                     {/* CASES */}
-                    <TabsContent value="cases">
+                    <TabsContent value="cases" className="space-y-6">
                         <SectionHeadingCard control={formControl} baseName="caseStudiesPreview.sectionHeading" title="Case Studies Preview" />
+                        <Card>
+                            <CardHeader><CardTitle>Case Studies</CardTitle></CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground">Detailed case studies are managed separately and are automatically added dynamically to this section.</p>
+                            </CardContent>
+                        </Card>
                     </TabsContent>
 
                     {/* AREAS */}
@@ -928,13 +917,58 @@ function SectionHeadingCard({ control, baseName, title }: { control: any; baseNa
     )
 }
 
+function StatItemCard({ control, name, title }: { control: any; name: string; title: string }) {
+    return (
+        <div className="space-y-4 pb-8 last:pb-0 border-b last:border-0 border-border/40">
+            <h4 className="font-semibold text-base text-muted-foreground uppercase tracking-wider">{title}</h4>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div className="lg:col-span-5 space-y-4">
+                    <LocalizedInput
+                        control={control}
+                        name={`${name}.value`}
+                        label="Metric Value"
+                        noBorder
+                        compact
+                    />
+                    <FormField
+                        control={control}
+                        name={`${name}.suffix`}
+                        render={({ field }) => (
+                            <FormItem className="pb-1">
+                                <FormLabel className=" font-medium text-muted-foreground">Suffix</FormLabel>
+                                <FormControl>
+                                    <Input {...field} placeholder="e.g., +, %, K" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <div className="lg:col-span-7">
+                    <LocalizedInput
+                        control={control}
+                        name={`${name}.label`}
+                        label="Display Label"
+                        noBorder
+                        compact
+                    />
+                </div>
+            </div>
+        </div>
+    )
+}
+
 function getDefaultValues(): LandingPageContentValues {
     return {
         hero: { badge: { en: "", ur: "", es: "", ar: "" }, headingLines: [], descriptionParagraphs: [], ctaButtons: [] },
         servicesPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
         portfolioPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
         aboutPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
-        stats: [],
+        stats: {
+            projectsDelivered: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+            yearsExperience: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+            clientSatisfaction: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+        },
         whyChooseUs: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, benefits: [] },
         blogPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
         faqs: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, faqItems: [] },
@@ -957,7 +991,11 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
         servicesPreview: { ...defaults.servicesPreview, ...data.servicesPreview },
         portfolioPreview: { ...defaults.portfolioPreview, ...data.portfolioPreview },
         aboutPreview: { ...defaults.aboutPreview, ...data.aboutPreview },
-        stats: data.stats || defaults.stats,
+        stats: {
+            projectsDelivered: { ...defaults.stats.projectsDelivered, ...data.stats?.projectsDelivered },
+            yearsExperience: { ...defaults.stats.yearsExperience, ...data.stats?.yearsExperience },
+            clientSatisfaction: { ...defaults.stats.clientSatisfaction, ...data.stats?.clientSatisfaction },
+        },
         whyChooseUs: {
             sectionHeading: { ...defaults.whyChooseUs.sectionHeading, ...data.whyChooseUs?.sectionHeading },
             benefits: data.whyChooseUs?.benefits || defaults.whyChooseUs.benefits

@@ -29,7 +29,11 @@ async function ensureDocumentExists() {
                 servicesPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
                 portfolioPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
                 aboutPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
-                stats: [],
+                stats: {
+                    projectsDelivered: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
+                    yearsExperience: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
+                    clientSatisfaction: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
+                },
                 whyChooseUs: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, benefits: [] },
                 blogPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
                 faqs: {

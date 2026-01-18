@@ -35,7 +35,7 @@ const statSchema = z.object({
     _key: z.string().optional(),
     value: requiredLocalizedStringSchema,
     label: requiredLocalizedStringSchema,
-    suffix: z.string().optional(),
+    suffix: z.string().min(1, "Suffix is required (e.g., +, %)"),
 });
 
 // Benefit Schema
@@ -86,7 +86,11 @@ export const landingPageContentSchema = z.object({
     }),
 
     // Stats Section
-    stats: z.array(statSchema).min(1, "At least one stat is required"),
+    stats: z.object({
+        projectsDelivered: statSchema,
+        yearsExperience: statSchema,
+        clientSatisfaction: statSchema,
+    }),
 
     // Why Choose Us Section
     whyChooseUs: z.object({

@@ -67,7 +67,7 @@ const Stats = () => {
 
               </motion.div>
               <motion.div
-               
+
                 className="size-84 absolute rounded-full  border-accent border-2 z-10"
               />
 

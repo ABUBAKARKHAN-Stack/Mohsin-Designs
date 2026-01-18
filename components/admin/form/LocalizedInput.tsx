@@ -16,6 +16,8 @@ interface LocalizedInputProps {
     isTextarea?: boolean
     isUrl?: boolean
     className?: string
+    noBorder?: boolean
+    compact?: boolean
 }
 
 const LANGUAGES = [
@@ -27,7 +29,7 @@ const LANGUAGES = [
 
 import { useFormContext } from "react-hook-form"
 
-export function LocalizedInput({ control, name, label, isTextarea = false, isUrl = false, className }: LocalizedInputProps) {
+export function LocalizedInput({ control, name, label, isTextarea = false, isUrl = false, className, noBorder, compact }: LocalizedInputProps) {
     const { formState: { errors }, watch, trigger, setValue } = useFormContext()
     const fieldValues = watch(name)
 
@@ -58,7 +60,12 @@ export function LocalizedInput({ control, name, label, isTextarea = false, isUrl
     }
 
     return (
-        <div className={cn("space-y-2 border p-4 rounded-md", className)}>
+        <div className={cn(
+            "space-y-2",
+            !noBorder && "border p-4 rounded-md",
+            compact && "p-0 space-y-1",
+            className
+        )}>
             <div className="flex justify-between items-center">
                 <FormLabel className={cn(hasAnyError && "text-destructive")}>{label}</FormLabel>
                 <div className="flex items-center gap-2">

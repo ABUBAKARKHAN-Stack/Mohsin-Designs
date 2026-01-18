@@ -150,47 +150,53 @@ export const landingPageContentType = defineType({
         // STATS SECTION
         defineField({
             name: 'stats',
-            title: 'Stats',
-            type: 'array',
-            validation: Rule => Rule.required().min(1),
-            of: [{
-                type: 'object',
-                fields: [
-                    defineField({
-                        name: 'value',
-                        title: 'Value',
-                        type: 'localizedString',
-                        description: 'e.g., 3,000 or 95',
-                        validation: Rule => Rule.required()
-                    }),
-                    defineField({
-                        name: 'label',
-                        title: 'Label',
-                        type: 'localizedString',
-                        description: 'e.g., Clients or Success Rate',
-                        validation: Rule => Rule.required()
-                    }),
-                    defineField({
-                        name: 'suffix',
-                        title: 'Suffix',
-                        type: 'string',
-                        description: 'Optional suffix like +, %, K, M'
-                    })
-                ],
-                preview: {
-                    select: {
-                        value: 'value.en',
-                        label: 'label.en',
-                        suffix: 'suffix'
-                    },
-                    prepare({ value, label, suffix }) {
-                        return {
-                            title: `${value}${suffix || ''} - ${label}`,
-                            subtitle: 'Stat'
-                        }
-                    }
-                }
-            }]
+            title: 'Stats Section',
+            type: 'object',
+            validation: Rule => Rule.required(),
+            fields: [
+                defineField({
+                    name: 'projectsDelivered',
+                    title: 'Projects Delivered',
+                    type: 'object',
+                    fields: [
+                        defineField({ name: 'value', type: 'localizedString' }),
+                        defineField({ name: 'label', type: 'localizedString' }),
+                        defineField({
+                            name: 'suffix',
+                            type: 'string',
+                            validation: Rule => Rule.required()
+                        })
+                    ]
+                }),
+                defineField({
+                    name: 'yearsExperience',
+                    title: 'Years Experience',
+                    type: 'object',
+                    fields: [
+                        defineField({ name: 'value', type: 'localizedString' }),
+                        defineField({ name: 'label', type: 'localizedString' }),
+                        defineField({
+                            name: 'suffix',
+                            type: 'string',
+                            validation: Rule => Rule.required()
+                        })
+                    ]
+                }),
+                defineField({
+                    name: 'clientSatisfaction',
+                    title: 'Client Satisfaction',
+                    type: 'object',
+                    fields: [
+                        defineField({ name: 'value', type: 'localizedString' }),
+                        defineField({ name: 'label', type: 'localizedString' }),
+                        defineField({
+                            name: 'suffix',
+                            type: 'string',
+                            validation: Rule => Rule.required()
+                        })
+                    ]
+                })
+            ]
         }),
 
         // SERVICES PREVIEW SECTION

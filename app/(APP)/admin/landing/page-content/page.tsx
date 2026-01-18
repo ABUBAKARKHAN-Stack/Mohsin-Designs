@@ -21,7 +21,7 @@ export default async function LandingPageContentPage() {
         servicesPreview: pageContent.servicesPreview || {},
         portfolioPreview: pageContent.portfolioPreview || {},
         aboutPreview: pageContent.aboutPreview || {},
-        stats: pageContent.stats || [],
+        stats: pageContent.stats || {},
         whyChooseUs: pageContent.whyChooseUs || {},
         blogPreview: pageContent.blogPreview || {},
         faqs: pageContent.faqs || {},

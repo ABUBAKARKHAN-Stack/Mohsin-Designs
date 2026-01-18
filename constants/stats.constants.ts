@@ -1,9 +1,8 @@
 import { Briefcase, Building2, Car, Globe, GraduationCap, Home, MapPin, ShoppingBag, Stethoscope, Utensils } from "lucide-react";
 
 const stats = [
-    { value: 8, suffix: "+", label: "Industries" },
-    { value: 6, suffix: "+", label: "Years Experience" },
     { value: 3000, suffix: "+", label: "Projects Delivered" },
+    { value: 6, suffix: "+", label: "Years Experience" },
     { value: 98, suffix: "%", label: "Client Satisfaction" },
 ] as const
 

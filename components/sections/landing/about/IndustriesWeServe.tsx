@@ -2,7 +2,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import {
-     ArrowUpRight
+    ArrowUpRight
 } from "lucide-react";
 import SectionHeading from "@/components/ui/section-heading";
 import { ContainerLayout } from "@/components/layout";
@@ -23,7 +23,7 @@ const IndustriesWeServe = () => {
 
     return (
         <section ref={containerRef} className="lg:py-12.5 py-6.25 relative overflow-hidden">
-            
+
             {/* Background Elements */}
             <motion.div
                 style={{ y: y1 }}
@@ -88,7 +88,7 @@ const IndustriesWeServe = () => {
                     className="mt-16"
                 >
                     <div className="p-8 md:p-10 rounded-2xl bg-accent">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-center">
                             {stats.map((stat, index) => (
                                 <motion.div
                                     key={stat.label}

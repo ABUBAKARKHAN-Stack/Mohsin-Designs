@@ -8,6 +8,9 @@ import ServiceCard from "./ServiceCard";
 import { ContainerLayout } from "@/components/layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { useServices } from "@/context/ServiceContext";
+import { uiT } from "@/i18n";
+import { useParams } from "next/navigation";
+import { useLandingPageContent } from "@/context/LandingPageContentContext";
 
 
 const ServicesPreview = () => {
@@ -18,6 +21,10 @@ const ServicesPreview = () => {
   });
 
   const { services } = useServices()
+  const { lang }: LanguageType = useParams()
+  const { landingPageContent } = useLandingPageContent()
+
+  const servicesPreviewData = landingPageContent?.servicesPreview;
 
   const y1 = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const y2 = useTransform(scrollYProgress, [0, 1], [-40, 80]);
@@ -45,9 +52,9 @@ const ServicesPreview = () => {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 lg:mb-20 gap-8">
 
           <SectionHeading
-            eyebrow="services"
-            title="What We Do Best"
-            description="We blend creativity with strategy and technology to build digital solutions that help brands grow with clarity and confidence."
+            eyebrow={servicesPreviewData?.sectionHeading?.eyebrow || "services"}
+            title={servicesPreviewData?.sectionHeading?.title || "What We Do Best"}
+            description={servicesPreviewData?.sectionHeading?.description || "We blend creativity with strategy and technology to build digital solutions that help brands grow with clarity and confidence."}
             className="mb-0"
           />
 
@@ -59,10 +66,10 @@ const ServicesPreview = () => {
             className="hidden lg:block"
           >
             <Link
-              href="/services"
+              href={`/${lang}/services`}
               className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300 shadow-[0_10px_30px_-10px_hsl(var(--accent)/0.5)]"
             >
-              <span>View All Services</span>
+              <span>{uiT(lang, "common.viewAllServices")}</span>
               <ArrowUpRight className="size-4.5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
             </Link>
           </motion.div>
@@ -84,10 +91,10 @@ const ServicesPreview = () => {
           className="mt-12 lg:hidden text-center"
         >
           <Link
-            href="/services"
+            href={`/${lang}/services`}
             className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300"
           >
-            View All Services
+            {uiT(lang, "common.viewAllServices")}
             <ArrowUpRight className="size-4.5" />
           </Link>
         </motion.div>

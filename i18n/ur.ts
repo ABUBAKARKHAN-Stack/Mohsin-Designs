@@ -10,12 +10,15 @@ const ur = {
         keepExploring: "مزید دریافت کریں",
         otherServices: "دیگر خدمات",
         viewAllServices: "تمام خدمات دیکھیں",
+        since2019: "2019 سے",
         learnMore: "مزید جانیں",
         clients: "کلائنٹس",
         continents: "براعظم",
         countries: "ممالک",
         viewAllProjects: "تمام پروجیکٹس دیکھیں",
         step: "مرحلہ",
+        industries: "صنعتیں",
+        agencyStructure: "ایجنسی کا ڈھانچہ",
         areasCta: {
             title: "کیا آپ کی جگہ یہاں نہیں ہے؟",
             description: "ہم دنیا بھر کے کلائنٹس کے ساتھ کام کرتے ہیں۔ ابھی ہم سے رابطہ کریں!"

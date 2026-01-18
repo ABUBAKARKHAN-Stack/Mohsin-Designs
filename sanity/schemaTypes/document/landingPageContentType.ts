@@ -243,56 +243,59 @@ export const landingPageContentType = defineType({
                     title: 'Section Heading',
                     type: 'sectionHeading',
                     validation: Rule => Rule.required()
+                }),
+                defineField({
+                    name: 'leftDescriptions',
+                    title: 'Left Side Descriptions',
+                    type: 'array',
+                    description: 'Exactly 2 paragraphs for the left side',
+                    validation: Rule => Rule.required().min(2).max(2),
+                    of: [{
+                        type: 'object',
+                        fields: [
+                            defineField({
+                                name: 'text',
+                                title: 'Paragraph Text',
+                                type: 'localizedText',
+                                validation: Rule => Rule.required()
+                            })
+                        ]
+                    }]
+                }),
+                defineField({
+                    name: 'rightDescriptions',
+                    title: 'Right Side Descriptions',
+                    type: 'array',
+                    description: 'Exactly 2 paragraphs for the right side',
+                    validation: Rule => Rule.required().min(2).max(2),
+                    of: [{
+                        type: 'object',
+                        fields: [
+                            defineField({
+                                name: 'text',
+                                title: 'Paragraph Text',
+                                type: 'localizedText',
+                                validation: Rule => Rule.required()
+                            })
+                        ]
+                    }]
+                }),
+                defineField({
+                    name: 'ctaText',
+                    title: 'CTA Button Text',
+                    type: 'localizedString',
+                    validation: Rule => Rule.required()
+                }),
+                defineField({
+                    name: 'ctaUrl',
+                    title: 'CTA Button URL',
+                    type: 'string',
+                    description: 'Internal path (e.g., /about)',
+                    validation: Rule => Rule.required()
                 })
             ]
         }),
 
-        // // STATS SECTION
-        // defineField({
-        //     name: 'stats',
-        //     title: 'Stats Section',
-        //     type: 'array',
-        //     validation: Rule => Rule.required().min(1),
-        //     of: [{
-        //         type: 'object',
-        //         fields: [
-        //             defineField({
-        //                 name: 'value',
-        //                 title: 'Stat Value',
-        //                 type: 'localizedString',
-        //                 description: 'e.g., "3,000+", "50+", "10+"',
-        //                 validation: Rule => Rule.required()
-        //             }),
-        //             defineField({
-        //                 name: 'label',
-        //                 title: 'Stat Label',
-        //                 type: 'localizedString',
-        //                 description: 'e.g., "Clients", "Continents", "Countries"',
-        //                 validation: Rule => Rule.required()
-        //             }),
-        //             defineField({
-        //                 name: 'iconName',
-        //                 title: 'Icon Name',
-        //                 type: 'string',
-        //                 description: 'Lucide icon name (e.g., Users, Globe, MapPin)',
-        //                 validation: Rule => Rule.required()
-        //             })
-        //         ],
-        //         preview: {
-        //             select: {
-        //                 value: 'value.en',
-        //                 label: 'label.en',
-        //                 icon: 'iconName'
-        //             },
-        //             prepare({ value, label, icon }) {
-        //                 return {
-        //                     title: `${value} ${label}`,
-        //                     subtitle: `Icon: ${icon || 'None'}`
-        //                 }
-        //             }
-        //         }
-        //     }]
-        // }),
 
         // WHY CHOOSE US SECTION
         defineField({

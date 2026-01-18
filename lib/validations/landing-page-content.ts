@@ -83,6 +83,16 @@ export const landingPageContentSchema = z.object({
     // About Preview Section
     aboutPreview: z.object({
         sectionHeading: sectionHeadingSchema,
+        leftDescriptions: z.array(z.object({
+            _key: z.string().optional(),
+            text: requiredLocalizedTextSchema
+        })).min(2, "Exactly 2 left descriptions required").max(2, "Exactly 2 left descriptions required"),
+        rightDescriptions: z.array(z.object({
+            _key: z.string().optional(),
+            text: requiredLocalizedTextSchema
+        })).min(2, "Exactly 2 right descriptions required").max(2, "Exactly 2 right descriptions required"),
+        ctaText: requiredLocalizedStringSchema,
+        ctaUrl: requiredUrlSchema,
     }),
 
     // Stats Section

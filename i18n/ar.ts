@@ -10,10 +10,13 @@ const ar = {
         keepExploring: "تابع الاستكشاف",
         otherServices: "خدمات أخرى",
         viewAllServices: "عرض كل الخدمات",
+        since2019: "منذ 2019",
         learnMore: "اعرف أكثر",
         clients: "عملاء",
         continents: "قارات",
         countries: "دول",
+        industries: "صناعات",
+        agencyStructure: "هيكل الوكالة",
         viewAllProjects: "عرض جميع المشاريع",
         step: "الخطوة",
         areasCta: {

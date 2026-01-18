@@ -9,6 +9,9 @@ import MagneticButton from "@/components/MagneticButton";
 import HighlightedBrandname from "@/components/ui/highlighted-brandname";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import { useServices } from "@/context/ServiceContext";
+import { uiT } from "@/i18n";
+import { useParams } from "next/navigation";
+import { useLandingPageContent } from "@/context/LandingPageContentContext";
 
 type Props = {
     y: MotionValue<number>
@@ -17,7 +20,11 @@ type Props = {
 const HeroMainSection = ({
     y
 }: Props) => {
-    const {lightWeightServices} = useServices()
+    const { lang }: LanguageType = useParams()
+    const { lightWeightServices } = useServices()
+    const { landingPageContent } = useLandingPageContent()
+
+    const heroData = landingPageContent?.hero
     return (
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start mb-12 lg:mb-16">
 
@@ -43,114 +50,70 @@ const HeroMainSection = ({
                                 </motion.div>
                             ))}
                         </div>
-                        <span className="text-sm font-medium text-foreground/80">Trusted by 3,000+ Businesses</span>
+                        <span className="text-sm font-medium text-foreground/80">{heroData?.badge || "Trusted by 3,000+ Businesses"}</span>
                     </AnimatedBadge>
                 </motion.div>
 
                 {/* Main heading */}
                 <div className="mb-8 space-y-1">
-                    <div className="overflow-hidden">
-                        <motion.h1
-                            initial={{ y: 100 }}
-                            animate={{ y: 0 }}
-                            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                            className="text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] font-display font-bold leading-[1.02] tracking-tight"
-                        >
-                            We Build
-                        </motion.h1>
-                    </div>
-                    <div className="overflow-hidden">
-                        <motion.h1
-                            initial={{ y: 100 }}
-                            animate={{ y: 0 }}
-                            transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                            className="text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] font-display font-bold leading-[1.02] tracking-tight text-stroke"
-                        >
-                            Brands That
-                        </motion.h1>
-                    </div>
-                    <div className="overflow-hidden">
-                        <motion.h1
-                            initial={{ y: 100 }}
-                            animate={{ y: 0 }}
-                            transition={{ duration: 0.7, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                            className="text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] font-display font-bold leading-[1.02] tracking-tight gradient-text"
-                        >
-                            Stand Out
-                        </motion.h1>
-                    </div>
+                    {heroData?.headingLines?.map((line, index) => (
+                        <div key={index} className="overflow-hidden">
+                            <motion.h1
+                                initial={{ y: 100 }}
+                                animate={{ y: 0 }}
+                                transition={{ duration: 0.7, delay: 0.3 + (index * 0.1), ease: [0.16, 1, 0.3, 1] }}
+                                className={`text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] font-display font-bold leading-[1.02] tracking-tight ${line.style === 'stroke' ? 'text-stroke' :
+                                        line.style === 'gradient' ? 'gradient-text' : ''
+                                    }`}
+                            >
+                                {line.text}
+                            </motion.h1>
+                        </div>
+                    ))}
                 </div>
 
+                {/* Description paragraphs */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.6 }}
-                    className="max-w-xl"
+                    className="space-y-4 max-w-3xl mb-8"
                 >
-                    <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed">
-                        We are a creative design agency helping ambitious businesses build brands
-                        that are clear, confident, and impossible to ignore.
-                    </p>
+                    {heroData?.descriptionParagraphs?.map((paragraph, index) => (
+                        <p key={index} className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                            {paragraph.text}
+                        </p>
+                    ))}
                 </motion.div>
 
-                <div className="my-8">
-                    {/* Description paragraphs */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.65 }}
-                        className="space-y-4 max-w-3xl mb-8"
-                    >
-                        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                            At <HighlightedBrandname />, we don't believe in surface-level design or short-term
-                            trends. We believe in thoughtful branding, strategic creativity, and
-                            digital experiences that support real business growth.
-                        </p>
-
-                        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                            In a world where businesses compete for attention across countless
-                            platforms, standing out requires more than good visuals. It requires a
-                            brand that communicates clearly, connects emotionally, and performs
-                            consistently. That's where we come in.
-                        </p>
-
-                        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                            We partner with startups, growing companies, and established brands to
-                            create logos, digital platforms, and brand identities that feel
-                            intentional, professional, and future-ready. Every project we take on
-                            is shaped by research, guided by strategy, and refined through creative
-                            execution.
-                        </p>
-                    </motion.div>
-
-                    {/* CTA buttons */}
+                {/* CTA buttons */}
+                {heroData?.ctaButtons && heroData.ctaButtons.length > 0 && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.7 }}
                         className="flex flex-wrap gap-4"
                     >
-                        <MagneticButton strength={0.12}>
-                            <Link
-                                href="/contact"
-                                className="group inline-flex items-center gap-3 border-2 border-transparent bg-accent text-accent-foreground px-8 py-4 font-semibold text-sm uppercase tracking-wider hover:bg-foreground hover:text-background transition-all duration-300 shadow-lg shadow-accent/20"
-                            >
-                                Start Your Project
-                                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                        </MagneticButton>
-
-                        <MagneticButton strength={0.12}>
-                            <Link
-                                href="/portfolio"
-                                className="group inline-flex items-center gap-3 border-2 border-border hover:border-accent px-8 py-4 font-semibold text-sm uppercase tracking-wider hover:text-accent transition-all duration-300"
-                            >
-                                View Our Work
-                                <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                            </Link>
-                        </MagneticButton>
+                        {heroData.ctaButtons.map((button, index) => (
+                            <MagneticButton key={index} strength={0.12}>
+                                <Link
+                                    href={button.url}
+                                    className={`group inline-flex items-center gap-3 px-8 py-4 font-semibold text-sm uppercase tracking-wider transition-all duration-300 ${button.variant === 'primary'
+                                            ? 'border-2 border-transparent bg-accent text-accent-foreground hover:bg-foreground hover:text-background shadow-lg shadow-accent/20'
+                                            : 'border-2 border-border hover:border-accent hover:text-accent'
+                                        }`}
+                                >
+                                    {button.text}
+                                    {button.variant === 'primary' ? (
+                                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                    ) : (
+                                        <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                    )}
+                                </Link>
+                            </MagneticButton>
+                        ))}
                     </motion.div>
-                </div>
+                )}
             </div>
 
             {/* Right Column - Visual showcase */}
@@ -188,7 +151,7 @@ const HeroMainSection = ({
                                     transition={{ delay: 0.7 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                                 >
                                     <Link
-                                        href={service.slug}
+                                        href={`/${lang}/services/${service.slug}`}
                                         className="flex items-center gap-3 p-3.5 bg-muted/50 border border-border hover:border-accent/30 hover:bg-accent/5 transition-all group"
                                     >
                                         <div className="w-7 h-7 bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
@@ -226,7 +189,7 @@ const HeroMainSection = ({
                         transition={{ delay: 1 }}
                         className="absolute -top-6 -left-6 bg-foreground text-background px-4 py-2 text-xs font-semibold tracking-wider uppercase"
                     >
-                        Since 2019
+                        {uiT(lang, "common.since2019")}
                     </motion.div>
                 </div>
             </motion.div>

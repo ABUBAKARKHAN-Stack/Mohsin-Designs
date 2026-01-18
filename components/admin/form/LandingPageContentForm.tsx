@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { updateLandingPageContent, saveLandingPageDraft, discardLandingPageDraft } from "@/app/actions/landingPageContent"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
-import { Save, AlertCircle, Plus, Trash2, Clock, X } from "lucide-react"
+import { Save, AlertCircle, Plus, Trash2, Clock, X, Link } from "lucide-react"
 import { debounce } from "lodash"
 
 interface LandingPageContentFormProps {
@@ -39,8 +39,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         mode: "onChange",
         defaultValues: initialData ? mergeWithDefaults(initialData) : getDefaultValues(),
     })
-
-    console.log(form.formState.errors);
 
 
     const formControl = form.control as any
@@ -112,6 +110,16 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
     const { fields: highlightFields, append: appendHighlight, remove: removeHighlight } = useFieldArray({
         control: formControl,
         name: "serviceHighlightsMarquee.highlights",
+    })
+
+    const { fields: leftDescFields, append: appendLeftDesc, remove: removeLeftDesc } = useFieldArray({
+        control: formControl,
+        name: "aboutPreview.leftDescriptions",
+    })
+
+    const { fields: rightDescFields, append: appendRightDesc, remove: removeRightDesc } = useFieldArray({
+        control: formControl,
+        name: "aboutPreview.rightDescriptions",
     })
 
 
@@ -440,8 +448,51 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                     </TabsContent>
 
                     {/* ABOUT */}
-                    <TabsContent value="about">
+                    <TabsContent value="about" className="space-y-6">
                         <SectionHeadingCard control={formControl} baseName="aboutPreview.sectionHeading" title="About Preview" />
+
+                        {/* Left Descriptions */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Left Side Descriptions</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {leftDescFields.map((field, index) => (
+                                    <div key={field.id} className="border rounded p-4 space-y-4">
+                                        <div className="flex justify-between">
+                                            <span className="font-medium">Paragraph {index + 1}</span>
+                                        </div>
+                                        <LocalizedInput control={formControl} name={`aboutPreview.leftDescriptions.${index}.text`} label="Text" isTextarea />
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </Card>
+
+                        {/* Right Descriptions */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Right Side Descriptions</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {rightDescFields.map((field, index) => (
+                                    <div key={field.id} className="border rounded p-4 space-y-4">
+                                        <div className="flex justify-between">
+                                            <span className="font-medium">Paragraph {index + 1}</span>
+                                        </div>
+                                        <LocalizedInput control={formControl} name={`aboutPreview.rightDescriptions.${index}.text`} label="Text" isTextarea />
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </Card>
+
+                        {/* CTA Button */}
+                        <Card>
+                            <CardHeader><CardTitle>Call to Action</CardTitle></CardHeader>
+                            <CardContent className="space-y-4">
+                                <LocalizedInput control={formControl} name="aboutPreview.ctaText" label="Button Text" />
+                                <LocalizedInput control={formControl} name="aboutPreview.ctaUrl" label="Button URL" isUrl />
+                            </CardContent>
+                        </Card>
                     </TabsContent>
 
                     {/* APPROACH */}
@@ -674,6 +725,35 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                         <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.author`} label="Author" />
                                         <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.role`} label="Role" />
                                         <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.company`} label="Company" />
+
+                                        <div className="space-y-2">
+                                            <FormLabel>Avatar Image</FormLabel>
+                                            <FormField control={formControl} name={`testimonials.testimonials.${index}.avatar`} render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <ImageUpload
+                                                            value={field.value}
+                                                            onChange={(asset) => {
+                                                                if (!asset) {
+                                                                    field.onChange(null)
+                                                                    return
+                                                                }
+                                                                field.onChange({
+                                                                    _type: 'image',
+                                                                    asset: {
+                                                                        _type: 'reference',
+                                                                        _ref: asset._id || asset.id,
+                                                                    },
+                                                                    url: asset.url
+                                                                })
+                                                            }}
+                                                            label=""
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )} />
+                                        </div>
                                     </div>
                                 ))}
                             </CardContent>
@@ -696,7 +776,24 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                     <FormField control={formControl} name="leadership.founder.image" render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <ImageUpload value={field.value} onChange={field.onChange} label="" />
+                                                <ImageUpload
+                                                    value={field.value}
+                                                    onChange={(asset) => {
+                                                        if (!asset) {
+                                                            field.onChange(null)
+                                                            return
+                                                        }
+                                                        field.onChange({
+                                                            _type: 'image',
+                                                            asset: {
+                                                                _type: 'reference',
+                                                                _ref: asset._id || asset.id,
+                                                            },
+                                                            url: asset.url
+                                                        })
+                                                    }}
+                                                    label=""
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -775,7 +872,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                             <CardHeader><CardTitle>FAQ Button</CardTitle></CardHeader>
                             <CardContent className="space-y-4">
                                 <LocalizedInput control={formControl} name="faqs.buttonText" label="Button Text" />
-                                <LocalizedInput control={formControl} name="faqs.buttonUrl" label="Button URL" />
+                                <LocalizedInput control={formControl} name="faqs.buttonUrl" label="Button URL" isUrl />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -963,7 +1060,19 @@ function getDefaultValues(): LandingPageContentValues {
         hero: { badge: { en: "", ur: "", es: "", ar: "" }, headingLines: [], descriptionParagraphs: [], ctaButtons: [] },
         servicesPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
         portfolioPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
-        aboutPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
+        aboutPreview: {
+            sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } },
+            leftDescriptions: [
+                { text: { en: "", ur: "", es: "", ar: "" } },
+                { text: { en: "", ur: "", es: "", ar: "" } }
+            ],
+            rightDescriptions: [
+                { text: { en: "", ur: "", es: "", ar: "" } },
+                { text: { en: "", ur: "", es: "", ar: "" } }
+            ],
+            ctaText: { en: "", ur: "", es: "", ar: "" },
+            ctaUrl: { en: "", ur: "", es: "", ar: "" }
+        },
         stats: {
             projectsDelivered: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
             yearsExperience: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
@@ -990,7 +1099,13 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
         hero: { ...defaults.hero, ...data.hero },
         servicesPreview: { ...defaults.servicesPreview, ...data.servicesPreview },
         portfolioPreview: { ...defaults.portfolioPreview, ...data.portfolioPreview },
-        aboutPreview: { ...defaults.aboutPreview, ...data.aboutPreview },
+        aboutPreview: {
+            sectionHeading: { ...defaults.aboutPreview.sectionHeading, ...data.aboutPreview?.sectionHeading },
+            leftDescriptions: data.aboutPreview?.leftDescriptions?.length > 0 ? data.aboutPreview.leftDescriptions : defaults.aboutPreview.leftDescriptions,
+            rightDescriptions: data.aboutPreview?.rightDescriptions?.length > 0 ? data.aboutPreview.rightDescriptions : defaults.aboutPreview.rightDescriptions,
+            ctaText: { ...defaults.aboutPreview.ctaText, ...data.aboutPreview?.ctaText },
+            ctaUrl: { ...defaults.aboutPreview.ctaUrl, ...data.aboutPreview?.ctaUrl }
+        },
         stats: {
             projectsDelivered: { ...defaults.stats.projectsDelivered, ...data.stats?.projectsDelivered },
             yearsExperience: { ...defaults.stats.yearsExperience, ...data.stats?.yearsExperience },

@@ -9,6 +9,7 @@ const es = {
         getInTouch: "Contáctanos",
         keepExploring: "Sigue explorando",
         otherServices: "Otros servicios",
+        since2019: "Desde 2019",
         viewAllServices: "Ver todos los servicios",
         learnMore: "Saber más",
         clients: "Clientes",
@@ -16,6 +17,8 @@ const es = {
         countries: "Países",
         viewAllProjects: "Ver todos los proyectos",
         step: "Paso",
+        industries: "Industrias",
+        agencyStructure: "Estructura de la agencia",
         areasCta: {
             title: "¿No encuentras tu ubicación?",
             description: "Trabajamos con clientes en todo el mundo. ¡Conéctate con nosotros!"

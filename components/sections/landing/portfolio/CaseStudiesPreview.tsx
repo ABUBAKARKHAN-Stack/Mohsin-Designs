@@ -1,6 +1,6 @@
 "use client"
 import { motion, useScroll, useTransform } from "motion/react";
-import { ArrowUpRight} from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useRef, useState } from "react";
 import SectionHeading from "@/components/ui/section-heading";
 import Link from "next/link";
@@ -8,7 +8,9 @@ import { ContainerLayout } from "@/components/layout";
 import { projects } from "@/constants/portfolio.constants";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-
+import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { useParams } from "next/navigation";
+import { uiT } from "@/i18n";
 
 const BeforeAfterSlider = ({ beforeImage, afterImage }: { beforeImage: string; afterImage: string }) => {
     const [sliderPosition, setSliderPosition] = useState(50);
@@ -87,6 +89,10 @@ const CaseStudiesPreview = () => {
     });
 
     const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+    const { landingPageContent } = useLandingPageContent();
+
+    const { lang }: LanguageType = useParams()
+    const caseStudiesPreviewData = landingPageContent?.caseStudiesPreview;
 
     const caseStudies = projects.filter((p) => p.caseStudy !== null).map(p => p.caseStudy)
 
@@ -106,9 +112,9 @@ const CaseStudiesPreview = () => {
                         transition={{ duration: 0.6 }}
                     >
                         <SectionHeading
-                            eyebrow="Case Studies"
-                            title="Real Results, Real Growth"
-                            description="See how we've helped businesses transform their brands and achieve measurable success."
+                            eyebrow={caseStudiesPreviewData?.sectionHeading?.eyebrow || "Case Studies"}
+                            title={caseStudiesPreviewData?.sectionHeading?.title || "Real Results, Real Growth"}
+                            description={caseStudiesPreviewData?.sectionHeading?.description || "See how we've helped businesses transform their brands and achieve measurable success."}
                             className="mb-0"
                         />
                     </motion.div>
@@ -120,10 +126,10 @@ const CaseStudiesPreview = () => {
                         className="hidden lg:block"
                     >
                         <Link
-                            href="/portfolio"
+                            href={`/${lang}/portfolio`}
                             className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300 shadow-[0_10px_30px_-10px_hsl(var(--accent)/0.5)]"
                         >
-                            <span>View All Projects</span>
+                            <span>{uiT(lang, "common.viewAllProjects")}</span>
                             <ArrowUpRight className="size-4.5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
                         </Link>
                     </motion.div>
@@ -220,10 +226,10 @@ const CaseStudiesPreview = () => {
                     className="mt-12 lg:hidden text-center"
                 >
                     <Link
-                        href="/portfolio"
+                        href={`/${lang}/portfolio`}
                         className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300"
                     >
-                        View all Projects
+                        {uiT(lang, "common.viewAllProjects")}
                         <ArrowUpRight className="size-4.5" />
                     </Link>
                 </motion.div>

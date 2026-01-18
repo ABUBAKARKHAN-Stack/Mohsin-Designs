@@ -10,6 +10,8 @@ import { getLightWeightServicesByLocale, getServicesByLocale } from "@/helpers/s
 import { SanityLive } from "@/sanity/lib/live";
 import { getSiteSettingsByLocale } from "@/helpers/site-settings.helpers";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
+import { LandingPageContentProvider } from "@/context/LandingPageContentContext";
+import { getLandingPageContent } from "@/helpers/landing-page-content.helpers";
 
 
 
@@ -31,28 +33,31 @@ export default async function LangLayout({ children, params }: Props) {
     const services = await getServicesByLocale(lang)
     const lightWeightServices = await getLightWeightServicesByLocale(lang)
     const siteSettings = await getSiteSettingsByLocale(lang)
+    const landingPageContent = await getLandingPageContent(lang)
 
 
     return (
 
         <SiteSettingsProvider settings={siteSettings}>
-            <PublicProvider>
-                <div lang={lang} className="min-h-screen flex flex-col">
-                    <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
-                        <SanityLive />
-                        <Navbar />
+            <LandingPageContentProvider landingPageContent={landingPageContent}>
+                <PublicProvider>
+                    <div lang={lang} className="min-h-screen flex flex-col">
+                        <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
+                            <SanityLive />
+                            <Navbar />
 
-                        <main className="flex-1 pt-20">
-                            <AnimatePresence mode="wait">
-                                {children}
-                            </AnimatePresence>
-                        </main>
+                            <main className="flex-1 pt-20">
+                                <AnimatePresence mode="wait">
+                                    {children}
+                                </AnimatePresence>
+                            </main>
 
-                        <FloatingContactBadge />
-                        <Footer />
-                    </ServicesProvider>
-                </div>
-            </PublicProvider>
+                            <FloatingContactBadge />
+                            <Footer />
+                        </ServicesProvider>
+                    </div>
+                </PublicProvider>
+            </LandingPageContentProvider>
         </SiteSettingsProvider>
 
     );

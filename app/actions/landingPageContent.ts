@@ -28,7 +28,19 @@ async function ensureDocumentExists() {
                 },
                 servicesPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
                 portfolioPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
-                aboutPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
+                aboutPreview: {
+                    sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } },
+                    leftDescriptions: [
+                        { text: { en: '', ur: '', es: '', ar: '' } },
+                        { text: { en: '', ur: '', es: '', ar: '' } }
+                    ],
+                    rightDescriptions: [
+                        { text: { en: '', ur: '', es: '', ar: '' } },
+                        { text: { en: '', ur: '', es: '', ar: '' } }
+                    ],
+                    ctaText: { en: '', ur: '', es: '', ar: '' },
+                    ctaUrl: { en: '', ur: '', es: '', ar: '' }
+                },
                 stats: {
                     projectsDelivered: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
                     yearsExperience: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
@@ -81,6 +93,7 @@ export async function getLandingPageContentForAdmin() {
 export async function updateLandingPageContent(data: LandingPageContentValues) {
     try {
         const validatedFields = landingPageContentSchema.parse(data)
+
 
         const updateData: any = {
             _type: 'landingPageContent',

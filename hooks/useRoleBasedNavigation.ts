@@ -12,6 +12,7 @@ import {
     Briefcase,
     FolderOpen,
     Wrench,
+    Inbox,
 } from "lucide-react";
 
 export interface NavigationItem {
@@ -48,8 +49,8 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                     icon: FileText,
                     isOpenByDefault: true,
                     subItems: [
-                        { title: "Home", url: "/admin/pages/home" },
-                        { title: "About", url: "/admin/pages/about" },
+                        { title: "Landing Page Content", url: "/admin/landing/page-content" },
+                        { title: "Services Page Content", url: "/admin/services/page-content" },
                         { title: "Contact", url: "/admin/pages/contact" },
                     ]
                 }
@@ -74,23 +75,16 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                     icon: FileText,
                     isOpenByDefault: true,
                     subItems: [
-                        { title: "Home", url: "/admin/pages/home" },
-                        { title: "About", url: "/admin/pages/about" },
+                        { title: "Landing Page Content", url: "/admin/landing/page-content" },
+                        { title: "Services Page Content", url: "/admin/services/page-content" },
                         { title: "Contact", url: "/admin/pages/contact" },
                     ]
                 },
+                { title: "Services", url: "/admin/services", icon: Briefcase },
                 { title: "Blogs", url: "/admin/blogs", icon: FileText },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
-                { title: "Sections", url: "/admin/sections", icon: Layers },
-            ]
-        },
-        {
-            label: "Services",
-            items: [
-                { title: "Services", url: "/admin/services", icon: Briefcase },
-                { title: "Services Setting", url: "/admin/services/settings", icon: Wrench },
-                { title: "Services Page Content", url: "/admin/services/page-content", icon: FileText },
-                { title: "Landing Page Content", url: "/admin/landing/page-content", icon: Layers },
+                { title: "Forms", url: "/admin/forms", icon: Layers },
+                { title: "Contact Submissions", url: "/admin/contact-submissions", icon: Inbox },
             ]
         },
         {
@@ -103,8 +97,9 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
         {
             label: "Settings",
             items: [
-                { title: "Users", url: "/admin/users", icon: Users },
+                { title: "Services Settings", url: "/admin/services/settings", icon: Wrench },
                 { title: "Site Settings", url: "/admin/site-settings", icon: Wrench },
+                { title: "Users", url: "/admin/users", icon: Users },
                 { title: "Profile", url: "/admin/profile", icon: User },
             ]
         },
@@ -127,18 +122,16 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                     icon: FileText,
                     isOpenByDefault: true,
                     subItems: [
-                        { title: "Home", url: "/admin/pages/home" },
-                        { title: "About", url: "/admin/pages/about" },
+                        { title: "Landing Page Content", url: "/admin/landing/page-content" },
+                        { title: "Services Page Content", url: "/admin/services/page-content" },
                         { title: "Contact", url: "/admin/pages/contact" },
                     ]
                 },
                 { title: "Services", url: "/admin/services", icon: Briefcase },
-                { title: "Services Setting", url: "/admin/services/settings", icon: Wrench },
-                { title: "Services Page Content", url: "/admin/services/page-content", icon: FileText },
-                { title: "Landing Page Content", url: "/admin/landing/page-content", icon: Layers },
                 { title: "Blogs", url: "/admin/blogs", icon: FileText },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
-                { title: "Sections", url: "/admin/sections", icon: Layers },
+                { title: "Forms", url: "/admin/forms", icon: Layers },
+                { title: "Contact Submissions", url: "/admin/contact-submissions", icon: Inbox },
                 { title: "Media", url: "/admin/media", icon: FolderOpen },
             ]
         },
@@ -167,8 +160,8 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                     icon: FileText,
                     isOpenByDefault: true,
                     subItems: [
-                        { title: "Home", url: "/admin/pages/home" },
-                        { title: "About", url: "/admin/pages/about" },
+                        { title: "Landing Page Content", url: "/admin/landing/page-content" },
+                        { title: "Services Page Content", url: "/admin/services/page-content" },
                         { title: "Contact", url: "/admin/pages/contact" },
                     ]
                 }
@@ -205,15 +198,16 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                     icon: FileText,
                     isOpenByDefault: true,
                     subItems: [
-                        { title: "Home", url: "/admin/pages/home" },
-                        { title: "About", url: "/admin/pages/about" },
+                        { title: "Landing Page Content", url: "/admin/landing/page-content" },
+                        { title: "Services Page Content", url: "/admin/services/page-content" },
                         { title: "Contact", url: "/admin/pages/contact" },
                     ]
                 },
                 { title: "Services", url: "/admin/services", icon: Briefcase },
                 { title: "Blogs", url: "/admin/blogs", icon: FileText },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
-                { title: "Sections", url: "/admin/sections", icon: Layers },
+                { title: "Forms", url: "/admin/forms", icon: Layers },
+                { title: "Contact Submissions", url: "/admin/contact-submissions", icon: Inbox },
             ]
         },
     ];

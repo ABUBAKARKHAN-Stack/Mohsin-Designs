@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { RefreshCcw, Home, AlertTriangle, ShieldQuestion } from 'lucide-react'
 import Link from 'next/link'
@@ -16,17 +15,13 @@ export default function ErrorPage({
   const params = useParams()
   const lang = (params?.lang as string) || 'en'
 
-  useEffect(() => {
-    // Log the error to an error reporting service
-    console.error('Public Layout Error:', error)
-  }, [error])
 
   const isNetworkError = error.message?.toLowerCase().includes('fetch') ||
     error.message?.toLowerCase().includes('network') ||
     error.message?.toLowerCase().includes('failed to fetch')
 
   return (
-    <div className="relative flex min-h-[80vh] w-full flex-col items-center justify-center overflow-hidden bg-background px-6 py-24">
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background px-6 py-24">
       {/* Decorative background element */}
       <div className="absolute top-1/2 left-1/2 -z-10 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-[100px]" />
 
@@ -61,7 +56,7 @@ export default function ErrorPage({
             variant="outline"
             size="lg"
             asChild
-            className="h-12 min-w-[160px] rounded-full gap-2 text-base font-medium transition-all hover:bg-primary/5 border-primary/20"
+            className="h-12 min-w-[160px] rounded-full gap-2 text-base font-medium transition-all hover:bg-primary/5 hover:text-foreground/75 border-primary/20"
           >
             <Link href={`/${lang}`}>
               <Home className="h-5 w-5" />

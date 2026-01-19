@@ -68,6 +68,12 @@ async function ensureDocumentExists() {
                         socialLinks: []
                     },
                     agencyStructure: []
+                },
+                cta: {
+                    badge: { en: '', ur: '', es: '', ar: '' },
+                    heading: { en: '', ur: '', es: '', ar: '' },
+                    description: { en: '', ur: '', es: '', ar: '' },
+                    benefits: []
                 }
             }
             return await adminClient.create(initialDoc)
@@ -113,7 +119,14 @@ export async function updateLandingPageContent(data: LandingPageContentValues) {
             areasWeServe: validatedFields.areasWeServe,
             industriesWeServe: validatedFields.industriesWeServe,
             testimonials: validatedFields.testimonials,
-            leadership: validatedFields.leadership
+            leadership: validatedFields.leadership,
+            cta: {
+                ...validatedFields.cta,
+                formId: validatedFields.cta.formId ? {
+                    _type: 'reference',
+                    _ref: validatedFields.cta.formId
+                } : undefined
+            }
         }
 
         await adminClient.createOrReplace(updateData)

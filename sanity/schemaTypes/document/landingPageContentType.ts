@@ -911,6 +911,72 @@ export const landingPageContentType = defineType({
             ]
         }),
 
+        // CTA SECTION
+        defineField({
+            name: 'cta',
+            title: 'CTA Section',
+            type: 'object',
+            validation: Rule => Rule.required(),
+            fields: [
+                defineField({
+                    name: 'badge',
+                    title: 'Badge Text',
+                    type: 'localizedString',
+                    description: 'e.g., "Available for new projects"',
+                    validation: Rule => Rule.required()
+                }),
+                defineField({
+                    name: 'heading',
+                    title: 'Heading',
+                    type: 'localizedString',
+                    description: 'Main CTA heading',
+                    validation: Rule => Rule.required()
+                }),
+                defineField({
+                    name: 'description',
+                    title: 'Description',
+                    type: 'localizedText',
+                    description: 'CTA description paragraphs',
+                    validation: Rule => Rule.required()
+                }),
+                defineField({
+                    name: 'benefits',
+                    title: 'Benefits',
+                    type: 'array',
+                    description: 'List of benefits/features',
+                    validation: Rule => Rule.required().min(1).max(5),
+                    of: [{
+                        type: 'object',
+                        fields: [
+                            defineField({
+                                name: 'text',
+                                title: 'Benefit Text',
+                                type: 'localizedString',
+                                validation: Rule => Rule.required()
+                            })
+                        ],
+                        preview: {
+                            select: {
+                                text: 'text.en'
+                            },
+                            prepare({ text }) {
+                                return {
+                                    title: text || 'Untitled Benefit'
+                                }
+                            }
+                        }
+                    }]
+                }),
+                defineField({
+                    name: 'formId',
+                    title: 'Contact Form',
+                    type: 'reference',
+                    to: [{ type: 'form' }],
+                    description: 'Select which form to display in the CTA section',
+                }),
+            ]
+        }),
+
     ],
 
     preview: {

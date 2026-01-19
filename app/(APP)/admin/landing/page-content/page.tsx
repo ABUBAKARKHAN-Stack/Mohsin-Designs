@@ -33,6 +33,7 @@ export default async function LandingPageContentPage() {
         industriesWeServe: pageContent.industriesWeServe || {},
         testimonials: pageContent.testimonials || {},
         leadership: pageContent.leadership || {},
+        cta: pageContent.cta || {},
     } : undefined;
 
     return (

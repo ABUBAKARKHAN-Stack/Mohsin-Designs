@@ -16,6 +16,8 @@ import { localizedUrl } from './objects/localizedUrlType'
 import { siteSettings } from './document/siteSettingsType'
 import { servicesPageContentType } from './document/servicesPageContentType'
 import { landingPageContentType } from './document/landingPageContentType'
+import { contactSubmissionType } from './document/contactSubmissionType'
+import { formType } from './document/formType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -36,5 +38,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     siteSettings,
     servicesPageContentType,
     landingPageContentType,
+    contactSubmissionType,
+    formType,
   ],
 }

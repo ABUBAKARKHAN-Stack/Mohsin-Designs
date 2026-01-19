@@ -211,6 +211,18 @@ export const landingPageContentSchema = z.object({
         })).min(1, "At least one team is required"),
     }),
 
+    // CTA
+    cta: z.object({
+        badge: requiredLocalizedStringSchema,
+        heading: requiredLocalizedStringSchema,
+        description: requiredLocalizedTextSchema,
+        benefits: z.array(z.object({
+            _key: z.string().optional(),
+            text: requiredLocalizedStringSchema,
+        })).min(1, "At least one benefit is required"),
+        formId: z.string().optional(), // Reference to form document
+    }),
+
 });
 
 export type LandingPageContentValues = z.infer<typeof landingPageContentSchema>;

@@ -201,8 +201,8 @@ const LANDING_PAGE_CONTENT_QUERY_BY_LOCALE = `{
     "badge": cta.badge[$lang],
     "heading": cta.heading[$lang],
     "description": cta.description[$lang],
-    "buttonText": cta.buttonText[$lang],
-    "buttonUrl": cta.buttonUrl[$lang]
+    "benefits": cta.benefits[]{"text": text[$lang]},
+    "formId": cta.formId._ref
   }
 }`;
 

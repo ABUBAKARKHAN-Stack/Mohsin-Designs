@@ -15,8 +15,15 @@ import { cn } from "@/lib/utils";
 import DecorativeElements from "./DecorativeElements";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import { Spinner } from "@/components/ui/spinner";
+import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { submitContactForm } from "@/app/actions/submitContactForm";
+import { getForm, submitDynamicForm } from "@/app/actions/formActions";
+import { successToast, errorToast } from "@/lib/toastNotifications";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 
 const CTA = () => {
+  const { lang }: any = useParams();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -24,29 +31,89 @@ const CTA = () => {
   });
   const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
+  const { landingPageContent } = useLandingPageContent();
+  const ctaData = landingPageContent?.cta;
+  const [dynamicForm, setDynamicForm] = useState<any>(null);
+  const [isLoadingForm, setIsLoadingForm] = useState(false);
 
-
+  // Fetch dynamic form if formId is provided
+  useEffect(() => {
+    async function fetchForm() {
+      if (ctaData?.formId) {
+        setIsLoadingForm(true);
+        try {
+          const result = await getForm(ctaData.formId);
+          if (result.success && result.data) {
+            setDynamicForm(result.data);
+          }
+        } catch (error) {
+          console.error("Failed to load form:", error);
+        } finally {
+          setIsLoadingForm(false);
+        }
+      } else {
+        setDynamicForm(null);
+      }
+    }
+    fetchForm();
+  }, [ctaData?.formId]);
 
   const form = useForm({
-    resolver: zodResolver(contactSchema),
-    defaultValues: {
-      email: "",
-      message: "",
-      name: "",
-      subject: ""
-    }
+    // Dynamic fields handle their own validation via rules in Controller
   })
 
+  // Initialize form defaults when dynamicForm is loaded or cleared
+  useEffect(() => {
+    if (dynamicForm) {
+      const defaults: Record<string, any> = {};
+      dynamicForm.fields.forEach((f: any) => {
+        defaults[f.fieldName] = "";
+      });
+      form.reset(defaults);
+    } else {
+      form.reset({
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+      });
+    }
+  }, [dynamicForm, form]);
+
   const {
-    isLoading,
     isSubmitting,
-    isSubmitted
   } = form.formState
 
-  const onSubmit = (data: ContactFormType) => { }
+  const onSubmit = async (data: any) => {
+    try {
+      if (dynamicForm) {
+        const result = await submitDynamicForm(dynamicForm._id, data, lang);
 
+        if (result.success) {
+          successToast(result.message || "Form submitted successfully!");
+          form.reset();
+        } else {
+          errorToast(result.error || "Failed to submit form");
+        }
+      } else {
+        // Use default contact form submission
+        const result = await submitContactForm(data as ContactFormType);
+
+        if (result.success) {
+          successToast(result.message);
+          form.reset();
+        } else {
+          errorToast(result.message);
+        }
+      }
+    } catch (error) {
+      errorToast('An unexpected error occurred. Please try again.');
+    }
+  }
 
   const fieldBaseClass = "bg-foreground/5! border-foreground/10! text-foreground/80! placeholder:text-foreground/40! focus:border-accent! h-12 rounded-xl"
+
+  if (!ctaData) return null;
 
   return (
     <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-background relative overflow-hidden">
@@ -69,32 +136,24 @@ const CTA = () => {
 
             <AnimatedBadge className="inline-flex gap-2 px-5 py-2 mb-6">
               <span className="w-2 h-2 rounded-full bg-foreground/80 animate-pulse" />
-              <span className="text-sm font-medium text-foreground/80">Available for new projects</span>
+              <span className="text-sm font-medium text-foreground/80">{ctaData.badge}</span>
             </AnimatedBadge>
 
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight leading-tight mb-6">
-              Ready to Start Your{" "}
-              <span className="text-accent">Next Project?</span>
+              {ctaData.heading}
             </h2>
 
             <div className="text-foreground/70 text-lg leading-relaxed mb-8 max-w-lg space-y-4">
               <p>
-                If you’re looking for a creative agency that combines clarity, creativity, and accountability, we’d love to collaborate.
-              </p>
-              <p>
-                Whether you’re building a brand from the ground up or refining an existing presence, we approach every project with the same commitment to quality and purpose.
+                {ctaData.description}
               </p>
             </div>
 
             {/* Quick benefits */}
             <div className="space-y-3">
-              {[
-                "Free initial consultation",
-                "Response within 24 hours",
-                "No commitment required",
-              ].map((benefit, index) => (
+              {ctaData.benefits?.map((benefit, index) => (
                 <motion.div
-                  key={benefit}
+                  key={index}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
@@ -102,7 +161,7 @@ const CTA = () => {
                   className="flex items-center gap-3 text-foreground/80"
                 >
                   <CheckCircle2 className="w-5 h-5 text-accent shrink-0" />
-                  <span>{benefit}</span>
+                  <span>{benefit?.text}</span>
                 </motion.div>
               ))}
             </div>
@@ -120,112 +179,149 @@ const CTA = () => {
                 <span className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
                   <Send className="w-5 h-5 text-accent-foreground" />
                 </span>
-                Send us a message
+                {dynamicForm?.name || "Send us a message"}
               </h3>
 
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FieldGroup>
-
-                  <div className="grid md:grid-cols-2 gap-4">
-
-                    <Controller
-                      name="name"
-                      control={form.control}
-                      render={({ field, fieldState }) => (
-                        <Field data-invalid={fieldState.invalid}>
-                          <FieldLabel htmlFor="name">
-                            Name *
-                          </FieldLabel>
-                          <Input
-                            {...field}
-                            id="name"
-                            aria-invalid={fieldState.invalid}
-                            placeholder="Enter your name"
-                            className={fieldBaseClass}
-                            autoComplete="off"
+              {isLoadingForm ? (
+                <div className="flex justify-center py-12">
+                  <Spinner className="size-8 text-accent" />
+                </div>
+              ) : (
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <FieldGroup>
+                    {dynamicForm ? (
+                      <div className="grid gap-4">
+                        {dynamicForm.fields.map((field: any) => (
+                          <Controller
+                            key={field._key || field.fieldName}
+                            name={field.fieldName}
+                            control={form.control}
+                            rules={{ required: field.required }}
+                            render={({ field: rField, fieldState }) => (
+                              <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor={field.fieldName}>
+                                  {field.label[lang] || field.label.en} {field.required && "*"}
+                                </FieldLabel>
+                                {field.fieldType === 'textarea' ? (
+                                  <Textarea
+                                    {...rField}
+                                    id={field.fieldName}
+                                    placeholder={field.placeholder?.[lang] || field.placeholder?.en}
+                                    className={cn(fieldBaseClass, "resize-none")}
+                                  />
+                                ) : (
+                                  <Input
+                                    {...rField}
+                                    id={field.fieldName}
+                                    type={field.fieldType === 'email' ? 'email' : 'text'}
+                                    placeholder={field.placeholder?.[lang] || field.placeholder?.en}
+                                    className={fieldBaseClass}
+                                    autoComplete="off"
+                                  />
+                                )}
+                                {fieldState.invalid && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
                           />
-                          {fieldState.invalid && (
-                            <FieldError errors={[fieldState.error]} />
-                          )}
-                        </Field>
-                      )}
-                    />
-                    <Controller
-                      name="email"
-                      control={form.control}
-                      render={({ field, fieldState }) => (
-                        <Field data-invalid={fieldState.invalid}>
-                          <FieldLabel htmlFor="email">
-                            Email *
-                          </FieldLabel>
-                          <Input
-                            {...field}
-                            id="email"
-                            aria-invalid={fieldState.invalid}
-                            placeholder="Enter your email"
-                            className={fieldBaseClass}
-                            autoComplete="off"
-
-
+                        ))}
+                      </div>
+                    ) : (
+                      <>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <Controller
+                            name="name"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                              <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="name">
+                                  Name *
+                                </FieldLabel>
+                                <Input
+                                  {...field}
+                                  id="name"
+                                  placeholder="Enter your name"
+                                  className={fieldBaseClass}
+                                  autoComplete="off"
+                                />
+                                {fieldState.invalid && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
                           />
-                          {fieldState.invalid && (
-                            <FieldError errors={[fieldState.error]} />
-                          )}
-                        </Field>
-                      )}
-                    />
-                  </div>
+                          <Controller
+                            name="email"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                              <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="email">
+                                  Email *
+                                </FieldLabel>
+                                <Input
+                                  {...field}
+                                  id="email"
+                                  placeholder="Enter your email"
+                                  className={fieldBaseClass}
+                                  autoComplete="off"
+                                />
+                                {fieldState.invalid && (
+                                  <FieldError errors={[fieldState.error]} />
+                                )}
+                              </Field>
+                            )}
+                          />
+                        </div>
 
-                  <Controller
-                    name="subject"
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="subject">
-                          Subject *
-                        </FieldLabel>
-                        <Input
-                          {...field}
-                          id="subject"
-                          aria-invalid={fieldState.invalid}
-                          placeholder="Project inquiry"
-                          className={fieldBaseClass}
-                          autoComplete="off"
-
-                        />
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
-                      </Field>
-                    )}
-                  />
-
-                  <Controller
-                    name="message"
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="message">
-                          Message *
-                        </FieldLabel>
-                        <Textarea
-                          {...field}
-                          id="message"
-                          aria-invalid={fieldState.invalid}
-                          placeholder="Tell us about your project..."
-                          className={cn(
-                            fieldBaseClass,
-                            "resize-none"
+                        <Controller
+                          name="subject"
+                          control={form.control}
+                          render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                              <FieldLabel htmlFor="subject">
+                                Subject *
+                              </FieldLabel>
+                              <Input
+                                {...field}
+                                id="subject"
+                                placeholder="Project inquiry"
+                                className={fieldBaseClass}
+                                autoComplete="off"
+                              />
+                              {fieldState.invalid && (
+                                <FieldError errors={[fieldState.error]} />
+                              )}
+                            </Field>
                           )}
                         />
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
-                      </Field>
-                    )}
-                  />
 
-                </FieldGroup>
+                        <Controller
+                          name="message"
+                          control={form.control}
+                          render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                              <FieldLabel htmlFor="message">
+                                Message *
+                              </FieldLabel>
+                              <Textarea
+                                {...field}
+                                id="message"
+                                placeholder="Tell us about your project..."
+                                className={cn(
+                                  fieldBaseClass,
+                                  "resize-none"
+                                )}
+                              />
+                              {fieldState.invalid && (
+                                <FieldError errors={[fieldState.error]} />
+                              )}
+                            </Field>
+                          )}
+                        />
+                      </>
+                    )}
+                  </FieldGroup>
 
                   <MagneticButton strength={0.05} className="w-full">
                     <Button
@@ -235,27 +331,23 @@ const CTA = () => {
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
-                       <Spinner
-                       className="size-4.5!"
-                       />
+                        <Spinner className="size-4.5!" />
                       ) : (
                         <>
-                          Start Your Project
-                          <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                          {(dynamicForm?.submitButtonText && (dynamicForm.submitButtonText[lang] || dynamicForm.submitButtonText.en)) || "Start Your Project"}
+                          <Send className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                         </>
                       )}
                     </Button>
                   </MagneticButton>
-
-
-              </form>
-
+                </form>
+              )}
             </div>
           </motion.div>
-
         </div>
       </ContainerLayout>
     </section>
   );
 };
+
 export default CTA;

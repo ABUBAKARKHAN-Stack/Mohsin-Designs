@@ -43,6 +43,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
     const formControl = form.control as any
 
+
     // Auto-save draft functionality
     const saveDraft = useCallback(
         debounce(async (data: Partial<LandingPageContentValues>) => {
@@ -147,6 +148,11 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
     const { fields: agencyStructureFields, append: appendAgencyTeam, remove: removeAgencyTeam } = useFieldArray({
         control: formControl,
         name: "leadership.agencyStructure",
+    })
+
+    const { fields: ctaBenefitsFields, append: appendCtaBenefit, remove: removeCtaBenefit } = useFieldArray({
+        control: formControl,
+        name: "cta.benefits",
     })
 
     async function onSubmit(values: LandingPageContentValues) {
@@ -287,6 +293,10 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         <TabsTrigger value="faqs" className="relative">
                             FAQs
                             {formErrors.faqs && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        </TabsTrigger>
+                        <TabsTrigger value="cta" className="relative">
+                            CTA
+                            {formErrors.cta && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
                     </TabsList>
 
@@ -877,6 +887,64 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </Card>
                     </TabsContent>
 
+                    {/* CTA */}
+                    <TabsContent value="cta">
+                        <Card>
+                            <CardHeader><CardTitle>CTA Section</CardTitle></CardHeader>
+                            <CardContent className="space-y-6">
+                                <LocalizedInput control={formControl} name="cta.badge" label="Badge Text" />
+                                <LocalizedInput control={formControl} name="cta.heading" label="Heading" />
+                                <LocalizedInput control={formControl} name="cta.description" label="Description" isTextarea />
+
+                                {/* Form Selector */}
+                                <FormField control={formControl} name="cta.formId" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Contact Form (Optional)</FormLabel>
+                                        <FormDescription>
+                                            Select a form to display in the CTA section. If no form is selected, the default contact form will be used.
+                                        </FormDescription>
+                                        <FormSelectorDropdown field={field} />
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
+
+                                {/* Benefits */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <FormLabel>Benefits</FormLabel>
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => appendCtaBenefit({ text: { en: "", ur: "", es: "", ar: "" } })}
+                                        >
+                                            <Plus className="h-4 w-4 mr-2" /> Add Benefit
+                                        </Button>
+                                    </div>
+                                    {ctaBenefitsFields.map((field, index) => (
+                                        <div key={field.id} className="border rounded p-4 space-y-4">
+                                            <div className="flex justify-between">
+                                                <span className="font-medium">Benefit {index + 1}</span>
+                                                <Button
+                                                    type="button"
+                                                    size="sm"
+                                                    variant="destructive"
+                                                    onClick={() => removeCtaBenefit(index)}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                            <LocalizedInput
+                                                control={formControl}
+                                                name={`cta.benefits.${index}.text`}
+                                                label="Benefit Text"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
                 </Tabs>
             </form>
         </Form>
@@ -1088,7 +1156,17 @@ function getDefaultValues(): LandingPageContentValues {
         areasWeServe: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, areas: [] },
         industriesWeServe: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, industries: [] },
         testimonials: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, testimonials: [] },
-        leadership: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, founder: { name: { en: "", ur: "", es: "", ar: "" }, role: { en: "", ur: "", es: "", ar: "" }, image: null, socialLinks: [{ platform: "linkedin", url: "" }] }, agencyStructure: [] }
+        leadership: {
+            sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } },
+            founder: { name: { en: "", ur: "", es: "", ar: "" }, role: { en: "", ur: "", es: "", ar: "" }, image: null, socialLinks: [{ platform: "linkedin", url: "" }] },
+            agencyStructure: []
+        },
+        cta: {
+            badge: { en: "", ur: "", es: "", ar: "" },
+            heading: { en: "", ur: "", es: "", ar: "" },
+            description: { en: "", ur: "", es: "", ar: "" },
+            benefits: [],
+        }
     } as LandingPageContentValues
 }
 
@@ -1148,6 +1226,60 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
             sectionHeading: { ...defaults.leadership.sectionHeading, ...data.leadership?.sectionHeading },
             founder: { ...defaults.leadership.founder, ...data.leadership?.founder },
             agencyStructure: data.leadership?.agencyStructure || defaults.leadership.agencyStructure
+        },
+        cta: {
+            badge: { ...defaults.cta.badge, ...data.cta?.badge },
+            heading: { ...defaults.cta.heading, ...data.cta?.heading },
+            description: { ...defaults.cta.description, ...data.cta?.description },
+            benefits: data.cta?.benefits || defaults.cta.benefits,
+            formId: typeof data.cta?.formId === 'object' ? data.cta.formId?._ref : data.cta?.formId || undefined
         }
     } as LandingPageContentValues
+}
+
+// Form Selector Dropdown Component
+function FormSelectorDropdown({ field }: { field: any }) {
+    const [forms, setForms] = useState<any[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        async function loadForms() {
+            setIsLoading(true)
+            try {
+                const { getForms } = await import("@/app/actions/formActions")
+                const result = await getForms()
+                if (result.success && result.data) {
+                    setForms(result.data)
+                }
+            } catch (error) {
+                console.error("Failed to load forms:", error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        loadForms()
+    }, [])
+
+    const handleValueChange = (value: string) => {
+        // Convert "__none__" back to undefined for the form
+        field.onChange(value === "__none__" ? undefined : value)
+    }
+
+    return (
+        <Select onValueChange={handleValueChange} value={field.value || "__none__"}>
+            <FormControl>
+                <SelectTrigger>
+                    <SelectValue placeholder={isLoading ? "Loading forms..." : "Select a form (optional)"} />
+                </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+                <SelectItem value="__none__">None (use default form)</SelectItem>
+                {forms.map((form) => (
+                    <SelectItem key={form._id} value={form._id}>
+                        {form.name}
+                    </SelectItem>
+                ))}
+            </SelectContent>
+        </Select>
+    )
 }

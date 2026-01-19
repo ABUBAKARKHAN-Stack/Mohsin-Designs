@@ -193,7 +193,15 @@ export type LandingPageContentData = {
             };
         }>;
     };
-    cta?: any;
+    cta?: {
+        badge?: string;
+        heading?: string;
+        description?: string;
+        benefits?: Array<{
+            text: string;
+        }>;
+        formId?: string;
+    };
 };
 
 type LandingPageContentContextType = {

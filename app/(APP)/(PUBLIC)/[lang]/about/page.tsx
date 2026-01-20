@@ -20,8 +20,6 @@ import { PageWrapper } from "@/components/layout";
 
 
 
-
-
 const About = () => {
 
     return (
@@ -30,7 +28,7 @@ const About = () => {
             <IntroSection />
             <MissionVisionSection />
             <PhilosophySection />
-            <Stats />
+            {/* <Stats /> */}
             <ServicesPreview />
             <OurApproach />
             <IndustriesWeServe />

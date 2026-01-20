@@ -22,7 +22,7 @@ export const MissionVisionSection = () => {
 
     return (
         <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-muted/30 relative overflow-hidden">
-            
+
             {/* Animated Background Pattern */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
 
@@ -170,7 +170,7 @@ export const MissionVisionSection = () => {
                                     <motion.div
                                         animate={{ x: ["-100%", "100%"] }}
                                         transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                        className="absolute top-1/2 left-0 w-20 h-px bg-linear-to-r from-transparent via-accent to-transparent"
+                                        className="absolute top-1/2 left-0 w-full h-px bg-linear-to-r from-transparent via-accent to-transparent"
                                     />
                                 </div>
 
@@ -264,7 +264,7 @@ export const MissionVisionSection = () => {
                                     <motion.div
                                         animate={{ x: ["100%", "-100%"] }}
                                         transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                        className="absolute top-1/2 left-0 w-20 h-px bg-linear-to-r from-transparent via-accent to-transparent"
+                                        className="absolute top-1/2 left-0 w-full h-px bg-linear-to-r from-transparent via-accent to-transparent"
                                     />
                                 </div>
 

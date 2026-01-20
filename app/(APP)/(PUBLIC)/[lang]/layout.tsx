@@ -14,6 +14,8 @@ import { LandingPageContentProvider } from "@/context/LandingPageContentContext"
 import { getLandingPageContent } from "@/helpers/landing-page-content.helpers";
 import { AboutPageContentProvider } from "@/context/AboutPageContentContext";
 import { getAboutPageContent } from "@/helpers/about-page-content.helpers";
+import { GlobalContentProvider } from "@/context/GlobalContentContext";
+import { getGlobalContent } from "@/helpers/global-content.helpers";
 
 
 
@@ -37,32 +39,35 @@ export default async function LangLayout({ children, params }: Props) {
     const siteSettings = await getSiteSettingsByLocale(lang)
     const landingPageContent = await getLandingPageContent(lang)
     const aboutPageContent = await getAboutPageContent(lang)
+    const globalContent = await getGlobalContent(lang)
 
 
     return (
 
         <SiteSettingsProvider settings={siteSettings}>
-            <LandingPageContentProvider landingPageContent={landingPageContent}>
-                <AboutPageContentProvider aboutPageContent={aboutPageContent}>
-                    <PublicProvider>
-                        <div lang={lang} className="min-h-screen flex flex-col">
-                            <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
-                                <SanityLive />
-                                <Navbar />
+            <GlobalContentProvider globalContent={globalContent}>
+                <LandingPageContentProvider landingPageContent={landingPageContent}>
+                    <AboutPageContentProvider aboutPageContent={aboutPageContent}>
+                        <PublicProvider>
+                            <div lang={lang} className="min-h-screen flex flex-col">
+                                <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
+                                    <SanityLive />
+                                    <Navbar />
 
-                                <main className="flex-1 pt-20">
-                                    <AnimatePresence mode="wait">
-                                        {children}
-                                    </AnimatePresence>
-                                </main>
+                                    <main className="flex-1 pt-20">
+                                        <AnimatePresence mode="wait">
+                                            {children}
+                                        </AnimatePresence>
+                                    </main>
 
-                                <FloatingContactBadge />
-                                <Footer />
-                            </ServicesProvider>
-                        </div>
-                    </PublicProvider>
-                </AboutPageContentProvider>
-            </LandingPageContentProvider>
+                                    <FloatingContactBadge />
+                                    <Footer />
+                                </ServicesProvider>
+                            </div>
+                        </PublicProvider>
+                    </AboutPageContentProvider>
+                </LandingPageContentProvider>
+            </GlobalContentProvider>
         </SiteSettingsProvider>
 
     );

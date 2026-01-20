@@ -13,12 +13,15 @@ import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
 import { IconSelect } from "@/components/admin/form/IconSelect"
 import { BulkImageUpload } from "@/components/admin/form/BulkImageUpload"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { updateLandingPageContent, saveLandingPageDraft, discardLandingPageDraft } from "@/app/actions/landingPageContent"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
-import { Save, AlertCircle, Plus, Trash2, Clock, X, Link } from "lucide-react"
+import { Save, AlertCircle, Plus, Trash2, Clock, X, Globe, ExternalLink } from "lucide-react"
 import { debounce } from "lodash"
+import Link from "next/link"
+import { SectionHeadingCard } from "./SectionHeadingCard"
+import { StatItemCard } from "./StatItemCard"
 
 interface LandingPageContentFormProps {
     initialData?: any
@@ -40,16 +43,12 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         defaultValues: initialData ? mergeWithDefaults(initialData) : getDefaultValues(),
     })
 
-
     const formControl = form.control as any
-
 
     // Auto-save draft functionality
     const saveDraft = useCallback(
         debounce(async (data: Partial<LandingPageContentValues>) => {
-            // Don't save on initial mount
             if (isInitialMount) return
-
             setIsSavingDraft(true)
             try {
                 const result = await saveLandingPageDraft(data)
@@ -65,15 +64,11 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         [isInitialMount]
     )
 
-    // Mark as not initial mount after first render
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsInitialMount(false)
-        }, 1000)
+        const timer = setTimeout(() => setIsInitialMount(false), 1000)
         return () => clearTimeout(timer)
     }, [])
 
-    // Watch form changes and auto-save
     useEffect(() => {
         const subscription = form.watch((value) => {
             saveDraft(value as Partial<LandingPageContentValues>)
@@ -81,7 +76,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         return () => subscription.unsubscribe()
     }, [form, saveDraft])
 
-    // Field arrays for Hero section
+    // Field arrays for sections that remain in this form
     const { fields: headingLineFields, append: appendHeadingLine, remove: removeHeadingLine } = useFieldArray({
         control: formControl,
         name: "hero.headingLines",
@@ -95,12 +90,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
     const { fields: ctaButtonFields, append: appendCtaButton, remove: removeCtaButton } = useFieldArray({
         control: formControl,
         name: "hero.ctaButtons",
-    })
-
-
-    const { fields: benefitFields, append: appendBenefit, remove: removeBenefit } = useFieldArray({
-        control: formControl,
-        name: "whyChooseUs.benefits",
     })
 
     const { fields: faqFields, append: appendFaq, remove: removeFaq } = useFieldArray({
@@ -123,36 +112,14 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         name: "aboutPreview.rightDescriptions",
     })
 
-
-
-    const { fields: stepFields, append: appendStep, remove: removeStep } = useFieldArray({
-        control: formControl,
-        name: "ourApproach.steps",
-    })
-
     const { fields: areaFields, append: appendArea, remove: removeArea } = useFieldArray({
         control: formControl,
         name: "areasWeServe.areas",
     })
 
-    const { fields: industryFields, append: appendIndustry, remove: removeIndustry } = useFieldArray({
-        control: formControl,
-        name: "industriesWeServe.industries",
-    })
-
     const { fields: testimonialFields, append: appendTestimonial, remove: removeTestimonial } = useFieldArray({
         control: formControl,
         name: "testimonials.testimonials",
-    })
-
-    const { fields: agencyStructureFields, append: appendAgencyTeam, remove: removeAgencyTeam } = useFieldArray({
-        control: formControl,
-        name: "leadership.agencyStructure",
-    })
-
-    const { fields: ctaBenefitsFields, append: appendCtaBenefit, remove: removeCtaBenefit } = useFieldArray({
-        control: formControl,
-        name: "cta.benefits",
     })
 
     async function onSubmit(values: LandingPageContentValues) {
@@ -174,6 +141,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
     }
 
     async function handleDiscardDraft() {
+        if (!confirm("Are you sure you want to discard your draft?")) return
         const result = await discardLandingPageDraft()
         if (result.success) {
             successToast("Draft discarded")
@@ -193,9 +161,9 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sticky top-0 z-20 bg-background/95 backdrop-blur py-4 border-b">
                     <div>
-                        <h1 className="text-2xl font-bold">Landing Page Content</h1>
+                        <h1 className="text-2xl font-bold font-display">Landing Page Content</h1>
                         <div className="flex items-center gap-3 text-muted-foreground text-sm mt-1">
-                            <p>Manage all 16 sections</p>
+                            <p>Manage home page specific sections</p>
                             {isSavingDraft && (
                                 <span className="flex items-center gap-1 text-blue-600">
                                     <Spinner className="h-3 w-3" />
@@ -205,7 +173,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                             {lastSaved && !isSavingDraft && (
                                 <span className="flex items-center gap-1 text-green-600">
                                     <Clock className="h-3 w-3" />
-                                    Saved {lastSaved.toLocaleTimeString()}
+                                    Draft Saved {lastSaved.toLocaleTimeString()}
                                 </span>
                             )}
                         </div>
@@ -229,168 +197,81 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                 </div>
 
                 <Tabs defaultValue="hero" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 gap-2 h-auto bg-transparent p-0 mb-6">
-                        <TabsTrigger value="hero" className="relative">
+                    <TabsList className="flex flex-wrap gap-2 h-auto bg-transparent p-0 mb-6 font-display font-medium">
+                        <TabsTrigger value="hero" className="relative data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
                             Hero
                             {formErrors.hero && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
-                        <TabsTrigger value="stats" className="relative">
-                            Stats
-                            {formErrors.stats && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="marquee" className="relative">
-                            Marquee
-                            {formErrors.serviceHighlightsMarquee && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="brands" className="relative">
-                            Brands
-                            {formErrors.trustedByBrands && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="about" className="relative">
-                            About
-                            {formErrors.aboutPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="approach" className="relative">
-                            Approach
-                            {formErrors.ourApproach && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="services" className="relative">
-                            Services
-                            {formErrors.servicesPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="whyUs" className="relative">
-                            Why Us
-                            {formErrors.whyChooseUs && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="portfolio" className="relative">
+                        <TabsTrigger value="services" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Services</TabsTrigger>
+                        <TabsTrigger value="portfolio" className="relative data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
                             Portfolio
                             {formErrors.portfolioPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
-                        <TabsTrigger value="cases" className="relative">
-                            Cases
-                            {formErrors.caseStudiesPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        <TabsTrigger value="about" className="relative data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+                            About Preview
+                            {formErrors.aboutPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
-                        <TabsTrigger value="areas" className="relative">
-                            Areas
-                            {formErrors.areasWeServe && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="industries" className="relative">
-                            Industries
-                            {formErrors.industriesWeServe && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="testimonials" className="relative">
-                            Testimonials
-                            {formErrors.testimonials && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="leadership" className="relative">
-                            Leadership
-                            {formErrors.leadership && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="blog" className="relative">
+                        <TabsTrigger value="stats" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Stats</TabsTrigger>
+                        <TabsTrigger value="whyUs" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Why Us</TabsTrigger>
+                        <TabsTrigger value="blog" className="relative data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
                             Blog
                             {formErrors.blogPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
-                        <TabsTrigger value="faqs" className="relative">
+                        <TabsTrigger value="faqs" className="relative data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
                             FAQs
                             {formErrors.faqs && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
-                        <TabsTrigger value="cta" className="relative">
-                            CTA
-                            {formErrors.cta && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        <TabsTrigger value="trusted" className="relative data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+                            Brands
+                            {formErrors.trustedByBrands && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
+                        <TabsTrigger value="approach" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Approach</TabsTrigger>
+                        <TabsTrigger value="industries" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Industries</TabsTrigger>
+                        <TabsTrigger value="testimonials" className="relative data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+                            Testimonials
+                            {formErrors.testimonials && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        </TabsTrigger>
+                        <TabsTrigger value="leadership" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Leadership</TabsTrigger>
+                        <TabsTrigger value="cta" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />CTA</TabsTrigger>
                     </TabsList>
 
                     {/* HERO */}
-                    <TabsContent value="hero">
+                    <TabsContent value="hero" className="space-y-6">
                         <Card>
-                            <CardHeader><CardTitle>Hero Section</CardTitle></CardHeader>
+                            <CardHeader><CardTitle>Hero Configuration</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
                                 <LocalizedInput control={formControl} name="hero.badge" label="Badge Text" />
 
                                 <div className="space-y-4">
-                                    <div className="flex justify-between items-center">
-                                        <h3 className="font-semibold">Heading Lines (Max 3)</h3>
-                                        <Button type="button" size="sm" variant="outline" onClick={() => appendHeadingLine({ text: { en: "", ur: "", es: "", ar: "" }, style: "normal" })} disabled={headingLineFields.length >= 3}>
-                                            <Plus className="h-4 w-4 mr-2" /> Add
+                                    <div className="flex items-center justify-between">
+                                        <FormLabel>Heading Lines</FormLabel>
+                                        <Button type="button" size="sm" variant="outline" onClick={() => appendHeadingLine({ text: { en: "", ur: "", es: "", ar: "" } })}>
+                                            <Plus className="h-4 w-4 mr-2" /> Add Line
                                         </Button>
                                     </div>
                                     {headingLineFields.map((field, index) => (
-                                        <div key={field.id} className="border rounded p-4 space-y-4">
-                                            <div className="flex justify-between">
-                                                <span className="font-medium">Line {index + 1}</span>
-                                                <Button type="button" size="sm" variant="destructive" onClick={() => removeHeadingLine(index)}>
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
+                                        <div key={field.id} className="flex gap-2 items-start">
+                                            <div className="flex-1">
+                                                <LocalizedInput control={formControl} name={`hero.headingLines.${index}.text`} label={`Line ${index + 1}`} />
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.headingLines.${index}.text`} label="Text" />
-                                            <FormField control={formControl} name={`hero.headingLines.${index}.style`} render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Style</FormLabel>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                        <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                                                        <SelectContent>
-                                                            <SelectItem value="normal">Normal</SelectItem>
-                                                            <SelectItem value="stroke">Stroke</SelectItem>
-                                                            <SelectItem value="gradient">Gradient</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )} />
+                                            <Button type="button" size="sm" variant="ghost" onClick={() => removeHeadingLine(index)} className="mt-8 text-destructive"><Trash2 className="h-4 w-4" /></Button>
                                         </div>
                                     ))}
                                 </div>
 
                                 <div className="space-y-4">
-                                    <div className="flex justify-between items-center">
-                                        <h3 className="font-semibold">Description Paragraphs (Max 5)</h3>
-                                        <Button type="button" size="sm" variant="outline" onClick={() => appendParagraph({ text: { en: "", ur: "", es: "", ar: "" } })} disabled={paragraphFields.length >= 5}>
-                                            <Plus className="h-4 w-4 mr-2" /> Add
+                                    <div className="flex items-center justify-between">
+                                        <FormLabel>Description Paragraphs</FormLabel>
+                                        <Button type="button" size="sm" variant="outline" onClick={() => appendParagraph({ text: { en: "", ur: "", es: "", ar: "" } })}>
+                                            <Plus className="h-4 w-4 mr-2" /> Add Paragraph
                                         </Button>
                                     </div>
                                     {paragraphFields.map((field, index) => (
-                                        <div key={field.id} className="border rounded p-4 space-y-4">
-                                            <div className="flex justify-between">
-                                                <span className="font-medium">Paragraph {index + 1}</span>
-                                                <Button type="button" size="sm" variant="destructive" onClick={() => removeParagraph(index)}>
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
+                                        <div key={field.id} className="flex gap-2 items-start">
+                                            <div className="flex-1">
+                                                <LocalizedInput control={formControl} name={`hero.descriptionParagraphs.${index}.text`} label={`Paragraph ${index + 1}`} isTextarea />
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.descriptionParagraphs.${index}.text`} label="Text" isTextarea />
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-center">
-                                        <h3 className="font-semibold">CTA Buttons (Exactly 2)</h3>
-                                        <Button type="button" size="sm" variant="outline" onClick={() => appendCtaButton({ text: { en: "", ur: "", es: "", ar: "" }, url: { en: "", ur: "", es: "", ar: "" }, variant: "primary" })} disabled={ctaButtonFields.length >= 2}>
-                                            <Plus className="h-4 w-4 mr-2" /> Add
-                                        </Button>
-                                    </div>
-                                    {ctaButtonFields.map((field, index) => (
-                                        <div key={field.id} className="border rounded p-4 space-y-4">
-                                            <div className="flex justify-between">
-                                                <span className="font-medium">Button {index + 1}</span>
-                                                <Button type="button" size="sm" variant="destructive" onClick={() => removeCtaButton(index)}>
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                            <LocalizedInput control={formControl} name={`hero.ctaButtons.${index}.text`} label="Text" />
-                                            <LocalizedInput control={formControl} name={`hero.ctaButtons.${index}.url`} label="URL" isUrl />
-                                            <FormField control={formControl} name={`hero.ctaButtons.${index}.variant`} render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Variant</FormLabel>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                        <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                                                        <SelectContent>
-                                                            <SelectItem value="primary">Primary</SelectItem>
-                                                            <SelectItem value="secondary">Secondary</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )} />
+                                            <Button type="button" size="sm" variant="ghost" onClick={() => removeParagraph(index)} className="mt-8 text-destructive"><Trash2 className="h-4 w-4" /></Button>
                                         </div>
                                     ))}
                                 </div>
@@ -398,550 +279,87 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </Card>
                     </TabsContent>
 
-                    {/* STATS */}
-                    <TabsContent value="stats">
-                        <Card className="border-2 shadow-sm">
-                            <CardHeader className="bg-muted/30 pb-4 border-b">
-                                <CardTitle className="text-xl">Statistics Section</CardTitle>
-                                <p className="text-sm text-muted-foreground">Manage the three core metrics displayed on your landing page.</p>
-                            </CardHeader>
-                            <CardContent className="p-6 space-y-8">
-                                <StatItemCard control={formControl} name="stats.projectsDelivered" title="Projects Delivered" />
-                                <StatItemCard control={formControl} name="stats.yearsExperience" title="Years Experience" />
-                                <StatItemCard control={formControl} name="stats.clientSatisfaction" title="Client Satisfaction" />
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
+                    <TabsContent value="services"><SharedSectionNotice sectionName="Services Preview" /></TabsContent>
+                    <TabsContent value="stats"><SharedSectionNotice sectionName="Shared Statistics" /></TabsContent>
+                    <TabsContent value="whyUs"><SharedSectionNotice sectionName="Why Choose Us" /></TabsContent>
+                    <TabsContent value="approach"><SharedSectionNotice sectionName="Our Approach" /></TabsContent>
+                    <TabsContent value="industries"><SharedSectionNotice sectionName="Industries We Serve" /></TabsContent>
+                    <TabsContent value="leadership"><SharedSectionNotice sectionName="Leadership" /></TabsContent>
+                    <TabsContent value="cta"><SharedSectionNotice sectionName="CTA" /></TabsContent>
 
-                    {/* MARQUEE */}
-                    <TabsContent value="marquee">
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Service Highlights Marquee</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendHighlight({ text: { en: "", ur: "", es: "", ar: "" } })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {highlightFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Highlight {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeHighlight(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`serviceHighlightsMarquee.highlights.${index}.text`} label="Text" />
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* BRANDS */}
-                    <TabsContent value="brands" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="trustedByBrands.sectionHeading" title="Section Heading" />
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Brand Logos</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <FormField control={formControl} name="trustedByBrands.brandLogos" render={({ field }) => (
-                                    <BulkImageUpload
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        label="Brand Logos"
-                                    />
-                                )} />
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* ABOUT */}
-                    <TabsContent value="about" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="aboutPreview.sectionHeading" title="About Preview" />
-
-                        {/* Left Descriptions */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Left Side Descriptions</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {leftDescFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Paragraph {index + 1}</span>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`aboutPreview.leftDescriptions.${index}.text`} label="Text" isTextarea />
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-
-                        {/* Right Descriptions */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Right Side Descriptions</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {rightDescFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Paragraph {index + 1}</span>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`aboutPreview.rightDescriptions.${index}.text`} label="Text" isTextarea />
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-
-                        {/* CTA Button */}
-                        <Card>
-                            <CardHeader><CardTitle>Call to Action</CardTitle></CardHeader>
-                            <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="aboutPreview.ctaText" label="Button Text" />
-                                <LocalizedInput control={formControl} name="aboutPreview.ctaUrl" label="Button URL" isUrl />
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* APPROACH */}
-                    <TabsContent value="approach" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="ourApproach.sectionHeading" title="Our Approach" />
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Steps</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendStep({ title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "" })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {stepFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Step {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeStep(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`ourApproach.steps.${index}.title`} label="Title" />
-                                        <LocalizedInput control={formControl} name={`ourApproach.steps.${index}.description`} label="Description" isTextarea />
-                                        <FormField control={formControl} name={`ourApproach.steps.${index}.iconName`} render={({ field }) => (
-                                            <IconSelect field={field} type="step" label="Icon" />
-                                        )} />
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* SERVICES */}
-                    <TabsContent value="services" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="servicesPreview.sectionHeading" title="Services Preview" />
-                        <Card>
-                            <CardHeader><CardTitle>Services List</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Individual services are managed separately in the Services section and are automatically added dynamically to this section.</p>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* WHY US */}
-                    <TabsContent value="whyUs" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="whyChooseUs.sectionHeading" title="Why Choose Us" />
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Benefits</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendBenefit({ title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "" })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {benefitFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Benefit {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeBenefit(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`whyChooseUs.benefits.${index}.title`} label="Title" />
-                                        <LocalizedInput control={formControl} name={`whyChooseUs.benefits.${index}.description`} label="Description" isTextarea />
-                                        <FormField control={formControl} name={`whyChooseUs.benefits.${index}.iconName`} render={({ field }) => (
-                                            <IconSelect field={field} type="benefit" label="Icon" />
-                                        )} />
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* PORTFOLIO */}
-                    <TabsContent value="portfolio" className="space-y-6">
+                    {/* PORTFOLIO PREVIEW */}
+                    <TabsContent value="portfolio">
                         <SectionHeadingCard control={formControl} baseName="portfolioPreview.sectionHeading" title="Portfolio Preview" />
-                        <Card>
-                            <CardHeader><CardTitle>Portfolio Projects</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Portfolio projects are managed separately and are automatically added dynamically as you create them.</p>
-                            </CardContent>
-                        </Card>
                     </TabsContent>
 
-                    {/* CASES */}
-                    <TabsContent value="cases" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="caseStudiesPreview.sectionHeading" title="Case Studies Preview" />
-                        <Card>
-                            <CardHeader><CardTitle>Case Studies</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Detailed case studies are managed separately and are automatically added dynamically to this section.</p>
-                            </CardContent>
-                        </Card>
+                    {/* ABOUT PREVIEW */}
+                    <TabsContent value="about" className="space-y-6">
+                        <SectionHeadingCard control={formControl} baseName="aboutPreview.sectionHeading" title="About Section Preview" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card>
+                                <CardHeader><CardTitle>Left Side Indicators</CardTitle></CardHeader>
+                                <CardContent className="space-y-4">
+                                    {leftDescFields.map((field, index) => (
+                                        <LocalizedInput key={field.id} control={formControl} name={`aboutPreview.leftDescriptions.${index}.text`} label={`Indicator ${index + 1}`} />
+                                    ))}
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader><CardTitle>Right Side Indicators</CardTitle></CardHeader>
+                                <CardContent className="space-y-4">
+                                    {rightDescFields.map((field, index) => (
+                                        <LocalizedInput key={field.id} control={formControl} name={`aboutPreview.rightDescriptions.${index}.text`} label={`Indicator ${index + 1}`} />
+                                    ))}
+                                </CardContent>
+                            </Card>
+                        </div>
                     </TabsContent>
 
-                    {/* AREAS */}
-                    <TabsContent value="areas" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="areasWeServe.sectionHeading" title="Areas We Serve" />
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Regions</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendArea({
-                                    region: { en: "", ur: "", es: "", ar: "" },
-                                    locations: [{ en: "", ur: "", es: "", ar: "" }],
-                                    featured: false,
-                                    clients: 0,
-                                    flag: ""
-                                })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add Region
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {areaFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Region {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeArea(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-
-                                        <LocalizedInput control={formControl} name={`areasWeServe.areas.${index}.region`} label="Region Name" />
-
-                                        <FormField control={formControl} name={`areasWeServe.areas.${index}.flag`} render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Flag Emoji</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="🇺🇸 🇬🇧 🇵🇰" maxLength={10} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )} />
-
-                                        <NestedLocationsField control={formControl} areaIndex={index} />
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <FormField control={formControl} name={`areasWeServe.areas.${index}.clients`} render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Number of Clients</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} min={0} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )} />
-
-                                            <FormField control={formControl} name={`areasWeServe.areas.${index}.featured`} render={({ field }) => (
-                                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                                    <div className="space-y-0.5">
-                                                        <FormLabel className="text-base">Featured</FormLabel>
-                                                        <div className="text-sm text-muted-foreground">Mark as featured region</div>
-                                                    </div>
-                                                    <FormControl>
-                                                        <input type="checkbox" checked={field.value} onChange={field.onChange} className="h-4 w-4" />
-                                                    </FormControl>
-                                                </FormItem>
-                                            )} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* INDUSTRIES */}
-                    <TabsContent value="industries" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="industriesWeServe.sectionHeading" title="Industries We Serve" />
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Industries</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendIndustry({ name: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "" })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {industryFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Industry {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeIndustry(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`industriesWeServe.industries.${index}.name`} label="Name" />
-                                        <LocalizedInput control={formControl} name={`industriesWeServe.industries.${index}.description`} label="Description" isTextarea />
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <FormField control={formControl} name={`industriesWeServe.industries.${index}.iconName`} render={({ field }) => (
-                                                <IconSelect field={field} type="industry" label="Icon" />
-                                            )} />
-
-                                            <FormField control={formControl} name={`industriesWeServe.industries.${index}.featured`} render={({ field }) => (
-                                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                                    <div className="space-y-0.5">
-                                                        <FormLabel className="text-base">Featured</FormLabel>
-                                                        <div className="text-sm text-muted-foreground">Mark as featured industry</div>
-                                                    </div>
-                                                    <FormControl>
-                                                        <input type="checkbox" checked={field.value} onChange={field.onChange} className="h-4 w-4" />
-                                                    </FormControl>
-                                                </FormItem>
-                                            )} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* TESTIMONIALS */}
-                    <TabsContent value="testimonials" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="testimonials.sectionHeading" title="Testimonials" />
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Testimonials</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendTestimonial({ quote: { en: "", ur: "", es: "", ar: "" }, author: { en: "", ur: "", es: "", ar: "" }, role: { en: "", ur: "", es: "", ar: "" }, company: { en: "", ur: "", es: "", ar: "" }, avatar: null })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {testimonialFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Testimonial {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeTestimonial(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.quote`} label="Quote" isTextarea />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.author`} label="Author" />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.role`} label="Role" />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.company`} label="Company" />
-
-                                        <div className="space-y-2">
-                                            <FormLabel>Avatar Image</FormLabel>
-                                            <FormField control={formControl} name={`testimonials.testimonials.${index}.avatar`} render={({ field }) => (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <ImageUpload
-                                                            value={field.value}
-                                                            onChange={(asset) => {
-                                                                if (!asset) {
-                                                                    field.onChange(null)
-                                                                    return
-                                                                }
-                                                                field.onChange({
-                                                                    _type: 'image',
-                                                                    asset: {
-                                                                        _type: 'reference',
-                                                                        _ref: asset._id || asset.id,
-                                                                    },
-                                                                    url: asset.url
-                                                                })
-                                                            }}
-                                                            label=""
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* LEADERSHIP */}
-                    <TabsContent value="leadership" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="leadership.sectionHeading" title="Leadership" />
-
-                        {/* Founder Info */}
-                        <Card>
-                            <CardHeader><CardTitle>Founder Information</CardTitle></CardHeader>
-                            <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="leadership.founder.name" label="Name" />
-                                <LocalizedInput control={formControl} name="leadership.founder.role" label="Role/Title" />
-
-                                <div className="space-y-2">
-                                    <FormLabel>Profile Image</FormLabel>
-                                    <FormField control={formControl} name="leadership.founder.image" render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <ImageUpload
-                                                    value={field.value}
-                                                    onChange={(asset) => {
-                                                        if (!asset) {
-                                                            field.onChange(null)
-                                                            return
-                                                        }
-                                                        field.onChange({
-                                                            _type: 'image',
-                                                            asset: {
-                                                                _type: 'reference',
-                                                                _ref: asset._id || asset.id,
-                                                            },
-                                                            url: asset.url
-                                                        })
-                                                    }}
-                                                    label=""
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                </div>
-
-                                <NestedSocialLinksField control={formControl} />
-                            </CardContent>
-                        </Card>
-
-                        {/* Agency Structure */}
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Agency Structure</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendAgencyTeam({ title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "", featured: false })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add Team
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {agencyStructureFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Team {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeAgencyTeam(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`leadership.agencyStructure.${index}.title`} label="Team Title" />
-                                        <LocalizedInput control={formControl} name={`leadership.agencyStructure.${index}.description`} label="Description" />
-                                        <FormField control={formControl} name={`leadership.agencyStructure.${index}.iconName`} render={({ field }) => (
-                                            <IconSelect field={field} type="team" label="Icon" />
-                                        )} />
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* BLOG */}
-                    <TabsContent value="blog" className="space-y-6">
+                    <TabsContent value="blog">
                         <SectionHeadingCard control={formControl} baseName="blogPreview.sectionHeading" title="Blog Preview" />
-                        <Card>
-                            <CardHeader><CardTitle>Blog Content</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Blog posts are managed separately and will be displayed dynamically.</p>
-                            </CardContent>
-                        </Card>
                     </TabsContent>
 
-                    {/* FAQS */}
                     <TabsContent value="faqs" className="space-y-6">
                         <SectionHeadingCard control={formControl} baseName="faqs.sectionHeading" title="FAQs" />
                         <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>FAQ Items</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendFaq({ question: { en: "", ur: "", es: "", ar: "" }, answer: { en: "", ur: "", es: "", ar: "" } })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add
-                                </Button>
-                            </CardHeader>
+                            <CardHeader className="flex flex-row justify-between items-center"><CardTitle>FAQ Items</CardTitle><Button type="button" size="sm" variant="outline" onClick={() => appendFaq({ question: { en: "", ur: "", es: "", ar: "" }, answer: { en: "", ur: "", es: "", ar: "" } })}><Plus className="h-4 w-4 mr-2" /> Add</Button></CardHeader>
                             <CardContent className="space-y-4">
                                 {faqFields.map((field, index) => (
                                     <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">FAQ {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeFaq(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
                                         <LocalizedInput control={formControl} name={`faqs.faqItems.${index}.question`} label="Question" />
                                         <LocalizedInput control={formControl} name={`faqs.faqItems.${index}.answer`} label="Answer" isTextarea />
+                                        <Button type="button" size="sm" variant="destructive" onClick={() => removeFaq(index)}><Trash2 className="h-4 w-4 mr-2" /> Remove</Button>
                                     </div>
                                 ))}
                             </CardContent>
                         </Card>
+                    </TabsContent>
+
+                    <TabsContent value="trusted" className="space-y-6">
+                        <SectionHeadingCard control={formControl} baseName="trustedByBrands.sectionHeading" title="Trusted Brands" />
                         <Card>
-                            <CardHeader><CardTitle>FAQ Button</CardTitle></CardHeader>
-                            <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="faqs.buttonText" label="Button Text" />
-                                <LocalizedInput control={formControl} name="faqs.buttonUrl" label="Button URL" isUrl />
+                            <CardHeader><CardTitle>Brand Logos</CardTitle></CardHeader>
+                            <CardContent>
+                                <FormField control={formControl} name="trustedByBrands.brandLogos" render={({ field }) => (
+                                    <FormItem><FormControl><BulkImageUpload value={field.value || []} onChange={field.onChange} label="Upload Brand Logos" /></FormControl><FormMessage /></FormItem>
+                                )} />
                             </CardContent>
                         </Card>
                     </TabsContent>
 
-                    {/* CTA */}
-                    <TabsContent value="cta">
+                    <TabsContent value="testimonials" className="space-y-6">
+                        <SectionHeadingCard control={formControl} baseName="testimonials.sectionHeading" title="Testimonials" />
                         <Card>
-                            <CardHeader><CardTitle>CTA Section</CardTitle></CardHeader>
-                            <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="cta.badge" label="Badge Text" />
-                                <LocalizedInput control={formControl} name="cta.heading" label="Heading" />
-                                <LocalizedInput control={formControl} name="cta.description" label="Description" isTextarea />
-
-                                {/* Form Selector */}
-                                <FormField control={formControl} name="cta.formId" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Contact Form (Optional)</FormLabel>
-                                        <FormDescription>
-                                            Select a form to display in the CTA section. If no form is selected, the default contact form will be used.
-                                        </FormDescription>
-                                        <FormSelectorDropdown field={field} />
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
-
-                                {/* Benefits */}
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <FormLabel>Benefits</FormLabel>
-                                        <Button
-                                            type="button"
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => appendCtaBenefit({ text: { en: "", ur: "", es: "", ar: "" } })}
-                                        >
-                                            <Plus className="h-4 w-4 mr-2" /> Add Benefit
-                                        </Button>
+                            <CardHeader className="flex flex-row justify-between items-center"><CardTitle>Testimonials</CardTitle><Button type="button" size="sm" variant="outline" onClick={() => appendTestimonial({ quote: { en: "", ur: "", es: "", ar: "" }, author: { en: "", ur: "", es: "", ar: "" }, role: { en: "", ur: "", es: "", ar: "" } })}><Plus className="h-4 w-4 mr-2" /> Add</Button></CardHeader>
+                            <CardContent className="space-y-4">
+                                {testimonialFields.map((field, index) => (
+                                    <div key={field.id} className="border rounded p-4 space-y-4">
+                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.quote`} label="Quote" isTextarea />
+                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.author`} label="Author" />
+                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.role`} label="Role" />
+                                        <Button type="button" size="sm" variant="destructive" onClick={() => removeTestimonial(index)}><Trash2 className="h-4 w-4 mr-2" /> Remove</Button>
                                     </div>
-                                    {ctaBenefitsFields.map((field, index) => (
-                                        <div key={field.id} className="border rounded p-4 space-y-4">
-                                            <div className="flex justify-between">
-                                                <span className="font-medium">Benefit {index + 1}</span>
-                                                <Button
-                                                    type="button"
-                                                    size="sm"
-                                                    variant="destructive"
-                                                    onClick={() => removeCtaBenefit(index)}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                            <LocalizedInput
-                                                control={formControl}
-                                                name={`cta.benefits.${index}.text`}
-                                                label="Benefit Text"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
+                                ))}
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -951,335 +369,77 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
     )
 }
 
-function NestedSocialLinksField({ control }: { control: any }) {
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "leadership.founder.socialLinks",
-    })
-
-    // Get already selected platforms
-    const selectedPlatforms = fields.map((field: any) => field.platform)
-
+function SharedSectionNotice({ sectionName }: { sectionName: string }) {
     return (
-        <div className="space-y-3 border-l-2 border-primary/20 pl-4">
-            <div className="flex justify-between items-center">
-                <h4 className="font-medium text-sm">Social Links</h4>
-                <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => append({ platform: "linkedin", url: "" })}
-                    disabled={fields.length >= 3}
-                >
-                    <Plus className="h-3 w-3 mr-1" /> Add Link
-                </Button>
-            </div>
-            {fields.map((field, index) => (
-                <div key={field.id} className="flex gap-2 items-start">
-                    <div className="flex-1 grid grid-cols-2 gap-2">
-                        <FormField control={control} name={`leadership.founder.socialLinks.${index}.platform`} render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Platform</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select platform" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="linkedin" disabled={selectedPlatforms.includes("linkedin") && field.value !== "linkedin"}>
-                                            LinkedIn
-                                        </SelectItem>
-                                        <SelectItem value="twitter" disabled={selectedPlatforms.includes("twitter") && field.value !== "twitter"}>
-                                            Twitter
-                                        </SelectItem>
-                                        <SelectItem value="email" disabled={selectedPlatforms.includes("email") && field.value !== "email"}>
-                                            Email
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                        <FormField control={control} name={`leadership.founder.socialLinks.${index}.url`} render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>URL</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="https://..." />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    </div>
-                    <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => remove(index)}
-                        className="mt-8"
-                    >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
+        <Card className="border-primary/20 bg-primary/5">
+            <CardHeader>
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 rounded-lg"><Globe className="h-6 w-6 text-primary" /></div>
+                    <div><CardTitle>Global Shared Section</CardTitle><CardDescription>{sectionName} is now managed centrally.</CardDescription></div>
                 </div>
-            ))}
-        </div>
-    )
-}
-
-function NestedLocationsField({ control, areaIndex }: { control: any; areaIndex: number }) {
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: `areasWeServe.areas.${areaIndex}.locations`,
-    })
-
-    return (
-        <div className="space-y-3 border-l-2 border-primary/20 pl-4">
-            <div className="flex justify-between items-center">
-                <h4 className="font-medium text-sm">Locations/Cities</h4>
-                <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => append({ en: "", ur: "", es: "", ar: "" })}
-                >
-                    <Plus className="h-3 w-3 mr-1" /> Add Location
-                </Button>
-            </div>
-            {fields.map((field, index) => (
-                <div key={field.id} className="flex gap-2 items-start">
-                    <div className="flex-1">
-                        <LocalizedInput
-                            control={control}
-                            name={`areasWeServe.areas.${areaIndex}.locations.${index}`}
-                            label={`Location ${index + 1}`}
-                        />
-                    </div>
-                    <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => remove(index)}
-                        className="mt-8"
-                    >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                </div>
-            ))}
-        </div>
-    )
-}
-
-function SectionHeadingCard({ control, baseName, title }: { control: any; baseName: string; title: string }) {
-    return (
-        <Card>
-            <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
+            </CardHeader>
             <CardContent className="space-y-4">
-                <LocalizedInput control={control} name={`${baseName}.eyebrow`} label="Eyebrow" />
-                <LocalizedInput control={control} name={`${baseName}.title`} label="Title" />
-                <LocalizedInput control={control} name={`${baseName}.description`} label="Description" isTextarea />
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                    To maintain consistency across YOUR website, the <strong>{sectionName}</strong> is managed in the Global Sections editor.
+                    Changes made there will automatically update this Landing Page and any other pages where this section appears.
+                </p>
+                <Button asChild variant="default" className="w-full sm:w-auto">
+                    <Link href="/admin/global">Go to Global Sections <ExternalLink className="ml-2 h-4 w-4" /></Link>
+                </Button>
             </CardContent>
         </Card>
     )
 }
 
-function StatItemCard({ control, name, title }: { control: any; name: string; title: string }) {
-    return (
-        <div className="space-y-4 pb-8 last:pb-0 border-b last:border-0 border-border/40">
-            <h4 className="font-semibold text-base text-muted-foreground uppercase tracking-wider">{title}</h4>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <div className="lg:col-span-5 space-y-4">
-                    <LocalizedInput
-                        control={control}
-                        name={`${name}.value`}
-                        label="Metric Value"
-                        noBorder
-                        compact
-                    />
-                    <FormField
-                        control={control}
-                        name={`${name}.suffix`}
-                        render={({ field }) => (
-                            <FormItem className="pb-1">
-                                <FormLabel className=" font-medium text-muted-foreground">Suffix</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="e.g., +, %, K" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <div className="lg:col-span-7">
-                    <LocalizedInput
-                        control={control}
-                        name={`${name}.label`}
-                        label="Display Label"
-                        noBorder
-                        compact
-                    />
-                </div>
-            </div>
-        </div>
-    )
-}
-
 function getDefaultValues(): LandingPageContentValues {
+    const emptyLoc = { en: "", ur: "", es: "", ar: "" };
     return {
-        hero: { badge: { en: "", ur: "", es: "", ar: "" }, headingLines: [], descriptionParagraphs: [], ctaButtons: [] },
-        servicesPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
-        portfolioPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
+        hero: { badge: emptyLoc, headingLines: [], descriptionParagraphs: [], ctaButtons: [] },
+        servicesPreview: { sectionHeading: { title: emptyLoc } },
+        portfolioPreview: { sectionHeading: { title: emptyLoc } },
         aboutPreview: {
-            sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } },
-            leftDescriptions: [
-                { text: { en: "", ur: "", es: "", ar: "" } },
-                { text: { en: "", ur: "", es: "", ar: "" } }
-            ],
-            rightDescriptions: [
-                { text: { en: "", ur: "", es: "", ar: "" } },
-                { text: { en: "", ur: "", es: "", ar: "" } }
-            ],
-            ctaText: { en: "", ur: "", es: "", ar: "" },
-            ctaUrl: { en: "", ur: "", es: "", ar: "" }
+            sectionHeading: { title: emptyLoc },
+            leftDescriptions: [],
+            rightDescriptions: [],
+            ctaText: emptyLoc,
+            ctaUrl: emptyLoc
         },
         stats: {
-            projectsDelivered: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
-            yearsExperience: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
-            clientSatisfaction: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+            projectsDelivered: { value: emptyLoc, label: emptyLoc, suffix: "" },
+            yearsExperience: { value: emptyLoc, label: emptyLoc, suffix: "" },
+            clientSatisfaction: { value: emptyLoc, label: emptyLoc, suffix: "" }
         },
-        whyChooseUs: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, benefits: [] },
-        blogPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
-        faqs: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, faqItems: [] },
+        whyChooseUs: { sectionHeading: { title: emptyLoc }, benefits: [] },
+        blogPreview: { sectionHeading: { title: emptyLoc } },
+        faqs: { sectionHeading: { title: emptyLoc }, faqItems: [] },
         serviceHighlightsMarquee: { highlights: [] },
-        trustedByBrands: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, brandLogos: [] },
-        ourApproach: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, steps: [] },
-        caseStudiesPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
-        areasWeServe: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, areas: [] },
-        industriesWeServe: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, industries: [] },
-        testimonials: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, testimonials: [] },
+        trustedByBrands: { sectionHeading: { title: emptyLoc }, brandLogos: [] },
+        ourApproach: { sectionHeading: { title: emptyLoc }, steps: [] },
+        caseStudiesPreview: { sectionHeading: { title: emptyLoc } },
+        areasWeServe: { sectionHeading: { title: emptyLoc }, areas: [] },
+        industriesWeServe: { sectionHeading: { title: emptyLoc }, industries: [] },
+        testimonials: { sectionHeading: { title: emptyLoc }, testimonials: [] },
         leadership: {
-            sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } },
-            founder: { name: { en: "", ur: "", es: "", ar: "" }, role: { en: "", ur: "", es: "", ar: "" }, image: null, socialLinks: [{ platform: "linkedin", url: "" }] },
+            sectionHeading: { title: emptyLoc },
+            founder: { name: emptyLoc, role: emptyLoc, image: null as any, socialLinks: [] },
             agencyStructure: []
         },
         cta: {
-            badge: { en: "", ur: "", es: "", ar: "" },
-            heading: { en: "", ur: "", es: "", ar: "" },
-            description: { en: "", ur: "", es: "", ar: "" },
+            badge: emptyLoc,
+            heading: emptyLoc,
+            description: emptyLoc,
             benefits: [],
+            formId: undefined
         }
-    } as LandingPageContentValues
+    }
 }
 
-// Merge initial data with defaults to ensure all required fields exist
 function mergeWithDefaults(data: any): LandingPageContentValues {
     const defaults = getDefaultValues()
     return {
+        ...defaults,
+        ...data,
         hero: { ...defaults.hero, ...data.hero },
-        servicesPreview: { ...defaults.servicesPreview, ...data.servicesPreview },
-        portfolioPreview: { ...defaults.portfolioPreview, ...data.portfolioPreview },
-        aboutPreview: {
-            sectionHeading: { ...defaults.aboutPreview.sectionHeading, ...data.aboutPreview?.sectionHeading },
-            leftDescriptions: data.aboutPreview?.leftDescriptions?.length > 0 ? data.aboutPreview.leftDescriptions : defaults.aboutPreview.leftDescriptions,
-            rightDescriptions: data.aboutPreview?.rightDescriptions?.length > 0 ? data.aboutPreview.rightDescriptions : defaults.aboutPreview.rightDescriptions,
-            ctaText: { ...defaults.aboutPreview.ctaText, ...data.aboutPreview?.ctaText },
-            ctaUrl: { ...defaults.aboutPreview.ctaUrl, ...data.aboutPreview?.ctaUrl }
-        },
-        stats: {
-            projectsDelivered: { ...defaults.stats.projectsDelivered, ...data.stats?.projectsDelivered },
-            yearsExperience: { ...defaults.stats.yearsExperience, ...data.stats?.yearsExperience },
-            clientSatisfaction: { ...defaults.stats.clientSatisfaction, ...data.stats?.clientSatisfaction },
-        },
-        whyChooseUs: {
-            sectionHeading: { ...defaults.whyChooseUs.sectionHeading, ...data.whyChooseUs?.sectionHeading },
-            benefits: data.whyChooseUs?.benefits || defaults.whyChooseUs.benefits
-        },
-        blogPreview: { ...defaults.blogPreview, ...data.blogPreview },
-        faqs: {
-            sectionHeading: { ...defaults.faqs.sectionHeading, ...data.faqs?.sectionHeading },
-            faqItems: data.faqs?.faqItems || defaults.faqs.faqItems,
-            ...(data.faqs?.buttonText && { buttonText: data.faqs.buttonText }),
-            ...(data.faqs?.buttonUrl && { buttonUrl: data.faqs.buttonUrl })
-        },
-        serviceHighlightsMarquee: { ...defaults.serviceHighlightsMarquee, ...data.serviceHighlightsMarquee },
-        trustedByBrands: {
-            sectionHeading: { ...defaults.trustedByBrands.sectionHeading, ...data.trustedByBrands?.sectionHeading },
-            brandLogos: data.trustedByBrands?.brandLogos || defaults.trustedByBrands.brandLogos
-        },
-        ourApproach: {
-            sectionHeading: { ...defaults.ourApproach.sectionHeading, ...data.ourApproach?.sectionHeading },
-            steps: data.ourApproach?.steps || defaults.ourApproach.steps
-        },
-        caseStudiesPreview: { ...defaults.caseStudiesPreview, ...data.caseStudiesPreview },
-        areasWeServe: {
-            sectionHeading: { ...defaults.areasWeServe.sectionHeading, ...data.areasWeServe?.sectionHeading },
-            areas: data.areasWeServe?.areas || defaults.areasWeServe.areas
-        },
-        industriesWeServe: {
-            sectionHeading: { ...defaults.industriesWeServe.sectionHeading, ...data.industriesWeServe?.sectionHeading },
-            industries: data.industriesWeServe?.industries || defaults.industriesWeServe.industries
-        },
-        testimonials: {
-            sectionHeading: { ...defaults.testimonials.sectionHeading, ...data.testimonials?.sectionHeading },
-            testimonials: data.testimonials?.testimonials || defaults.testimonials.testimonials
-        },
-        leadership: {
-            sectionHeading: { ...defaults.leadership.sectionHeading, ...data.leadership?.sectionHeading },
-            founder: { ...defaults.leadership.founder, ...data.leadership?.founder },
-            agencyStructure: data.leadership?.agencyStructure || defaults.leadership.agencyStructure
-        },
-        cta: {
-            badge: { ...defaults.cta.badge, ...data.cta?.badge },
-            heading: { ...defaults.cta.heading, ...data.cta?.heading },
-            description: { ...defaults.cta.description, ...data.cta?.description },
-            benefits: data.cta?.benefits || defaults.cta.benefits,
-            formId: typeof data.cta?.formId === 'object' ? data.cta.formId?._ref : data.cta?.formId || undefined
-        }
+        aboutPreview: { ...defaults.aboutPreview, ...data.aboutPreview },
     } as LandingPageContentValues
-}
-
-// Form Selector Dropdown Component
-function FormSelectorDropdown({ field }: { field: any }) {
-    const [forms, setForms] = useState<any[]>([])
-    const [isLoading, setIsLoading] = useState(true)
-
-    useEffect(() => {
-        async function loadForms() {
-            setIsLoading(true)
-            try {
-                const { getForms } = await import("@/app/actions/formActions")
-                const result = await getForms()
-                if (result.success && result.data) {
-                    setForms(result.data)
-                }
-            } catch (error) {
-                console.error("Failed to load forms:", error)
-            } finally {
-                setIsLoading(false)
-            }
-        }
-        loadForms()
-    }, [])
-
-    const handleValueChange = (value: string) => {
-        // Convert "__none__" back to undefined for the form
-        field.onChange(value === "__none__" ? undefined : value)
-    }
-
-    return (
-        <Select onValueChange={handleValueChange} value={field.value || "__none__"}>
-            <FormControl>
-                <SelectTrigger>
-                    <SelectValue placeholder={isLoading ? "Loading forms..." : "Select a form (optional)"} />
-                </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-                <SelectItem value="__none__">None (use default form)</SelectItem>
-                {forms.map((form) => (
-                    <SelectItem key={form._id} value={form._id}>
-                        {form.name}
-                    </SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
-    )
 }

@@ -35,6 +35,15 @@ export const structure: StructureResolver = (S) =>
             .schemaType('aboutPageContent')
             .documentId('aboutPageContent')
         ),
+      S.listItem()
+        .title('Global Sections')
+        .id('globalContent')
+        .child(
+          S.document()
+            .schemaType('globalContent')
+            .documentId('globalContent')
+        ),
+      S.divider(),
       S.documentTypeListItem('service').title('Service'),
       S.listItem()
         .title('Service CTA')
@@ -46,7 +55,7 @@ export const structure: StructureResolver = (S) =>
         ),
       S.divider(),
       ...S.documentTypeListItems().filter(
-        (item) => item.getId() && !['post', 'category', 'author', "service", "serviceCta", "siteSettings", "servicesPageContent", "landingPageContent", "aboutPageContent"].includes(item.getId()!),
+        (item) => item.getId() && !['post', 'category', 'author', "service", "serviceCta", "siteSettings", "servicesPageContent", "landingPageContent", "aboutPageContent", "globalContent"].includes(item.getId()!),
       ),
       S.divider(),
       S.listItem()

@@ -14,9 +14,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { updateAboutPageContent, saveAboutPageDraft, discardAboutPageDraft } from "@/app/actions/aboutPageContent"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
-import { Save, AlertCircle, Plus, Trash2, Clock, X } from "lucide-react"
+import { Save, AlertCircle, Plus, Trash2, Clock, X, Globe, ExternalLink } from "lucide-react"
+import Link from "next/link"
+import { CardDescription } from "@/components/ui/card"
 import { debounce } from "lodash"
 import { Input } from "@/components/ui/input"
+import { SectionHeadingCard } from "./SectionHeadingCard"
 
 interface AboutPageContentFormProps {
     initialData?: any
@@ -202,6 +205,13 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                             Culture
                             {formErrors.culture && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
+                        <TabsTrigger value="services" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Services</TabsTrigger>
+                        <TabsTrigger value="stats" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Stats</TabsTrigger>
+                        <TabsTrigger value="whyUs" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Why Us</TabsTrigger>
+                        <TabsTrigger value="approach" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Approach</TabsTrigger>
+                        <TabsTrigger value="industries" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Industries</TabsTrigger>
+                        <TabsTrigger value="leadership" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />Leadership</TabsTrigger>
+                        <TabsTrigger value="cta" className="border border-dashed border-primary/40"><Globe className="h-3 w-3 mr-1.5 opacity-70" />CTA</TabsTrigger>
                     </TabsList>
                     <TabsContent value="hero">
                         <Card>
@@ -481,24 +491,60 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                             </CardContent>
                         </Card>
                     </TabsContent>
+                    <TabsContent value="cta">
+                        <SharedSectionNotice sectionName="CTA" />
+                    </TabsContent>
+                    <TabsContent value="leadership">
+                        <SharedSectionNotice sectionName="Leadership" />
+                    </TabsContent>
+                    <TabsContent value="services">
+                        <SharedSectionNotice sectionName="Services Preview" />
+                    </TabsContent>
+                    <TabsContent value="stats">
+                        <SharedSectionNotice sectionName="Shared Statistics" />
+                    </TabsContent>
+                    <TabsContent value="whyUs">
+                        <SharedSectionNotice sectionName="Why Choose Us" />
+                    </TabsContent>
+                    <TabsContent value="approach">
+                        <SharedSectionNotice sectionName="Our Approach" />
+                    </TabsContent>
+                    <TabsContent value="industries">
+                        <SharedSectionNotice sectionName="Industries We Serve" />
+                    </TabsContent>
                 </Tabs>
             </form>
         </Form>
     )
 }
 
-function SectionHeadingCard({ control, baseName, title }: { control: any; baseName: string; title: string }) {
+function SharedSectionNotice({ sectionName }: { sectionName: string }) {
     return (
-        <Card>
-            <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
+        <Card className="border-primary/20 bg-primary/5">
+            <CardHeader>
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 rounded-lg"><Globe className="h-6 w-6 text-primary" /></div>
+                    <div>
+                        <CardTitle>Global Shared Section</CardTitle>
+                        <CardDescription>{sectionName} is now managed centrally.</CardDescription>
+                    </div>
+                </div>
+            </CardHeader>
             <CardContent className="space-y-4">
-                <LocalizedInput control={control} name={`${baseName}.eyebrow`} label="Eyebrow" />
-                <LocalizedInput control={control} name={`${baseName}.title`} label="Title" />
-                <LocalizedInput control={control} name={`${baseName}.description`} label="Description" isTextarea />
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                    To maintain consistency across YOUR website, the <strong>{sectionName}</strong> is managed in the Global Sections editor.
+                    Changes made there will automatically update this About Page and any other pages where this section appears.
+                </p>
+                <Button asChild variant="default" className="w-full sm:w-auto">
+                    <Link href="/admin/global">
+                        Go to Global Sections <ExternalLink className="ml-2 h-4 w-4" />
+                    </Link>
+                </Button>
             </CardContent>
         </Card>
     )
 }
+
 
 function getDefaultValues(): AboutPageContentValues {
     return {

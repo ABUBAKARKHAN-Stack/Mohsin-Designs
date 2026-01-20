@@ -1,0 +1,69 @@
+"use client";
+
+import { createContext, useContext, ReactNode } from "react";
+
+export type GlobalContentData = {
+    stats?: {
+        projectsDelivered?: { value: string; label: string; suffix: string };
+        yearsExperience?: { value: string; label: string; suffix: string };
+        clientSatisfaction?: { value: string; label: string; suffix: string };
+    };
+    servicesPreview?: {
+        sectionHeading?: { eyebrow?: string; title?: string; description?: string };
+    };
+    whyChooseUs?: {
+        sectionHeading?: { eyebrow?: string; title?: string; description?: string };
+        benefits?: Array<{ title: string; description: string; iconName: string }>;
+    };
+    ourApproach?: {
+        sectionHeading?: { eyebrow?: string; title?: string; description?: string };
+        steps?: Array<{ title: string; description: string; iconName: string }>;
+    };
+    industriesWeServe?: {
+        sectionHeading?: { eyebrow?: string; title?: string; description?: string };
+        industries?: Array<{ name: string; description: string; iconName: string }>;
+    };
+    leadership?: {
+        sectionHeading?: { eyebrow?: string; title?: string; description?: string };
+        founder?: {
+            name: string;
+            role: string;
+            image?: { _id: string; url: string };
+            socialLinks?: Array<{ platform: string; url: string }>;
+        };
+        agencyStructure?: Array<{ title: string; description: string; iconName: string }>;
+    };
+    cta?: {
+        badge?: string;
+        heading?: string;
+        description?: string;
+        benefits?: Array<{ text: string }>;
+        formId?: string;
+    };
+};
+
+type GlobalContentContextType = {
+    globalContent: GlobalContentData | null;
+};
+
+const GlobalContentContext = createContext<GlobalContentContextType | null>(null);
+
+export const GlobalContentProvider = ({
+    children,
+    globalContent
+}: {
+    children: ReactNode;
+    globalContent: GlobalContentData | null;
+}) => {
+    return (
+        <GlobalContentContext.Provider value={{ globalContent }}>
+            {children}
+        </GlobalContentContext.Provider>
+    );
+};
+
+export const useGlobalContent = () => {
+    const ctx = useContext(GlobalContentContext);
+    if (!ctx) throw new Error("useGlobalContent must be inside GlobalContentProvider");
+    return ctx;
+};

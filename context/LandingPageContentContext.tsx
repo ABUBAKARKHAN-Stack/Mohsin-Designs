@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode, useMemo } from "react";
+import { useGlobalContent } from "./GlobalContentContext";
 
 // Define the type based on what getLandingPageContent returns
 export type LandingPageContentData = {
@@ -212,13 +213,31 @@ const LandingPageContentContext = createContext<LandingPageContentContextType | 
 
 export const LandingPageContentProvider = ({
     children,
-    landingPageContent
+    landingPageContent: initialContent
 }: {
     children: ReactNode;
     landingPageContent: LandingPageContentData | null;
 }) => {
+    const { globalContent } = useGlobalContent();
+
+    const mergedContent = useMemo(() => {
+        if (!initialContent) return null;
+        if (!globalContent) return initialContent;
+
+        return {
+            ...initialContent,
+            stats: globalContent.stats || initialContent.stats,
+            servicesPreview: globalContent.servicesPreview || initialContent.servicesPreview,
+            whyChooseUs: globalContent.whyChooseUs || initialContent.whyChooseUs,
+            ourApproach: globalContent.ourApproach || initialContent.ourApproach,
+            industriesWeServe: globalContent.industriesWeServe || initialContent.industriesWeServe,
+            leadership: globalContent.leadership || initialContent.leadership,
+            cta: globalContent.cta || initialContent.cta,
+        };
+    }, [initialContent, globalContent]);
+
     return (
-        <LandingPageContentContext.Provider value={{ landingPageContent }}>
+        <LandingPageContentContext.Provider value={{ landingPageContent: mergedContent }}>
             {children}
         </LandingPageContentContext.Provider>
     );

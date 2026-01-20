@@ -52,6 +52,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                         { title: "Landing Page Content", url: "/admin/landing/page-content" },
                         { title: "About Page Content", url: "/admin/about/page-content" },
                         { title: "Services Page Content", url: "/admin/services/page-content" },
+                        { title: "Global Sections", url: "/admin/global" },
                         { title: "Contact", url: "/admin/pages/contact" },
                     ]
                 }
@@ -79,6 +80,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                         { title: "Landing Page Content", url: "/admin/landing/page-content" },
                         { title: "About Page Content", url: "/admin/about/page-content" },
                         { title: "Services Page Content", url: "/admin/services/page-content" },
+                        { title: "Global Sections", url: "/admin/global" },
                         { title: "Contact", url: "/admin/pages/contact" },
                     ]
                 },
@@ -127,6 +129,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                         { title: "Landing Page Content", url: "/admin/landing/page-content" },
                         { title: "About Page Content", url: "/admin/about/page-content" },
                         { title: "Services Page Content", url: "/admin/services/page-content" },
+                        { title: "Global Sections", url: "/admin/global" },
                         { title: "Contact", url: "/admin/pages/contact" },
                     ]
                 },

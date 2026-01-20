@@ -10,7 +10,7 @@ import SectionHeading from "@/components/ui/section-heading";
 import { useServices } from "@/context/ServiceContext";
 import { uiT } from "@/i18n";
 import { useParams } from "next/navigation";
-import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 
 
 const ServicesPreview = () => {
@@ -21,10 +21,10 @@ const ServicesPreview = () => {
   });
 
   const { services } = useServices()
-  const { lang }: LanguageType = useParams()
-  const { landingPageContent } = useLandingPageContent()
+  const { lang }: any = useParams()
+  const { globalContent } = useGlobalContent()
 
-  const servicesPreviewData = landingPageContent?.servicesPreview;
+  const servicesPreviewData = globalContent?.servicesPreview;
 
   const y1 = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const y2 = useTransform(scrollYProgress, [0, 1], [-40, 80]);

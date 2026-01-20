@@ -4,13 +4,13 @@ import { motion } from "framer-motion";
 import SplitText from "@/components/ui/split-text";
 import { ContainerLayout } from "@/components/layout";
 import SectionHeading from "@/components/ui/section-heading";
-import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
 
 const WhyChooseUs = () => {
-  const { landingPageContent } = useLandingPageContent();
+  const { globalContent } = useGlobalContent();
 
-  const whyChooseUsData = landingPageContent?.whyChooseUs;
+  const whyChooseUsData = globalContent?.whyChooseUs;
   const benefits = whyChooseUsData?.benefits || [];
 
   if (benefits.length === 0) return null;

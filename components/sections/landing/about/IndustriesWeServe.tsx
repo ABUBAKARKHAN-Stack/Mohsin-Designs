@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import SectionHeading from "@/components/ui/section-heading";
 import { ContainerLayout } from "@/components/layout";
-import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
 import { useParams } from "next/navigation";
 import { uiT } from "@/i18n";
@@ -20,13 +20,13 @@ const IndustriesWeServe = () => {
 
     const y1 = useTransform(scrollYProgress, [0, 1], [0, -60]);
     const y2 = useTransform(scrollYProgress, [0, 1], [0, 60]);
-    const { landingPageContent } = useLandingPageContent();
-    const { lang }: LanguageType = useParams();
+    const { globalContent } = useGlobalContent();
+    const { lang }: any = useParams();
 
-    const industriesWeServeData = landingPageContent?.industriesWeServe;
+    const industriesWeServeData = globalContent?.industriesWeServe;
     const industriesData = industriesWeServeData?.industries || [];
 
-    const statsData = landingPageContent?.stats;
+    const statsData = globalContent?.stats;
     const statsArray = statsData ? [
         {
             value: industriesData.length.toString(),

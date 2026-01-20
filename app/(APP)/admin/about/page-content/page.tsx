@@ -1,4 +1,5 @@
 import { getAboutPageContentForAdmin, getAboutPageDraft } from "@/app/actions/aboutPageContent";
+import { getGlobalSectionsForAdmin, getGlobalSectionsDraft } from "@/app/actions/globalSections";
 import { AboutPageContentForm } from "@/components/admin/form/AboutPageContentForm";
 
 // Force this page to be dynamic (no caching)
@@ -10,17 +11,21 @@ export default async function AboutPageContentPage() {
     const draft = await getAboutPageDraft();
     const published = await getAboutPageContentForAdmin();
 
+    const globalDraft = await getGlobalSectionsDraft();
+    const globalPublished = await getGlobalSectionsForAdmin();
+
     const pageContent = draft || published;
-    const hasDraft = !!draft;
-    const draftUpdatedAt = draft?._updatedAt ? new Date(draft._updatedAt).toISOString() : null;
+    const globalContent = globalDraft || globalPublished;
+
+    const hasDraft = !!draft || !!globalDraft;
+    // Use the latest updatedAt if both exist
+    const draftUpdatedAt = [draft?._updatedAt, globalDraft?._updatedAt]
+        .filter(Boolean)
+        .sort((a, b) => new Date(b!).getTime() - new Date(a!).getTime())[0] || null;
 
     const initialData = pageContent ? {
-        hero: pageContent.hero || {},
-        intro: pageContent.intro || {},
-        missionVision: pageContent.missionVision || {},
-        philosophy: pageContent.philosophy || {},
-        globalReach: pageContent.globalReach || {},
-        culture: pageContent.culture || {},
+        ...pageContent,
+        ...globalContent,
     } : undefined;
 
     return (

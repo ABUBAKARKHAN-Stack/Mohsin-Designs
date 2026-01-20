@@ -77,6 +77,16 @@ export const aboutPageContentSchema = z.object({
         quote: requiredLocalizedStringSchema.optional(),
         quoteHighlight: requiredLocalizedStringSchema.optional(),
     }),
+
+    // Global Sections (Optional in this schema as they are managed globally)
+    stats: z.any().optional(),
+    servicesPreview: z.any().optional(),
+    whyChooseUs: z.any().optional(),
+    ourApproach: z.any().optional(),
+    industriesWeServe: z.any().optional(),
+    faqs: z.any().optional(),
+    leadership: z.any().optional(),
+    cta: z.any().optional(),
 });
 
 export type AboutPageContentValues = z.infer<typeof aboutPageContentSchema>;

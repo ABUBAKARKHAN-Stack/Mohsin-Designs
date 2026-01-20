@@ -4,17 +4,17 @@ import SectionHeading from "@/components/ui/section-heading";
 import { Linkedin, Twitter, Mail } from "lucide-react";
 import Image from "next/image";
 import { ContainerLayout } from "@/components/layout";
-import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
 import { useParams } from "next/navigation";
 import { uiT } from "@/i18n";
 
 
 const Leadership = () => {
-  const { landingPageContent } = useLandingPageContent();
-  const {lang}:LanguageType = useParams()
+  const { globalContent } = useGlobalContent();
+  const { lang }: any = useParams()
 
-  const leadershipData = landingPageContent?.leadership;
+  const leadershipData = globalContent?.leadership;
   const founderData = leadershipData?.founder;
   const agencyStructure = leadershipData?.agencyStructure || [];
 

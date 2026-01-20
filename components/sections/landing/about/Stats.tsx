@@ -1,14 +1,34 @@
 "use client"
-
-import { stats } from "@/constants/stats.constants";
 import { motion } from "motion/react";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { ContainerLayout } from "@/components/layout";
 import { cn } from "@/lib/utils";
 import SplitText from "@/components/ui/split-text";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 
 
 const Stats = () => {
+  const { globalContent } = useGlobalContent();
+  const statsData = globalContent?.stats;
+
+  const statsArray = [
+    {
+      value: parseInt(statsData?.projectsDelivered?.value || "3000"),
+      suffix: statsData?.projectsDelivered?.suffix || "+",
+      label: statsData?.projectsDelivered?.label || "Projects Delivered"
+    },
+    {
+      value: parseInt(statsData?.yearsExperience?.value || "12"),
+      suffix: statsData?.yearsExperience?.suffix || "+",
+      label: statsData?.yearsExperience?.label || "Years Experience"
+    },
+    {
+      value: parseInt(statsData?.clientSatisfaction?.value || "99"),
+      suffix: statsData?.clientSatisfaction?.suffix || "%",
+      label: statsData?.clientSatisfaction?.label || "Client Satisfaction"
+    },
+  ];
+
   return (
     <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
 
@@ -43,7 +63,7 @@ const Stats = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-          {stats.map((stat, index) => (
+          {statsArray.map((stat, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}

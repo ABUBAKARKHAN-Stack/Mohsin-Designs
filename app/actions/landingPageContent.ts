@@ -150,9 +150,17 @@ export async function updateLandingPageContent(data: LandingPageContentValues) {
 export async function saveLandingPageDraft(data: Partial<LandingPageContentValues>) {
     try {
         const updateData: any = {
+            ...data,
             _type: 'landingPageContent',
             _id: `drafts.${LANDING_PAGE_CONTENT_ID}`,
-            ...data
+        }
+
+        // Normalize CTA formId to reference if it's a string
+        if (updateData.cta && typeof updateData.cta.formId === 'string') {
+            updateData.cta.formId = {
+                _type: 'reference',
+                _ref: updateData.cta.formId
+            }
         }
 
         await adminClient.createOrReplace(updateData)

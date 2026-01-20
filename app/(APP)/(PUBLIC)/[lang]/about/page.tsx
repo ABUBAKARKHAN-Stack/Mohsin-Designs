@@ -1,5 +1,4 @@
 import {
-    Stats,
     WhyChooseUs,
     Leadership,
     IndustriesWeServe,
@@ -28,7 +27,6 @@ const About = () => {
             <IntroSection />
             <MissionVisionSection />
             <PhilosophySection />
-            {/* <Stats /> */}
             <ServicesPreview />
             <OurApproach />
             <IndustriesWeServe />

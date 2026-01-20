@@ -86,6 +86,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                 { title: "Blogs", url: "/admin/blogs", icon: FileText },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
                 { title: "Forms", url: "/admin/forms", icon: Layers },
+                { title: "Global Sections", url: "/admin/global-sections", icon: Layers },
                 { title: "Contact Submissions", url: "/admin/contact-submissions", icon: Inbox },
             ]
         },
@@ -134,6 +135,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                 { title: "Blogs", url: "/admin/blogs", icon: FileText },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
                 { title: "Forms", url: "/admin/forms", icon: Layers },
+                { title: "Global Sections", url: "/admin/global-sections", icon: Layers },
                 { title: "Contact Submissions", url: "/admin/contact-submissions", icon: Inbox },
                 { title: "Media", url: "/admin/media", icon: FolderOpen },
             ]

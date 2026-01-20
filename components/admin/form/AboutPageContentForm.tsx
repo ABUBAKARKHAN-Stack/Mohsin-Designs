@@ -17,6 +17,9 @@ import { Spinner } from "@/components/ui/spinner"
 import { Save, AlertCircle, Plus, Trash2, Clock, X } from "lucide-react"
 import { debounce } from "lodash"
 import { Input } from "@/components/ui/input"
+import { GlobalSectionsFormTabs } from "./GlobalSectionsFormTabs"
+import { SectionHeadingCard } from "./SharedFormComponents"
+import { saveGlobalSectionsDraft, updateGlobalSections, discardGlobalSectionsDraft } from "@/app/actions/globalSections"
 
 interface AboutPageContentFormProps {
     initialData?: any
@@ -46,8 +49,22 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
             if (isInitialMount) return
             setIsSavingDraft(true)
             try {
-                const result = await saveAboutPageDraft(data)
-                if (result.success) {
+                // Split data into local and global
+                const localData = { ...data }
+                const globalFields = ['stats', 'servicesPreview', 'whyChooseUs', 'ourApproach', 'industriesWeServe', 'faqs', 'leadership', 'cta']
+                const globalData: any = {}
+                globalFields.forEach(field => {
+                    if (localData[field as keyof typeof localData]) {
+                        globalData[field] = localData[field as keyof typeof localData]
+                    }
+                })
+
+                const [result1, result2] = await Promise.all([
+                    saveAboutPageDraft(localData),
+                    saveGlobalSectionsDraft(globalData)
+                ])
+
+                if (result1.success && result2.success) {
                     setLastSaved(new Date())
                 }
             } catch (error) {
@@ -105,13 +122,28 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
     async function onSubmit(values: AboutPageContentValues) {
         setIsLoading(true)
         try {
-            const result = await updateAboutPageContent(values)
-            if (result.success) {
+            // Split data
+            const localData = { ...values }
+            const globalFields = ['stats', 'servicesPreview', 'whyChooseUs', 'ourApproach', 'industriesWeServe', 'faqs', 'leadership', 'cta']
+            const globalData: any = {}
+            globalFields.forEach(field => {
+                globalData[field] = localData[field as keyof typeof localData]
+            })
+
+            const [result1, result2] = await Promise.all([
+                updateAboutPageContent(values),
+                updateGlobalSections(globalData)
+            ])
+
+            if (result1.success && result2.success) {
                 successToast("About page content published successfully")
-                await discardAboutPageDraft()
+                await Promise.all([
+                    discardAboutPageDraft(),
+                    discardGlobalSectionsDraft()
+                ])
                 setLastSaved(null)
             } else {
-                errorToast(result.error || "Failed to update content")
+                errorToast(result1.success ? result2.error : result1.error || "Failed to update content")
             }
         } catch (error) {
             errorToast("An unexpected error occurred")
@@ -122,8 +154,11 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
 
     async function handleDiscardDraft() {
         if (!confirm("Are you sure you want to discard your draft changes?")) return
-        const result = await discardAboutPageDraft()
-        if (result.success) {
+        const [result1, result2] = await Promise.all([
+            discardAboutPageDraft(),
+            discardGlobalSectionsDraft()
+        ])
+        if (result1.success && result2.success) {
             successToast("Draft discarded")
             setLastSaved(null)
             window.location.reload()
@@ -201,6 +236,12 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                         <TabsTrigger value="culture" className="relative data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
                             Culture
                             {formErrors.culture && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        </TabsTrigger>
+                        <TabsTrigger value="shared" className="relative bg-primary/10">
+                            Shared Content
+                            {(formErrors.stats || formErrors.servicesPreview || formErrors.whyChooseUs || formErrors.ourApproach || formErrors.industriesWeServe || formErrors.faqs || formErrors.leadership || formErrors.cta) && (
+                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                            )}
                         </TabsTrigger>
                     </TabsList>
                     <TabsContent value="hero">
@@ -481,24 +522,16 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                             </CardContent>
                         </Card>
                     </TabsContent>
+
+                    <TabsContent value="shared">
+                        <GlobalSectionsFormTabs control={formControl} errors={formErrors} />
+                    </TabsContent>
                 </Tabs>
             </form>
         </Form>
     )
 }
 
-function SectionHeadingCard({ control, baseName, title }: { control: any; baseName: string; title: string }) {
-    return (
-        <Card>
-            <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-                <LocalizedInput control={control} name={`${baseName}.eyebrow`} label="Eyebrow" />
-                <LocalizedInput control={control} name={`${baseName}.title`} label="Title" />
-                <LocalizedInput control={control} name={`${baseName}.description`} label="Description" isTextarea />
-            </CardContent>
-        </Card>
-    )
-}
 
 function getDefaultValues(): AboutPageContentValues {
     return {
@@ -558,12 +591,35 @@ function getDefaultValues(): AboutPageContentValues {
             sectionHeading: { title: { en: "", ur: "", es: "", ar: "" } },
             values: [],
         },
+        // Global Sections
+        stats: {
+            projectsDelivered: { value: "", label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+            yearsExperience: { value: "", label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+            clientSatisfaction: { value: "", label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+        },
+        servicesPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
+        whyChooseUs: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, benefits: [] },
+        ourApproach: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, steps: [] },
+        industriesWeServe: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, industries: [] },
+        faqs: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, faqItems: [] },
+        leadership: {
+            sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } },
+            founder: { name: { en: "", ur: "", es: "", ar: "" }, role: { en: "", ur: "", es: "", ar: "" }, image: null, socialLinks: [] },
+            agencyStructure: []
+        },
+        cta: {
+            badge: { en: "", ur: "", es: "", ar: "" },
+            heading: { en: "", ur: "", es: "", ar: "" },
+            description: { en: "", ur: "", es: "", ar: "" },
+            benefits: [],
+        }
     } as AboutPageContentValues
 }
 
 function mergeWithDefaults(data: any): AboutPageContentValues {
     const defaults = getDefaultValues()
     return {
+        ...data,
         hero: { ...defaults.hero, ...data.hero },
         intro: { ...defaults.intro, ...data.intro },
         missionVision: {
@@ -598,5 +654,42 @@ function mergeWithDefaults(data: any): AboutPageContentValues {
             quote: data.culture?.quote || defaults.culture.quote,
             quoteHighlight: data.culture?.quoteHighlight || defaults.culture.quoteHighlight,
         },
+        // Merge Global Sections
+        stats: {
+            projectsDelivered: { ...defaults.stats?.projectsDelivered, ...data.stats?.projectsDelivered },
+            yearsExperience: { ...defaults.stats?.yearsExperience, ...data.stats?.yearsExperience },
+            clientSatisfaction: { ...defaults.stats?.clientSatisfaction, ...data.stats?.clientSatisfaction },
+        },
+        servicesPreview: { ...defaults.servicesPreview, ...data.servicesPreview },
+        whyChooseUs: {
+            sectionHeading: { ...defaults.whyChooseUs?.sectionHeading, ...data.whyChooseUs?.sectionHeading },
+            benefits: data.whyChooseUs?.benefits || defaults.whyChooseUs?.benefits
+        },
+        ourApproach: {
+            sectionHeading: { ...defaults.ourApproach?.sectionHeading, ...data.ourApproach?.sectionHeading },
+            steps: data.ourApproach?.steps || defaults.ourApproach?.steps
+        },
+        industriesWeServe: {
+            sectionHeading: { ...defaults.industriesWeServe?.sectionHeading, ...data.industriesWeServe?.sectionHeading },
+            industries: data.industriesWeServe?.industries || defaults.industriesWeServe?.industries
+        },
+        faqs: {
+            sectionHeading: { ...defaults.faqs?.sectionHeading, ...data.faqs?.sectionHeading },
+            faqItems: data.faqs?.faqItems || defaults.faqs?.faqItems,
+            ...(data.faqs?.buttonText && { buttonText: data.faqs.buttonText }),
+            ...(data.faqs?.buttonUrl && { buttonUrl: data.faqs.buttonUrl })
+        },
+        leadership: {
+            sectionHeading: { ...defaults.leadership?.sectionHeading, ...data.leadership?.sectionHeading },
+            founder: { ...defaults.leadership?.founder, ...data.leadership?.founder },
+            agencyStructure: data.leadership?.agencyStructure || defaults.leadership?.agencyStructure
+        },
+        cta: {
+            badge: { ...defaults.cta?.badge, ...data.cta?.badge },
+            heading: { ...defaults.cta?.heading, ...data.cta?.heading },
+            description: { ...defaults.cta?.description, ...data.cta?.description },
+            benefits: data.cta?.benefits || defaults.cta?.benefits,
+            formId: typeof data.cta?.formId === 'object' ? data.cta.formId?._ref : data.cta?.formId || undefined
+        }
     } as AboutPageContentValues
 }

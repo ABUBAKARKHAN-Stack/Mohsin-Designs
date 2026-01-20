@@ -14,6 +14,8 @@ import { LandingPageContentProvider } from "@/context/LandingPageContentContext"
 import { getLandingPageContent } from "@/helpers/landing-page-content.helpers";
 import { AboutPageContentProvider } from "@/context/AboutPageContentContext";
 import { getAboutPageContent } from "@/helpers/about-page-content.helpers";
+import { GlobalContentProvider } from "@/context/GlobalContentContext";
+import { getGlobalSections } from "@/helpers/global-sections.helpers";
 
 
 
@@ -32,11 +34,22 @@ export default async function LangLayout({ children, params }: Props) {
     }
 
 
-    const services = await getServicesByLocale(lang)
-    const lightWeightServices = await getLightWeightServicesByLocale(lang)
-    const siteSettings = await getSiteSettingsByLocale(lang)
-    const landingPageContent = await getLandingPageContent(lang)
-    const aboutPageContent = await getAboutPageContent(lang)
+ 
+    const [servicesResult, lightWeightServicesResult, siteSettingsResult, landingPageContentResult, aboutPageContentResult, globalContentResult] = await Promise.allSettled([
+        getServicesByLocale(lang),
+        getLightWeightServicesByLocale(lang),
+        getSiteSettingsByLocale(lang),
+        getLandingPageContent(lang),
+        getAboutPageContent(lang),
+        getGlobalSections(lang),
+    ])
+
+    const services = servicesResult.status === "fulfilled" ? servicesResult.value : [];
+    const lightWeightServices = lightWeightServicesResult.status === "fulfilled" ? lightWeightServicesResult.value : [];
+    const siteSettings = siteSettingsResult.status === "fulfilled" ? siteSettingsResult.value : null;
+    const landingPageContent = landingPageContentResult.status === "fulfilled" ? landingPageContentResult.value : null;
+    const aboutPageContent = aboutPageContentResult.status === "fulfilled" ? aboutPageContentResult.value : null;
+    const globalContent = globalContentResult.status === "fulfilled" ? globalContentResult.value : null;
 
 
     return (
@@ -44,23 +57,25 @@ export default async function LangLayout({ children, params }: Props) {
         <SiteSettingsProvider settings={siteSettings}>
             <LandingPageContentProvider landingPageContent={landingPageContent}>
                 <AboutPageContentProvider aboutPageContent={aboutPageContent}>
-                    <PublicProvider>
-                        <div lang={lang} className="min-h-screen flex flex-col">
-                            <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
-                                <SanityLive />
-                                <Navbar />
+                    <GlobalContentProvider globalContent={globalContent}>
+                        <PublicProvider>
+                            <div lang={lang} className="min-h-screen flex flex-col">
+                                <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
+                                    <SanityLive />
+                                    <Navbar />
 
-                                <main className="flex-1 pt-20">
-                                    <AnimatePresence mode="wait">
-                                        {children}
-                                    </AnimatePresence>
-                                </main>
+                                    <main dir={lang === "ur" || lang === "ar" ? "rtl" : "ltr"} className="flex-1 pt-20">
+                                        <AnimatePresence mode="wait">
+                                            {children}
+                                        </AnimatePresence>
+                                    </main>
 
-                                <FloatingContactBadge />
-                                <Footer />
-                            </ServicesProvider>
-                        </div>
-                    </PublicProvider>
+                                    <FloatingContactBadge />
+                                    <Footer />
+                                </ServicesProvider>
+                            </div>
+                        </PublicProvider>
+                    </GlobalContentProvider>
                 </AboutPageContentProvider>
             </LandingPageContentProvider>
         </SiteSettingsProvider>

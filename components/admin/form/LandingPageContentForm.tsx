@@ -5,19 +5,21 @@ import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { landingPageContentSchema, LandingPageContentValues } from "@/lib/validations/landing-page-content"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
-import { IconSelect } from "@/components/admin/form/IconSelect"
 import { BulkImageUpload } from "@/components/admin/form/BulkImageUpload"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { updateLandingPageContent, saveLandingPageDraft, discardLandingPageDraft } from "@/app/actions/landingPageContent"
+import { updateGlobalSections, saveGlobalSectionsDraft, discardGlobalSectionsDraft } from "@/app/actions/globalSections"
+import { GlobalSectionsFormTabs } from "@/components/admin/form/GlobalSectionsFormTabs"
+import {  SectionHeadingCard } from "@/components/admin/form/SharedFormComponents"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
-import { Save, AlertCircle, Plus, Trash2, Clock, X, Link } from "lucide-react"
+import { Save, AlertCircle, Plus, Trash2, Clock, X, Link, Database } from "lucide-react"
 import { debounce } from "lodash"
 
 interface LandingPageContentFormProps {
@@ -52,8 +54,24 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
             setIsSavingDraft(true)
             try {
-                const result = await saveLandingPageDraft(data)
-                if (result.success) {
+                // Split data into local and global
+                const localData = { ...data }
+                const globalFields = ['stats', 'servicesPreview', 'whyChooseUs', 'ourApproach', 'industriesWeServe', 'faqs', 'leadership', 'cta']
+                const globalData: any = {}
+                globalFields.forEach(field => {
+                    if (localData[field as keyof typeof localData]) {
+                        globalData[field] = localData[field as keyof typeof localData]
+                        // We keep it in localData too for now to avoid schema issues, 
+                        // but normally we'd remove it.
+                    }
+                })
+
+                const [result1, result2] = await Promise.all([
+                    saveLandingPageDraft(localData),
+                    saveGlobalSectionsDraft(globalData)
+                ])
+
+                if (result1.success && result2.success) {
                     setLastSaved(new Date())
                 }
             } catch (error) {
@@ -98,16 +116,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
     })
 
 
-    const { fields: benefitFields, append: appendBenefit, remove: removeBenefit } = useFieldArray({
-        control: formControl,
-        name: "whyChooseUs.benefits",
-    })
-
-    const { fields: faqFields, append: appendFaq, remove: removeFaq } = useFieldArray({
-        control: formControl,
-        name: "faqs.faqItems",
-    })
-
+  
     const { fields: highlightFields, append: appendHighlight, remove: removeHighlight } = useFieldArray({
         control: formControl,
         name: "serviceHighlightsMarquee.highlights",
@@ -125,46 +134,45 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
 
 
-    const { fields: stepFields, append: appendStep, remove: removeStep } = useFieldArray({
-        control: formControl,
-        name: "ourApproach.steps",
-    })
-
     const { fields: areaFields, append: appendArea, remove: removeArea } = useFieldArray({
         control: formControl,
         name: "areasWeServe.areas",
     })
 
-    const { fields: industryFields, append: appendIndustry, remove: removeIndustry } = useFieldArray({
-        control: formControl,
-        name: "industriesWeServe.industries",
-    })
-
+  
     const { fields: testimonialFields, append: appendTestimonial, remove: removeTestimonial } = useFieldArray({
         control: formControl,
         name: "testimonials.testimonials",
     })
 
-    const { fields: agencyStructureFields, append: appendAgencyTeam, remove: removeAgencyTeam } = useFieldArray({
-        control: formControl,
-        name: "leadership.agencyStructure",
-    })
-
-    const { fields: ctaBenefitsFields, append: appendCtaBenefit, remove: removeCtaBenefit } = useFieldArray({
-        control: formControl,
-        name: "cta.benefits",
-    })
+   
+   
 
     async function onSubmit(values: LandingPageContentValues) {
         setIsLoading(true)
         try {
-            const result = await updateLandingPageContent(values)
-            if (result.success) {
-                successToast("Landing page content published successfully")
-                await discardLandingPageDraft()
+            // Split data
+            const localData = { ...values }
+            const globalFields = ['stats', 'servicesPreview', 'whyChooseUs', 'ourApproach', 'industriesWeServe', 'faqs', 'leadership', 'cta']
+            const globalData: any = {}
+            globalFields.forEach(field => {
+                globalData[field] = localData[field as keyof typeof localData]
+            })
+
+            const [result1, result2] = await Promise.all([
+                updateLandingPageContent(values),
+                updateGlobalSections(globalData)
+            ])
+
+            if (result1.success && result2.success) {
+                successToast("All content published successfully")
+                await Promise.all([
+                    discardLandingPageDraft(),
+                    discardGlobalSectionsDraft()
+                ])
                 setLastSaved(null)
             } else {
-                errorToast(result.error || "Failed to update content")
+                errorToast(result1.success ? result2.error : result1.error || "Failed to update content")
             }
         } catch (error) {
             errorToast("An unexpected error occurred")
@@ -173,16 +181,9 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         }
     }
 
-    async function handleDiscardDraft() {
-        const result = await discardLandingPageDraft()
-        if (result.success) {
-            successToast("Draft discarded")
-            setLastSaved(null)
-            window.location.reload()
-        } else {
-            errorToast("Failed to discard draft")
-        }
-    }
+  
+
+   
 
     const formErrors = form.formState.errors
     const hasErrors = Object.keys(formErrors).length > 0
@@ -195,7 +196,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                     <div>
                         <h1 className="text-2xl font-bold">Landing Page Content</h1>
                         <div className="flex items-center gap-3 text-muted-foreground text-sm mt-1">
-                            <p>Manage all 16 sections</p>
+                            <p>Manage all sections</p>
                             {isSavingDraft && (
                                 <span className="flex items-center gap-1 text-blue-600">
                                     <Spinner className="h-3 w-3" />
@@ -211,11 +212,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        {/* {hasDraft && (
-                            <Button type="button" variant="outline" size="sm" onClick={handleDiscardDraft}>
-                                <X className="mr-2 h-4 w-4" /> Discard Draft
-                            </Button>
-                        )} */}
                         {hasErrors && (
                             <div className="flex items-center gap-2 text-destructive text-xs px-3 py-1 bg-destructive/10 rounded">
                                 <AlertCircle className="h-3 w-3" />
@@ -229,14 +225,10 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                 </div>
 
                 <Tabs defaultValue="hero" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 gap-2 h-auto bg-transparent p-0 mb-6">
+                    <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6 gap-2 h-auto bg-transparent p-0 mb-6">
                         <TabsTrigger value="hero" className="relative">
                             Hero
                             {formErrors.hero && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="stats" className="relative">
-                            Stats
-                            {formErrors.stats && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
                         <TabsTrigger value="marquee" className="relative">
                             Marquee
@@ -250,18 +242,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                             About
                             {formErrors.aboutPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
-                        <TabsTrigger value="approach" className="relative">
-                            Approach
-                            {formErrors.ourApproach && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="services" className="relative">
-                            Services
-                            {formErrors.servicesPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="whyUs" className="relative">
-                            Why Us
-                            {formErrors.whyChooseUs && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
                         <TabsTrigger value="portfolio" className="relative">
                             Portfolio
                             {formErrors.portfolioPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
@@ -274,29 +254,19 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                             Areas
                             {formErrors.areasWeServe && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
-                        <TabsTrigger value="industries" className="relative">
-                            Industries
-                            {formErrors.industriesWeServe && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
                         <TabsTrigger value="testimonials" className="relative">
                             Testimonials
                             {formErrors.testimonials && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="leadership" className="relative">
-                            Leadership
-                            {formErrors.leadership && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
                         <TabsTrigger value="blog" className="relative">
                             Blog
                             {formErrors.blogPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
-                        <TabsTrigger value="faqs" className="relative">
-                            FAQs
-                            {formErrors.faqs && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                        </TabsTrigger>
-                        <TabsTrigger value="cta" className="relative">
-                            CTA
-                            {formErrors.cta && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        <TabsTrigger value="shared" className="relative bg-primary/10">
+                            Shared Content
+                            {(formErrors.stats || formErrors.servicesPreview || formErrors.whyChooseUs || formErrors.ourApproach || formErrors.industriesWeServe || formErrors.faqs || formErrors.leadership || formErrors.cta) && (
+                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                            )}
                         </TabsTrigger>
                     </TabsList>
 
@@ -398,19 +368,8 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </Card>
                     </TabsContent>
 
-                    {/* STATS */}
-                    <TabsContent value="stats">
-                        <Card className="border-2 shadow-sm">
-                            <CardHeader className="bg-muted/30 pb-4 border-b">
-                                <CardTitle className="text-xl">Statistics Section</CardTitle>
-                                <p className="text-sm text-muted-foreground">Manage the three core metrics displayed on your landing page.</p>
-                            </CardHeader>
-                            <CardContent className="p-6 space-y-8">
-                                <StatItemCard control={formControl} name="stats.projectsDelivered" title="Projects Delivered" />
-                                <StatItemCard control={formControl} name="stats.yearsExperience" title="Years Experience" />
-                                <StatItemCard control={formControl} name="stats.clientSatisfaction" title="Client Satisfaction" />
-                            </CardContent>
-                        </Card>
+                    <TabsContent value="shared">
+                        <GlobalSectionsFormTabs control={formControl} errors={formErrors} />
                     </TabsContent>
 
                     {/* MARQUEE */}
@@ -505,76 +464,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </Card>
                     </TabsContent>
 
-                    {/* APPROACH */}
-                    <TabsContent value="approach" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="ourApproach.sectionHeading" title="Our Approach" />
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Steps</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendStep({ title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "" })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {stepFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Step {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeStep(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`ourApproach.steps.${index}.title`} label="Title" />
-                                        <LocalizedInput control={formControl} name={`ourApproach.steps.${index}.description`} label="Description" isTextarea />
-                                        <FormField control={formControl} name={`ourApproach.steps.${index}.iconName`} render={({ field }) => (
-                                            <IconSelect field={field} type="step" label="Icon" />
-                                        )} />
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* SERVICES */}
-                    <TabsContent value="services" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="servicesPreview.sectionHeading" title="Services Preview" />
-                        <Card>
-                            <CardHeader><CardTitle>Services List</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Individual services are managed separately in the Services section and are automatically added dynamically to this section.</p>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* WHY US */}
-                    <TabsContent value="whyUs" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="whyChooseUs.sectionHeading" title="Why Choose Us" />
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Benefits</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendBenefit({ title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "" })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {benefitFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Benefit {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeBenefit(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`whyChooseUs.benefits.${index}.title`} label="Title" />
-                                        <LocalizedInput control={formControl} name={`whyChooseUs.benefits.${index}.description`} label="Description" isTextarea />
-                                        <FormField control={formControl} name={`whyChooseUs.benefits.${index}.iconName`} render={({ field }) => (
-                                            <IconSelect field={field} type="benefit" label="Icon" />
-                                        )} />
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
 
                     {/* PORTFOLIO */}
                     <TabsContent value="portfolio" className="space-y-6">
@@ -667,38 +556,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </Card>
                     </TabsContent>
 
-                    {/* INDUSTRIES */}
-                    <TabsContent value="industries" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="industriesWeServe.sectionHeading" title="Industries We Serve" />
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Industries</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendIndustry({ name: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "" })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {industryFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Industry {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeIndustry(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`industriesWeServe.industries.${index}.name`} label="Name" />
-                                        <LocalizedInput control={formControl} name={`industriesWeServe.industries.${index}.description`} label="Description" isTextarea />
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <FormField control={formControl} name={`industriesWeServe.industries.${index}.iconName`} render={({ field }) => (
-                                                <IconSelect field={field} type="industry" label="Icon" />
-                                            )} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
 
                     {/* TESTIMONIALS */}
                     <TabsContent value="testimonials" className="space-y-6">
@@ -758,261 +615,13 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </Card>
                     </TabsContent>
 
-                    {/* LEADERSHIP */}
-                    <TabsContent value="leadership" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="leadership.sectionHeading" title="Leadership" />
-
-                        {/* Founder Info */}
-                        <Card>
-                            <CardHeader><CardTitle>Founder Information</CardTitle></CardHeader>
-                            <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="leadership.founder.name" label="Name" />
-                                <LocalizedInput control={formControl} name="leadership.founder.role" label="Role/Title" />
-
-                                <div className="space-y-2">
-                                    <FormLabel>Profile Image</FormLabel>
-                                    <FormField control={formControl} name="leadership.founder.image" render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <ImageUpload
-                                                    value={field.value}
-                                                    onChange={(asset) => {
-                                                        if (!asset) {
-                                                            field.onChange(null)
-                                                            return
-                                                        }
-                                                        field.onChange({
-                                                            _type: 'image',
-                                                            asset: {
-                                                                _type: 'reference',
-                                                                _ref: asset._id || asset.id,
-                                                            },
-                                                            url: asset.url
-                                                        })
-                                                    }}
-                                                    label=""
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                </div>
-
-                                <NestedSocialLinksField control={formControl} />
-                            </CardContent>
-                        </Card>
-
-                        {/* Agency Structure */}
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>Agency Structure</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendAgencyTeam({ title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "", featured: false })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add Team
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {agencyStructureFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Team {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeAgencyTeam(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`leadership.agencyStructure.${index}.title`} label="Team Title" />
-                                        <LocalizedInput control={formControl} name={`leadership.agencyStructure.${index}.description`} label="Description" />
-                                        <FormField control={formControl} name={`leadership.agencyStructure.${index}.iconName`} render={({ field }) => (
-                                            <IconSelect field={field} type="team" label="Icon" />
-                                        )} />
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* BLOG */}
-                    <TabsContent value="blog" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="blogPreview.sectionHeading" title="Blog Preview" />
-                        <Card>
-                            <CardHeader><CardTitle>Blog Content</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Blog posts are managed separately and will be displayed dynamically.</p>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* FAQS */}
-                    <TabsContent value="faqs" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="faqs.sectionHeading" title="FAQs" />
-                        <Card>
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>FAQ Items</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendFaq({ question: { en: "", ur: "", es: "", ar: "" }, answer: { en: "", ur: "", es: "", ar: "" } })}>
-                                    <Plus className="h-4 w-4 mr-2" /> Add
-                                </Button>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {faqFields.map((field, index) => (
-                                    <div key={field.id} className="border rounded p-4 space-y-4">
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">FAQ {index + 1}</span>
-                                            <Button type="button" size="sm" variant="destructive" onClick={() => removeFaq(index)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <LocalizedInput control={formControl} name={`faqs.faqItems.${index}.question`} label="Question" />
-                                        <LocalizedInput control={formControl} name={`faqs.faqItems.${index}.answer`} label="Answer" isTextarea />
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader><CardTitle>FAQ Button</CardTitle></CardHeader>
-                            <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="faqs.buttonText" label="Button Text" />
-                                <LocalizedInput control={formControl} name="faqs.buttonUrl" label="Button URL" isUrl />
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    {/* CTA */}
-                    <TabsContent value="cta">
-                        <Card>
-                            <CardHeader><CardTitle>CTA Section</CardTitle></CardHeader>
-                            <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="cta.badge" label="Badge Text" />
-                                <LocalizedInput control={formControl} name="cta.heading" label="Heading" />
-                                <LocalizedInput control={formControl} name="cta.description" label="Description" isTextarea />
-
-                                {/* Form Selector */}
-                                <FormField control={formControl} name="cta.formId" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Contact Form (Optional)</FormLabel>
-                                        <FormDescription>
-                                            Select a form to display in the CTA section. If no form is selected, the default contact form will be used.
-                                        </FormDescription>
-                                        <FormSelectorDropdown field={field} />
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
-
-                                {/* Benefits */}
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <FormLabel>Benefits</FormLabel>
-                                        <Button
-                                            type="button"
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => appendCtaBenefit({ text: { en: "", ur: "", es: "", ar: "" } })}
-                                        >
-                                            <Plus className="h-4 w-4 mr-2" /> Add Benefit
-                                        </Button>
-                                    </div>
-                                    {ctaBenefitsFields.map((field, index) => (
-                                        <div key={field.id} className="border rounded p-4 space-y-4">
-                                            <div className="flex justify-between">
-                                                <span className="font-medium">Benefit {index + 1}</span>
-                                                <Button
-                                                    type="button"
-                                                    size="sm"
-                                                    variant="destructive"
-                                                    onClick={() => removeCtaBenefit(index)}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                            <LocalizedInput
-                                                control={formControl}
-                                                name={`cta.benefits.${index}.text`}
-                                                label="Benefit Text"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
                 </Tabs>
             </form>
         </Form>
     )
 }
 
-function NestedSocialLinksField({ control }: { control: any }) {
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "leadership.founder.socialLinks",
-    })
-
-    // Get already selected platforms
-    const selectedPlatforms = fields.map((field: any) => field.platform)
-
-    return (
-        <div className="space-y-3 border-l-2 border-primary/20 pl-4">
-            <div className="flex justify-between items-center">
-                <h4 className="font-medium text-sm">Social Links</h4>
-                <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => append({ platform: "linkedin", url: "" })}
-                    disabled={fields.length >= 3}
-                >
-                    <Plus className="h-3 w-3 mr-1" /> Add Link
-                </Button>
-            </div>
-            {fields.map((field, index) => (
-                <div key={field.id} className="flex gap-2 items-start">
-                    <div className="flex-1 grid grid-cols-2 gap-2">
-                        <FormField control={control} name={`leadership.founder.socialLinks.${index}.platform`} render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Platform</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select platform" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="linkedin" disabled={selectedPlatforms.includes("linkedin") && field.value !== "linkedin"}>
-                                            LinkedIn
-                                        </SelectItem>
-                                        <SelectItem value="twitter" disabled={selectedPlatforms.includes("twitter") && field.value !== "twitter"}>
-                                            Twitter
-                                        </SelectItem>
-                                        <SelectItem value="email" disabled={selectedPlatforms.includes("email") && field.value !== "email"}>
-                                            Email
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                        <FormField control={control} name={`leadership.founder.socialLinks.${index}.url`} render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>URL</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="https://..." />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    </div>
-                    <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => remove(index)}
-                        className="mt-8"
-                    >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                </div>
-            ))}
-        </div>
-    )
-}
+// End of LandingPageContentForm
 
 function NestedLocationsField({ control, areaIndex }: { control: any; areaIndex: number }) {
     const { fields, append, remove } = useFieldArray({
@@ -1057,65 +666,7 @@ function NestedLocationsField({ control, areaIndex }: { control: any; areaIndex:
     )
 }
 
-function SectionHeadingCard({ control, baseName, title }: { control: any; baseName: string; title: string }) {
-    return (
-        <Card>
-            <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-                <LocalizedInput control={control} name={`${baseName}.eyebrow`} label="Eyebrow" />
-                <LocalizedInput control={control} name={`${baseName}.title`} label="Title" />
-                <LocalizedInput control={control} name={`${baseName}.description`} label="Description" isTextarea />
-            </CardContent>
-        </Card>
-    )
-}
-
-function StatItemCard({ control, name, title }: { control: any; name: string; title: string }) {
-    return (
-        <div className="space-y-4 pb-8 last:pb-0 border-b last:border-0 border-border/40">
-            <h4 className="font-semibold text-base text-muted-foreground uppercase tracking-wider">{title}</h4>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <div className="lg:col-span-5 space-y-4">
-                    <FormField
-                        control={control}
-                        name={`${name}.value`}
-                        render={({ field }) => (
-                            <FormItem className="pb-1">
-                                <FormLabel className=" font-medium text-muted-foreground">Metric Value</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="e.g. 10" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={control}
-                        name={`${name}.suffix`}
-                        render={({ field }) => (
-                            <FormItem className="pb-1">
-                                <FormLabel className=" font-medium text-muted-foreground">Suffix</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="e.g., +, %, K" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <div className="lg:col-span-7">
-                    <LocalizedInput
-                        control={control}
-                        name={`${name}.label`}
-                        label="Display Label"
-                        noBorder
-                        compact
-                    />
-                </div>
-            </div>
-        </div>
-    )
-}
+// End of LandingPageContentForm
 
 function getDefaultValues(): LandingPageContentValues {
     return {

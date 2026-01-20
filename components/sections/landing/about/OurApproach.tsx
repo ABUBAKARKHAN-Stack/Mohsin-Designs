@@ -2,13 +2,13 @@
 import { motion } from "motion/react";
 import SectionHeading from "@/components/ui/section-heading";
 import { ContainerLayout } from "@/components/layout";
-import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
 
 const OurApproach = () => {
-  const { landingPageContent } = useLandingPageContent();
+  const { globalContent } = useGlobalContent();
 
-  const ourApproachData = landingPageContent?.ourApproach;
+  const ourApproachData = globalContent?.ourApproach;
   const steps = ourApproachData?.steps || [];
 
   if (steps.length === 0) return null;

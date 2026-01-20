@@ -1,4 +1,5 @@
 import { getLandingPageContentForAdmin, getLandingPageDraft } from "@/app/actions/landingPageContent";
+import { getGlobalSectionsForAdmin, getGlobalSectionsDraft } from "@/app/actions/globalSections";
 import { LandingPageContentForm } from "@/components/admin/form/LandingPageContentForm";
 
 // Force this page to be dynamic (no caching)
@@ -10,30 +11,23 @@ export default async function LandingPageContentPage() {
     const draft = await getLandingPageDraft();
     const published = await getLandingPageContentForAdmin();
 
+    const globalDraft = await getGlobalSectionsDraft();
+    const globalPublished = await getGlobalSectionsForAdmin();
+
     const pageContent = draft || published;
-    const hasDraft = !!draft;
-    const draftUpdatedAt = draft?._updatedAt ? new Date(draft._updatedAt).toISOString() : null;
+    const globalContent = globalDraft || globalPublished;
+
+    const hasDraft = !!draft || !!globalDraft;
+    // Use the latest updatedAt if both exist
+    const draftUpdatedAt = [draft?._updatedAt, globalDraft?._updatedAt]
+        .filter(Boolean)
+        .sort((a, b) => new Date(b!).getTime() - new Date(a!).getTime())[0] || null;
 
     console.log('Page loaded - Has draft:', hasDraft, 'Draft updated:', draftUpdatedAt)
 
     const initialData = pageContent ? {
-        hero: pageContent.hero || {},
-        servicesPreview: pageContent.servicesPreview || {},
-        portfolioPreview: pageContent.portfolioPreview || {},
-        aboutPreview: pageContent.aboutPreview || {},
-        stats: pageContent.stats || {},
-        whyChooseUs: pageContent.whyChooseUs || {},
-        blogPreview: pageContent.blogPreview || {},
-        faqs: pageContent.faqs || {},
-        serviceHighlightsMarquee: pageContent.serviceHighlightsMarquee || {},
-        trustedByBrands: pageContent.trustedByBrands || {},
-        ourApproach: pageContent.ourApproach || {},
-        caseStudiesPreview: pageContent.caseStudiesPreview || {},
-        areasWeServe: pageContent.areasWeServe || {},
-        industriesWeServe: pageContent.industriesWeServe || {},
-        testimonials: pageContent.testimonials || {},
-        leadership: pageContent.leadership || {},
-        cta: pageContent.cta || {},
+        ...pageContent,
+        ...globalContent,
     } : undefined;
 
     return (

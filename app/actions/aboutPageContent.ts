@@ -117,9 +117,9 @@ export async function updateAboutPageContent(data: AboutPageContentValues) {
 export async function saveAboutPageDraft(data: Partial<AboutPageContentValues>) {
     try {
         const updateData: any = {
+            ...data,
             _type: 'aboutPageContent',
             _id: `drafts.${ABOUT_PAGE_CONTENT_ID}`,
-            ...data
         }
         await adminClient.createOrReplace(updateData)
         return { success: true }

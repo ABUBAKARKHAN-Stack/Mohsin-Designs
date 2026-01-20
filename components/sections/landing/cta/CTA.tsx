@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import DecorativeElements from "./DecorativeElements";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import { Spinner } from "@/components/ui/spinner";
-import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 import { submitContactForm } from "@/app/actions/submitContactForm";
 import { getForm, submitDynamicForm } from "@/app/actions/formActions";
 import { successToast, errorToast } from "@/lib/toastNotifications";
@@ -32,8 +32,8 @@ const CTA = () => {
   });
   const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
-  const { landingPageContent } = useLandingPageContent();
-  const ctaData = landingPageContent?.cta;
+  const { globalContent } = useGlobalContent();
+  const ctaData = globalContent?.cta;
   const [dynamicForm, setDynamicForm] = useState<any>(null);
   const [isLoadingForm, setIsLoadingForm] = useState(false);
 
@@ -180,7 +180,7 @@ const CTA = () => {
                 <span className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
                   <Send className="w-5 h-5 text-accent-foreground" />
                 </span>
-                {uiT(lang,"common.sendUsMessage")}
+                {uiT(lang, "common.sendUsMessage")}
               </h3>
 
               {isLoadingForm ? (

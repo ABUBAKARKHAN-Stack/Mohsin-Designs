@@ -211,11 +211,11 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        {hasDraft && (
+                        {/* {hasDraft && (
                             <Button type="button" variant="outline" size="sm" onClick={handleDiscardDraft}>
                                 <X className="mr-2 h-4 w-4" /> Discard Draft
                             </Button>
-                        )}
+                        )} */}
                         {hasErrors && (
                             <div className="flex items-center gap-2 text-destructive text-xs px-3 py-1 bg-destructive/10 rounded">
                                 <AlertCircle className="h-3 w-3" />
@@ -692,18 +692,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                         <div className="grid grid-cols-2 gap-4">
                                             <FormField control={formControl} name={`industriesWeServe.industries.${index}.iconName`} render={({ field }) => (
                                                 <IconSelect field={field} type="industry" label="Icon" />
-                                            )} />
-
-                                            <FormField control={formControl} name={`industriesWeServe.industries.${index}.featured`} render={({ field }) => (
-                                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                                    <div className="space-y-0.5">
-                                                        <FormLabel className="text-base">Featured</FormLabel>
-                                                        <div className="text-sm text-muted-foreground">Mark as featured industry</div>
-                                                    </div>
-                                                    <FormControl>
-                                                        <input type="checkbox" checked={field.value} onChange={field.onChange} className="h-4 w-4" />
-                                                    </FormControl>
-                                                </FormItem>
                                             )} />
                                         </div>
                                     </div>

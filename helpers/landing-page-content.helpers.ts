@@ -43,17 +43,17 @@ const LANDING_PAGE_CONTENT_QUERY_BY_LOCALE = `{
   },
   "stats": {
     "projectsDelivered": {
-      "value": stats.projectsDelivered.value[$lang],
+      "value": stats.projectsDelivered.value,
       "label": stats.projectsDelivered.label[$lang],
       "suffix": stats.projectsDelivered.suffix
     },
     "yearsExperience": {
-      "value": stats.yearsExperience.value[$lang],
+      "value": stats.yearsExperience.value,
       "label": stats.yearsExperience.label[$lang],
       "suffix": stats.yearsExperience.suffix
     },
     "clientSatisfaction": {
-      "value": stats.clientSatisfaction.value[$lang],
+      "value": stats.clientSatisfaction.value,
       "label": stats.clientSatisfaction.label[$lang],
       "suffix": stats.clientSatisfaction.suffix
     }

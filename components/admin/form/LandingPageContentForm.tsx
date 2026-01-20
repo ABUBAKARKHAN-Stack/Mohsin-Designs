@@ -1088,12 +1088,18 @@ function StatItemCard({ control, name, title }: { control: any; name: string; ti
             <h4 className="font-semibold text-base text-muted-foreground uppercase tracking-wider">{title}</h4>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div className="lg:col-span-5 space-y-4">
-                    <LocalizedInput
+                    <FormField
                         control={control}
                         name={`${name}.value`}
-                        label="Metric Value"
-                        noBorder
-                        compact
+                        render={({ field }) => (
+                            <FormItem className="pb-1">
+                                <FormLabel className=" font-medium text-muted-foreground">Metric Value</FormLabel>
+                                <FormControl>
+                                    <Input {...field} placeholder="e.g. 10" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
                     <FormField
                         control={control}
@@ -1142,9 +1148,9 @@ function getDefaultValues(): LandingPageContentValues {
             ctaUrl: { en: "", ur: "", es: "", ar: "" }
         },
         stats: {
-            projectsDelivered: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
-            yearsExperience: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
-            clientSatisfaction: { value: { en: "", ur: "", es: "", ar: "" }, label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+            projectsDelivered: { value: "", label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+            yearsExperience: { value: "", label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+            clientSatisfaction: { value: "", label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
         },
         whyChooseUs: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, benefits: [] },
         blogPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },

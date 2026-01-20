@@ -33,7 +33,7 @@ const ctaButtonSchema = z.object({
 // Stat Schema
 const statSchema = z.object({
     _key: z.string().optional(),
-    value: requiredLocalizedStringSchema,
+    value: z.string().min(1, "Value must be at least 1"),
     label: requiredLocalizedStringSchema,
     suffix: z.string().min(1, "Suffix is required (e.g., +, %)"),
 });

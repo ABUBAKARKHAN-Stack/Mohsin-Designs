@@ -159,7 +159,7 @@ export const landingPageContentType = defineType({
                     title: 'Projects Delivered',
                     type: 'object',
                     fields: [
-                        defineField({ name: 'value', type: 'localizedString' }),
+                        defineField({ name: 'value', type: 'string' }),
                         defineField({ name: 'label', type: 'localizedString' }),
                         defineField({
                             name: 'suffix',
@@ -173,7 +173,7 @@ export const landingPageContentType = defineType({
                     title: 'Years Experience',
                     type: 'object',
                     fields: [
-                        defineField({ name: 'value', type: 'localizedString' }),
+                        defineField({ name: 'value', type: 'string' }),
                         defineField({ name: 'label', type: 'localizedString' }),
                         defineField({
                             name: 'suffix',
@@ -187,7 +187,7 @@ export const landingPageContentType = defineType({
                     title: 'Client Satisfaction',
                     type: 'object',
                     fields: [
-                        defineField({ name: 'value', type: 'localizedString' }),
+                        defineField({ name: 'value', type: 'string' }),
                         defineField({ name: 'label', type: 'localizedString' }),
                         defineField({
                             name: 'suffix',

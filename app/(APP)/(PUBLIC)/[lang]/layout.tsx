@@ -12,6 +12,8 @@ import { getSiteSettingsByLocale } from "@/helpers/site-settings.helpers";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import { LandingPageContentProvider } from "@/context/LandingPageContentContext";
 import { getLandingPageContent } from "@/helpers/landing-page-content.helpers";
+import { AboutPageContentProvider } from "@/context/AboutPageContentContext";
+import { getAboutPageContent } from "@/helpers/about-page-content.helpers";
 
 
 
@@ -34,29 +36,32 @@ export default async function LangLayout({ children, params }: Props) {
     const lightWeightServices = await getLightWeightServicesByLocale(lang)
     const siteSettings = await getSiteSettingsByLocale(lang)
     const landingPageContent = await getLandingPageContent(lang)
+    const aboutPageContent = await getAboutPageContent(lang)
 
 
     return (
 
         <SiteSettingsProvider settings={siteSettings}>
             <LandingPageContentProvider landingPageContent={landingPageContent}>
-                <PublicProvider>
-                    <div lang={lang} className="min-h-screen flex flex-col">
-                        <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
-                            <SanityLive />
-                            <Navbar />
+                <AboutPageContentProvider aboutPageContent={aboutPageContent}>
+                    <PublicProvider>
+                        <div lang={lang} className="min-h-screen flex flex-col">
+                            <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
+                                <SanityLive />
+                                <Navbar />
 
-                            <main className="flex-1 pt-20">
-                                <AnimatePresence mode="wait">
-                                    {children}
-                                </AnimatePresence>
-                            </main>
+                                <main className="flex-1 pt-20">
+                                    <AnimatePresence mode="wait">
+                                        {children}
+                                    </AnimatePresence>
+                                </main>
 
-                            <FloatingContactBadge />
-                            <Footer />
-                        </ServicesProvider>
-                    </div>
-                </PublicProvider>
+                                <FloatingContactBadge />
+                                <Footer />
+                            </ServicesProvider>
+                        </div>
+                    </PublicProvider>
+                </AboutPageContentProvider>
             </LandingPageContentProvider>
         </SiteSettingsProvider>
 

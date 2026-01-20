@@ -11,6 +11,7 @@ const ur = {
         otherServices: "دیگر خدمات",
         viewAllServices: "تمام خدمات دیکھیں",
         since2019: "2019 سے",
+        since: "سے لے کر اب تک",
         learnMore: "مزید جانیں",
         clients: "کلائنٹس",
         continents: "براعظم",

@@ -10,6 +10,7 @@ const es = {
         keepExploring: "Sigue explorando",
         otherServices: "Otros servicios",
         since2019: "Desde 2019",
+        since: "Desde el año",
         viewAllServices: "Ver todos los servicios",
         learnMore: "Saber más",
         clients: "Clientes",

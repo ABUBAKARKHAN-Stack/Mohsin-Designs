@@ -1,9 +1,8 @@
 "use client"
 
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+
 import { Control } from "react-hook-form"
 import { LocalizedInput } from "./LocalizedInput"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface SectionHeadingInputProps {
     control: Control<any>
@@ -30,6 +29,7 @@ export function SectionHeadingInput({ control, name, label }: SectionHeadingInpu
                 name={`${name}.description`}
                 label="Section Description (Optional)"
                 isTextarea
+                optional={true}
             />
         </div>
     )

@@ -18,6 +18,7 @@ interface LocalizedInputProps {
     className?: string
     noBorder?: boolean
     compact?: boolean
+    optional?: boolean
 }
 
 const LANGUAGES = [
@@ -29,7 +30,17 @@ const LANGUAGES = [
 
 import { useFormContext } from "react-hook-form"
 
-export function LocalizedInput({ control, name, label, isTextarea = false, isUrl = false, className, noBorder, compact }: LocalizedInputProps) {
+export function LocalizedInput({
+    control,
+    name,
+    label,
+    isTextarea = false,
+    isUrl = false,
+    className,
+    noBorder,
+    compact,
+    optional = false
+}: LocalizedInputProps) {
     const { formState: { errors }, watch, trigger, setValue } = useFormContext()
     const fieldValues = watch(name)
 
@@ -46,7 +57,7 @@ export function LocalizedInput({ control, name, label, isTextarea = false, isUrl
     // 2. OR the whole field has an error and this specific language is empty
     const getTabHasError = (langCode: string) => {
         if (fieldErrors?.[langCode]) return true
-        if (hasAnyError && (!fieldValues?.[langCode] || fieldValues[langCode]?.trim() === "")) return true
+        if (!optional && hasAnyError && (!fieldValues?.[langCode] || fieldValues[langCode]?.trim() === "")) return true
         return false
     }
 
@@ -81,7 +92,7 @@ export function LocalizedInput({ control, name, label, isTextarea = false, isUrl
                             Auto-fill URLs
                         </Button>
                     )}
-                    {hasAnyError && (
+                    {hasAnyError && !optional && (
                         <span className="text-xs text-destructive font-medium">Missing translations</span>
                     )}
                 </div>

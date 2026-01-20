@@ -18,6 +18,7 @@ import { servicesPageContentType } from './document/servicesPageContentType'
 import { landingPageContentType } from './document/landingPageContentType'
 import { contactSubmissionType } from './document/contactSubmissionType'
 import { formType } from './document/formType'
+import { aboutPageContentType } from './document/aboutPageContentType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -40,5 +41,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     landingPageContentType,
     contactSubmissionType,
     formType,
+    aboutPageContentType,
   ],
 }

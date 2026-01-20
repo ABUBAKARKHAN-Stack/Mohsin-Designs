@@ -12,6 +12,7 @@ const en = {
         viewAllServices: "View All Services",
         since2019: "Since 2019",
         since: "Since the year",
+        sendUsMessage: "Send us a message",
         learnMore: "Learn more",
         clients: "Clients",
         continents: "Continents",

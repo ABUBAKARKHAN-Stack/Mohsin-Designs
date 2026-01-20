@@ -12,6 +12,7 @@ const ar = {
         viewAllServices: "عرض كل الخدمات",
         since2019: "منذ 2019",
         since: "منذ عام",
+        sendUsMessage: "أرسل لنا رسالة",
         learnMore: "اعرف أكثر",
         clients: "عملاء",
         continents: "قارات",

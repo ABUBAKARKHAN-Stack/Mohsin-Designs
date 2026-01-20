@@ -11,6 +11,7 @@ const es = {
         otherServices: "Otros servicios",
         since2019: "Desde 2019",
         since: "Desde el año",
+        sendUsMessage: "Envíanos un mensaje",
         viewAllServices: "Ver todos los servicios",
         learnMore: "Saber más",
         clients: "Clientes",

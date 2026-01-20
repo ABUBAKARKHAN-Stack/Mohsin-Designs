@@ -12,6 +12,7 @@ const ur = {
         viewAllServices: "تمام خدمات دیکھیں",
         since2019: "2019 سے",
         since: "سے لے کر اب تک",
+        sendUsMessage: "ہمیں پیغام بھیجیں",
         learnMore: "مزید جانیں",
         clients: "کلائنٹس",
         continents: "براعظم",

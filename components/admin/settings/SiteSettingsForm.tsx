@@ -22,14 +22,42 @@ import { errorToast, successToast } from "@/lib/toastNotifications"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Spinner } from "@/components/ui/spinner"
 import { SEOKeywordsInput } from "@/components/admin/form/SEOKeywordsInput"
-import { Save, Globe, Info, Mail, Share2, Scale, AlertCircle } from "lucide-react"
+import { Save, Globe, Info, Mail, Share2, Scale, AlertCircle, Languages } from "lucide-react"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 interface SiteSettingsFormProps {
     initialData?: SiteSettingsValues
 }
 
+const hasLangError = (error: any, lang: string): boolean => {
+    if (!error) return false;
+
+    // If it's a localized error object (has language sub-keys)
+    // We check if the specific language has an error
+    const isLocalized = error.en || error.ur || error.es || error.ar;
+    if (isLocalized) {
+        return !!error[lang];
+    }
+
+    // If it's a direct field error (has message/type, e.g. email, phone, logo)
+    if (error.message || error.type) return true;
+
+    // Recurse for nested objects (like seo, contact)
+    if (typeof error === 'object') {
+        return Object.values(error).some(child => hasLangError(child, lang));
+    }
+    return false;
+}
+
 export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
     const [isLoading, setIsLoading] = useState(false)
+    const [selectedLang, setSelectedLang] = useState("en")
 
     const form = useForm<SiteSettingsValues>({
         resolver: zodResolver(siteSettingsSchema) as any,
@@ -52,8 +80,9 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
     })
 
     const formControl = form.control as any
-
+    
     async function onSubmit(values: SiteSettingsValues) {
+        
         setIsLoading(true)
         try {
             const result = await updateSiteSettings(values)
@@ -91,7 +120,24 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
                         <h1 className="text-xl sm:text-2xl font-bold">Site Settings</h1>
                         <p className="text-muted-foreground text-xs sm:text-sm">Manage global configurations for your website.</p>
                     </div>
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-lg border">
+                            <div className="flex items-center gap-1.5 px-2 text-xs font-medium text-muted-foreground border-r pr-2 shadow-sm">
+                                <Languages className="h-3.5 w-3.5" />
+                                <span>Language</span>
+                            </div>
+                            <Select value={selectedLang} onValueChange={setSelectedLang}>
+                                <SelectTrigger className="h-8 border-none bg-transparent shadow-none focus:ring-0 min-w-[110px]">
+                                    <SelectValue placeholder="Language" />
+                                </SelectTrigger>
+                                <SelectContent align="end">
+                                    <SelectItem value="en">English (EN)</SelectItem>
+                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
+                                    <SelectItem value="es">Spanish (ES)</SelectItem>
+                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                         {hasErrors && (
                             <div className="flex flex-col items-end gap-1">
                                 <div className="flex items-center gap-2 text-destructive text-xs font-semibold px-3 py-1 bg-destructive/10 rounded-full border border-destructive/20 animate-in fade-in slide-in-from-right-2">
@@ -100,7 +146,16 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
                                     <span className="sm:hidden">Missing info</span>
                                 </div>
                                 <div className="text-[10px] text-destructive italic max-w-[200px] text-right hidden sm:block">
-                                    Check: {Object.keys(formErrors).map(key => key === 'siteName' ? 'Site Name' : key).join(", ")}
+                                    Check {selectedLang.toUpperCase()}: {
+                                        Object.entries(formErrors)
+                                            .filter(([_, error]) => hasLangError(error, selectedLang))
+                                            .map(([key, _]) => {
+                                                if (key === 'siteName') return 'Site Name';
+                                                if (key === 'footerText') return 'Footer Text';
+                                                return key.charAt(0).toUpperCase() + key.slice(1);
+                                            })
+                                            .join(", ")
+                                    }
                                 </div>
                             </div>
                         )}
@@ -163,8 +218,8 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
                                 <CardTitle>Site Identity</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="siteName" label="Site Name" />
-                                <LocalizedInput control={formControl} name="tagline" label="Tagline" />
+                                <LocalizedInput control={formControl} name="siteName" label="Site Name" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="tagline" label="Tagline" activeLang={selectedLang} />
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <ImageUpload
@@ -215,9 +270,9 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
                                 <CardTitle>Default SEO Settings</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="seo.metaTitle" label="Default Meta Title" />
-                                <LocalizedInput control={formControl} name="seo.metaDescription" label="Default Meta Description" isTextarea />
-                                <SEOKeywordsInput control={formControl} name="seo.keywords" label="Global Keywords" />
+                                <LocalizedInput control={formControl} name="seo.metaTitle" label="Default Meta Title" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="seo.metaDescription" label="Default Meta Description" isTextarea activeLang={selectedLang} />
+                                <SEOKeywordsInput control={formControl} name="seo.keywords" label="Global Keywords" externalActiveLang={selectedLang} />
                                 <FormField
                                     control={formControl}
                                     name="seo.schema"
@@ -269,7 +324,7 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
                                         )}
                                     />
                                 </div>
-                                <LocalizedInput control={formControl} name="contact.address" label="Office Address" isTextarea />
+                                <LocalizedInput control={formControl} name="contact.address" label="Office Address" isTextarea activeLang={selectedLang} />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -345,8 +400,8 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
                                 <CardTitle>Footer & Legal</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="footerText" label="Footer About Text" isTextarea />
-                                <LocalizedInput control={formControl} name="copyright" label="Copyright Notice" />
+                                <LocalizedInput control={formControl} name="footerText" label="Footer About Text" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="copyright" label="Copyright Notice" activeLang={selectedLang} />
                             </CardContent>
                         </Card>
                     </TabsContent>

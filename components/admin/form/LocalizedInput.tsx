@@ -19,6 +19,7 @@ interface LocalizedInputProps {
     noBorder?: boolean
     compact?: boolean
     optional?: boolean
+    activeLang?: string
 }
 
 const LANGUAGES = [
@@ -28,7 +29,8 @@ const LANGUAGES = [
     { code: 'ar', label: 'Arabic', dir: 'rtl' },
 ]
 
-import { useFormContext } from "react-hook-form"
+import { useFormContext, useWatch } from "react-hook-form"
+import { useEffect, useState } from "react"
 
 export function LocalizedInput({
     control,
@@ -39,9 +41,11 @@ export function LocalizedInput({
     className,
     noBorder,
     compact,
-    optional = false
+    optional = false,
+    activeLang
 }: LocalizedInputProps) {
-    const { formState: { errors }, watch, trigger, setValue } = useFormContext()
+    const { formState: { errors, isSubmitted }, watch, trigger, setValue } = useFormContext()
+    const [internalTab, setInternalTab] = useState("en")
     const fieldValues = watch(name)
 
     // Helper to get nested error
@@ -50,7 +54,31 @@ export function LocalizedInput({
     }
 
     const fieldErrors = getNestedError(name)
+    const currentLangError = activeLang ? getNestedError(`${name}.${activeLang}`) : null
+
+    // Determine if we should highlight the field as having ANY error
     const hasAnyError = !!fieldErrors
+    const shouldShowCurrentError = !!currentLangError
+
+    // ONLY show red if the CURRENTLY selected language has an error
+    // This avoids the "all red" syndrome when other languages are missing.
+    const isErrorState = activeLang ? shouldShowCurrentError : hasAnyError
+
+    // Helper to check if OTHER languages are missing
+    const missingLanguages = hasAnyError
+        ? Object.keys(fieldErrors || {})
+            .filter(key => key !== activeLang)
+            .map(code => LANGUAGES.find(l => l.code === code)?.label || code)
+        : []
+
+    const hasOtherErrors = missingLanguages.length > 0
+
+    // Auto-revalidate when activeLang changes to ensure correct error status
+    useEffect(() => {
+        if (activeLang && isSubmitted) {
+            trigger(`${name}.${activeLang}`)
+        }
+    }, [activeLang, isSubmitted, name, trigger])
 
     // A tab is considered to have an error if:
     // 1. It has a specific Zod error
@@ -74,11 +102,12 @@ export function LocalizedInput({
         <div className={cn(
             "space-y-2",
             !noBorder && "border p-4 rounded-md",
+            isErrorState && "border-destructive/50",
             compact && "p-0 space-y-1",
             className
         )}>
             <div className="flex justify-between items-center">
-                <FormLabel className={cn(hasAnyError && "text-destructive")}>{label}</FormLabel>
+                <FormLabel className={cn(isErrorState && "text-destructive")}>{label}</FormLabel>
                 <div className="flex items-center gap-2">
                     {isUrl && (
                         <Button
@@ -92,29 +121,50 @@ export function LocalizedInput({
                             Auto-fill URLs
                         </Button>
                     )}
-                    {hasAnyError && !optional && (
-                        <span className="text-xs text-destructive font-medium">Missing translations</span>
+                    {hasOtherErrors && !optional && (
+                        <span className={cn(
+                            "text-[10px] font-medium px-2 py-0.5 rounded-full transition-all duration-300",
+                            isSubmitted ? "bg-destructive/10 text-destructive border border-destructive/20" : "bg-muted text-muted-foreground border border-transparent"
+                        )}>
+                            {isSubmitted ? `Missing: ${missingLanguages.join(", ")}` : "Translations pending"}
+                        </span>
                     )}
                 </div>
             </div>
-            <Tabs defaultValue="en" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
-                    {LANGUAGES.map((lang) => {
-                        const hasError = getTabHasError(lang.code)
-                        return (
-                            <TabsTrigger
-                                key={lang.code}
-                                value={lang.code}
-                                className={cn(hasError && "text-destructive data-[state=active]:text-destructive border-b-2 border-transparent data-[state=active]:border-destructive")}
-                            >
-                                {lang.label}
-                                {hasError && <span className="ml-1 w-1.5 h-1.5 rounded-full bg-destructive" />}
-                            </TabsTrigger>
-                        )
-                    })}
-                </TabsList>
+            <Tabs
+                value={activeLang || internalTab}
+                onValueChange={setInternalTab}
+                className="w-full"
+            >
+                {!activeLang && (
+                    <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto mb-4">
+                        {LANGUAGES.map((lang) => {
+                            const hasError = getTabHasError(lang.code)
+                            return (
+                                <TabsTrigger
+                                    key={lang.code}
+                                    value={lang.code}
+                                    className={cn(hasError && "text-destructive data-[state=active]:text-destructive border-b-2 border-transparent data-[state=active]:border-destructive")}
+                                >
+                                    {lang.label}
+                                    {hasError && <span className="ml-1 w-1.5 h-1.5 rounded-full bg-destructive" />}
+                                </TabsTrigger>
+                            )
+                        })}
+                    </TabsList>
+                )}
+
+                {/* Always render all fields to keep them registered in React Hook Form */}
                 {LANGUAGES.map((lang) => (
-                    <TabsContent key={lang.code} value={lang.code}>
+                    <TabsContent
+                        key={lang.code}
+                        value={lang.code}
+                        forceMount
+                        className={cn(
+                            "mt-0",
+                            (activeLang || internalTab) !== lang.code && "hidden"
+                        )}
+                    >
                         <FormField
                             control={control}
                             name={`${name}.${lang.code}`}
@@ -133,7 +183,8 @@ export function LocalizedInput({
                                                 placeholder={`Enter ${label.toLowerCase()} in ${lang.label}...`}
                                                 onChange={(e) => {
                                                     field.onChange(e)
-                                                    trigger(name) // Force re-validation of the parent localized object
+                                                    // Trigger specific field validation
+                                                    trigger(`${name}.${lang.code}`)
                                                 }}
                                             />
                                         ) : (
@@ -144,7 +195,7 @@ export function LocalizedInput({
                                                 placeholder={`Enter ${label.toLowerCase()} in ${lang.label}...`}
                                                 onChange={(e) => {
                                                     field.onChange(e)
-                                                    trigger(name) // Force re-validation of the parent localized object
+                                                    trigger(`${name}.${lang.code}`)
                                                 }}
                                             />
                                         )}

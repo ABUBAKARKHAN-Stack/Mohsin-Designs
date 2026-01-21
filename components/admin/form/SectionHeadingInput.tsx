@@ -8,9 +8,10 @@ interface SectionHeadingInputProps {
     control: Control<any>
     name: string
     label: string
+    activeLang?: string
 }
 
-export function SectionHeadingInput({ control, name, label }: SectionHeadingInputProps) {
+export function SectionHeadingInput({ control, name, label, activeLang }: SectionHeadingInputProps) {
     return (
         <div className="space-y-4 border-l-4 border-primary pl-4">
             <h3 className="font-semibold text-lg">{label}</h3>
@@ -18,11 +19,13 @@ export function SectionHeadingInput({ control, name, label }: SectionHeadingInpu
                 control={control}
                 name={`${name}.eyebrow`}
                 label="Eyebrow (Optional)"
+                activeLang={activeLang}
             />
             <LocalizedInput
                 control={control}
                 name={`${name}.title`}
                 label="Section Title"
+                activeLang={activeLang}
             />
             <LocalizedInput
                 control={control}
@@ -30,6 +33,7 @@ export function SectionHeadingInput({ control, name, label }: SectionHeadingInpu
                 label="Section Description (Optional)"
                 isTextarea
                 optional={true}
+                activeLang={activeLang}
             />
         </div>
     )

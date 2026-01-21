@@ -14,6 +14,7 @@ interface SEOKeywordsInputProps {
     control: Control<any>
     name: string
     label: string
+    externalActiveLang?: string
 }
 
 const LANGUAGES = [
@@ -23,7 +24,7 @@ const LANGUAGES = [
     { code: "ar", name: "Arabic", dir: "rtl" },
 ]
 
-export function SEOKeywordsInput({ control, name, label }: SEOKeywordsInputProps) {
+export function SEOKeywordsInput({ control, name, label, externalActiveLang }: SEOKeywordsInputProps) {
     const { watch, trigger, setValue } = useFormContext()
     const { fields, append, remove } = useFieldArray({
         control,
@@ -42,6 +43,15 @@ export function SEOKeywordsInput({ control, name, label }: SEOKeywordsInputProps
             editInputRef.current.select()
         }
     }, [editingState])
+
+    // Switch internal active lang when external lang changes
+    useEffect(() => {
+        if (externalActiveLang) {
+            setActiveLang(externalActiveLang)
+            setEditingState(null)
+            setNewKeyword("")
+        }
+    }, [externalActiveLang])
 
     const handleAdd = () => {
         if (!newKeyword.trim()) return
@@ -100,13 +110,15 @@ export function SEOKeywordsInput({ control, name, label }: SEOKeywordsInputProps
                 setEditingState(null)
                 setNewKeyword("")
             }} className="w-full">
-                <TabsList className="grid grid-cols-4 w-full max-w-[400px]">
-                    {LANGUAGES.map((lang) => (
-                        <TabsTrigger key={lang.code} value={lang.code} className="text-xs">
-                            {lang.code.toUpperCase()}
-                        </TabsTrigger>
-                    ))}
-                </TabsList>
+                {!externalActiveLang && (
+                    <TabsList className="grid grid-cols-4 w-full max-w-[400px]">
+                        {LANGUAGES.map((lang) => (
+                            <TabsTrigger key={lang.code} value={lang.code} className="text-xs">
+                                {lang.code.toUpperCase()}
+                            </TabsTrigger>
+                        ))}
+                    </TabsList>
+                )}
 
                 {LANGUAGES.map((lang) => {
                     // Filter keywords: ones that HAVE a value in this language OR are being edited in this language

@@ -7,6 +7,7 @@ import { aboutPageContentSchema, AboutPageContentValues } from "@/lib/validation
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
 import { IconSelect } from "@/components/admin/form/IconSelect"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
@@ -33,6 +34,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
     const [lastSaved, setLastSaved] = useState<Date | null>(
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
+    const [selectedLang, setSelectedLang] = useState("en")
     const [isInitialMount, setIsInitialMount] = useState(true)
 
     const form = useForm<AboutPageContentValues>({
@@ -170,6 +172,19 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
     const formErrors = form.formState.errors
     const hasErrors = Object.keys(formErrors).length > 0
 
+    // Helper to check if a specific language has errors anywhere in the form
+    const hasLangError = (langCode: string) => {
+        const checkErrors = (obj: any): boolean => {
+            if (!obj) return false
+            if (obj.message && typeof obj.message === 'string') return false
+            if (obj[langCode] && obj[langCode].message) return true
+            return Object.values(obj).some(val => typeof val === 'object' && checkErrors(val))
+        }
+        return checkErrors(formErrors)
+    }
+
+    const currentLangHasError = hasLangError(selectedLang)
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -193,21 +208,38 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                             )}
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        {hasDraft && (
-                            <Button type="button" variant="outline" size="sm" onClick={handleDiscardDraft}>
-                                <X className="mr-2 h-4 w-4" /> Discard Draft
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Language:</span>
+                            <Select value={selectedLang} onValueChange={setSelectedLang}>
+                                <SelectTrigger className="w-[140px] h-9 bg-primary/5 border-primary/20 font-medium font-display">
+                                    <SelectValue placeholder="Language" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="en">English (EN)</SelectItem>
+                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
+                                    <SelectItem value="es">Spanish (ES)</SelectItem>
+                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="flex items-center gap-2 border-l pl-4">
+                            {hasDraft && (
+                                <Button type="button" variant="outline" size="sm" onClick={handleDiscardDraft}>
+                                    <X className="mr-2 h-4 w-4" /> Discard Draft
+                                </Button>
+                            )}
+                            {currentLangHasError && (
+                                <div className="flex items-center gap-2 text-destructive text-xs px-3 py-1 bg-destructive/10 rounded">
+                                    <AlertCircle className="h-3 w-3" />
+                                    <span>Fix {selectedLang.toUpperCase()} errors</span>
+                                </div>
+                            )}
+                            <Button type="submit" disabled={isLoading || hasErrors}>
+                                {isLoading ? <><Spinner className="mr-2 h-4 w-4" /> Publishing...</> : <><Save className="mr-2 h-4 w-4" /> Publish</>}
                             </Button>
-                        )}
-                        {hasErrors && (
-                            <div className="flex items-center gap-2 text-destructive text-xs px-3 py-1 bg-destructive/10 rounded">
-                                <AlertCircle className="h-3 w-3" />
-                                <span>Fix errors to publish</span>
-                            </div>
-                        )}
-                        <Button type="submit" disabled={isLoading || hasErrors}>
-                            {isLoading ? <><Spinner className="mr-2 h-4 w-4" /> Publishing...</> : <><Save className="mr-2 h-4 w-4" /> Publish</>}
-                        </Button>
+                        </div>
                     </div>
                 </div>
 
@@ -248,9 +280,9 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                         <Card>
                             <CardHeader><CardTitle>Hero Section</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="hero.title" label="Title" />
-                                <LocalizedInput control={formControl} name="hero.subtitle" label="Subtitle" />
-                                <LocalizedInput control={formControl} name="hero.description" label="Description" isTextarea />
+                                <LocalizedInput control={formControl} name="hero.title" label="Title" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="hero.subtitle" label="Subtitle" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="hero.description" label="Description" isTextarea activeLang={selectedLang} />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -260,11 +292,11 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                         <Card>
                             <CardHeader><CardTitle>Intro Section (Who We Are)</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="intro.badge" label="Badge Text" />
-                                <LocalizedInput control={formControl} name="intro.heading" label="Heading" />
-                                <LocalizedInput control={formControl} name="intro.description1" label="Description Paragraph 1" isTextarea />
-                                <LocalizedInput control={formControl} name="intro.description2" label="Description Paragraph 2" isTextarea />
-                                <LocalizedInput control={formControl} name="intro.quote" label="Quote (Optional)" isTextarea />
+                                <LocalizedInput control={formControl} name="intro.badge" label="Badge Text" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="intro.heading" label="Heading" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="intro.description1" label="Description Paragraph 1" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="intro.description2" label="Description Paragraph 2" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="intro.quote" label="Quote (Optional)" isTextarea activeLang={selectedLang} />
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
@@ -313,7 +345,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
 
                     {/* MISSION & VISION */}
                     <TabsContent value="missionVision" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="missionVision.sectionHeading" title="Mission & Vision Section Heading" />
+                        <SectionHeadingCard control={formControl} baseName="missionVision.sectionHeading" title="Mission & Vision Section Heading" activeLang={selectedLang} />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* MISSION */}
@@ -325,10 +357,10 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                                     </Button>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <LocalizedInput control={formControl} name="missionVision.mission.eyebrow" label="Eyebrow (e.g. Purpose)" />
-                                    <LocalizedInput control={formControl} name="missionVision.mission.title" label="Title (e.g. Our Mission)" />
-                                    <LocalizedInput control={formControl} name="missionVision.mission.description1" label="Main Description" isTextarea />
-                                    <LocalizedInput control={formControl} name="missionVision.mission.description2" label="Secondary Description (after divider)" isTextarea />
+                                    <LocalizedInput control={formControl} name="missionVision.mission.eyebrow" label="Eyebrow (e.g. Purpose)" activeLang={selectedLang} />
+                                    <LocalizedInput control={formControl} name="missionVision.mission.title" label="Title (e.g. Our Mission)" activeLang={selectedLang} />
+                                    <LocalizedInput control={formControl} name="missionVision.mission.description1" label="Main Description" isTextarea activeLang={selectedLang} />
+                                    <LocalizedInput control={formControl} name="missionVision.mission.description2" label="Secondary Description (after divider)" isTextarea activeLang={selectedLang} />
 
                                     <div className="space-y-3 pt-2">
                                         <FormLabel>Key Points</FormLabel>
@@ -336,7 +368,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                                             {missionResults.map((field, index) => (
                                                 <div key={field.id} className="flex gap-2 items-start">
                                                     <div className="flex-1">
-                                                        <LocalizedInput control={formControl} name={`missionVision.mission.keyPoints.${index}`} label={`Point ${index + 1}`} />
+                                                        <LocalizedInput control={formControl} name={`missionVision.mission.keyPoints.${index}`} label={`Point ${index + 1}`} activeLang={selectedLang} />
                                                     </div>
                                                     <Button type="button" size="sm" variant="ghost" onClick={() => removeMissionResult(index)} className="mt-8">
                                                         <Trash2 className="h-4 w-4 text-destructive" />
@@ -357,10 +389,10 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                                     </Button>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <LocalizedInput control={formControl} name="missionVision.vision.eyebrow" label="Eyebrow (e.g. Direction)" />
-                                    <LocalizedInput control={formControl} name="missionVision.vision.title" label="Title (e.g. Our Vision)" />
-                                    <LocalizedInput control={formControl} name="missionVision.vision.description1" label="Main Description" isTextarea />
-                                    <LocalizedInput control={formControl} name="missionVision.vision.description2" label="Secondary Description (after divider)" isTextarea />
+                                    <LocalizedInput control={formControl} name="missionVision.vision.eyebrow" label="Eyebrow (e.g. Direction)" activeLang={selectedLang} />
+                                    <LocalizedInput control={formControl} name="missionVision.vision.title" label="Title (e.g. Our Vision)" activeLang={selectedLang} />
+                                    <LocalizedInput control={formControl} name="missionVision.vision.description1" label="Main Description" isTextarea activeLang={selectedLang} />
+                                    <LocalizedInput control={formControl} name="missionVision.vision.description2" label="Secondary Description (after divider)" isTextarea activeLang={selectedLang} />
 
                                     <div className="space-y-3 pt-2">
                                         <FormLabel>Key Points</FormLabel>
@@ -368,7 +400,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                                             {visionResults.map((field, index) => (
                                                 <div key={field.id} className="flex gap-2 items-start">
                                                     <div className="flex-1">
-                                                        <LocalizedInput control={formControl} name={`missionVision.vision.keyPoints.${index}`} label={`Point ${index + 1}`} />
+                                                        <LocalizedInput control={formControl} name={`missionVision.vision.keyPoints.${index}`} label={`Point ${index + 1}`} activeLang={selectedLang} />
                                                     </div>
                                                     <Button type="button" size="sm" variant="ghost" onClick={() => removeVisionResult(index)} className="mt-8">
                                                         <Trash2 className="h-4 w-4 text-destructive" />
@@ -384,14 +416,14 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
 
                     {/* PHILOSOPHY */}
                     <TabsContent value="philosophy" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="philosophy.sectionHeading" title="Philosophy Section Heading" />
+                        <SectionHeadingCard control={formControl} baseName="philosophy.sectionHeading" title="Philosophy Section Heading" activeLang={selectedLang} />
 
                         <Card>
                             <CardHeader><CardTitle>Content</CardTitle></CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="philosophy.quoteBlock" label="Special Quote Block" isTextarea />
-                                <LocalizedInput control={formControl} name="philosophy.description1" label="Introduction Paragraph" isTextarea />
-                                <LocalizedInput control={formControl} name="philosophy.description2" label="Closing Paragraph" isTextarea />
+                                <LocalizedInput control={formControl} name="philosophy.quoteBlock" label="Special Quote Block" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="philosophy.description1" label="Introduction Paragraph" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="philosophy.description2" label="Closing Paragraph" isTextarea activeLang={selectedLang} />
                             </CardContent>
                         </Card>
 
@@ -411,7 +443,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`philosophy.steps.${index}.label`} label="Label" />
+                                        <LocalizedInput control={formControl} name={`philosophy.steps.${index}.label`} label="Label" activeLang={selectedLang} />
                                         <FormField control={formControl} name={`philosophy.steps.${index}.iconName`} render={({ field }) => (
                                             <IconSelect field={field} type="benefit" label="Icon" />
                                         )} />
@@ -426,10 +458,10 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                         <Card>
                             <CardHeader><CardTitle>Global Reach Info</CardTitle></CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="globalReach.badge" label="Badge" />
-                                <LocalizedInput control={formControl} name="globalReach.heading" label="Heading" />
-                                <LocalizedInput control={formControl} name="globalReach.description1" label="Description 1" isTextarea />
-                                <LocalizedInput control={formControl} name="globalReach.description2" label="Description 2" isTextarea />
+                                <LocalizedInput control={formControl} name="globalReach.badge" label="Badge" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="globalReach.heading" label="Heading" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="globalReach.description1" label="Description 1" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="globalReach.description2" label="Description 2" isTextarea activeLang={selectedLang} />
                             </CardContent>
                         </Card>
 
@@ -445,7 +477,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                                     {globalRegions.map((field, index) => (
                                         <div key={field.id} className="flex gap-2 items-start">
                                             <div className="flex-1">
-                                                <LocalizedInput control={formControl} name={`globalReach.regions.${index}`} label={`Region ${index + 1}`} />
+                                                <LocalizedInput control={formControl} name={`globalReach.regions.${index}`} label={`Region ${index + 1}`} activeLang={selectedLang} />
                                             </div>
                                             <Button type="button" size="sm" variant="ghost" onClick={() => removeGlobalRegion(index)} className="mt-8">
                                                 <Trash2 className="h-4 w-4 text-destructive" />
@@ -478,7 +510,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                                                     <FormMessage />
                                                 </FormItem>
                                             )} />
-                                            <LocalizedInput control={formControl} name={`globalReach.stats.${index}.label`} label="Label" />
+                                            <LocalizedInput control={formControl} name={`globalReach.stats.${index}.label`} label="Label" activeLang={selectedLang} />
                                         </div>
                                     ))}
                                 </CardContent>
@@ -488,7 +520,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
 
                     {/* CULTURE */}
                     <TabsContent value="culture" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="culture.sectionHeading" title="Culture Section Heading" />
+                        <SectionHeadingCard control={formControl} baseName="culture.sectionHeading" title="Culture Section Heading" activeLang={selectedLang} />
                         <Card>
                             <CardHeader className="flex flex-row justify-between items-center">
                                 <CardTitle>Core Values</CardTitle>
@@ -505,8 +537,8 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`culture.values.${index}.title`} label="Title" />
-                                        <LocalizedInput control={formControl} name={`culture.values.${index}.description`} label="Description" isTextarea />
+                                        <LocalizedInput control={formControl} name={`culture.values.${index}.title`} label="Title" activeLang={selectedLang} />
+                                        <LocalizedInput control={formControl} name={`culture.values.${index}.description`} label="Description" isTextarea activeLang={selectedLang} />
                                         <FormField control={formControl} name={`culture.values.${index}.iconName`} render={({ field }) => (
                                             <IconSelect field={field} type="benefit" label="Icon" />
                                         )} />
@@ -517,14 +549,14 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt }: 
                         <Card>
                             <CardHeader><CardTitle>Culture Quote</CardTitle></CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="culture.quote" label="Quote Text" isTextarea />
-                                <LocalizedInput control={formControl} name="culture.quoteHighlight" label="Highlight Text (appears bold/accent)" />
+                                <LocalizedInput control={formControl} name="culture.quote" label="Quote Text" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="culture.quoteHighlight" label="Highlight Text (appears bold/accent)" activeLang={selectedLang} />
                             </CardContent>
                         </Card>
                     </TabsContent>
 
                     <TabsContent value="shared">
-                        <GlobalSectionsFormTabs control={formControl} errors={formErrors} />
+                        <GlobalSectionsFormTabs control={formControl} errors={formErrors} activeLang={selectedLang} />
                     </TabsContent>
                 </Tabs>
             </form>

@@ -5,20 +5,20 @@ import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-export function SectionHeadingCard({ control, baseName, title }: { control: any; baseName: string; title: string }) {
+export function SectionHeadingCard({ control, baseName, title, activeLang }: { control: any; baseName: string; title: string; activeLang?: string }) {
     return (
         <Card>
             <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-                <LocalizedInput control={control} name={`${baseName}.eyebrow`} label="Eyebrow" />
-                <LocalizedInput control={control} name={`${baseName}.title`} label="Title" />
-                <LocalizedInput control={control} name={`${baseName}.description`} label="Description" isTextarea />
+                <LocalizedInput control={control} name={`${baseName}.eyebrow`} label="Eyebrow" activeLang={activeLang} />
+                <LocalizedInput control={control} name={`${baseName}.title`} label="Title" activeLang={activeLang} />
+                <LocalizedInput control={control} name={`${baseName}.description`} label="Description" isTextarea activeLang={activeLang} />
             </CardContent>
         </Card>
     )
 }
 
-export function StatItemCard({ control, name, title }: { control: any; name: string; title: string }) {
+export function StatItemCard({ control, name, title, activeLang }: { control: any; name: string; title: string; activeLang?: string }) {
     return (
         <div className="space-y-4 pb-8 last:pb-0 border-b last:border-0 border-border/40">
             <h4 className="font-semibold text-base text-muted-foreground uppercase tracking-wider">{title}</h4>
@@ -58,6 +58,7 @@ export function StatItemCard({ control, name, title }: { control: any; name: str
                         label="Display Label"
                         noBorder
                         compact
+                        activeLang={activeLang}
                     />
                 </div>
             </div>

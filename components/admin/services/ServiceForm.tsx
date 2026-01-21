@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useState, useEffect } from "react"
 import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { serviceFormSchema, ServiceFormValues } from "@/lib/validations/service"
@@ -15,12 +15,14 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
 import { SectionHeadingInput } from "@/components/admin/form/SectionHeadingInput"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, Trash2, ArrowLeft } from "lucide-react"
+import { Plus, Trash2, ArrowLeft, AlertCircle, Clock } from "lucide-react"
 import { createService } from "@/app/actions/createService"
 import { updateService } from "@/app/actions/updateService"
+import { saveServiceDraft } from "@/app/actions/serviceDraftActions"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -29,14 +31,24 @@ import { slugify } from "@/lib/utils"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Spinner } from "@/components/ui/spinner"
 import { SEOKeywordsInput } from "@/components/admin/form/SEOKeywordsInput"
+import { debounce } from "lodash"
+
 
 interface ServiceFormProps {
     initialData?: ServiceFormValues
     serviceId?: string
+    hasDraft?: boolean
+    draftUpdatedAt?: string | null
 }
 
-export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
+export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }: ServiceFormProps) {
     const [isLoading, setIsLoading] = useState(false)
+    const [isSavingDraft, setIsSavingDraft] = useState(false)
+    const [lastSaved, setLastSaved] = useState<Date | null>(
+        draftUpdatedAt ? new Date(draftUpdatedAt) : null
+    )
+    const [selectedLang, setSelectedLang] = useState("en")
+    const [isInitialMount, setIsInitialMount] = useState(true)
     const router = useRouter()
 
     const form = useForm<ServiceFormValues>({
@@ -79,6 +91,39 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
 
     // Type cast to avoid complex type inference issues
     const formControl = form.control as any
+
+    // Auto-save draft functionality
+    const saveDraft = useCallback(
+        debounce(async (data: Partial<ServiceFormValues>) => {
+            if (isInitialMount || !serviceId) return
+            setIsSavingDraft(true)
+            try {
+                // Ensure slug is correctly handled if partial
+                const result = await saveServiceDraft(serviceId, data)
+                if (result.success) {
+                    setLastSaved(new Date())
+                }
+            } catch (error) {
+                console.error("Draft save failed:", error)
+            } finally {
+                setIsSavingDraft(false)
+            }
+        }, 2000),
+        [isInitialMount, serviceId]
+    )
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIsInitialMount(false), 1000)
+        return () => clearTimeout(timer)
+    }, [])
+
+
+    useEffect(() => {
+        const subscription = form.watch((value) => {
+            saveDraft(value as Partial<ServiceFormValues>)
+        })
+        return () => subscription.unsubscribe()
+    }, [form, saveDraft])
 
     const { fields: roleFields, append: appendRole, remove: removeRole } = useFieldArray({
         control: form.control,
@@ -141,6 +186,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
 
             if (result.success) {
                 successToast(serviceId ? "Service updated successfully!" : "Service created successfully!")
+                setLastSaved(null)
                 router.push("/admin/services")
             } else {
                 errorToast(`Error: ${result.error}`)
@@ -153,33 +199,104 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
         }
     }
 
+    const formErrors = form.formState.errors
+    const hasErrors = Object.keys(formErrors).length > 0
+
+    // Helper to check if a specific language has errors anywhere in the form
+    const hasLangError = (langCode: string) => {
+        const checkErrors = (obj: any): boolean => {
+            if (!obj) return false
+            if (obj.message && typeof obj.message === 'string') return false
+            if (obj[langCode] && obj[langCode].message) return true
+            return Object.values(obj).some(val => typeof val === 'object' && checkErrors(val))
+        }
+        return checkErrors(formErrors)
+    }
+
+    const currentLangHasError = hasLangError(selectedLang)
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-8">
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between sticky top-0 bg-background/95 backdrop-blur-sm z-10 py-2 sm:py-3 px-1 border-b gap-3">
-                    <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-2">
-                        <Button variant="ghost" size="sm" asChild className="h-9">
-                            <Link href="/admin/services">
-                                <ArrowLeft className="mr-2 h-4 w-4" /> <span className="sm:inline hidden">Back</span>
-                            </Link>
-                        </Button>
-                        <div className="sm:hidden font-bold text-sm truncate max-w-[150px]">
-                            {serviceId ? "Edit Service" : "New Service"}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between sticky top-0 bg-background/95 backdrop-blur-sm z-30 py-2 sm:py-3 px-1 border-b gap-3">
+                    <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-4">
+                        <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="sm" asChild className="h-9">
+                                <Link href="/admin/services">
+                                    <ArrowLeft className="mr-2 h-4 w-4" /> <span className="sm:inline hidden">Back</span>
+                                </Link>
+                            </Button>
+                            <div className="sm:hidden font-bold text-sm truncate max-w-[150px]">
+                                {serviceId ? "Edit Service" : "New Service"}
+                            </div>
+                            <div className="hidden sm:flex flex-col">
+                                <span className="font-bold text-lg leading-none">
+                                    {serviceId ? "Edit Service" : "New Service"}
+                                </span>
+                                <div className="flex items-center gap-3 text-muted-foreground text-xs mt-1">
+                                    {isSavingDraft && (
+                                        <span className="flex items-center gap-1 text-blue-600">
+                                            <Spinner className="h-3 w-3" />
+                                            Saving...
+                                        </span>
+                                    )}
+                                    {lastSaved && !isSavingDraft && (
+                                        <span className="flex items-center gap-1 text-green-600 font-medium">
+                                            <Clock className="h-3 w-3" />
+                                            Draft Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 border-l pl-4">
+                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden sm:inline">Language:</span>
+                            <Select value={selectedLang} onValueChange={setSelectedLang}>
+                                <SelectTrigger className="w-[140px] h-9 bg-primary/5 border-primary/20 font-medium font-display">
+                                    <SelectValue placeholder="Language" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="en">English (EN)</SelectItem>
+                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
+                                    <SelectItem value="es">Spanish (ES)</SelectItem>
+                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
-                    <Button type="submit" disabled={isLoading} className="w-full sm:w-auto h-9">
-                        {isLoading ? (
-                            <><Spinner /> Saving...</>
-                        ) : (
-                            serviceId ? "Update Service" : "Create Service"
+
+                    <div className="flex items-center gap-2">
+                        {currentLangHasError && (
+                            <div className="flex items-center gap-2 text-destructive text-xs font-semibold px-3 py-1 bg-destructive/10 rounded-full border border-destructive/20">
+                                <AlertCircle className="h-3 w-3" />
+                                <span>Fix {selectedLang.toUpperCase()} errors</span>
+                            </div>
                         )}
-                    </Button>
+                        <Button type="submit" disabled={isLoading} className="w-full sm:w-auto h-9 min-w-[120px]">
+                            {isLoading ? (
+                                <><Spinner className="mr-2 h-4 w-4" /> Saving...</>
+                            ) : (
+                                serviceId ? "Update Service" : "Create Service"
+                            )}
+                        </Button>
+                    </div>
                 </div>
 
                 <Tabs defaultValue="details" className="w-full">
                     <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="details">Service Details</TabsTrigger>
-                        <TabsTrigger value="seo">SEO</TabsTrigger>
+                        <TabsTrigger value="details" className="relative">
+                            Service Details
+                            {Object.keys(formErrors).some(key => key !== 'seo') && (
+                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                            )}
+                        </TabsTrigger>
+                        <TabsTrigger value="seo" className="relative">
+                            SEO
+                            {!!formErrors.seo && (
+                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                            )}
+                        </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="details" className="space-y-6">
@@ -190,9 +307,9 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
 
-                                <LocalizedInput control={formControl} name="title" label="Title" />
-                                <LocalizedInput control={formControl} name="subtitle" label="Subtitle" />
-                                <LocalizedInput control={formControl} name="description" label="Description" isTextarea />
+                                <LocalizedInput control={formControl} name="title" label="Title" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="subtitle" label="Subtitle" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="description" label="Description" isTextarea activeLang={selectedLang} />
 
                                 <div className="space-y-2">
                                     <FormField
@@ -248,7 +365,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                     label="Hero Image"
                                 />
 
-                                <LocalizedInput control={formControl} name="heroImageAlt" label="Hero Image Alt Text" />
+                                <LocalizedInput control={formControl} name="heroImageAlt" label="Hero Image Alt Text" activeLang={selectedLang} />
                             </CardContent>
                         </Card>
 
@@ -258,9 +375,9 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                 <CardTitle>Intro Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="introTagLine" label="Intro Tag Line" />
-                                <LocalizedInput control={formControl} name="introTitle" label="Intro Title" />
-                                <LocalizedInput control={formControl} name="introContent" label="Intro Content" isTextarea />
+                                <LocalizedInput control={formControl} name="introTagLine" label="Intro Tag Line" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="introTitle" label="Intro Title" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="introContent" label="Intro Content" isTextarea activeLang={selectedLang} />
                             </CardContent>
                         </Card>
 
@@ -270,7 +387,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                 <CardTitle>Role Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="roleTitle" label="Role Title" />
+                                <LocalizedInput control={formControl} name="roleTitle" label="Role Title" activeLang={selectedLang} />
                                 <div className="space-y-4">
                                     <FormLabel>Role Content Points</FormLabel>
                                     {roleFields.map((field, index) => (
@@ -281,6 +398,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                     name={`roleContent.${index}`}
                                                     label={`Point ${index + 1}`}
                                                     isTextarea
+                                                    activeLang={selectedLang}
                                                 />
                                             </div>
                                             {roleFields.length > 1 && (
@@ -304,7 +422,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
 
-                                <SectionHeadingInput control={formControl} name="howWeHelpSection" label="Section Heading" />
+                                <SectionHeadingInput control={formControl} name="howWeHelpSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Help Points</FormLabel>
                                     {helpFields.map((field, index) => (
@@ -316,8 +434,8 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                     </Button>
                                                 </div>
                                             )}
-                                            <LocalizedInput control={formControl} name={`howWeHelpPoints.${index}.title`} label="Title" />
-                                            <LocalizedInput control={formControl} name={`howWeHelpPoints.${index}.description`} label="Description" isTextarea />
+                                            <LocalizedInput control={formControl} name={`howWeHelpPoints.${index}.title`} label="Title" activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`howWeHelpPoints.${index}.description`} label="Description" isTextarea activeLang={selectedLang} />
                                         </div>
                                     ))}
                                     <Button type="button" variant="outline" size="sm" onClick={() => appendHelp({ _key: Math.random().toString(36).substring(2, 9), title: {}, description: {} })}>
@@ -334,7 +452,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
 
-                                <SectionHeadingInput control={formControl} name="overviewSection" label="Section Heading" />
+                                <SectionHeadingInput control={formControl} name="overviewSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Items</FormLabel>
                                     {itemFields.map((field, index) => (
@@ -344,6 +462,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                     control={formControl}
                                                     name={`items.${index}`}
                                                     label={`Item ${index + 1}`}
+                                                    activeLang={selectedLang}
                                                 />
                                             </div>
                                             {itemFields.length > 1 && (
@@ -367,7 +486,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
 
-                                <SectionHeadingInput control={formControl} name="processSection" label="Section Heading" />
+                                <SectionHeadingInput control={formControl} name="processSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Process Steps</FormLabel>
                                     {processFields.map((field, index) => (
@@ -392,8 +511,8 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                     </FormItem>
                                                 )}
                                             />
-                                            <LocalizedInput control={formControl} name={`process.${index}.title`} label="Title" />
-                                            <LocalizedInput control={formControl} name={`process.${index}.desc`} label="Description" isTextarea />
+                                            <LocalizedInput control={formControl} name={`process.${index}.title`} label="Title" activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`process.${index}.desc`} label="Description" isTextarea activeLang={selectedLang} />
                                         </div>
                                     ))}
                                     <Button type="button" variant="outline" size="sm" onClick={() => appendProcess({ _key: Math.random().toString(36).substring(2, 9), step: `0${processFields.length + 1}`, title: {}, desc: {} })}>
@@ -410,7 +529,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
 
-                                <SectionHeadingInput control={formControl} name="areasSection" label="Section Heading" />
+                                <SectionHeadingInput control={formControl} name="areasSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Areas</FormLabel>
                                     {areaFields.map((field, index) => (
@@ -420,11 +539,11 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`areas.${index}.region`} label="Region" />
+                                            <LocalizedInput control={formControl} name={`areas.${index}.region`} label="Region" activeLang={selectedLang} />
 
                                             <div className="space-y-2">
                                                 <FormLabel>Locations</FormLabel>
-                                                <LocalizedInput control={formControl} name={`areas.${index}.locations.0`} label="Location" />
+                                                <LocalizedInput control={formControl} name={`areas.${index}.locations.0`} label="Location" activeLang={selectedLang} />
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">
@@ -489,7 +608,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
 
-                                <SectionHeadingInput control={formControl} name="industriesSection" label="Section Heading" />
+                                <SectionHeadingInput control={formControl} name="industriesSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Industries</FormLabel>
                                     {industryFields.map((field, index) => (
@@ -499,8 +618,8 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`industries.${index}.name`} label="Industry Name" />
-                                            <LocalizedInput control={formControl} name={`industries.${index}.description`} label="Description" isTextarea />
+                                            <LocalizedInput control={formControl} name={`industries.${index}.name`} label="Industry Name" activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`industries.${index}.description`} label="Description" isTextarea activeLang={selectedLang} />
                                         </div>
                                     ))}
                                     <Button type="button" variant="outline" size="sm" onClick={() => appendIndustry({ _key: Math.random().toString(36).substring(2, 9), name: {}, description: {} })}>
@@ -517,7 +636,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
 
-                                <SectionHeadingInput control={formControl} name="benifitsSection" label="Section Heading" />
+                                <SectionHeadingInput control={formControl} name="benifitsSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Benefits</FormLabel>
                                     {benefitFields.map((field, index) => (
@@ -527,6 +646,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                     control={formControl}
                                                     name={`benefits.${index}`}
                                                     label={`Benefit ${index + 1}`}
+                                                    activeLang={selectedLang}
                                                 />
                                             </div>
                                             {benefitFields.length > 1 && (
@@ -550,7 +670,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
 
-                                <SectionHeadingInput control={formControl} name="whyChooseUsSection" label="Section Heading" />
+                                <SectionHeadingInput control={formControl} name="whyChooseUsSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Points</FormLabel>
                                     {whyChooseFields.map((field, index) => (
@@ -562,8 +682,8 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                     </Button>
                                                 </div>
                                             )}
-                                            <LocalizedInput control={formControl} name={`whyChooseUsPoints.${index}.title`} label="Title" />
-                                            <LocalizedInput control={formControl} name={`whyChooseUsPoints.${index}.description`} label="Description" isTextarea />
+                                            <LocalizedInput control={formControl} name={`whyChooseUsPoints.${index}.title`} label="Title" activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`whyChooseUsPoints.${index}.description`} label="Description" isTextarea activeLang={selectedLang} />
                                         </div>
                                     ))}
                                     <Button type="button" variant="outline" size="sm" onClick={() => appendWhyChoose({ _key: Math.random().toString(36).substring(2, 9), title: {}, description: {} })}>
@@ -580,7 +700,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
 
-                                <SectionHeadingInput control={formControl} name="caseStudiesSection" label="Section Heading" />
+                                <SectionHeadingInput control={formControl} name="caseStudiesSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Case Studies</FormLabel>
                                     {caseStudyFields.map((field, index) => (
@@ -590,10 +710,10 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.title`} label="Title" />
-                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.problem`} label="Problem" isTextarea />
-                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.solution`} label="Solution" isTextarea />
-                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.result`} label="Result" isTextarea />
+                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.title`} label="Title" activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.problem`} label="Problem" isTextarea activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.solution`} label="Solution" isTextarea activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.result`} label="Result" isTextarea activeLang={selectedLang} />
                                         </div>
                                     ))}
                                     <Button type="button" variant="outline" size="sm" onClick={() => appendCaseStudy({ _key: Math.random().toString(36).substring(2, 9), title: {}, problem: {}, solution: {}, result: {} })}>
@@ -610,7 +730,7 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
 
-                                <SectionHeadingInput control={formControl} name="faqsSection" label="Section Heading" />
+                                <SectionHeadingInput control={formControl} name="faqsSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>FAQs</FormLabel>
                                     {faqFields.map((field, index) => (
@@ -620,8 +740,8 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`faqs.${index}.question`} label="Question" />
-                                            <LocalizedInput control={formControl} name={`faqs.${index}.answer`} label="Answer" isTextarea />
+                                            <LocalizedInput control={formControl} name={`faqs.${index}.question`} label="Question" activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`faqs.${index}.answer`} label="Answer" isTextarea activeLang={selectedLang} />
                                         </div>
                                     ))}
                                     <Button type="button" variant="outline" size="sm" onClick={() => appendFaq({ _key: Math.random().toString(36).substring(2, 9), question: {}, answer: {} })}>
@@ -639,9 +759,9 @@ export function ServiceForm({ initialData, serviceId }: ServiceFormProps) {
                                 <CardTitle>SEO Settings</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="seo.metaTitle" label="Meta Title" />
-                                <LocalizedInput control={formControl} name="seo.metaDescription" label="Meta Description" isTextarea />
-                                <SEOKeywordsInput control={formControl} name="seo.keywords" label="Focus Keywords" />
+                                <LocalizedInput control={formControl} name="seo.metaTitle" label="Meta Title" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="seo.metaDescription" label="Meta Description" isTextarea activeLang={selectedLang} />
+                                <SEOKeywordsInput control={formControl} name="seo.keywords" label="Focus Keywords" externalActiveLang={selectedLang} />
                                 <FormField
                                     control={formControl}
                                     name="seo.schema"

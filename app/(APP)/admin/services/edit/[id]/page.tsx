@@ -1,5 +1,6 @@
 import { client } from "@/sanity/lib/client"
 import { ServiceForm } from "@/components/admin/services/ServiceForm"
+import { getServiceDraft } from "@/app/actions/serviceDraftActions"
 import { notFound } from "next/navigation"
 import { sanityFetch } from "@/sanity/lib/live"
 
@@ -55,11 +56,8 @@ async function getService(id: string) {
         slug,
         heroImage {
             ...,
-            asset {
-                _ref,
-                _type,
-                "url": @->url
-            }
+            asset,
+            "url": asset->url
         },
         introTagLine,
         introTitle,
@@ -93,11 +91,17 @@ async function getService(id: string) {
 
 export default async function EditServicePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
-    const service = await getService(id)
+    const draft = await getServiceDraft(id)
+    const published = await getService(id)
+
+    const service = draft || published
 
     if (!service) {
         notFound()
     }
+
+    const hasDraft = !!draft
+    const draftUpdatedAt = draft?._updatedAt || null
 
     // Transform service data to match form structure
     const initialData = {
@@ -141,7 +145,12 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
                     Update service information and content.
                 </p>
             </div>
-            <ServiceForm initialData={initialData} serviceId={service._id} />
+            <ServiceForm
+                initialData={initialData}
+                serviceId={published?._id || service._id}
+                hasDraft={hasDraft}
+                draftUpdatedAt={draftUpdatedAt}
+            />
         </div>
     )
 }

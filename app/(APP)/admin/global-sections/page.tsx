@@ -1,7 +1,7 @@
 import { getGlobalSectionsForAdmin, getGlobalSectionsDraft } from "@/app/actions/globalSections";
 import { GlobalSectionsManageForm } from "@/components/admin/form/GlobalSectionsManageForm";
 
-// Force this page to be dynamic (no caching)
+//* No Caching
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -20,7 +20,6 @@ export default async function GlobalSectionsPage() {
         <div className="container mx-auto pb-10">
             <GlobalSectionsManageForm
                 initialData={globalContent as any}
-                hasDraft={hasDraft}
                 draftUpdatedAt={draftUpdatedAt}
             />
         </div>

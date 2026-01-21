@@ -207,7 +207,7 @@ export function ServicesClient({ services }: ServicesClientProps) {
                                     key={service._id}
                                     className={cn(
                                         "group transition-colors hover:bg-muted/30 cursor-pointer",
-                                        selectedIds.includes(service._id) ? "bg-primary/[0.03] data-[state=selected]:bg-muted" : ""
+                                        selectedIds.includes(service._id) ? "bg-primary/3 data-[state=selected]:bg-muted" : ""
                                     )}
                                     onClick={() => toggleSelection(service._id)}
                                     data-state={selectedIds.includes(service._id) ? "selected" : undefined}
@@ -219,7 +219,7 @@ export function ServicesClient({ services }: ServicesClientProps) {
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <div className="relative h-12 w-20 rounded-md border overflow-hidden bg-muted flex-shrink-0">
+                                        <div className="relative h-12 w-20 rounded-md border overflow-hidden bg-muted shrink-0">
                                             {service.heroImageUrl ? (
                                                 <Image
                                                     src={service.heroImageUrl}

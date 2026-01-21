@@ -1,8 +1,13 @@
-import { getServicesPageContentForAdmin } from "@/app/actions/servicesPageContent";
+import { getServicesPageContentForAdmin, getServicesPageDraft } from "@/app/actions/servicesPageContent";
 import { ServicesPageContentForm } from "@/components/admin/form/ServicesPageContentForm";
 
 export default async function ServicesPageContentPage() {
-    const pageContent = await getServicesPageContentForAdmin();
+    const draft = await getServicesPageDraft();
+    const published = await getServicesPageContentForAdmin();
+
+    const pageContent = draft || published;
+    const hasDraft = !!draft;
+    const draftUpdatedAt = draft?._updatedAt || null;
 
     const initialData = pageContent ? {
         hero: pageContent.hero || {},
@@ -20,7 +25,11 @@ export default async function ServicesPageContentPage() {
 
     return (
         <div className="container mx-auto pb-10">
-            <ServicesPageContentForm initialData={initialData as any} />
+            <ServicesPageContentForm
+                initialData={initialData as any}
+                hasDraft={hasDraft}
+                draftUpdatedAt={draftUpdatedAt}
+            />
         </div>
     );
 }

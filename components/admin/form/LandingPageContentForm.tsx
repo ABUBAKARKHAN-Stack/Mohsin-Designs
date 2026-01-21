@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { updateLandingPageContent, saveLandingPageDraft, discardLandingPageDraft } from "@/app/actions/landingPageContent"
 import { updateGlobalSections, saveGlobalSectionsDraft, discardGlobalSectionsDraft } from "@/app/actions/globalSections"
 import { GlobalSectionsFormTabs } from "@/components/admin/form/GlobalSectionsFormTabs"
-import {  SectionHeadingCard } from "@/components/admin/form/SharedFormComponents"
+import { SectionHeadingCard } from "@/components/admin/form/SharedFormComponents"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
 import { Save, AlertCircle, Plus, Trash2, Clock, X, Link, Database } from "lucide-react"
@@ -34,6 +34,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
     const [lastSaved, setLastSaved] = useState<Date | null>(
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
+    const [selectedLang, setSelectedLang] = useState("en")
     const [isInitialMount, setIsInitialMount] = useState(true)
 
     const form = useForm<LandingPageContentValues>({
@@ -116,7 +117,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
     })
 
 
-  
+
     const { fields: highlightFields, append: appendHighlight, remove: removeHighlight } = useFieldArray({
         control: formControl,
         name: "serviceHighlightsMarquee.highlights",
@@ -139,14 +140,14 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         name: "areasWeServe.areas",
     })
 
-  
+
     const { fields: testimonialFields, append: appendTestimonial, remove: removeTestimonial } = useFieldArray({
         control: formControl,
         name: "testimonials.testimonials",
     })
 
-   
-   
+
+
 
     async function onSubmit(values: LandingPageContentValues) {
         setIsLoading(true)
@@ -181,12 +182,29 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         }
     }
 
-  
 
-   
+
+
 
     const formErrors = form.formState.errors
     const hasErrors = Object.keys(formErrors).length > 0
+
+    // Helper to check if a specific language has errors anywhere in the form
+    const hasLangError = (langCode: string) => {
+        const checkErrors = (obj: any): boolean => {
+            if (!obj) return false
+            if (obj.message && typeof obj.message === 'string') return false // It's a field error
+
+            // If it's the language we're looking for and has a message, it's an error
+            if (obj[langCode] && obj[langCode].message) return true
+
+            // Otherwise recurse
+            return Object.values(obj).some(val => typeof val === 'object' && checkErrors(val))
+        }
+        return checkErrors(formErrors)
+    }
+
+    const currentLangHasError = hasLangError(selectedLang)
 
     return (
         <Form {...form}>
@@ -211,16 +229,33 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                             )}
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        {hasErrors && (
-                            <div className="flex items-center gap-2 text-destructive text-xs px-3 py-1 bg-destructive/10 rounded">
-                                <AlertCircle className="h-3 w-3" />
-                                <span>Fix errors to publish</span>
-                            </div>
-                        )}
-                        <Button type="submit" disabled={isLoading || hasErrors}>
-                            {isLoading ? <><Spinner className="mr-2 h-4 w-4" /> Publishing...</> : <><Save className="mr-2 h-4 w-4" /> Publish</>}
-                        </Button>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Language:</span>
+                            <Select value={selectedLang} onValueChange={setSelectedLang}>
+                                <SelectTrigger className="w-[140px] h-9 bg-primary/5 border-primary/20 font-medium">
+                                    <SelectValue placeholder="Language" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="en">English (EN)</SelectItem>
+                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
+                                    <SelectItem value="es">Spanish (ES)</SelectItem>
+                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="flex items-center gap-2 border-l pl-4">
+                            {currentLangHasError && (
+                                <div className="flex items-center gap-2 text-destructive text-xs px-3 py-1 bg-destructive/10 rounded">
+                                    <AlertCircle className="h-3 w-3" />
+                                    <span>Fix {selectedLang.toUpperCase()} errors</span>
+                                </div>
+                            )}
+                            <Button type="submit" disabled={isLoading || hasErrors}>
+                                {isLoading ? <><Spinner className="mr-2 h-4 w-4" /> Publishing...</> : <><Save className="mr-2 h-4 w-4" /> Publish</>}
+                            </Button>
+                        </div>
                     </div>
                 </div>
 
@@ -275,7 +310,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         <Card>
                             <CardHeader><CardTitle>Hero Section</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="hero.badge" label="Badge Text" />
+                                <LocalizedInput control={formControl} name="hero.badge" label="Badge Text" activeLang={selectedLang} />
 
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
@@ -292,7 +327,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.headingLines.${index}.text`} label="Text" />
+                                            <LocalizedInput control={formControl} name={`hero.headingLines.${index}.text`} label="Text" activeLang={selectedLang} />
                                             <FormField control={formControl} name={`hero.headingLines.${index}.style`} render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Style</FormLabel>
@@ -326,7 +361,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.descriptionParagraphs.${index}.text`} label="Text" isTextarea />
+                                            <LocalizedInput control={formControl} name={`hero.descriptionParagraphs.${index}.text`} label="Text" isTextarea activeLang={selectedLang} />
                                         </div>
                                     ))}
                                 </div>
@@ -346,8 +381,8 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.ctaButtons.${index}.text`} label="Text" />
-                                            <LocalizedInput control={formControl} name={`hero.ctaButtons.${index}.url`} label="URL" isUrl />
+                                            <LocalizedInput control={formControl} name={`hero.ctaButtons.${index}.text`} label="Text" activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`hero.ctaButtons.${index}.url`} label="URL" isUrl activeLang={selectedLang} />
                                             <FormField control={formControl} name={`hero.ctaButtons.${index}.variant`} render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Variant</FormLabel>
@@ -369,7 +404,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                     </TabsContent>
 
                     <TabsContent value="shared">
-                        <GlobalSectionsFormTabs control={formControl} errors={formErrors} />
+                        <GlobalSectionsFormTabs control={formControl} errors={formErrors} activeLang={selectedLang} />
                     </TabsContent>
 
                     {/* MARQUEE */}
@@ -390,7 +425,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`serviceHighlightsMarquee.highlights.${index}.text`} label="Text" />
+                                        <LocalizedInput control={formControl} name={`serviceHighlightsMarquee.highlights.${index}.text`} label="Text" activeLang={selectedLang} />
                                     </div>
                                 ))}
                             </CardContent>
@@ -399,7 +434,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
                     {/* BRANDS */}
                     <TabsContent value="brands" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="trustedByBrands.sectionHeading" title="Section Heading" />
+                        <SectionHeadingCard control={formControl} baseName="trustedByBrands.sectionHeading" title="Section Heading" activeLang={selectedLang} />
                         <Card>
                             <CardHeader>
                                 <CardTitle>Brand Logos</CardTitle>
@@ -418,7 +453,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
                     {/* ABOUT */}
                     <TabsContent value="about" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="aboutPreview.sectionHeading" title="About Preview" />
+                        <SectionHeadingCard control={formControl} baseName="aboutPreview.sectionHeading" title="About Preview" activeLang={selectedLang} />
 
                         {/* Left Descriptions */}
                         <Card>
@@ -431,7 +466,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                         <div className="flex justify-between">
                                             <span className="font-medium">Paragraph {index + 1}</span>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`aboutPreview.leftDescriptions.${index}.text`} label="Text" isTextarea />
+                                        <LocalizedInput control={formControl} name={`aboutPreview.leftDescriptions.${index}.text`} label="Text" isTextarea activeLang={selectedLang} />
                                     </div>
                                 ))}
                             </CardContent>
@@ -448,7 +483,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                         <div className="flex justify-between">
                                             <span className="font-medium">Paragraph {index + 1}</span>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`aboutPreview.rightDescriptions.${index}.text`} label="Text" isTextarea />
+                                        <LocalizedInput control={formControl} name={`aboutPreview.rightDescriptions.${index}.text`} label="Text" isTextarea activeLang={selectedLang} />
                                     </div>
                                 ))}
                             </CardContent>
@@ -458,8 +493,8 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         <Card>
                             <CardHeader><CardTitle>Call to Action</CardTitle></CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="aboutPreview.ctaText" label="Button Text" />
-                                <LocalizedInput control={formControl} name="aboutPreview.ctaUrl" label="Button URL" isUrl />
+                                <LocalizedInput control={formControl} name="aboutPreview.ctaText" label="Button Text" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="aboutPreview.ctaUrl" label="Button URL" isUrl activeLang={selectedLang} />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -467,7 +502,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
                     {/* PORTFOLIO */}
                     <TabsContent value="portfolio" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="portfolioPreview.sectionHeading" title="Portfolio Preview" />
+                        <SectionHeadingCard control={formControl} baseName="portfolioPreview.sectionHeading" title="Portfolio Preview" activeLang={selectedLang} />
                         <Card>
                             <CardHeader><CardTitle>Portfolio Projects</CardTitle></CardHeader>
                             <CardContent>
@@ -478,7 +513,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
                     {/* CASES */}
                     <TabsContent value="cases" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="caseStudiesPreview.sectionHeading" title="Case Studies Preview" />
+                        <SectionHeadingCard control={formControl} baseName="caseStudiesPreview.sectionHeading" title="Case Studies Preview" activeLang={selectedLang} />
                         <Card>
                             <CardHeader><CardTitle>Case Studies</CardTitle></CardHeader>
                             <CardContent>
@@ -489,7 +524,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
                     {/* AREAS */}
                     <TabsContent value="areas" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="areasWeServe.sectionHeading" title="Areas We Serve" />
+                        <SectionHeadingCard control={formControl} baseName="areasWeServe.sectionHeading" title="Areas We Serve" activeLang={selectedLang} />
                         <Card>
                             <CardHeader className="flex flex-row justify-between items-center">
                                 <CardTitle>Regions</CardTitle>
@@ -513,7 +548,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                             </Button>
                                         </div>
 
-                                        <LocalizedInput control={formControl} name={`areasWeServe.areas.${index}.region`} label="Region Name" />
+                                        <LocalizedInput control={formControl} name={`areasWeServe.areas.${index}.region`} label="Region Name" activeLang={selectedLang} />
 
                                         <FormField control={formControl} name={`areasWeServe.areas.${index}.flag`} render={({ field }) => (
                                             <FormItem>
@@ -525,7 +560,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                             </FormItem>
                                         )} />
 
-                                        <NestedLocationsField control={formControl} areaIndex={index} />
+                                        <NestedLocationsField control={formControl} areaIndex={index} activeLang={selectedLang} />
 
                                         <div className="grid grid-cols-2 gap-4">
                                             <FormField control={formControl} name={`areasWeServe.areas.${index}.clients`} render={({ field }) => (
@@ -559,7 +594,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
                     {/* TESTIMONIALS */}
                     <TabsContent value="testimonials" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="testimonials.sectionHeading" title="Testimonials" />
+                        <SectionHeadingCard control={formControl} baseName="testimonials.sectionHeading" title="Testimonials" activeLang={selectedLang} />
                         <Card>
                             <CardHeader className="flex flex-row justify-between items-center">
                                 <CardTitle>Testimonials</CardTitle>
@@ -576,10 +611,10 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.quote`} label="Quote" isTextarea />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.author`} label="Author" />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.role`} label="Role" />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.company`} label="Company" />
+                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.quote`} label="Quote" isTextarea activeLang={selectedLang} />
+                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.author`} label="Author" activeLang={selectedLang} />
+                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.role`} label="Role" activeLang={selectedLang} />
+                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.company`} label="Company" activeLang={selectedLang} />
 
                                         <div className="space-y-2">
                                             <FormLabel>Avatar Image</FormLabel>
@@ -623,7 +658,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
 // End of LandingPageContentForm
 
-function NestedLocationsField({ control, areaIndex }: { control: any; areaIndex: number }) {
+function NestedLocationsField({ control, areaIndex, activeLang }: { control: any; areaIndex: number; activeLang?: string }) {
     const { fields, append, remove } = useFieldArray({
         control,
         name: `areasWeServe.areas.${areaIndex}.locations`,
@@ -649,6 +684,7 @@ function NestedLocationsField({ control, areaIndex }: { control: any; areaIndex:
                             control={control}
                             name={`areasWeServe.areas.${areaIndex}.locations.${index}`}
                             label={`Location ${index + 1}`}
+                            activeLang={activeLang}
                         />
                     </div>
                     <Button

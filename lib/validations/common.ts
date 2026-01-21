@@ -19,19 +19,33 @@ export const localizedTextSchema = z.object({
 });
 
 // For strictly required fields
-export const requiredLocalizedStringSchema = localizedStringSchema.refine(
-    (data) => [data.en, data.ur, data.es, data.ar].every(val => val && val.trim() !== ""),
-    {
-        message: "All languages (English, Urdu, Spanish, Arabic) are required",
-        path: ["en"]
+export const requiredLocalizedStringSchema = localizedStringSchema.superRefine(
+    (data, ctx) => {
+        ['en', 'ur', 'es', 'ar'].forEach((lang) => {
+            const val = (data as any)[lang];
+            if (!val || val.trim() === "") {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: `${lang.toUpperCase()} is required`,
+                    path: [lang],
+                });
+            }
+        });
     }
 );
 
-export const requiredLocalizedTextSchema = localizedTextSchema.refine(
-    (data) => [data.en, data.ur, data.es, data.ar].every(val => val && val.trim() !== ""),
-    {
-        message: "All languages (English, Urdu, Spanish, Arabic) are required",
-        path: ["en"]
+export const requiredLocalizedTextSchema = localizedTextSchema.superRefine(
+    (data, ctx) => {
+        ['en', 'ur', 'es', 'ar'].forEach((lang) => {
+            const val = (data as any)[lang];
+            if (!val || val.trim() === "") {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: `${lang.toUpperCase()} is required`,
+                    path: [lang],
+                });
+            }
+        });
     }
 );
 
@@ -42,16 +56,23 @@ export const sectionHeadingSchema = z.object({
     description: localizedTextSchema.optional(),
 });
 
-export const strictMultiLanguageSchema = baseLocalizedStringSchema.refine(
-    (data) => {
+export const strictMultiLanguageSchema = baseLocalizedStringSchema.superRefine(
+    (data, ctx) => {
         const values = [data.en, data.ur, data.es, data.ar];
-        const someHasContent = values.some(hasContent);
-        if (!someHasContent) return true; // All empty is valid (optional)
-        return values.every(hasContent); // If touched, all must be filled
-    },
-    {
-        message: "All languages are required if this field is used",
-        path: ["en"], // Highlight English field generally, or we could return multiple issues but Zod refine path is simple
+        const hasAny = values.some(val => val && val.trim() !== "");
+
+        if (hasAny) {
+            ['en', 'ur', 'es', 'ar'].forEach((lang) => {
+                const val = (data as any)[lang];
+                if (!val || val.trim() === "") {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: `${lang.toUpperCase()} is required if this field is used`,
+                        path: [lang],
+                    });
+                }
+            });
+        }
     }
 );
 
@@ -61,16 +82,23 @@ export const strictMultiLanguageSchema = baseLocalizedStringSchema.refine(
 const hasContent = (str?: string) => str && str.trim().length > 0;
 
 
-export const strictMultiLanguageTextSchema = localizedTextSchema.refine(
-    (data) => {
+export const strictMultiLanguageTextSchema = localizedTextSchema.superRefine(
+    (data, ctx) => {
         const values = [data.en, data.ur, data.es, data.ar];
-        const someHasContent = values.some(hasContent);
-        if (!someHasContent) return true; // All empty is valid
-        return values.every(hasContent);
-    },
-    {
-        message: "All languages are required if this field is used",
-        path: ["en"],
+        const hasAny = values.some(val => val && val.trim() !== "");
+
+        if (hasAny) {
+            ['en', 'ur', 'es', 'ar'].forEach((lang) => {
+                const val = (data as any)[lang];
+                if (!val || val.trim() === "") {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: `${lang.toUpperCase()} is required if this field is used`,
+                        path: [lang],
+                    });
+                }
+            });
+        }
     }
 );
 

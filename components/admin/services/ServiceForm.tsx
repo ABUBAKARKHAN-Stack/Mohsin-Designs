@@ -215,6 +215,17 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
 
     const currentLangHasError = hasLangError(selectedLang)
 
+    // Helper to check if any field in a list has an error
+    const hasTabError = (fields: string[]) => {
+        return fields.some(field => {
+            if (field.includes('.')) {
+                const [parent, child] = field.split('.')
+                return !!(formErrors as any)[parent]?.[child] || !!(formErrors as any)[parent]
+            }
+            return !!(formErrors as any)[field]
+        })
+    }
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-8">
@@ -283,30 +294,96 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                     </div>
                 </div>
 
-                <Tabs defaultValue="details" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="details" className="relative">
-                            Service Details
-                            {Object.keys(formErrors).some(key => key !== 'seo') && (
-                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                            )}
-                        </TabsTrigger>
-                        <TabsTrigger value="seo" className="relative">
-                            SEO
-                            {!!formErrors.seo && (
-                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                            )}
-                        </TabsTrigger>
-                    </TabsList>
+                <Tabs defaultValue="general" className="w-full">
+                    <div className="relative mb-6">
+                        <TabsList className="flex w-full h-auto flex-wrap gap-1 p-1 bg-muted/50 rounded-lg justify-start">
+                            <TabsTrigger value="general" className="relative px-4 py-2 text-xs sm:text-sm">
+                                General
+                                {hasTabError(['title', 'subtitle', 'description', 'slug', 'heroImage', 'heroImageAlt']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="intro" className="relative px-4 py-2 text-xs sm:text-sm">
+                                Intro
+                                {hasTabError(['introTagLine', 'introTitle', 'introContent']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="role" className="relative px-4 py-2 text-xs sm:text-sm">
+                                Role
+                                {hasTabError(['roleTitle', 'roleContent']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="help" className="relative px-4 py-2 text-xs sm:text-sm">
+                                Help
+                                {hasTabError(['howWeHelpSection', 'howWeHelpPoints']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="overview" className="relative px-4 py-2 text-xs sm:text-sm">
+                                Overview
+                                {hasTabError(['overviewSection', 'items']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="process" className="relative px-4 py-2 text-xs sm:text-sm">
+                                Process
+                                {hasTabError(['processSection', 'process']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="areas" className="relative px-4 py-2 text-xs sm:text-sm">
+                                Areas
+                                {hasTabError(['areasSection', 'areas']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="industries" className="relative px-4 py-2 text-xs sm:text-sm">
+                                Industries
+                                {hasTabError(['industriesSection', 'industries']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="benefits" className="relative px-4 py-2 text-xs sm:text-sm">
+                                Benefits
+                                {hasTabError(['benifitsSection', 'benefits']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="whyChooseUs" className="relative px-4 py-2 text-xs sm:text-sm">
+                                Why Us
+                                {hasTabError(['whyChooseUsSection', 'whyChooseUsPoints']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="caseStudies" className="relative px-4 py-2 text-xs sm:text-sm">
+                                Case Studies
+                                {hasTabError(['caseStudiesSection', 'caseStudies']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="faqs" className="relative px-4 py-2 text-xs sm:text-sm">
+                                FAQs
+                                {hasTabError(['faqsSection', 'faqs']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                            <TabsTrigger value="seo" className="relative px-4 py-2 text-xs sm:text-sm">
+                                SEO
+                                {hasTabError(['seo']) && (
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                                )}
+                            </TabsTrigger>
+                        </TabsList>
+                    </div>
 
-                    <TabsContent value="details" className="space-y-6">
-                        {/* Basic Information */}
+                    <TabsContent value="general" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Basic Information</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-
                                 <LocalizedInput control={formControl} name="title" label="Title" activeLang={selectedLang} />
                                 <LocalizedInput control={formControl} name="subtitle" label="Subtitle" activeLang={selectedLang} />
                                 <LocalizedInput control={formControl} name="description" label="Description" isTextarea activeLang={selectedLang} />
@@ -368,8 +445,9 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <LocalizedInput control={formControl} name="heroImageAlt" label="Hero Image Alt Text" activeLang={selectedLang} />
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* Intro Section */}
+                    <TabsContent value="intro" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Intro Section</CardTitle>
@@ -380,8 +458,9 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <LocalizedInput control={formControl} name="introContent" label="Intro Content" isTextarea activeLang={selectedLang} />
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* Role Section */}
+                    <TabsContent value="role" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Role Section</CardTitle>
@@ -414,14 +493,14 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* How We Help Section */}
+                    <TabsContent value="help" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>How We Help Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-
                                 <SectionHeadingInput control={formControl} name="howWeHelpSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Help Points</FormLabel>
@@ -444,14 +523,14 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* Overview Section */}
+                    <TabsContent value="overview" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Overview Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-
                                 <SectionHeadingInput control={formControl} name="overviewSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Items</FormLabel>
@@ -478,14 +557,14 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* Process Section */}
+                    <TabsContent value="process" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Process Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-
                                 <SectionHeadingInput control={formControl} name="processSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Process Steps</FormLabel>
@@ -521,14 +600,14 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* Areas Section */}
+                    <TabsContent value="areas" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Areas Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-
                                 <SectionHeadingInput control={formControl} name="areasSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Areas</FormLabel>
@@ -540,12 +619,10 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                 </Button>
                                             </div>
                                             <LocalizedInput control={formControl} name={`areas.${index}.region`} label="Region" activeLang={selectedLang} />
-
                                             <div className="space-y-2">
                                                 <FormLabel>Locations</FormLabel>
                                                 <LocalizedInput control={formControl} name={`areas.${index}.locations.0`} label="Location" activeLang={selectedLang} />
                                             </div>
-
                                             <div className="grid grid-cols-2 gap-4">
                                                 <FormField
                                                     control={formControl}
@@ -574,7 +651,6 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                     )}
                                                 />
                                             </div>
-
                                             <FormField
                                                 control={formControl}
                                                 name={`areas.${index}.featured`}
@@ -600,14 +676,14 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* Industries Section */}
+                    <TabsContent value="industries" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Industries Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-
                                 <SectionHeadingInput control={formControl} name="industriesSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Industries</FormLabel>
@@ -628,14 +704,14 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* Benefits Section */}
+                    <TabsContent value="benefits" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Benefits Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-
                                 <SectionHeadingInput control={formControl} name="benifitsSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Benefits</FormLabel>
@@ -662,14 +738,14 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* Why Choose Us Section */}
+                    <TabsContent value="whyChooseUs" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Why Choose Us Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-
                                 <SectionHeadingInput control={formControl} name="whyChooseUsSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Points</FormLabel>
@@ -692,14 +768,14 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* Case Studies Section */}
+                    <TabsContent value="caseStudies" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Case Studies Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-
                                 <SectionHeadingInput control={formControl} name="caseStudiesSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Case Studies</FormLabel>
@@ -722,14 +798,14 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </CardContent>
                         </Card>
+                    </TabsContent>
 
-                        {/* FAQs Section */}
+                    <TabsContent value="faqs" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>FAQs Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-
                                 <SectionHeadingInput control={formControl} name="faqsSection" label="Section Heading" activeLang={selectedLang} />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>FAQs</FormLabel>
@@ -750,7 +826,6 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </CardContent>
                         </Card>
-
                     </TabsContent>
 
                     <TabsContent value="seo" className="space-y-6">

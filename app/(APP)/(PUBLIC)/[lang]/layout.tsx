@@ -34,7 +34,7 @@ export default async function LangLayout({ children, params }: Props) {
     }
 
 
- 
+
     const [servicesResult, lightWeightServicesResult, siteSettingsResult, landingPageContentResult, aboutPageContentResult, globalContentResult] = await Promise.allSettled([
         getServicesByLocale(lang),
         getLightWeightServicesByLocale(lang),

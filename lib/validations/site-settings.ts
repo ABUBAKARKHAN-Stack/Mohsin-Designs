@@ -56,6 +56,16 @@ export const siteSettingsSchema = z.object({
 
     footerText: requiredLocalizedTextSchema,
     copyright: requiredLocalizedStringSchema,
+
+    headerMenu: z.object({
+        _type: z.literal('reference').optional(),
+        _ref: z.string().optional(),
+    }).optional().nullable(),
+
+    footerMenu: z.object({
+        _type: z.literal('reference').optional(),
+        _ref: z.string().optional(),
+    }).optional().nullable(),
 });
 
 export type SiteSettingsValues = z.infer<typeof siteSettingsSchema>;

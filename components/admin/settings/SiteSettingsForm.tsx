@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { siteSettingsSchema, SiteSettingsValues } from "@/lib/validations/site-settings"
 import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -16,13 +17,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { updateSiteSettings } from "@/app/actions/siteSettings"
-import { errorToast, successToast } from "@/lib/toastNotifications"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Spinner } from "@/components/ui/spinner"
 import { SEOKeywordsInput } from "@/components/admin/form/SEOKeywordsInput"
-import { Save, Globe, Info, Mail, Share2, Scale, AlertCircle, Languages } from "lucide-react"
+import { getAllMenus, updateSiteSettings } from "@/app/actions/siteSettings"
+import { errorToast, successToast } from "@/lib/toastNotifications"
+import { Save, Globe, Info, Mail, Share2, Scale, AlertCircle, Languages, Menu as MenuIcon, ExternalLink } from "lucide-react"
+import { useEffect } from "react"
 import {
     Select,
     SelectContent,
@@ -30,6 +32,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import Link from "next/link"
 
 interface SiteSettingsFormProps {
     initialData?: SiteSettingsValues
@@ -76,13 +79,28 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
             contact: { email: "", phone: "", address: { en: "", ur: "", es: "", ar: "" } },
             footerText: { en: "", ur: "", es: "", ar: "" },
             copyright: { en: "", ur: "", es: "", ar: "" },
+            headerMenu: { _type: 'reference', _ref: "" },
+            footerMenu: { _type: 'reference', _ref: "" },
         } as SiteSettingsValues,
     })
 
-    const formControl = form.control as any
+    const [menus, setMenus] = useState<any[]>([])
+
+    useEffect(() => {
+        async function fetchMenus() {
+            const data = await getAllMenus()
+            setMenus(data)
+        }
+        fetchMenus()
+        console.log(menus);
+    }, [])
+
+
     
+    const formControl = form.control as any
+
     async function onSubmit(values: SiteSettingsValues) {
-        
+
         setIsLoading(true)
         try {
             const result = await updateSiteSettings(values)
@@ -110,6 +128,7 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
         contact: !!formErrors.contact,
         social: !!formErrors.social,
         footer: !!(formErrors.footerText || formErrors.copyright),
+        menu: !!(formErrors.headerMenu || formErrors.footerMenu),
     }
 
     return (
@@ -174,13 +193,20 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
                 </div>
 
                 <Tabs defaultValue="branding" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 h-auto gap-2 bg-transparent p-0 mb-6">
+                    <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 h-auto gap-2 bg-transparent p-0 mb-6">
                         <TabsTrigger
                             value="branding"
                             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border h-10 px-4 relative"
                         >
                             <Info className="h-4 w-4 mr-2 hidden sm:inline" /> Branding
                             {tabErrors.branding && <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full animate-pulse" />}
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="menu"
+                            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border h-10 px-4 relative"
+                        >
+                            <MenuIcon className="h-4 w-4 mr-2 hidden sm:inline" /> Menu
+                            {tabErrors.menu && <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full animate-pulse" />}
                         </TabsTrigger>
                         <TabsTrigger
                             value="seo"
@@ -402,6 +428,91 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
                             <CardContent className="space-y-6">
                                 <LocalizedInput control={formControl} name="footerText" label="Footer About Text" isTextarea activeLang={selectedLang} />
                                 <LocalizedInput control={formControl} name="copyright" label="Copyright Notice" activeLang={selectedLang} />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    <TabsContent value="menu" className="space-y-6">
+                        <Card className="border-2 border-primary/20 shadow-md">
+                            <CardHeader className="bg-primary/5 border-b py-4">
+                                <CardTitle className="text-xl">Menu Management</CardTitle>
+                                <CardDescription>Assign specific menu documents to the website navigation areas.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="pt-6 space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <FormField
+                                        control={formControl}
+                                        name="headerMenu._ref"
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-3">
+                                                <div className="flex items-center justify-between">
+                                                    <FormLabel className="text-base font-bold">Header Menu</FormLabel>
+                                                    <Button variant="link" size="sm" asChild className="h-auto p-0 text-xs">
+                                                        <Link href="/admin/menus" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                                                            Manage Menus <ExternalLink className="h-3 w-3" />
+                                                        </Link>
+                                                    </Button>
+                                                </div>
+                                                <FormControl>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
+                                                        <SelectTrigger className="h-12 text-base">
+                                                            <SelectValue placeholder="Select a menu for Header" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {menus.filter(menu => menu.location === 'header').map((menu) => (
+                                                                <SelectItem key={menu._id} value={menu._id}>
+                                                                    {menu.title}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormDescription>
+                                                    This menu will appear in the main navigation bar at the top of the site.
+                                                </FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={formControl}
+                                        name="footerMenu._ref"
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-3">
+                                                <div className="flex items-center justify-between">
+                                                    <FormLabel className="text-base font-bold">Footer Menu</FormLabel>
+                                                    <Button variant="link" size="sm" asChild className="h-auto p-0 text-xs">
+                                                        <Link 
+                                                            href="/admin/menus"
+                                                            target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                                                            Manage Menus <ExternalLink className="h-3 w-3" />
+                                                        </Link>
+                                                    </Button>
+                                                </div>
+                                                <FormControl>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
+                                                        <SelectTrigger className="h-12 text-base">
+                                                            <SelectValue placeholder="Select a menu for Footer" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {menus.filter(menu => menu.location === 'footer').map((menu) => (
+                                                                <SelectItem key={menu._id} value={menu._id}>
+                                                                    {menu.title}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormDescription>
+                                                    This menu will appear in the website footer.
+                                                </FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
                             </CardContent>
                         </Card>
                     </TabsContent>

@@ -20,6 +20,8 @@ import { contactSubmissionType } from './document/contactSubmissionType'
 import { formType } from './document/formType'
 import { aboutPageContentType } from './document/aboutPageContentType'
 import { globalSectionsType } from './document/globalSectionsType'
+import { menuType } from './document/menuType'
+import { menuItemType } from './objects/menuItemType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -44,5 +46,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     formType,
     aboutPageContentType,
     globalSectionsType,
+    menuType,
+    menuItemType,
   ],
 }

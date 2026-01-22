@@ -9,13 +9,15 @@ export async function getSiteSettings() {
         const query = `*[_type == "siteSettings"][0] {
             ...,
             "logo": logo {
-              asset,
-              "url": asset->url
+                asset,
+                "url": asset->url
             },
             "favicon": favicon {
-              asset,
-              "url": asset->url
-            }
+                asset,
+                "url": asset->url
+            },
+            headerMenu,
+            footerMenu
         }`
 
         const { data } = await sanityFetch({ query })
@@ -40,6 +42,8 @@ export async function updateSiteSettings(data: SiteSettingsValues) {
             contact: validatedFields.contact,
             footerText: validatedFields.footerText,
             copyright: validatedFields.copyright,
+            headerMenu: validatedFields.headerMenu,
+            footerMenu: validatedFields.footerMenu,
         }
 
         // Only update logo if we have a valid reference
@@ -65,17 +69,26 @@ export async function updateSiteSettings(data: SiteSettingsValues) {
         }
 
         await adminClient.createOrReplace(updateData)
-
         return { success: true }
-
     } catch (error: any) {
         console.error("Failed to update site settings:", error)
-
-        // Extract a more helpful error message if possible
         const errorMessage = error.response?.body?.message || error.message || "Failed to update site settings"
-        return {
-            success: false,
-            error: errorMessage
-        }
+        return { success: false, error: errorMessage }
+    }
+}
+
+export async function getAllMenus() {
+    try {
+        const query = `*[_type == "menu"] {
+            _id,
+            title,
+            "slug": slug.current,
+            location
+        }`
+        const { data } = await sanityFetch({ query })
+        return (data as any[]) || []
+    } catch (error) {
+        console.error("Failed to fetch menus:", error)
+        return []
     }
 }

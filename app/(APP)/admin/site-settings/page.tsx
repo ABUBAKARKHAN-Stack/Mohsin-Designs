@@ -16,6 +16,8 @@ export default async function SiteSettingsPage() {
         contact: siteSettings.contact || { email: "", phone: "", address: {} },
         footerText: siteSettings.footerText || {},
         copyright: siteSettings.copyright || {},
+        headerMenu: siteSettings.headerMenu || { _type: 'reference', _ref: "" },
+        footerMenu: siteSettings.footerMenu || { _type: 'reference', _ref: "" },
     } : undefined;
 
     return (

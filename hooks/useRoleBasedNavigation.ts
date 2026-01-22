@@ -13,6 +13,7 @@ import {
     FolderOpen,
     Wrench,
     Inbox,
+    Menu as MenuIcon,
 } from "lucide-react";
 
 export interface NavigationItem {
@@ -87,6 +88,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
                 { title: "Forms", url: "/admin/forms", icon: Layers },
                 { title: "Global Sections", url: "/admin/global-sections", icon: Layers },
+                { title: "Menus", url: "/admin/menus", icon: MenuIcon },
                 { title: "Contact Submissions", url: "/admin/contact-submissions", icon: Inbox },
             ]
         },

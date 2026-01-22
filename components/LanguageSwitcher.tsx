@@ -12,7 +12,7 @@ const LANGUAGES = [
     { code: 'ar', label: 'العربية' },
 ];
 
-export default function LanguageSwitcher({ currentLang }: { currentLang: string }) {
+export default function LanguageSwitcher({ currentLang ,className}: { currentLang: string ,className?:string}) {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -29,7 +29,7 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: string 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" className={className}>
                     {currentLabel} <Globe />
                 </Button>
             </DropdownMenuTrigger>

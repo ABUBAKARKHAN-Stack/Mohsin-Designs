@@ -16,6 +16,25 @@ const FooterMainGrid = () => {
     const { lang }: LanguageType = useParams()
     const { settings } = useSiteSettings()
 
+    // Helper to resolve dynamic URLs
+    const resolveUrl = (item: any) => {
+        if (item.type === 'custom') return item.url || '#';
+        if (item.type === 'reference' && item.reference) {
+            if (item.reference._type === 'service') return `/${lang}/services/${item.reference.slug}`;
+            return `/${lang}/${item.reference.slug}`;
+        }
+        return '#';
+    };
+
+    const footerNavItems = settings?.footerMenu?.items || [
+        ...navLinks,
+        { name: "FAQs", path: "/faq" },
+    ].map(item => ({
+        label: (item as any).name ? uiT(lang, `navigation.${(item as any).name.toLowerCase().trim()}`) : (item as any).label,
+        url: (item as any).path ? `/${lang}${(item as any).path}` : resolveUrl(item),
+        type: 'custom'
+    }))
+
     const socialPlatforms = [
         { label: "Facebook", key: "facebook" as const, icon: Facebook },
         { label: "Twitter", key: "twitter" as const, icon: Twitter },
@@ -38,43 +57,69 @@ const FooterMainGrid = () => {
             </div>
 
             {/* Navigation */}
-            <div>
-                <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">{uiT(lang, "common.navigation")}</h4>
-                <ul className="space-y-4">
-                    {[
-                        ...navLinks,
-                        { name: "FAQs", path: "/faq" },
-                    ].map((item) => (
-                        <li key={item.name}>
-                            <Link
-                                href={`/${lang}${item.path}`}
-                                className="text-sm text-foreground/70 hover:text-accent transition-colors inline-flex items-center gap-2 group"
-                            >
-                                {uiT(lang, `navigation.${item.name.toLowerCase().trim()}`)}
-                                <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            {/* Services */}
-            <div>
-                <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">{uiT(lang, "common.services")}</h4>
-                <ul className="space-y-4">
-                    {lightWeightServices.map((item) => (
-                        <li key={item.slug}>
-                            <Link
-                                href={`/${lang}/services/${item.slug}`}
-                                className="text-sm text-foreground/70 hover:text-accent transition-colors inline-flex items-center gap-2 group"
-                            >
-                                {item.title}
-                                <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+            {/* Dynamic Footer Menu Columns */}
+            {(settings?.footerMenu?.items && settings.footerMenu.items.length > 0) ? (
+                settings.footerMenu.items.map((column: any, colIndex: number) => (
+                    <div key={column._key || colIndex}>
+                        <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+                            {column.label || "Menu"}
+                        </h4>
+                        <ul className="space-y-4">
+                            {column.children?.map((item: any, index: number) => {
+                                const href = item.url || resolveUrl(item);
+                                const label = item.label || item.title;
+                                return (
+                                    <li key={item._key || index}>
+                                        <Link
+                                            href={href}
+                                            className="text-sm text-foreground/70 hover:text-accent transition-colors inline-flex items-center gap-2 group"
+                                        >
+                                            {label}
+                                            <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </Link>
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                    </div>
+                ))
+            ) : (
+                /* Fallback for when no Footer Menu is defined */
+                <>
+                    <div>
+                        <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">{uiT(lang, "common.navigation")}</h4>
+                        <ul className="space-y-4">
+                            {footerNavItems.map((item, index) => (
+                                <li key={index}>
+                                    <Link
+                                        href={(item as any).url}
+                                        className="text-sm text-foreground/70 hover:text-accent transition-colors inline-flex items-center gap-2 group"
+                                    >
+                                        {item.label}
+                                        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">{uiT(lang, "common.services")}</h4>
+                        <ul className="space-y-4">
+                            {lightWeightServices.map((item) => (
+                                <li key={item.slug}>
+                                    <Link
+                                        href={`/${lang}/services/${item.slug}`}
+                                        className="text-sm text-foreground/70 hover:text-accent transition-colors inline-flex items-center gap-2 group"
+                                    >
+                                        {item.title}
+                                        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </>
+            )}
 
             {/* Contact */}
             <div>

@@ -103,7 +103,7 @@ export function LocalizedInput({
             "space-y-2",
             !noBorder && "border p-4 rounded-md",
             isErrorState && "border-destructive/50",
-            compact && "p-0 space-y-1",
+            compact && "p-2 space-y-2",
             className
         )}>
             <div className="flex justify-between items-center">

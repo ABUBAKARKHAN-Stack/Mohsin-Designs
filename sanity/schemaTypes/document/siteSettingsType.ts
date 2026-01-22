@@ -90,6 +90,23 @@ export const siteSettings = defineType({
       type: "localizedString",
       validation: Rule => Rule.required(),
     }),
+
+    //* Menu Management
+    defineField({
+      name: "headerMenu",
+      title: "Header Navigation Menu",
+      type: "reference",
+      to: [{ type: "menu" }],
+      description: "Select the menu to display in the website header",
+    }),
+
+    defineField({
+      name: "footerMenu",
+      title: "Footer Navigation Menu",
+      type: "reference",
+      to: [{ type: "menu" }],
+      description: "Select the menu to display in the website footer",
+    }),
   ],
 
   preview: {

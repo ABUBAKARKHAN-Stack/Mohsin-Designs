@@ -18,8 +18,102 @@ const SITE_SETTINGS_QUERY_BY_LOCALE = `{
     "address": contact.address[$lang]
   },
   "footerText": footerText[$lang],
-  "copyright": copyright[$lang]
+  "copyright": copyright[$lang],
+  "headerMenu": headerMenu-> {
+    "title": title,
+    "slug": slug.current,
+    "items": items[] {
+      "label": label[$lang],
+      "description": description[$lang],
+      type,
+      "url": url[$lang],
+      "reference": reference-> {
+        _type,
+        "title": title[$lang],
+        "items": items[][$lang],
+        "slug": slug.current
+      },
+      "children": children[] {
+        "label": label[$lang],
+        "description": description[$lang],
+        type,
+        "url": url[$lang],
+        "reference": reference-> {
+          _type,
+          "title": title[$lang],
+          "slug": slug.current
+        },
+        "children": children[] {
+          "label": label[$lang],
+          "description": description[$lang],
+          type,
+          "url": url[$lang],
+          "reference": reference-> {
+            _type,
+            "title": title[$lang],
+            "slug": slug.current
+          }
+        }
+      }
+    }
+  },
+  "footerMenu": footerMenu-> {
+    "title": title,
+    "slug": slug.current,
+    "items": items[] {
+      "label": label[$lang],
+      "description": description[$lang],
+      type,
+      "url": url[$lang],
+      "reference": reference-> {
+        _type,
+        "title": title[$lang],
+        "slug": slug.current
+      },
+      "children": children[] {
+        "label": label[$lang],
+        "description": description[$lang],
+        type,
+        "url": url[$lang],
+        "reference": reference-> {
+          _type,
+          "title": title[$lang],
+          "slug": slug.current
+        },
+        "children": children[] {
+          "label": label[$lang],
+          "description": description[$lang],
+          type,
+          "url": url[$lang],
+          "reference": reference-> {
+            _type,
+            "title": title[$lang],
+            "slug": slug.current
+          }
+        }
+      }
+    }
+  }
 }`;
+
+export type MenuItemData = {
+    label: string;
+    description?: string;
+    type: 'reference' | 'custom';
+    url?: string;
+    reference?: {
+        _type: string;
+        title: string;
+        slug: string;
+    };
+    children?: MenuItemData[];
+};
+
+export type MenuData = {
+    title: string;
+    slug: string;
+    items: MenuItemData[];
+};
 
 export type SiteSettingsData = {
     siteName: string;
@@ -45,6 +139,8 @@ export type SiteSettingsData = {
     };
     footerText: string;
     copyright: string;
+    headerMenu?: MenuData;
+    footerMenu?: MenuData;
 };
 
 export const getSiteSettingsByLocale = async (lang: string) => {

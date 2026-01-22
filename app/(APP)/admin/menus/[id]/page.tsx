@@ -3,9 +3,7 @@ import { MenuForm } from "@/components/admin/menus/MenuForm"
 import { notFound } from "next/navigation"
 
 interface EditMenuPageProps {
-    params: {
-        id: string
-    }
+    params: Promise<{ id: string }>
 }
 
 export default async function EditMenuPage({ params }: EditMenuPageProps) {

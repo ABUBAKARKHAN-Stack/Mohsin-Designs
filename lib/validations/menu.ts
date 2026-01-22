@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { localizedStringSchema, requiredLocalizedStringSchema } from "./common";
+import { localizedStringSchema, requiredLocalizedStringSchema, strictMultiLanguageSchema } from "./common";
 
 // Define the base schema first for recursion
 const baseMenuItemSchema = z.object({
     _key: z.string().optional(),
     label: requiredLocalizedStringSchema,
-    description: localizedStringSchema.optional().nullable(),
+    description: strictMultiLanguageSchema.optional().nullable(),
     type: z.enum(['reference', 'custom', 'header']),
     reference: z.object({
         _type: z.string().optional().default('reference'),

@@ -21,7 +21,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Spinner } from "@/components/ui/spinner"
 import { SEOKeywordsInput } from "@/components/admin/form/SEOKeywordsInput"
-import { getAllMenus, updateSiteSettings } from "@/app/actions/siteSettings"
+import { updateSiteSettings } from "@/app/actions/siteSettings"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Save, Globe, Info, Mail, Share2, Scale, AlertCircle, Languages, Menu as MenuIcon, ExternalLink } from "lucide-react"
 import { useEffect } from "react"
@@ -36,6 +36,7 @@ import Link from "next/link"
 
 interface SiteSettingsFormProps {
     initialData?: SiteSettingsValues
+    menus: any[]
 }
 
 const hasLangError = (error: any, lang: string): boolean => {
@@ -58,7 +59,7 @@ const hasLangError = (error: any, lang: string): boolean => {
     return false;
 }
 
-export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
+export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSettingsFormProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [selectedLang, setSelectedLang] = useState("en")
 
@@ -84,19 +85,9 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
         } as SiteSettingsValues,
     })
 
-    const [menus, setMenus] = useState<any[]>([])
-
-    useEffect(() => {
-        async function fetchMenus() {
-            const data = await getAllMenus()
-            setMenus(data)
-        }
-        fetchMenus()
-        console.log(menus);
-    }, [])
+    const [menus] = useState<any[]>(initialMenus || [])
 
 
-    
     const formControl = form.control as any
 
     async function onSubmit(values: SiteSettingsValues) {
@@ -483,7 +474,7 @@ export function SiteSettingsForm({ initialData }: SiteSettingsFormProps) {
                                                 <div className="flex items-center justify-between">
                                                     <FormLabel className="text-base font-bold">Footer Menu</FormLabel>
                                                     <Button variant="link" size="sm" asChild className="h-auto p-0 text-xs">
-                                                        <Link 
+                                                        <Link
                                                             href="/admin/menus"
                                                             target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
                                                             Manage Menus <ExternalLink className="h-3 w-3" />

@@ -1,8 +1,10 @@
 import { getSiteSettings } from "@/app/actions/siteSettings";
+import { getMenus } from "@/app/actions/menus";
 import { SiteSettingsForm } from "@/components/admin/settings/SiteSettingsForm";
 
 export default async function SiteSettingsPage() {
     const siteSettings = await getSiteSettings();
+    const menus = await getMenus();
 
     // Transform sanity data into form values if needed
     // The query already handles resolving urls for logo and favicon
@@ -22,7 +24,7 @@ export default async function SiteSettingsPage() {
 
     return (
         <div className="container mx-auto pb-10">
-            <SiteSettingsForm initialData={initialData as any} />
+            <SiteSettingsForm initialData={initialData as any} menus={menus} />
         </div>
     );
 }

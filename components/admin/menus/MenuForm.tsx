@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { menuSchema, MenuValues } from "@/lib/validations/menu"
@@ -50,6 +50,16 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
         control: form.control,
         name: "items"
     })
+
+    const bottomRef = useRef<HTMLDivElement>(null)
+    const prevLengthRef = useRef(fields.length)
+
+    useEffect(() => {
+        if (fields.length > prevLengthRef.current) {
+            bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+        }
+        prevLengthRef.current = fields.length
+    }, [fields.length])
 
     console.log(form.formState.errors);
 
@@ -218,6 +228,7 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
                                     location={form.watch("location")}
                                 />
                             ))}
+                            <div ref={bottomRef} />
 
                             {fields.length === 0 && (
                                 <div className="text-center py-20 border-2 border-dashed rounded-xl bg-muted/30">

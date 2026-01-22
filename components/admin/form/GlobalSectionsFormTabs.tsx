@@ -57,46 +57,71 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
 
     const isSharedMode = mode === 'shared';
 
+    // Helper to check if any field in a list has an error
+    const hasTabError = (fields: string[]) => {
+        return fields.some(field => {
+            if (field.includes('.')) {
+                const [parent, child] = field.split('.')
+                return !!(errors as any)[parent]?.[child] || !!(errors as any)[parent]
+            }
+            return !!(errors as any)[field]
+        })
+    }
+
     return (
         <Tabs defaultValue="stats" className="w-full">
-            <TabsList className={cn(
-                "grid w-full grid-cols-4 lg:grid-cols-8 gap-2 h-auto bg-transparent p-0 mb-6 font-medium",
-                isSharedMode && "border border-muted"
-            )}>
-                <TabsTrigger value="stats" className="relative data-[state=active]:bg-primary/10">
-                    Stats
-                    {errors.stats && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                </TabsTrigger>
-                <TabsTrigger value="services" className="relative data-[state=active]:bg-primary/10">
-                    Services
-                    {errors.servicesPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                </TabsTrigger>
-                <TabsTrigger value="whyUs" className="relative data-[state=active]:bg-primary/10">
-                    Why Us
-                    {errors.whyChooseUs && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                </TabsTrigger>
-                <TabsTrigger value="approach" className="relative data-[state=active]:bg-primary/10">
-                    Approach
-                    {errors.ourApproach && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                </TabsTrigger>
-                <TabsTrigger value="industries" className="relative data-[state=active]:bg-primary/10">
-                    Industries
-                    {errors.industriesWeServe && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                </TabsTrigger>
-                <TabsTrigger value="faqs" className="relative data-[state=active]:bg-primary/10">
-                    FAQs
-                    {errors.faqs && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                </TabsTrigger>
-                <TabsTrigger value="leadership" className="relative data-[state=active]:bg-primary/10">
-                    Leadership
-                    {errors.leadership && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                </TabsTrigger>
-                <TabsTrigger value="cta" className="relative data-[state=active]:bg-primary/10">
-                    CTA
-                    {errors.cta && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
-                </TabsTrigger>
-            </TabsList>
-
+            <div className="relative mb-6">
+                <TabsList className="flex w-full h-auto flex-wrap gap-1 p-1 bg-muted/50 rounded-lg justify-start">
+                    <TabsTrigger value="stats" className="relative px-4 py-2 text-xs sm:text-sm data-[state=active]:bg-primary/10">
+                        Stats
+                        {hasTabError(['stats']) && (
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="services" className="relative px-4 py-2 text-xs sm:text-sm data-[state=active]:bg-primary/10">
+                        Services
+                        {hasTabError(['servicesPreview']) && (
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="whyUs" className="relative px-4 py-2 text-xs sm:text-sm data-[state=active]:bg-primary/10">
+                        Why Us
+                        {hasTabError(['whyChooseUs']) && (
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="approach" className="relative px-4 py-2 text-xs sm:text-sm data-[state=active]:bg-primary/10">
+                        Approach
+                        {hasTabError(['ourApproach']) && (
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="industries" className="relative px-4 py-2 text-xs sm:text-sm data-[state=active]:bg-primary/10">
+                        Industries
+                        {hasTabError(['industriesWeServe']) && (
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="faqs" className="relative px-4 py-2 text-xs sm:text-sm data-[state=active]:bg-primary/10">
+                        FAQs
+                        {hasTabError(['faqs']) && (
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="leadership" className="relative px-4 py-2 text-xs sm:text-sm data-[state=active]:bg-primary/10">
+                        Leadership
+                        {hasTabError(['leadership']) && (
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="cta" className="relative px-4 py-2 text-xs sm:text-sm data-[state=active]:bg-primary/10">
+                        CTA
+                        {hasTabError(['cta']) && (
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                        )}
+                    </TabsTrigger>
+                </TabsList>
+            </div>
             <div className="shadow-lg">
                 <div className="bg-card rounded-lg p-4 relative min-h-[400px]">
                     {/* Header Info Banner for Shared Mode */}

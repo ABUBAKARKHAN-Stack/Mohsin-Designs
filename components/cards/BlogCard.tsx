@@ -1,29 +1,29 @@
-import { IBlog } from "@/types/blog.types";
+import { BlogPost } from "@/types/blog.types";
 import { ArrowUpRight, Clock } from "lucide-react";
 import { motion } from "motion/react"
 import Image from "next/image";
 import Link from "next/link";
 
 type Props = {
-    post: IBlog;
+    post: BlogPost;
     index: number
 }
 const BlogCard = ({ post, index }: Props) => {
     return (
         <motion.article
-            key={post.id}
+            key={post._id}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6, delay: index * 0.1 }}
             className="group cursor-pointer"
         >
-            <Link href="/blog">
+            <Link href={`/blog/${post.slug.current}`}>
                 {/* Image */}
                 <div className="aspect-16/12 overflow-hidden mb-6 relative">
                     <Image
                         fill
-                        src={post.image}
+                        src={post.mainImage}
                         alt={post.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
                     />

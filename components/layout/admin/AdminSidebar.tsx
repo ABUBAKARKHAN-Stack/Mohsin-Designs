@@ -88,7 +88,7 @@ export function AppSidebar() {
                                                         <AccordionTrigger asChild>
                                                             <SidebarMenuButton
                                                                 isActive={isActive || item.subItems?.some(sub => pathname === sub.url)}
-                                                                className="w-full justify-start gap-2 h-9 py-0! px-2 text-accent-foreground items-center data-[state=open]:bg-sidebar-accent group/item"
+                                                                className="w-full justify-start gap-2 hover:[text-decoration:none] items-center group/item"
                                                             >
                                                                 <item.icon className="h-4 w-4 shrink-0" />
                                                                 <span className="flex-1 text-left">{item.title}</span>

@@ -398,7 +398,6 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                 <div className="flex flex-col sm:flex-row gap-2">
                                                     <FormControl className="flex-1">
                                                         <Input {...field} value={field.value || ""}
-                                                            disabled
                                                             placeholder="auto-generated" className="font-mono text-sm" />
                                                     </FormControl>
                                                     <Button

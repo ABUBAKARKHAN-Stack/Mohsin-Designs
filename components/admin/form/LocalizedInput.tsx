@@ -12,7 +12,7 @@ import { Link } from "lucide-react"
 interface LocalizedInputProps {
     control: Control<any>
     name: string
-    label: string
+    label: React.ReactNode | string
     isTextarea?: boolean
     isUrl?: boolean
     className?: string
@@ -20,6 +20,7 @@ interface LocalizedInputProps {
     compact?: boolean
     optional?: boolean
     activeLang?: string
+    placeholder?: string
 }
 
 const LANGUAGES = [
@@ -42,7 +43,8 @@ export function LocalizedInput({
     noBorder,
     compact,
     optional = false,
-    activeLang
+    activeLang,
+    placeholder
 }: LocalizedInputProps) {
     const { formState: { errors, isSubmitted }, watch, trigger, setValue } = useFormContext()
     const [internalTab, setInternalTab] = useState("en")
@@ -180,7 +182,7 @@ export function LocalizedInput({
                                                 value={field.value || ""}
                                                 dir={lang.dir}
                                                 className="min-h-[100px]"
-                                                placeholder={`Enter ${label.toLowerCase()} in ${lang.label}...`}
+                                                placeholder={placeholder || `Enter content in ${lang.label}...`}
                                                 onChange={(e) => {
                                                     field.onChange(e)
                                                     // Trigger specific field validation
@@ -192,7 +194,7 @@ export function LocalizedInput({
                                                 {...field}
                                                 value={field.value || ""}
                                                 dir={isUrl ? "ltr" : lang.dir}
-                                                placeholder={`Enter ${label.toLowerCase()} in ${lang.label}...`}
+                                                placeholder={placeholder || `Enter content in ${lang.label}...`}
                                                 onChange={(e) => {
                                                     field.onChange(e)
                                                     trigger(`${name}.${lang.code}`)

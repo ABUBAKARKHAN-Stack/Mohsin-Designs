@@ -3,7 +3,7 @@ import { type SchemaTypeDefinition } from 'sanity'
 import { blockContentType } from './blockContentType'
 import { categoryType } from './categoryType'
 import { postType } from './postType'
-import { localizedString, localizedText } from './objects/localizedStringType'
+import { localizedString, localizedText, localizedArray } from './objects/localizedStringType'
 import { seoType } from './objects/seoType'
 import { heroSectionType } from './document/heroSection'
 import { whatWeDoSectionType } from './document/whatWeDoSection'
@@ -21,6 +21,7 @@ import { aboutPageContentType } from './document/aboutPageContentType'
 import { globalSectionsType } from './document/globalSectionsType'
 import { menuType } from './document/menuType'
 import { menuItemType } from './objects/menuItemType'
+import { locationType } from './locationType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -29,6 +30,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     postType,
     localizedString,
     localizedText,
+    localizedArray,
     localizedUrl,
     sectionHeadingType,
     seoType,
@@ -46,5 +48,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     globalSectionsType,
     menuType,
     menuItemType,
+    locationType,
   ],
 }

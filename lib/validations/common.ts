@@ -18,6 +18,13 @@ export const localizedTextSchema = z.object({
     ar: z.string().optional(),
 });
 
+export const localizedArraySchema = z.object({
+    en: z.array(z.string()).optional().default([]),
+    ur: z.array(z.string()).optional().default([]),
+    es: z.array(z.string()).optional().default([]),
+    ar: z.array(z.string()).optional().default([]),
+});
+
 // For strictly required fields
 export const requiredLocalizedStringSchema = localizedStringSchema.superRefine(
     (data, ctx) => {

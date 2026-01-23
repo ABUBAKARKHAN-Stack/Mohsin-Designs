@@ -84,7 +84,17 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                     ]
                 },
                 { title: "Services", url: "/admin/services", icon: Briefcase },
-                { title: "Blogs", url: "/admin/blogs", icon: FileText },
+                {
+                    title: "Blogs",
+                    url: "/admin/blogs",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "All Blogs", url: "/admin/blogs" },
+                        { title: "Categories", url: "/admin/blogs/categories" },
+                        { title: "Locations", url: "/admin/blogs/locations" },
+                    ]
+                },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
                 { title: "Forms", url: "/admin/forms", icon: Layers },
                 { title: "Global Sections", url: "/admin/global-sections", icon: Layers },
@@ -134,7 +144,17 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                     ]
                 },
                 { title: "Services", url: "/admin/services", icon: Briefcase },
-                { title: "Blogs", url: "/admin/blogs", icon: FileText },
+                {
+                    title: "Blogs",
+                    url: "/admin/blogs",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "All Blogs", url: "/admin/blogs" },
+                        { title: "Categories", url: "/admin/blogs/categories" },
+                        { title: "Locations", url: "/admin/blogs/locations" },
+                    ]
+                },
                 { title: "Portfolio", url: "/admin/portfolio", icon: Image },
                 { title: "Forms", url: "/admin/forms", icon: Layers },
                 { title: "Global Sections", url: "/admin/global-sections", icon: Layers },

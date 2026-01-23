@@ -9,23 +9,46 @@ export const postType = defineType({
   fields: [
     defineField({
       name: 'title',
-      type: 'string',
+      type: 'localizedString',
+      title: 'Title',
+    }),
+    defineField({
+      name: 'description',
+      type: 'localizedText',
+      title: 'Description',
+    }),
+    defineField({
+      name: 'featured',
+      type: 'boolean',
+      title: 'Featured Post',
+      initialValue: false,
     }),
     defineField({
       name: 'slug',
       type: 'slug',
       options: {
-        source: 'title',
+        source: 'title.en',
       },
+    }),
+    defineField({
+      name: 'readTime',
+      type: 'number',
+      title: 'Read Time (minutes)',
     }),
     defineField({
       name: 'author',
       type: 'string',
     }),
     defineField({
+      name: 'tags',
+      type: 'localizedArray',
+      title: 'Tags',
+    }),
+    defineField({
       name: 'location',
-      type: 'string',
-      title: 'Location (City/Country)',
+      type: 'reference',
+      to: { type: 'location' },
+      title: 'Location',
     }),
     defineField({
       name: 'service',
@@ -58,13 +81,20 @@ export const postType = defineType({
     }),
     defineField({
       name: 'body',
-      type: 'blockContent',
+      type: 'object',
+      title: 'Body Content',
+      fields: [
+        defineField({ name: 'en', type: 'blockContent', title: 'English' }),
+        defineField({ name: 'ur', type: 'blockContent', title: 'Urdu' }),
+        defineField({ name: 'es', type: 'blockContent', title: 'Spanish' }),
+        defineField({ name: 'ar', type: 'blockContent', title: 'Arabic' }),
+      ]
     }),
   ],
   preview: {
     select: {
-      title: 'title',
-      author: 'author.name',
+      title: 'title.en',
+      author: 'author',
       media: 'mainImage',
     },
     prepare(selection) {

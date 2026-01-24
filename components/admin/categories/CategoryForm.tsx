@@ -3,25 +3,24 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Save, ArrowLeft } from "lucide-react"
+import { Save, ArrowLeft, Languages } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { createCategory, updateCategory } from "@/app/actions/category"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
-
-const categorySchema = z.object({
-    title: z.string().min(1, "Title is required"),
-    description: z.string().optional(),
-})
-
-type CategoryValues = z.infer<typeof categorySchema>
+import { categorySchema, CategoryValues } from "@/lib/validations/category"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
 
 interface CategoryFormProps {
     initialData?: any
@@ -29,14 +28,15 @@ interface CategoryFormProps {
 
 export function CategoryForm({ initialData }: CategoryFormProps) {
     const [isLoading, setIsLoading] = useState(false)
+    const [selectedLang, setSelectedLang] = useState("en")
     const router = useRouter()
     const isEditing = !!initialData?._id
 
     const form = useForm<CategoryValues>({
         resolver: zodResolver(categorySchema),
         defaultValues: {
-            title: initialData?.title || "",
-            description: initialData?.description || "",
+            title: initialData?.title || {},
+            description: initialData?.description || {},
         }
     })
 
@@ -76,10 +76,29 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
                             <p className="text-muted-foreground text-xs">{isEditing ? "Update category details" : "Create a new category"}</p>
                         </div>
                     </div>
-                    <Button type="submit" disabled={isLoading}>
-                        {isLoading ? <Spinner className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
-                        Save
-                    </Button>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-lg border">
+                            <div className="flex items-center gap-1.5 px-2 text-xs font-medium text-muted-foreground border-r pr-2 uppercase">
+                                <Languages className="h-3.5 w-3.5" />
+                                <span>Language</span>
+                            </div>
+                            <Select value={selectedLang} onValueChange={setSelectedLang}>
+                                <SelectTrigger className="h-8 border-none bg-transparent shadow-none focus:ring-0 min-w-[120px] font-display">
+                                    <SelectValue placeholder="Language" />
+                                </SelectTrigger>
+                                <SelectContent align="end">
+                                    <SelectItem value="en">English (EN)</SelectItem>
+                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
+                                    <SelectItem value="es">Spanish (ES)</SelectItem>
+                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <Button type="submit" disabled={isLoading}>
+                            {isLoading ? <Spinner className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
+                            Save
+                        </Button>
+                    </div>
                 </div>
 
                 <Card>
@@ -87,31 +106,20 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
                         <CardTitle>Category Details</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <FormField
+                        <LocalizedInput
                             control={form.control}
                             name="title"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Title</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="e.g. Design" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Title"
+                            activeLang={selectedLang}
+                            placeholder="e.g. Design"
                         />
-                        <FormField
+                        <LocalizedInput
                             control={form.control}
                             name="description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Description</FormLabel>
-                                    <FormControl>
-                                        <Textarea {...field} placeholder="Optional description..." />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Description"
+                            activeLang={selectedLang}
+                            isTextarea
+                            placeholder="Optional description..."
                         />
                     </CardContent>
                 </Card>

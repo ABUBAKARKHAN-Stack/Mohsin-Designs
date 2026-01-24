@@ -14,13 +14,15 @@ import {
     CheckCircle2,
     Loader2,
     Image as ImageIcon,
-    Check
+    Check,
+    Edit
 } from "lucide-react"
 import Image from "next/image"
 import { uploadMultipleImages, getMediaAssets, deleteMediaAsset, deleteMultipleMediaAssets } from "@/app/actions/mediaActions"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { cn } from "@/lib/utils"
 import { Checkbox } from "@/components/ui/checkbox"
+import { AltTextEditor } from "./AltTextEditor"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -39,6 +41,8 @@ interface MediaAsset {
     originalFilename?: string
     size: number
     _createdAt: string
+    altText?: any
+    caption?: any
     metadata?: {
         dimensions: {
             width: number
@@ -55,6 +59,7 @@ export function MediaLibrary() {
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
     const [selectedIds, setSelectedIds] = useState<string[]>([])
     const [isBulkDeleting, setIsBulkDeleting] = useState(false)
+    const [editingAsset, setEditingAsset] = useState<MediaAsset | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -308,6 +313,25 @@ export function MediaLibrary() {
                                 sizes="(max-width: 768px) 50vw, 16vw"
                             />
 
+                            {/* Alt Text Status Badge */}
+                            <div
+                                className={cn(
+                                    "absolute top-2 left-2 z-10 transition-opacity duration-200",
+                                    selectedIds.includes(asset._id) ? "opacity-0" : "opacity-100"
+                                )}
+                            >
+                                {asset.altText?.en || asset.altText?.ur || asset.altText?.es || asset.altText?.ar ? (
+                                    <div className="bg-green-500/90 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
+                                        <Check className="h-3 w-3" />
+                                        ALT
+                                    </div>
+                                ) : (
+                                    <div className="bg-orange-500/90 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                                        NO ALT
+                                    </div>
+                                )}
+                            </div>
+
                             {/* Checkbox overlay */}
                             <div
                                 className={cn(
@@ -353,6 +377,17 @@ export function MediaLibrary() {
                                 </AlertDialog>
                                 <Button
                                     size="icon"
+                                    variant="default"
+                                    className="h-8 w-8"
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        setEditingAsset(asset)
+                                    }}
+                                >
+                                    <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                    size="icon"
                                     variant="secondary"
                                     className="h-8 w-8"
                                     onClick={(e) => e.stopPropagation()}
@@ -364,7 +399,7 @@ export function MediaLibrary() {
                                 </Button>
                             </div>
                             <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] p-1 truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                                {asset.originalFilename}
+                                {asset.altText?.en || asset.originalFilename || "No description"}
                             </div>
                         </Card>
                     ))}
@@ -382,6 +417,7 @@ export function MediaLibrary() {
                                 </th>
                                 <th className="p-3 text-left font-medium">Preview</th>
                                 <th className="p-3 text-left font-medium">Name</th>
+                                <th className="p-3 text-left font-medium">Alt Text</th>
                                 <th className="p-3 text-left font-medium">Size</th>
                                 <th className="p-3 text-left font-medium">Date</th>
                                 <th className="p-3 text-right font-medium">Action</th>
@@ -409,9 +445,52 @@ export function MediaLibrary() {
                                         </div>
                                     </td>
                                     <td className="p-3 font-medium truncate max-w-xs">{asset.originalFilename}</td>
+                                    <td className="p-3">
+                                        <div className="flex flex-col gap-2">
+                                            {/* Overall Status */}
+                                            {asset.altText?.en || asset.altText?.ur || asset.altText?.es || asset.altText?.ar ? (
+                                                <div className="bg-green-500/20 text-green-700 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-md flex items-center gap-1 w-fit">
+                                                    <Check className="h-3 w-3" />
+                                                    Has Alt Text
+                                                </div>
+                                            ) : (
+                                                <div className="bg-orange-500/20 text-orange-700 dark:text-orange-400 text-xs font-semibold px-2 py-1 rounded-md w-fit">
+                                                    Missing Alt Text
+                                                </div>
+                                            )}
+
+                                            {/* Locale Status */}
+                                            <div className="flex flex-wrap gap-1">
+                                                {[
+                                                    { code: 'en', label: 'EN' },
+                                                    { code: 'ur', label: 'UR' },
+                                                    { code: 'es', label: 'ES' },
+                                                    { code: 'ar', label: 'AR' }
+                                                ].map(locale => (
+                                                    <span
+                                                        key={locale.code}
+                                                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${asset.altText?.[locale.code as keyof typeof asset.altText]
+                                                                ? 'bg-green-500/30 text-green-700 dark:text-green-300'
+                                                                : 'bg-red-500/30 text-red-700 dark:text-red-300'
+                                                            }`}
+                                                    >
+                                                        {locale.label}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td className="p-3 text-muted-foreground">{formatBytes(asset.size)}</td>
                                     <td className="p-3 text-muted-foreground">{new Date(asset._createdAt).toLocaleDateString()}</td>
-                                    <td className="p-3 text-right" onClick={(e) => e.stopPropagation()}>
+                                    <td className="p-3 text-right flex gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            className="h-8 w-8"
+                                            onClick={() => setEditingAsset(asset)}
+                                        >
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
                                         <Button
                                             size="icon"
                                             variant="ghost"
@@ -426,6 +505,16 @@ export function MediaLibrary() {
                         </tbody>
                     </table>
                 </div>
+            )}
+
+            {/* Alt Text Editor Modal */}
+            {editingAsset && (
+                <AltTextEditor
+                    isOpen={!!editingAsset}
+                    onClose={() => setEditingAsset(null)}
+                    asset={editingAsset}
+                    onUpdate={loadAssets}
+                />
             )}
         </div>
     )

@@ -1,26 +1,46 @@
+export interface PortfolioPageContentData {
+    hero: {
+        title: string;
+        subtitle: string;
+        description: string;
+    };
+    portfolioList: {
+        projects: Project[];
+    };
+    cta: {
+        sectionHeading?: {
+            eyebrow?: string;
+            title: string;
+            description?: string;
+        };
+        form: any;
+    };
+}
+
+export interface Project {
+    _id: string;
+    title: string;
+    slug: string;
+    category: string;
+    description: string;
+    image: any;
+}
+
 export type FormField = {
     _key?: string;
     fieldType: string;
     fieldName: string;
-    label: { en: string; ur: string; es: string; ar: string };
-    placeholder?: { en: string; ur: string; es: string; ar: string };
+    label: string | { [key: string]: string };
+    placeholder?: string | { [key: string]: string };
     required: boolean;
-    validation?: {
-        minLength?: number;
-        maxLength?: number;
-        pattern?: string;
-        errorMessage?: { en: string; ur: string; es: string; ar: string };
-    };
-    options?: Array<{
-        label: { en: string; ur: string; es: string; ar: string };
-        value: string;
-    }>;
+    validation?: string;
+    options?: { label: string | { [key: string]: string }; value: string }[];
 };
 
-export type FormDataValues = {
+export type FormData = {
+    _id: string;
     name: string;
-    description: string;
+    submitButtonText: string | { [key: string]: string };
+    successMessage: string | { [key: string]: string };
     fields: FormField[];
-    submitButtonText: { en: string; ur: string; es: string; ar: string };
-    successMessage: { en: string; ur: string; es: string; ar: string };
 };

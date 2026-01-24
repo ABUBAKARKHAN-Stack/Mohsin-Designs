@@ -48,7 +48,9 @@ export async function getMediaAssets() {
             },
             originalFilename,
             size,
-            _createdAt
+            _createdAt,
+            altText,
+            caption
         }`)
         return { success: true, assets }
     } catch (error: any) {
@@ -109,6 +111,21 @@ export async function deleteMultipleMediaAssets(ids: string[]) {
         }
     } catch (error: any) {
         console.error("Bulk delete failed:", error)
+        return { success: false, error: error.message }
+    }
+}
+
+export async function updateImageAltText(id: string, altText: any, caption?: any) {
+    try {
+        const updates: any = { altText }
+        if (caption !== undefined) {
+            updates.caption = caption
+        }
+
+        await adminClient.patch(id).set(updates).commit()
+        return { success: true }
+    } catch (error: any) {
+        console.error("Update alt text failed:", error)
         return { success: false, error: error.message }
     }
 }

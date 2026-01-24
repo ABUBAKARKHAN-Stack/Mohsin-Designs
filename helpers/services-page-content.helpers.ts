@@ -1,6 +1,7 @@
 import { sanityFetch } from "@/sanity/lib/live";
+import { defineQuery } from "next-sanity";
 
-const SERVICES_PAGE_CONTENT_QUERY_BY_LOCALE = `{
+export const SERVICES_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "servicesPageContent"][0] {
   "hero": {
     "title": hero.title[$lang],
     "subtitle": hero.subtitle[$lang],
@@ -38,18 +39,18 @@ const SERVICES_PAGE_CONTENT_QUERY_BY_LOCALE = `{
       iconName
     }
   }
-}`;
+}`);
 
 export async function getServicesPageContent(lang: string) {
-    try {
-        const { data } = await sanityFetch({
-            query: `*[_type == "servicesPageContent"][0] ${SERVICES_PAGE_CONTENT_QUERY_BY_LOCALE}`,
-            params: { lang },
-            perspective: "published"
-        });
-        return data;
-    } catch (error) {
-        console.error("Failed to fetch services page content:", error);
-        throw error;
-    }
+  try {
+    const { data } = await sanityFetch({
+      query: SERVICES_PAGE_CONTENT_QUERY,
+      params: { lang },
+      perspective: "published"
+    });
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch services page content:", error);
+    throw error;
+  }
 }

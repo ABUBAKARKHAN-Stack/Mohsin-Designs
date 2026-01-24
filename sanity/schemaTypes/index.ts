@@ -19,9 +19,13 @@ import { contactSubmissionType } from './document/contactSubmissionType'
 import { formType } from './document/formType'
 import { aboutPageContentType } from './document/aboutPageContentType'
 import { globalSectionsType } from './document/globalSectionsType'
+import { portfolioPageContentType } from './document/portfolioPageContentType'
+import { blogPageContentType } from './document/blogPageContentType'
 import { menuType } from './document/menuType'
 import { menuItemType } from './objects/menuItemType'
 import { locationType } from './locationType'
+import { projectType } from './projectType'
+import { imageAssetType } from './imageAssetType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -49,5 +53,9 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     menuType,
     menuItemType,
     locationType,
+    projectType,
+    portfolioPageContentType,
+    blogPageContentType,
+    imageAssetType,
   ],
 }

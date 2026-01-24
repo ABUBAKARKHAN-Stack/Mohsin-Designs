@@ -34,7 +34,7 @@ export async function getCategoryById(id: string) {
     }
 }
 
-export async function createCategory(data: { title: string; description?: string }) {
+export async function createCategory(data: { title: any; description?: any }) {
     try {
         const doc = {
             _type: 'category',
@@ -42,7 +42,7 @@ export async function createCategory(data: { title: string; description?: string
             description: data.description,
             slug: {
                 _type: 'slug',
-                current: data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+                current: data.title.en?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || 'untitled'
             }
         }
 
@@ -55,14 +55,14 @@ export async function createCategory(data: { title: string; description?: string
     }
 }
 
-export async function updateCategory(id: string, data: { title: string; description?: string }) {
+export async function updateCategory(id: string, data: { title: any; description?: any }) {
     try {
         const doc = {
             title: data.title,
             description: data.description,
             slug: {
                 _type: 'slug',
-                current: data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+                current: data.title.en?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || 'untitled'
             }
         }
 

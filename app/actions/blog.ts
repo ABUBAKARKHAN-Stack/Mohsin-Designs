@@ -148,7 +148,7 @@ export async function getPostForView(id: string) {
 export async function getBlogFormOptions() {
     try {
         const servicesQuery = `*[_type == "service"] { _id, "title": title.en }`
-        const categoriesQuery = `*[_type == "category"] { _id, title }`
+        const categoriesQuery = `*[_type == "category"] { _id, "title": title.en }`
         const locationsQuery = `*[_type == "location"] { _id, title }`
 
         const [services, categories, locations] = await Promise.all([

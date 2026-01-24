@@ -1,6 +1,7 @@
 import { sanityFetch } from "@/sanity/lib/live";
+import { defineQuery } from "next-sanity";
 
-const LANDING_PAGE_CONTENT_QUERY_BY_LOCALE = `{
+export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "landingPageContent"][0] {
   "hero": {
     "badge": hero.badge[$lang],
     "headingLines": hero.headingLines[]{
@@ -204,16 +205,16 @@ const LANDING_PAGE_CONTENT_QUERY_BY_LOCALE = `{
     "benefits": cta.benefits[]{"text": text[$lang]},
     "formId": cta.formId._ref
   }
-}`;
+}`);
 
 export async function getLandingPageContent(lang: string) {
   try {
     const { data } = await sanityFetch({
-      query: `*[_type == "landingPageContent"][0] ${LANDING_PAGE_CONTENT_QUERY_BY_LOCALE}`,
+      query: LANDING_PAGE_CONTENT_QUERY,
       params: { lang },
       perspective: "published"
     });
-    return data;
+    return data as any;
   } catch (error) {
     console.error("Failed to fetch landing page content:", error);
     throw error;

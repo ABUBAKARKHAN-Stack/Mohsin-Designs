@@ -7,12 +7,30 @@ export const metadata: Metadata = {
   title: "Our Work"
 }
 
-const Portfolio = () => {
+import { getPortfolioPageContent } from "@/helpers/portfolio-page-content.helpers";
+import PageCTA from "@/components/sections/shared/PageCTA";
+
+type Props = {
+  params: Promise<LanguageType>
+}
+
+const Portfolio = async ({ params }: Props) => {
+  const { lang } = await params;
+  const pageContent = await getPortfolioPageContent(lang);
+
+  if (!pageContent) {
+    return null; // Or show error
+  }
 
   return (
     <PageWrapper>
-      <PortfolioPageHero />
-      <MainContent />
+      <PortfolioPageHero
+        title={pageContent.hero.title}
+        subtitle={pageContent.hero.subtitle}
+        description={pageContent.hero.description}
+      />
+      <MainContent projects={pageContent.portfolioList.projects} />
+      <PageCTA cta={pageContent.cta} />
     </PageWrapper>
   );
 };

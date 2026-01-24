@@ -9,7 +9,7 @@ export const categoryType = defineType({
   fields: [
     defineField({
       name: 'title',
-      type: 'string',
+      type: 'localizedString',
     }),
     defineField({
       name: 'slug',
@@ -20,7 +20,7 @@ export const categoryType = defineType({
     }),
     defineField({
       name: 'description',
-      type: 'text',
+      type: 'localizedText',
     }),
   ],
 })

@@ -1,6 +1,7 @@
 import { sanityFetch } from "@/sanity/lib/live";
+import { defineQuery } from "next-sanity";
 
-const ABOUT_PAGE_CONTENT_QUERY_BY_LOCALE = `{
+export const ABOUT_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "aboutPageContent"][0] {
   "hero": {
     "title": hero.title[$lang],
     "subtitle": hero.subtitle[$lang],
@@ -78,12 +79,12 @@ const ABOUT_PAGE_CONTENT_QUERY_BY_LOCALE = `{
     "quote": culture.quote[$lang],
     "quoteHighlight": culture.quoteHighlight[$lang]
   }
-}`;
+}`);
 
 export async function getAboutPageContent(lang: string) {
   try {
     const { data } = await sanityFetch({
-      query: `*[_type == "aboutPageContent"][0] ${ABOUT_PAGE_CONTENT_QUERY_BY_LOCALE}`,
+      query: ABOUT_PAGE_CONTENT_QUERY,
       params: { lang },
       perspective: "published"
     });

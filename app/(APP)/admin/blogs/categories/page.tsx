@@ -46,9 +46,9 @@ export default async function CategoriesPage() {
                                     <TableRow key={category._id}>
                                         <TableCell className="font-medium flex items-center gap-2">
                                             <Tag className="h-4 w-4 text-muted-foreground" />
-                                            {category.title}
+                                            {category.title?.en || "Untitled"}
                                         </TableCell>
-                                        <TableCell>{category.description || "-"}</TableCell>
+                                        <TableCell>{category.description?.en || "-"}</TableCell>
                                         <TableCell>
                                             <CategoryActions id={category._id} />
                                         </TableCell>

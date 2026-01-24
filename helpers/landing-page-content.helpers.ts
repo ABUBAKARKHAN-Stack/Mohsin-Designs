@@ -105,7 +105,8 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "landingPageCo
     "brandLogos": trustedByBrands.brandLogos[]{
       "asset": asset->{
         _id,
-        url
+        url,
+        "altText": altText[$lang]
       },
       "alt": alt[$lang]
     }
@@ -169,7 +170,8 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "landingPageCo
       "company": company[$lang],
       "avatar": avatar.asset->{
         _id,
-        url
+        url,
+        "altText": altText[$lang]
       }
     }
   },
@@ -184,7 +186,8 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "landingPageCo
       "role": leadership.founder.role[$lang],
       "image": leadership.founder.image.asset->{
         _id,
-        url
+        url,
+        "altText": altText[$lang]
       },
       "socialLinks": leadership.founder.socialLinks[]{
         platform,

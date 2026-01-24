@@ -15,7 +15,8 @@ import {
     Loader2,
     Image as ImageIcon,
     Check,
-    Edit
+    Edit,
+    Download
 } from "lucide-react"
 import Image from "next/image"
 import { uploadMultipleImages, getMediaAssets, deleteMediaAsset, deleteMultipleMediaAssets } from "@/app/actions/mediaActions"
@@ -171,6 +172,27 @@ export function MediaLibrary() {
         const sizes = ['Bytes', 'KB', 'MB', 'GB']
         const i = Math.floor(Math.log(bytes) / Math.log(k))
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+    }
+
+    async function handleDownload(url: string, filename?: string) {
+        try {
+            const response = await fetch(url)
+            const blob = await response.blob()
+            const blobUrl = window.URL.createObjectURL(blob)
+
+            const link = document.createElement('a')
+            link.href = blobUrl
+            link.download = filename || 'image'
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+
+            // Clean up the blob URL
+            window.URL.revokeObjectURL(blobUrl)
+        } catch (error) {
+            errorToast("Failed to download image")
+            console.error("Download error:", error)
+        }
     }
 
     return (
@@ -390,6 +412,17 @@ export function MediaLibrary() {
                                     size="icon"
                                     variant="secondary"
                                     className="h-8 w-8"
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleDownload(asset.url, asset.originalFilename)
+                                    }}
+                                >
+                                    <Download className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                    size="icon"
+                                    variant="secondary"
+                                    className="h-8 w-8"
                                     onClick={(e) => e.stopPropagation()}
                                     asChild
                                 >
@@ -470,8 +503,8 @@ export function MediaLibrary() {
                                                     <span
                                                         key={locale.code}
                                                         className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${asset.altText?.[locale.code as keyof typeof asset.altText]
-                                                                ? 'bg-green-500/30 text-green-700 dark:text-green-300'
-                                                                : 'bg-red-500/30 text-red-700 dark:text-red-300'
+                                                            ? 'bg-green-500/30 text-green-700 dark:text-green-300'
+                                                            : 'bg-red-500/30 text-red-700 dark:text-red-300'
                                                             }`}
                                                     >
                                                         {locale.label}
@@ -490,6 +523,14 @@ export function MediaLibrary() {
                                             onClick={() => setEditingAsset(asset)}
                                         >
                                             <Edit className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            className="h-8 w-8"
+                                            onClick={() => handleDownload(asset.url, asset.originalFilename)}
+                                        >
+                                            <Download className="h-4 w-4" />
                                         </Button>
                                         <Button
                                             size="icon"

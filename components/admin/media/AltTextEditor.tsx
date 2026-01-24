@@ -49,11 +49,15 @@ export function AltTextEditor({ isOpen, onClose, asset, onUpdate }: AltTextEdito
     })
 
     async function onSubmit(values: any) {
-        // Validate that at least one language has alt text
-        const hasAnyAltText = values.altText?.en || values.altText?.ur || values.altText?.es || values.altText?.ar
+        // Validate that ALL languages have alt text
+        const missingLanguages = []
+        if (!values.altText?.en) missingLanguages.push('English')
+        if (!values.altText?.ur) missingLanguages.push('Urdu')
+        if (!values.altText?.es) missingLanguages.push('Spanish')
+        if (!values.altText?.ar) missingLanguages.push('Arabic')
 
-        if (!hasAnyAltText) {
-            errorToast("Please add alt text for at least one language")
+        if (missingLanguages.length > 0) {
+            errorToast(`Missing alt text for: ${missingLanguages.join(', ')}`)
             return
         }
 
@@ -140,9 +144,9 @@ export function AltTextEditor({ isOpen, onClose, asset, onUpdate }: AltTextEdito
                                     )
                                 })}
                             </div>
-                            {!form.watch('altText.en') && !form.watch('altText.ur') && !form.watch('altText.es') && !form.watch('altText.ar') && (
+                            {(!form.watch('altText.en') || !form.watch('altText.ur') || !form.watch('altText.es') || !form.watch('altText.ar')) && (
                                 <p className="text-xs text-destructive mt-2 font-medium">
-                                    ⚠️ At least one language is required for accessibility
+                                    ⚠️ All 4 languages are required for accessibility
                                 </p>
                             )}
                         </div>

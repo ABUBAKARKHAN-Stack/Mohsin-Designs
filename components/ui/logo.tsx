@@ -12,13 +12,13 @@ const Logo = ({ className = "", ...props }: LogoProps) => {
     const { settings } = useSiteSettings()
 
     // Use dynamic logo from settings, or fallback to default
-    const logoSrc = settings?.logo || "/assets/logo.webp"
+    const logoSrc = settings?.logo?.url || "/assets/logo.webp"
     const appName = settings?.siteName || APP_NAME
 
     return (
         <Image
             src={logoSrc}
-            alt={appName}
+            alt={settings?.logo?.altText || appName}
             height={50}
             width={50}
             {...props}

@@ -14,7 +14,11 @@ export const PORTFOLIO_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "portfolioPa
       "title": title[$lang],
       "slug": slug.current,
       "category": category[$lang],
-      "image": mainImage.asset._ref,
+      "image": mainImage.asset->{
+        _id,
+        url,
+        "altText": altText[$lang]
+      },
       "description": description[$lang]
     }
   },

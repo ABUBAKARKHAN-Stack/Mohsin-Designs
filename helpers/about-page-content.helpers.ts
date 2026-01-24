@@ -15,7 +15,8 @@ export const ABOUT_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "aboutPageConten
     "quote": intro.quote[$lang],
     "mainImage": intro.mainImage.asset->{
       _id,
-      url
+      url,
+      "altText": altText[$lang]
     },
     "sinceYear": intro.sinceYear
   },

@@ -11,10 +11,9 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { getMediaAssets, uploadMultipleImages } from "@/app/actions/mediaActions"
-import { Plus, Check, Search, ImageIcon, Loader2 } from "lucide-react"
+import { Plus, Search, ImageIcon, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
-import { cn } from "@/lib/utils"
 import { errorToast } from "@/lib/toastNotifications"
 
 interface MediaAsset {

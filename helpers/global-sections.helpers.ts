@@ -1,7 +1,7 @@
 import { sanityFetch } from "@/sanity/lib/live";
 
 export async function getGlobalSections(lang: string) {
-    const query = `*[_type == "globalSections" && _id == "globalSections"][0]{
+  const query = `*[_type == "globalSections" && _id == "globalSections"][0]{
     stats {
       projectsDelivered {
         value,
@@ -91,7 +91,8 @@ export async function getGlobalSections(lang: string) {
         "role": role.${lang},
         image {
           "url": asset->url,
-          "_id": asset->_id
+          "_id": asset->_id,
+          "altText": asset->altText.${lang}
         },
         socialLinks[] {
           _key,
@@ -119,11 +120,11 @@ export async function getGlobalSections(lang: string) {
     }
   }`;
 
-    try {
-        const { data } = await sanityFetch({ query });
-        return data;
-    } catch (error) {
-        console.error("Error fetching global sections:", error);
-        return null;
-    }
+  try {
+    const { data } = await sanityFetch({ query });
+    return data;
+  } catch (error) {
+    console.error("Error fetching global sections:", error);
+    return null;
+  }
 }

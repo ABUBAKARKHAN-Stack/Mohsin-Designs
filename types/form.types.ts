@@ -1,3 +1,5 @@
+import { SanityImageWithAlt } from './image.types';
+
 export interface PortfolioPageContentData {
     hero: {
         title: string;
@@ -23,7 +25,7 @@ export interface Project {
     slug: string;
     category: string;
     description: string;
-    image: any;
+    image: SanityImageWithAlt;
 }
 
 export type FormField = {

@@ -90,7 +90,7 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
 
     const formControl = form.control as any
 
-    async function onSubmit(values: SiteSettingsValues) {
+    async function onSubmit(values: SiteSettingsValues) {        
 
         setIsLoading(true)
         try {
@@ -243,6 +243,8 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                         value={form.watch('logo') as any}
                                         label="Site Logo"
                                         onChange={(asset) => {
+                                            console.log(asset);
+                                            
                                             if (!asset) {
                                                 form.setValue('logo', null as any)
                                                 return

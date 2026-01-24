@@ -3,8 +3,16 @@ import { sanityFetch } from "@/sanity/lib/live";
 const SITE_SETTINGS_QUERY_BY_LOCALE = `{
   "siteName": siteName[$lang],
   "tagline": tagline[$lang],
-  "logo": logo.asset->url,
-  "favicon": favicon.asset->url,
+  "logo": logo.asset->{
+    _id,
+    url,
+    "altText": altText[$lang]
+  },
+  "favicon": favicon.asset->{
+    _id,
+    url,
+    "altText": altText[$lang]
+  },
   "seo": {
     "metaTitle": seo.metaTitle[$lang],
     "metaDescription": seo.metaDescription[$lang],
@@ -118,8 +126,14 @@ export type MenuData = {
 export type SiteSettingsData = {
     siteName: string;
     tagline: string;
-    logo?: string;
-    favicon?: string;
+    logo?: {
+        url: string;
+        altText?: string;
+    };
+    favicon?: {
+        url: string;
+        altText?: string;
+    };
     seo: {
         metaTitle: string;
         metaDescription: string;

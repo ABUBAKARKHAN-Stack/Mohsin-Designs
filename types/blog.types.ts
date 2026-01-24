@@ -1,3 +1,5 @@
+import { SanityImageWithAlt } from './image.types';
+
 export interface BlogPageContentData {
     hero: {
         title: string;
@@ -25,7 +27,7 @@ export interface BlogPost {
     categories: string[];
     author: string;
     date: string;
-    image: any;
+    image: SanityImageWithAlt;
     readTime: number;
     tags?: string[];
     featured?: boolean;

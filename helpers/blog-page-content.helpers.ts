@@ -17,7 +17,11 @@ export const BLOG_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "blogPageContent"
       "categories": categories[]->title[$lang],
       author,
       "date": _createdAt,
-      "image": mainImage.asset._ref,
+      "image": mainImage.asset->{
+        _id,
+        url,
+        "altText": altText[$lang]
+      },
       "readTime": readTime,
       "tags": tags[$lang],
       "featured": featured,

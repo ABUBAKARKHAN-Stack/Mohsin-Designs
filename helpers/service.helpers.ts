@@ -7,9 +7,13 @@ const SERVICE_QUERY_BY_LOCALE = `{
   "subtitle": subtitle[$lang],
   "description":description[$lang],
   "slug": slug.current,
-  heroImage{
-    "alt": alt[$lang],
-    "source": asset._ref
+  heroImage {
+    "asset": asset->{
+      _id,
+      url,
+      "altText": altText[$lang]
+    },
+    "alt": alt[$lang]
   },
 
   // Intro Section
@@ -132,11 +136,15 @@ const SERVICE_QUERY_LIGHT_WEIGHT_BY_LOCALE = `{
 const SERVICE_SEO_QUERY_BY_LOCALE = `{
   "slug": slug.current,
 
-   heroImage{
-    "alt": alt[$lang],
-      "source": asset._ref
+  heroImage {
+    "asset": asset->{
+      _id,
+      url,
+      "altText": altText[$lang]
     },
-   "seo": seo{
+    "alt": alt[$lang]
+  },
+  "seo": seo{
     "metaTitle": metaTitle[$lang],
     "metaDescription": metaDescription[$lang],
     "keywords": keywords[][$lang],

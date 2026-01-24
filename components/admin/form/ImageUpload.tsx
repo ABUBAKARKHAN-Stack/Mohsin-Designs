@@ -17,8 +17,9 @@ interface ImageUploadProps {
         url?: string
         asset?: {
             _ref?: string
-            url?: string
+            url?: string;
         }
+        altText: any;
     }
     onChange: (value: any) => void
     label: string

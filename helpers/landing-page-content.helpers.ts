@@ -108,7 +108,6 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "landingPageCo
         url,
         "altText": altText[$lang]
       },
-      "alt": alt[$lang]
     }
   },
   "ourApproach": {

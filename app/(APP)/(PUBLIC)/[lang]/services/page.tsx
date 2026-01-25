@@ -25,11 +25,19 @@ const ServicesPage = async ({
 }: Props) => {
 
     const { lang } = await params;
-    const cta = await getServicesCTA(lang);
-    const pageContent = await getServicesPageContent(lang);
+  
+    const [ctaResult, pageContentResult] = await Promise.allSettled([
+        getServicesCTA(lang),
+        getServicesPageContent(lang)
+    ]);
+
+
+    const cta = ctaResult.status === "fulfilled" ? ctaResult.value : null;
+    const pageContent = pageContentResult.status === "fulfilled" ? pageContentResult.value : null;
+
 
     // Provide fallback if content not found
-    if (!pageContent) {
+    if (!pageContent || !cta) {
         throw new Error("Services page content not found");
     }
 

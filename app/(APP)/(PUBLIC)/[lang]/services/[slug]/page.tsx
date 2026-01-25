@@ -107,7 +107,6 @@ const ServiceDetailPage = async ({
     const service = await getServiceByLocale(lang, slug);
      const cta = await getServicesCTA(lang)
 
-
     if (!service) {
         return notFound();
     }

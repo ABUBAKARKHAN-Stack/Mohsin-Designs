@@ -55,7 +55,7 @@ const TrustedByBrands = () => {
             <TrustedByBrandsCard
               key={brand.asset?._id || i}
               brand={{
-                name: brand.alt || "Brand",
+                altText: brand.asset?.altText || "Brand",
                 logo: brand.asset?.url || ""
               }}
             />
@@ -68,7 +68,7 @@ const TrustedByBrands = () => {
             <TrustedByBrandsCard
               key={brand.asset?._id || i}
               brand={{
-                name: brand.alt || "Brand",
+                altText: brand.asset?.altText || "Brand",
                 logo: brand.asset?.url || ""
               }}
             />

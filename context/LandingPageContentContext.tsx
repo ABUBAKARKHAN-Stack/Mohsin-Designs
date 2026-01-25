@@ -101,8 +101,8 @@ export type LandingPageContentData = {
             asset?: {
                 _id: string;
                 url: string;
+                altText?: string;
             };
-            alt?: string;
         }>;
     };
     ourApproach?: {

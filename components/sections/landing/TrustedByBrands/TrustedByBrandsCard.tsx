@@ -4,7 +4,7 @@ import Image from "next/image";
 
 interface MarqueeRowProps {
     brand: {
-        name: string;
+        altText: string;
         logo: string;
     };
 }
@@ -20,7 +20,7 @@ const TrustedByBrandsCard = ({
             >
                 <Image
                     src={brand.logo}
-                    alt={brand.name}
+                    alt={brand.altText}
                     fill
                     className="max-h-full max-w-full object-contain pointer-events-none select-none"
                     draggable={false}

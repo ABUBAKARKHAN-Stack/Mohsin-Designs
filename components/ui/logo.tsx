@@ -1,3 +1,4 @@
+"use client"
 import { APP_NAME } from '@/constants/app.constants'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { cn } from '@/lib/utils'

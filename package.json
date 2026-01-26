@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@portabletext/editor": "^4.3.2",
+    "@portabletext/block-tools": "^4.1.11",
+    "@portabletext/editor": "^3.3.16",
     "@portabletext/react": "^6.0.2",
+    "@portabletext/sanity-bridge": "^1.2.14",
     "@portabletext/types": "^4.0.1",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",

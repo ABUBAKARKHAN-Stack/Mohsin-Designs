@@ -20,6 +20,7 @@ const Blog = async ({ params }: Props) => {
   if (!pageContent) {
     return null
   }
+  
 
   return (
     <PageWrapper>

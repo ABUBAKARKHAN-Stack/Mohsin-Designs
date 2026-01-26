@@ -12,12 +12,12 @@ import Link from "next/link";
 import { FormEditor } from "@/components/admin/form/FormEditor";
 import { successToast, errorToast } from "@/lib/toastNotifications";
 import { createForm } from "@/app/actions/formActions";
-import { FormDataValues, FormField } from "@/types/form.types";
+import {  FormField } from "@/types/form.types";
 
 export default function AddFormPage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState<FormDataValues>({
+    const [formData, setFormData] = useState({
         name: "",
         description: "",
         fields: [] as FormField[],

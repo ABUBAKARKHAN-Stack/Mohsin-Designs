@@ -1,6 +1,6 @@
 import { BlogPost } from "@/types/blog.types";
 
-const blogPosts: BlogPost[] = [
+const blogPosts: any[] = [
     {
         _id: "1",
         title: "The Future of Digital Branding in 2025",

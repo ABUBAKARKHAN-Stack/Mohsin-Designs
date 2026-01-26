@@ -19,6 +19,7 @@ const ur = {
         countries: "ممالک",
         viewAllProjects: "تمام پروجیکٹس دیکھیں",
         step: "مرحلہ",
+        readTime: "منٹ کی پڑھائی",
         industries: "صنعتیں",
         agencyStructure: "ایجنسی کا ڈھانچہ",
         areasCta: {

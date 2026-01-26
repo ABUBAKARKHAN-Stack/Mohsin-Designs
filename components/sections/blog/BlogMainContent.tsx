@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { ArrowUpRight, Clock, User } from "lucide-react"
 import { ContainerLayout } from "@/components/layout"
 import { urlFor } from "@/sanity/lib/image"
 import Link from "next/link"
+import { useParams } from "next/navigation"
 
 interface BlogPost {
     _id: string
@@ -26,6 +27,7 @@ interface BlogMainContentProps {
 
 export default function BlogMainContent({ posts }: BlogMainContentProps) {
     const [activeCategory, setActiveCategory] = useState("All")
+    const { lang }: LanguageType = useParams()
 
     const categories = ["All", ...new Set(posts.flatMap(post => post.categories || []).filter(Boolean))]
 
@@ -68,12 +70,12 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className="group cursor-pointer mb-24"
                     >
-                        <Link href={`/blog/${featuredPost.slug}`} className="grid lg:grid-cols-2 gap-8 items-center">
-                            <div className="aspect-[16/10] overflow-hidden relative">
+                        <Link href={`/${lang}/blog/${featuredPost.slug}`} className="grid lg:grid-cols-2 gap-8 items-center">
+                            <div className="aspect-16/10 overflow-hidden relative">
                                 <img
                                     src={urlFor(featuredPost.image).url()}
                                     alt={featuredPost.title}
-                                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                                    className="w-full h-full object-cover  group-hover:scale-105 transition-all duration-700"
                                 />
                                 <div className="absolute top-4 left-4 px-4 py-1 bg-accent text-accent-foreground text-xs uppercase tracking-widest">
                                     Featured
@@ -83,7 +85,7 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                 <div className="flex items-center gap-4 text-sm text-muted-foreground uppercase tracking-widest mb-4">
                                     <span className="text-accent">{featuredPost.categories?.[0]}</span>
                                     <span>·</span>
-                                    <span>{new Date(featuredPost.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                                    <span>{new Date(featuredPost.date).toLocaleDateString(lang, { month: 'short', year: 'numeric' })}</span>
                                 </div>
                                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-tight group-hover:text-accent transition-colors mb-6">
                                     {featuredPost.title}
@@ -127,18 +129,21 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                             transition={{ duration: 0.6, delay: i * 0.1 }}
                             className="group cursor-pointer"
                         >
-                            <Link href={`/blog/${post.slug}`}>
-                                <div className="aspect-[16/12] overflow-hidden mb-6">
+                            <Link href={`/${lang}/blog/${post.slug}`}>
+                                <div className="aspect-16/12 overflow-hidden mb-6">
                                     <img
                                         src={urlFor(post.image).url()}
                                         alt={post.title}
-                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                                        className="w-full h-full object-cover   group-hover:scale-105 transition-all duration-700"
                                     />
                                 </div>
                                 <div className="flex items-center gap-4 text-xs text-muted-foreground uppercase tracking-widest mb-3">
                                     <span className="text-accent">{post.categories?.[0]}</span>
                                     <span>·</span>
-                                    <span>{new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                                    <span>{new Date(post.date).toLocaleDateString(
+                                        lang,
+                                        { month: 'short', year: 'numeric' }
+                                    )}</span>
                                 </div>
                                 <h3 className="text-xl font-display font-bold tracking-tight group-hover:text-accent transition-colors mb-3 line-clamp-2">
                                     {post.title}

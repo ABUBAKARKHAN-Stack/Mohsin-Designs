@@ -9,15 +9,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Trash2, GripVertical } from "lucide-react";
 import { ControlledLocalizedInput } from "./ControlledLocalizedInput";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FormField } from "@/types/form.types";
+import { FormField, LocalizedString } from "@/types/form.types";
 
 type FormEditorProps = {
     fields: FormField[];
     onChange: (fields: FormField[]) => void;
-    submitButtonText: { en: string; ur: string; es: string; ar: string };
-    onSubmitButtonTextChange: (text: { en: string; ur: string; es: string; ar: string }) => void;
-    successMessage: { en: string; ur: string; es: string; ar: string };
-    onSuccessMessageChange: (message: { en: string; ur: string; es: string; ar: string }) => void;
+    submitButtonText: LocalizedString;
+    onSubmitButtonTextChange: (text: LocalizedString) => void;
+    successMessage: LocalizedString;
+    onSuccessMessageChange: (message: LocalizedString) => void;
 };
 
 export function FormEditor({
@@ -91,7 +91,7 @@ export function FormEditor({
                                     <div className="flex items-center gap-2">
                                         <GripVertical className="w-4 h-4 text-muted-foreground cursor-move" />
                                         <h4 className="font-medium">
-                                            {field.label.en || `Field ${index + 1}`}
+                                            {field.label?.en || `Field ${index + 1}`}
                                         </h4>
                                         <span className="text-sm text-muted-foreground">
                                             ({field.fieldType})

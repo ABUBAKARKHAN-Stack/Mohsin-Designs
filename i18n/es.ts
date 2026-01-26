@@ -19,6 +19,7 @@ const es = {
         countries: "Países",
         viewAllProjects: "Ver todos los proyectos",
         step: "Paso",
+        readTime: "Min de lectura",
         industries: "Industrias",
         agencyStructure: "Estructura de la agencia",
         areasCta: {

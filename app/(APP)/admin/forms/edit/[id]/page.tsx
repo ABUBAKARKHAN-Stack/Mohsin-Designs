@@ -12,7 +12,7 @@ import Link from "next/link";
 import { FormEditor } from "@/components/admin/form/FormEditor";
 import { successToast, errorToast } from "@/lib/toastNotifications";
 import { getForm, updateForm, deleteForm } from "@/app/actions/formActions";
-import { FormDataValues, FormField } from "@/types/form.types";
+import { FormField } from "@/types/form.types";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -32,7 +32,7 @@ export default function EditFormPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [formData, setFormData] = useState<FormDataValues>({
+    const [formData, setFormData] = useState({
         name: "",
         description: "",
         fields: [] as FormField[],

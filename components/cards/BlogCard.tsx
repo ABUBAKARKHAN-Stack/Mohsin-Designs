@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 type Props = {
-    post: BlogPost;
+    post: any;
     index: number
 }
 const BlogCard = ({ post, index }: Props) => {

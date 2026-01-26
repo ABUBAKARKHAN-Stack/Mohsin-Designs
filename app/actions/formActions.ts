@@ -1,9 +1,8 @@
 'use server'
 
 import { adminClient } from "@/sanity/lib/admin-client"
-import { FormField, FormDataValues } from "@/types/form.types"
 
-export async function createForm(formData: FormDataValues) {
+export async function createForm(formData:any) {
     try {
         if (!formData.name) {
             return { success: false, error: "Form name is required" };
@@ -25,7 +24,7 @@ export async function createForm(formData: FormDataValues) {
     }
 }
 
-export async function updateForm(id: string, formData: Partial<FormDataValues>) {
+export async function updateForm(id: string, formData: Partial<any>) {
     try {
         const result = await adminClient
             .patch(id)

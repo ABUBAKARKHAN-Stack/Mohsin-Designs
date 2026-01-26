@@ -21,6 +21,7 @@ const ar = {
         agencyStructure: "هيكل الوكالة",
         viewAllProjects: "عرض جميع المشاريع",
         step: "الخطوة",
+        readTime: "دقائق قراءة",
         areasCta: {
             title: "هل موقعك غير موجود؟",
             description: "نتعاون مع عملاء من جميع أنحاء العالم. تواصل معنا الآن!"

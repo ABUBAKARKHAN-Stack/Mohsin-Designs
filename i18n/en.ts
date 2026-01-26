@@ -21,12 +21,11 @@ const en = {
         agencyStructure: "Agency Structure",
         viewAllProjects: "View All Projects",
         step: "Step",
+        readTime: "Min read",
         areasCta: {
             title: "Don't see your location?",
             description: "We work with clients worldwide. Let's connect!"
         }
-
-
     },
 
     navigation: {

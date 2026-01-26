@@ -13,7 +13,7 @@ import {
     IndustriesSection,
     AreasWeServeSection,
     IntroSection,
-    ServiceBlogs,
+    // ServiceBlogs,
 } from "@/components/sections/services/service-details/";
 import { APP_NAME, BASE_URL } from "@/constants/app.constants";
 import { SUPPORTED_LANGS } from "@/constants/lang";
@@ -203,9 +203,9 @@ const ServiceDetailPage = async ({
             cta={cta}
             />
 
-            <ServiceBlogs
+            {/* <ServiceBlogs
                 slug={slug}
-            />
+            /> */}
 
             {/* Other Services Section */}
             <OtherServices

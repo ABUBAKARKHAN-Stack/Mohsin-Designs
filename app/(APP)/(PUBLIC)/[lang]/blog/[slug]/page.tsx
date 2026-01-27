@@ -10,12 +10,13 @@ import { ContainerLayout } from "@/components/layout"
 import { SUPPORTED_LANGS } from "@/constants/lang"
 import { uiT } from "@/i18n"
 import { ShareButtons } from "@/components/blog/ShareButtons"
+import { Badge } from "@/components/ui/badge"
 
 interface Props {
     params: Promise<{
-        lang: string
-        slug: string
-    }>
+        lang: string;
+        slug: string;
+    }>;
 }
 
 // Generate static params for all blog posts
@@ -87,23 +88,44 @@ export default async function BlogPostPage({ params }: Props) {
             <ContainerLayout>
 
                 {/* Meta Information Bar */}
-                <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground mb-12 py-6 border-t border-border">
+                <div className="flex flex-wrap items-center gap-y-4 gap-x-8 text-sm text-muted-foreground mb-12 py-6 border-y border-border/50 bg-muted/5 px-6 rounded-lg">
                     {post.author && (
                         <div className="flex items-center gap-2">
-                            <User className="h-4 w-4 text-accent" />
-                            <span className="font-medium">{post.author}</span>
+                            <User className="h-4 w-4 text-accent/70" />
+                            <span className="font-medium text-foreground/80">{post.author}</span>
                         </div>
                     )}
                     {formattedDate && (
                         <div className="flex items-center gap-2">
+                            <span className="w-1 h-1 bg-border rounded-full hidden md:block" />
                             <span>{formattedDate}</span>
                         </div>
                     )}
                     {post.readTime && (
-                        <div className="flex items-center gap-2 text-accent">
-                            <Clock className="h-4 w-4" />
-                            <span className="font-semibold uppercase tracking-wider">{post.readTime} {uiT(lang, "common.readTime")}</span>
+                        <div className="flex items-center gap-2">
+                            <span className="w-1 h-1 bg-border rounded-full hidden md:block" />
+                            <div className="flex items-center gap-2 text-accent/80">
+                                <Clock className="h-4 w-4" />
+                                <span className="font-semibold uppercase tracking-wider text-[10px]">{post.readTime} {uiT(lang, "common.readTime")}</span>
+                            </div>
                         </div>
+                    )}
+
+                    {post.categories && post.categories.length > 0 && (
+                        <>
+                            <span className="w-1.5 h-6 bg-border/40 mx-2 hidden lg:block" />
+                            <div className="flex flex-wrap gap-2">
+                                {post.categories.map((category: string) => (
+                                    <Badge
+                                        key={category}
+                                        variant="secondary"
+                                        className="bg-accent/5 text-accent border-accent/20 hover:bg-accent/10 transition-colors uppercase tracking-wider text-[9px] px-3 py-1 font-bold"
+                                    >
+                                        {category}
+                                    </Badge>
+                                ))}
+                            </div>
+                        </>
                     )}
                 </div>
 
@@ -142,10 +164,15 @@ export default async function BlogPostPage({ params }: Props) {
                         )}
 
                         {/* Share Section */}
-                        <div className="flex items-center justify-between p-6 bg-muted/30 border border-border rounded-lg">
-                            <div>
-                                <h3 className="font-display font-bold text-lg">Did you enjoy this article?</h3>
-                                <p className="text-muted-foreground text-sm">Share it with your network</p>
+                        <div className="flex flex-col md:flex-row items-center justify-between p-8 bg-accent/[0.03] border border-accent/10 rounded-2xl gap-6">
+                            <div className="flex items-center gap-4 text-center md:text-left">
+                                <div className="p-3 bg-accent/10 rounded-full hidden md:block">
+                                    <Share2 className="h-6 w-6 text-accent" />
+                                </div>
+                                <div>
+                                    <h3 className="font-display font-bold text-xl mb-1">Spread the word!</h3>
+                                    <p className="text-muted-foreground text-sm">Did you find this insightful? Share it with your network.</p>
+                                </div>
                             </div>
                             <ShareButtons title={post.title} />
                         </div>

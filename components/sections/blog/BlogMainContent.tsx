@@ -8,6 +8,8 @@ import { urlFor } from "@/sanity/lib/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { uiT } from "@/i18n"
+import { AnimatePresence } from "motion/react"
+import React, { useEffect, useCallback } from "react"
 
 interface BlogPost {
     _id: string
@@ -28,6 +30,8 @@ interface BlogMainContentProps {
 
 export default function BlogMainContent({ posts }: BlogMainContentProps) {
     const [activeCategory, setActiveCategory] = useState("All")
+    const [currentSlide, setCurrentSlide] = useState(0)
+    const [isAutoPlaying, setIsAutoPlaying] = useState(true)
     const { lang }: LanguageType = useParams()
 
     const categories = ["All", ...new Set(posts.flatMap(post => post.categories || []).filter(Boolean))]
@@ -36,11 +40,25 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
         ? posts
         : posts.filter(post => (post.categories || []).includes(activeCategory))
 
-    const featuredPost = posts.find(p => p.featured) || posts[0]
-    const remainingPosts = filteredPosts.filter(p => p._id !== featuredPost?._id)
+    const featuredPosts = posts.filter(p => p.featured)
 
-    console.log(posts);
-    
+    // If no posts are explicitly featured, use the first post as featured for the UI layout
+    const hasExplicitFeatured = featuredPosts.length > 0
+    const displayFeatured = hasExplicitFeatured ? featuredPosts : [posts[0]].filter(Boolean)
+
+    const featuredIds = new Set(displayFeatured.map(p => p._id))
+    const remainingPosts = filteredPosts.filter(p => !featuredIds.has(p._id))
+
+    const nextSlide = useCallback(() => {
+        setCurrentSlide((prev) => (prev + 1) % displayFeatured.length)
+    }, [displayFeatured.length])
+
+    useEffect(() => {
+        if (!isAutoPlaying || displayFeatured.length <= 1) return
+        const interval = setInterval(nextSlide, 5000)
+        return () => clearInterval(interval)
+    }, [isAutoPlaying, nextSlide, displayFeatured.length])
+
 
     return (
         <section className="pb-16">
@@ -66,59 +84,115 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                     ))}
                 </motion.div>
 
-                {/* Featured Post */}
-                {featuredPost && activeCategory === "All" && (
-                    <motion.article
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.3 }}
-                        className="group cursor-pointer mb-24"
-                    >
-                        <Link href={`/${lang}/blog/${featuredPost.slug}`} className="grid lg:grid-cols-2 gap-8 items-center">
-                            <div className="aspect-16/10 overflow-hidden relative">
-                                <img
-                                    src={featuredPost.image?.url || (featuredPost.image ? urlFor(featuredPost.image).url() : '')}
-                                    alt={featuredPost.title}
-                                    className="w-full h-full object-cover  group-hover:scale-105 transition-all duration-700"
-                                />
-                                <div className="absolute top-4 left-4 px-4 py-1 bg-accent text-accent-foreground text-xs uppercase tracking-widest">
-                                    Featured
+                {/* Featured Blog Carousel */}
+                {displayFeatured.length > 0 && activeCategory === "All" && (
+                    <div className="relative mb-24">
+                        <div className="overflow-hidden relative min-h-[500px] lg:min-h-[400px]">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={currentSlide}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                                    className="w-full"
+                                >
+                                    <Link
+                                        href={`/${lang}/blog/${displayFeatured[currentSlide]?.slug}`}
+                                        className="grid lg:grid-cols-2 gap-8 items-center group cursor-pointer"
+                                    >
+                                        <div className="aspect-16/10 overflow-hidden relative">
+                                            <img
+                                                src={displayFeatured[currentSlide].image?.url || (displayFeatured[currentSlide].image ? urlFor(displayFeatured[currentSlide].image).url() : '')}
+                                                alt={displayFeatured[currentSlide].title}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
+                                            />
+                                            <div className="absolute top-4 left-4 px-4 py-1 bg-accent text-accent-foreground text-xs uppercase tracking-widest">
+                                                Featured
+                                            </div>
+                                        </div>
+                                        <div className="lg:pl-8">
+                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground uppercase tracking-widest mb-4">
+                                                {displayFeatured[currentSlide].categories?.map((cat, idx) => (
+                                                    <React.Fragment key={cat}>
+                                                        <span className="text-accent">{cat}</span>
+                                                        {idx < (displayFeatured[currentSlide].categories?.length || 0) - 1 && <span>·</span>}
+                                                    </React.Fragment>
+                                                ))}
+                                                {displayFeatured[currentSlide].categories?.length > 0 && <span>·</span>}
+                                                <span>{new Date(displayFeatured[currentSlide].date).toLocaleDateString(lang, { month: 'short', year: 'numeric' })}</span>
+                                            </div>
+                                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-tight group-hover:text-accent transition-colors mb-6">
+                                                {displayFeatured[currentSlide].title}
+                                            </h2>
+                                            <p className="text-lg text-muted-foreground mb-6 line-clamp-3">
+                                                {displayFeatured[currentSlide].description}
+                                            </p>
+                                            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                                                <div className="flex items-center gap-2">
+                                                    <User className="h-4 w-4" />
+                                                    {displayFeatured[currentSlide].author}
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Clock className="h-4 w-4" />
+                                                    {displayFeatured[currentSlide].readTime} {uiT(lang, "common.readTime")}
+                                                </div>
+                                            </div>
+                                            <div className="mt-8">
+                                                <span className="inline-flex items-center gap-2 text-sm uppercase tracking-widest group-hover:text-accent transition-colors">
+                                                    {uiT(lang, "common.readArticle")} <ArrowUpRight className="h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Carousel Navigation */}
+                        {displayFeatured.length > 1 && (
+                            <div className="flex items-center gap-4 mt-8">
+                                <div className="flex gap-2">
+                                    {displayFeatured.map((_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => {
+                                                setCurrentSlide(index);
+                                                setIsAutoPlaying(false);
+                                            }}
+                                            className={`h-1.5 transition-all duration-300 rounded-full ${currentSlide === index ? "w-12 bg-accent" : "w-4 bg-border hover:bg-accent/50"
+                                                }`}
+                                            aria-label={`Go to slide ${index + 1}`}
+                                        />
+                                    ))}
+                                </div>
+                                <div className="ml-auto flex gap-2">
+                                    <button
+                                        onClick={() => {
+                                            setCurrentSlide((prev) => (prev - 1 + displayFeatured.length) % displayFeatured.length);
+                                            setIsAutoPlaying(false);
+                                        }}
+                                        className="p-2 border border-border hover:border-accent hover:text-accent transition-colors rounded-full"
+                                    >
+                                        <ArrowUpRight className="h-5 w-5 rotate-225" />
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setCurrentSlide((prev) => (prev + 1) % displayFeatured.length);
+                                            setIsAutoPlaying(false);
+                                        }}
+                                        className="p-2 border border-border hover:border-accent hover:text-accent transition-colors rounded-full"
+                                    >
+                                        <ArrowUpRight className="h-5 w-5 rotate-45" />
+                                    </button>
                                 </div>
                             </div>
-                            <div className="lg:pl-8">
-                                <div className="flex items-center gap-4 text-sm text-muted-foreground uppercase tracking-widest mb-4">
-                                    <span className="text-accent">{featuredPost.categories?.[0]}</span>
-                                    <span>·</span>
-                                    <span>{new Date(featuredPost.date).toLocaleDateString(lang, { month: 'short', year: 'numeric' })}</span>
-                                </div>
-                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-tight group-hover:text-accent transition-colors mb-6">
-                                    {featuredPost.title}
-                                </h2>
-                                <p className="text-lg text-muted-foreground mb-6 line-clamp-3">
-                                    {featuredPost.description}
-                                </p>
-                                <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                                    <div className="flex items-center gap-2">
-                                        <User className="h-4 w-4" />
-                                        {featuredPost.author}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Clock className="h-4 w-4" />
-                                        {featuredPost.readTime} {uiT(lang, "common.readTime")}
-                                    </div>
-                                </div>
-                                <div className="mt-8">
-                                    <span className="inline-flex items-center gap-2 text-sm uppercase tracking-widest group-hover:text-accent transition-colors">
-                                        {uiT(lang, "common.readArticle")} <ArrowUpRight className="h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                                    </span>
-                                </div>
-                            </div>
-                        </Link>
-                    </motion.article>
+                        )}
+                    </div>
                 )}
 
                 {/* Divider */}
-                {featuredPost && activeCategory === "All" && (
+                {displayFeatured.length > 0 && activeCategory === "All" && (
                     <div className="border-t border-border mb-16" />
                 )}
 
@@ -141,9 +215,14 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                         className="w-full h-full object-cover   group-hover:scale-105 transition-all duration-700"
                                     />
                                 </div>
-                                <div className="flex items-center gap-4 text-xs text-muted-foreground uppercase tracking-widest mb-3">
-                                    <span className="text-accent">{post.categories?.[0]}</span>
-                                    <span>·</span>
+                                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] text-muted-foreground uppercase tracking-widest mb-3">
+                                    {post.categories?.map((cat, idx) => (
+                                        <React.Fragment key={cat}>
+                                            <span className="text-accent">{cat}</span>
+                                            {idx < (post.categories?.length || 0) - 1 && <span>·</span>}
+                                        </React.Fragment>
+                                    ))}
+                                    {post.categories?.length > 0 && <span>·</span>}
                                     <span>{new Date(post.date).toLocaleDateString(
                                         lang,
                                         { month: 'short', year: 'numeric' }

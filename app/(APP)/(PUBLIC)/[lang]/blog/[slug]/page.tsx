@@ -164,7 +164,7 @@ export default async function BlogPostPage({ params }: Props) {
                         )}
 
                         {/* Share Section */}
-                        <div className="flex flex-col md:flex-row items-center justify-between p-8 bg-accent/[0.03] border border-accent/10 rounded-2xl gap-6">
+                        <div className="flex flex-col md:flex-row items-center justify-between p-8 bg-accent/3 border border-accent/10 rounded-2xl gap-6">
                             <div className="flex items-center gap-4 text-center md:text-left">
                                 <div className="p-3 bg-accent/10 rounded-full hidden md:block">
                                     <Share2 className="h-6 w-6 text-accent" />

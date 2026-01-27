@@ -1,13 +1,19 @@
 import PageHero from '../../../ui/page-hero'
 
-const ServicesPageHero = () => {
+type ServicesPageHeroProps = {
+  title: string
+  subtitle: string
+  description: string
+}
+
+const ServicesPageHero = ({ title, subtitle, description }: ServicesPageHeroProps) => {
   return (
-     <PageHero
-        title="What we do"
-        subtitle="Our Expertise"
-        description="From strategy to execution, we offer comprehensive services to transform your brand."
-        breadcrumbs={[{ label: "Services" }]}
-      />
+    <PageHero
+      title={title}
+      subtitle={subtitle}
+      description={description}
+      breadcrumbs={[{ label: "Services" }]}
+    />
   )
 }
 

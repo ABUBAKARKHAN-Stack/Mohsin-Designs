@@ -22,7 +22,7 @@ const ResetPasswordPage = async (
     }: Props
 ) => {
 
-    const { token } = await searchParams
+    const { token } = await searchParams;
 
     //! Invalid Token Fallback 
     if (!token) return <ResetPasswordFallback />

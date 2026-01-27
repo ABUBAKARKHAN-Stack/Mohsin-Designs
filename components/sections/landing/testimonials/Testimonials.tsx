@@ -3,17 +3,44 @@
 import { motion, useMotionValue, useSpring, animate, PanInfo } from "motion/react";
 import { Star, Quote } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
-import SplitText from "@/components/ui/split-text";
-import { testimonials } from "@/constants/testimonials.constants";
+
 import { ContainerLayout } from "@/components/layout";
 import SectionHeading from "@/components/ui/section-heading";
+import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import Image from "next/image";
 
 
 const CARD_WIDTH = 400;
 const CARD_GAP = 24;
 const DRAG_THRESHOLD = 30;
 
+const getInitials = (name: string) => {
+  if (!name) return "??";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return name.trim().slice(0, 2).toUpperCase();
+};
+
 const Testimonials = () => {
+  const { landingPageContent } = useLandingPageContent();
+  const cmsTestimonials = landingPageContent?.testimonials?.testimonials;
+  const cmsHeading = landingPageContent?.testimonials?.sectionHeading;
+
+  // Use CMS data if available, otherwise fallback to constants
+  const displayTestimonials = cmsTestimonials && cmsTestimonials.length > 0
+    ? cmsTestimonials.map((t, idx) => ({
+      id: idx,
+      quote: t.quote,
+      author: t.author,
+      role: t.role,
+      company: t.company,
+      rating: 5, // Default rating if not in CMS
+      image: t.avatar?.url || null // Remove founder image fallback
+    }))
+    : [];
+
   const [current, setCurrent] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
@@ -23,12 +50,12 @@ const Testimonials = () => {
   const dragXSpring = useSpring(dragX, { stiffness: 300, damping: 30 });
 
   const next = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % testimonials.length);
-  }, []);
+    setCurrent((prev) => (prev + 1) % displayTestimonials.length);
+  }, [displayTestimonials.length]);
 
   const prev = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  }, []);
+    setCurrent((prev) => (prev - 1 + displayTestimonials.length) % displayTestimonials.length);
+  }, [displayTestimonials.length]);
 
   const goTo = useCallback((index: number) => {
     setCurrent(index);
@@ -64,7 +91,7 @@ const Testimonials = () => {
 
   const getCardStyle = (index: number) => {
     const diff = index - current;
-    const total = testimonials.length;
+    const total = displayTestimonials.length;
 
     let normalizedDiff = diff;
     if (diff > total / 2) normalizedDiff = diff - total;
@@ -92,9 +119,9 @@ const Testimonials = () => {
       <ContainerLayout className="relative">
 
         <SectionHeading
-          eyebrow="Testimonials"
-          title="Client stories"
-          description="Our clients value more than just design output. They value the process, the collaboration, and the confidence that comes from working with a team that understands their goals."
+          eyebrow={cmsHeading?.eyebrow || "Testimonials"}
+          title={cmsHeading?.title || "Client stories"}
+          description={cmsHeading?.description || "Our clients value more than just design output. They value the process, the collaboration, and the confidence that comes from working with a team that understands their goals."}
           align="center"
           splitText
         />
@@ -116,7 +143,7 @@ const Testimonials = () => {
             onDragEnd={handleDragEnd}
             style={{ x: dragXSpring }}
           >
-            {testimonials.map((testimonial, index) => {
+            {displayTestimonials.map((testimonial, index) => {
               const style = getCardStyle(index);
 
               return (
@@ -162,15 +189,25 @@ const Testimonials = () => {
                     </blockquote>
 
                     <div className="flex items-center gap-3">
-                      <motion.img
-                        src={testimonial.image}
-                        alt={testimonial.author}
-                        className="w-11 h-11 rounded-full object-cover border-2 border-accent/30"
-                        whileHover={{ scale: 1.1 }}
-                      />
+                      <div className="relative w-11 h-11 shrink-0">
+                        {testimonial.image ? (
+                          <Image
+                            src={testimonial.image}
+                            alt={testimonial.author}
+                            fill
+                            className="rounded-full object-cover border-2 border-accent/30"
+                          />
+                        ) : (
+                          <div className="w-full h-full rounded-full bg-accent/10 flex items-center justify-center border-2 border-accent/20 text-accent font-bold text-sm uppercase tracking-wider">
+                            {getInitials(testimonial.author)}
+                          </div>
+                        )}
+                      </div>
                       <div>
                         <div className="font-semibold text-foreground text-sm">{testimonial.author}</div>
-                        <div className="text-xs text-muted-foreground">{testimonial.role}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {testimonial.role}{testimonial.company ? `, ${testimonial.company}` : ""}
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -196,7 +233,7 @@ const Testimonials = () => {
           </motion.button>
 
           <div className="flex gap-2">
-            {testimonials.map((_, index) => (
+            {displayTestimonials.map((_, index) => (
               <motion.button
                 key={index}
                 onClick={() => goTo(index)}

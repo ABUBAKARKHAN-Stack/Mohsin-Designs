@@ -19,8 +19,8 @@ const Navbar = () => {
 
       {/* Fullscreen Mobile Menu */}
       <MobileMenu
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
       />
     </>
   );

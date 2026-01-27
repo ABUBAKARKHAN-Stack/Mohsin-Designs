@@ -4,11 +4,13 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
 import Link from "next/link";
-import { services } from "@/constants/services.constants";
 import ServiceCard from "./ServiceCard";
 import { ContainerLayout } from "@/components/layout";
 import SectionHeading from "@/components/ui/section-heading";
-
+import { useServices } from "@/context/ServiceContext";
+import { uiT } from "@/i18n";
+import { useParams } from "next/navigation";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 
 
 const ServicesPreview = () => {
@@ -17,6 +19,12 @@ const ServicesPreview = () => {
     target: containerRef,
     offset: ["start end", "end start"],
   });
+
+  const { services } = useServices()
+  const { lang }: any = useParams()
+  const { globalContent } = useGlobalContent()
+
+  const servicesPreviewData = globalContent?.servicesPreview;
 
   const y1 = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const y2 = useTransform(scrollYProgress, [0, 1], [-40, 80]);
@@ -44,9 +52,9 @@ const ServicesPreview = () => {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 lg:mb-20 gap-8">
 
           <SectionHeading
-            eyebrow="services"
-            title="What We Do Best"
-            description="We blend creativity with strategy and technology to build digital solutions that help brands grow with clarity and confidence."
+            eyebrow={servicesPreviewData?.sectionHeading?.eyebrow || "services"}
+            title={servicesPreviewData?.sectionHeading?.title || "What We Do Best"}
+            description={servicesPreviewData?.sectionHeading?.description || "We blend creativity with strategy and technology to build digital solutions that help brands grow with clarity and confidence."}
             className="mb-0"
           />
 
@@ -58,10 +66,10 @@ const ServicesPreview = () => {
             className="hidden lg:block"
           >
             <Link
-              href="/services"
+              href={`/${lang}/services`}
               className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300 shadow-[0_10px_30px_-10px_hsl(var(--accent)/0.5)]"
             >
-              <span>View All Services</span>
+              <span>{uiT(lang, "common.viewAllServices")}</span>
               <ArrowUpRight className="size-4.5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
             </Link>
           </motion.div>
@@ -70,7 +78,7 @@ const ServicesPreview = () => {
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
           {services.map((service, index) => (
-            <ServiceCard key={service.number} service={service} index={index} />
+            <ServiceCard key={service.slug} service={service} index={index} />
           ))}
         </div>
 
@@ -83,10 +91,10 @@ const ServicesPreview = () => {
           className="mt-12 lg:hidden text-center"
         >
           <Link
-            href="/services"
+            href={`/${lang}/services`}
             className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300"
           >
-            View All Services
+            {uiT(lang, "common.viewAllServices")}
             <ArrowUpRight className="size-4.5" />
           </Link>
         </motion.div>

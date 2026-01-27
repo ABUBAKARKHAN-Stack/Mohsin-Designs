@@ -1,12 +1,18 @@
 import PageHero from '@/components/ui/page-hero'
 
-const PortfolioPageHero = () => {
+interface PortfolioPageHeroProps {
+    title: string
+    subtitle: string
+    description: string
+}
+
+const PortfolioPageHero = ({ title, subtitle, description }: PortfolioPageHeroProps) => {
     return (
         <PageHero
-            title="Our work"
-            subtitle="Portfolio"
-            description="A showcase of our best projects across brand, digital, and product design."
-            breadcrumbs={[{ label: "Work" }]}
+            title={title}
+            subtitle={subtitle}
+            description={description}
+            breadcrumbs={[{ label: "Our Work" }]}
         />
     )
 }

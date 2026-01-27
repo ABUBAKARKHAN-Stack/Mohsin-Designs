@@ -2,6 +2,7 @@
 import { motion } from "motion/react";
 import { Building2, ShoppingBag, Briefcase, Stethoscope, Plane, Code } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
+import { SectionHeadingType } from "@/types/services.types";
 
 interface Industry {
   name: string;
@@ -10,11 +11,12 @@ interface Industry {
 
 interface IndustriesSectionProps {
   industries: Industry[];
+  industriesSectionHeader:SectionHeadingType
 }
 
 const industryIcons = [Building2, ShoppingBag, Briefcase, Stethoscope, Plane, Code];
 
-const IndustriesSection = ({ industries }: IndustriesSectionProps) => {
+const IndustriesSection = ({ industries,industriesSectionHeader }: IndustriesSectionProps) => {
   return (
     <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
 
@@ -32,13 +34,13 @@ const IndustriesSection = ({ industries }: IndustriesSectionProps) => {
           className="max-w-3xl mx-auto text-center mb-16"
         >
           <span className="inline-block text-accent text-xs tracking-[0.3em] font-medium mb-6 uppercase">
-            Industries We Serve
+           {industriesSectionHeader.eyebrow}
           </span>
           <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight">
-            Solutions for Every Industry<span className="text-accent">.</span>
+            {industriesSectionHeader.title}<span className="text-accent">.</span>
           </h2>
           <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-            We bring expertise across diverse sectors, tailoring our approach to meet the unique challenges of each industry.
+           {industriesSectionHeader.description}
           </p>
         </motion.div>
 
@@ -48,7 +50,7 @@ const IndustriesSection = ({ industries }: IndustriesSectionProps) => {
             const Icon = industryIcons[index % industryIcons.length];
             return (
               <motion.div
-                key={industry.name}
+                key={`${index}-${industry.name}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

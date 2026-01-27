@@ -1,10 +1,11 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { client, db } from "./db";
+import { getMongo} from "./db";
 import { sendEmail } from "./sendEmail";
 import { admin } from "better-auth/plugins"
 import { Roles } from "@/types/auth.types";
 
+const { client, db } = await getMongo();
 
 export const auth = betterAuth({
     database: mongodbAdapter(db, {
@@ -37,6 +38,7 @@ export const auth = betterAuth({
                 type: "json"
             }
         },
+        
     },
 
     rateLimit: {

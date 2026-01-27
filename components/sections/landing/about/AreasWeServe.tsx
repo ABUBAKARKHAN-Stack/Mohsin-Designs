@@ -6,6 +6,10 @@ import SectionHeading from "@/components/ui/section-heading";
 import { ContainerLayout } from "@/components/layout";
 import { cn } from "@/lib/utils";
 import { areas } from "@/constants/stats.constants";
+import { uiT } from "@/i18n";
+import { useParams } from "next/navigation";
+import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import Link from "next/link";
 
 
 
@@ -20,6 +24,11 @@ const AreasWeServe = () => {
 
     const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
     const globeRotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
+    const { lang }: LanguageType = useParams()
+    const { landingPageContent } = useLandingPageContent()
+
+    const areasWeServeData = landingPageContent?.areasWeServe;
+    const areasData = areasWeServeData?.areas || [];
 
     return (
         <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-muted/30 relative overflow-hidden">
@@ -71,9 +80,9 @@ const AreasWeServe = () => {
             <ContainerLayout className="relative z-10">
                 <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-16">
                     <SectionHeading
-                        eyebrow="Global Reach"
-                        title="Areas We Serve"
-                        description="Delivering exceptional digital solutions to businesses across the globe. Our remote-first approach means we can serve you anywhere."
+                        eyebrow={areasWeServeData?.sectionHeading?.eyebrow || "Global Reach"}
+                        title={areasWeServeData?.sectionHeading?.title || "Areas We Serve"}
+                        description={areasWeServeData?.sectionHeading?.description || "Delivering exceptional digital solutions to businesses across the globe. Our remote-first approach means we can serve you anywhere."}
                         className="mb-0"
                     />
 
@@ -85,26 +94,26 @@ const AreasWeServe = () => {
                         className="flex gap-8"
                     >
                         <div className="text-center">
-                            <div className="text-4xl font-display font-bold text-accent">{areas.length}</div>
-                            <div className="text-sm text-muted-foreground">Continents</div>
+                            <div className="text-4xl font-display font-bold text-accent">{areasData.length}</div>
+                            <div className="text-sm text-muted-foreground">{uiT(lang, 'common.continents')}</div>
                         </div>
                         <div className="text-center">
                             <div className="text-4xl font-display font-bold text-accent">
-                                {areas.reduce((total, area) => total += area.locations.length, 0)}+
+                                {areasData.reduce((total, area) => total += area.locations.length, 0)}+
                             </div>
-                            <div className="text-sm text-muted-foreground">Countries</div>
+                            <div className="text-sm text-muted-foreground">{uiT(lang, 'common.countries')}</div>
                         </div>
                         <div className="text-center">
                             <div className="text-4xl font-display font-bold text-accent">
-                                {areas.reduce((total, area) => total += area.clients, 0)}+
+                                {areasData.reduce((total, area) => total += area.clients, 0)}+
                             </div>
-                            <div className="text-sm text-muted-foreground">Clients</div>
+                            <div className="text-sm text-muted-foreground">{uiT(lang, 'common.clients')}</div>
                         </div>
                     </motion.div>
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {areas.map((area, index) => (
+                    {areasData.map((area, index) => (
                         <motion.div
                             key={area.region}
                             initial={{ opacity: 0, y: 40 }}
@@ -138,7 +147,7 @@ const AreasWeServe = () => {
                                     <span className="text-4xl">{area.flag}</span>
                                     <div>
                                         <h3 className="text-xl font-display font-bold">{area.region}</h3>
-                                        <span className="text-xs text-muted-foreground">{area.clients} clients</span>
+                                        <span className="text-xs text-muted-foreground">{area.clients} {uiT(lang, 'common.clients')}</span>
                                     </div>
                                 </div>
 
@@ -162,10 +171,12 @@ const AreasWeServe = () => {
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={hoveredIndex === index ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                                    className="flex items-center gap-2 text-accent text-sm font-medium"
+                                    className=" text-accent text-sm font-medium"
                                 >
-                                    <span>View projects</span>
-                                    <ArrowRight className="w-4 h-4" />
+                                    <Link href={`/${lang}/portfolio`} className="flex items-center gap-2">
+                                        <span>{uiT(lang, 'common.viewAllProjects')}</span>
+                                        <ArrowRight className="w-4 h-4" />
+                                    </Link>
                                 </motion.div>
 
                                 {/* Decorative Ring */}
@@ -190,17 +201,19 @@ const AreasWeServe = () => {
                                     <Globe className="w-7 h-7 text-accent" />
                                 </div>
                                 <div>
-                                    <h4 className="text-lg font-display font-bold">Don't see your location?</h4>
-                                    <p className="text-muted-foreground text-sm">We work with clients worldwide. Let's connect!</p>
+                                    <h4 className="text-lg font-display font-bold">{uiT(lang, 'common.areasCta.title')}</h4>
+                                    <p className="text-muted-foreground text-sm">
+                                        {uiT(lang, 'common.areasCta.description')}
+                                    </p>
                                 </div>
                             </div>
                             <motion.a
-                                href="/contact"
+                                href={`/${lang}/contact`}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="px-8 py-3 bg-accent text-accent-foreground font-medium rounded-full flex items-center gap-2 shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-shadow"
                             >
-                                <span>Get in Touch</span>
+                                <span>{uiT(lang, 'common.getInTouch')}</span>
                                 <ArrowRight className="w-4 h-4" />
                             </motion.a>
                         </div>

@@ -2,10 +2,10 @@ const navLinks = [
   { name: "Work", path: "/portfolio" },
   { name: "Services", path: "/services", hasDropdown: true },
   { name: "About", path: "/about" },
-  { name: "Journal", path: "/blog" },
+  { name: "Blog", path: "/blog" },
 ];
 
 
 export {
-    navLinks
+  navLinks
 }

@@ -10,9 +10,12 @@ import {
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { useIsTouchDevice } from "@/hooks/useIsTouchDevice";
+import { ServiceData } from "@/types/services.types";
+import { urlFor } from "@/sanity/lib/image";
+import { useParams } from "next/navigation";
 
 interface ServiceCardProps {
-    service: (typeof services)[0];
+    service: ServiceData;
     index: number;
 }
 
@@ -47,13 +50,15 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
         setIsHovered(false);
     };
 
+    const {lang}:LanguageType = useParams()
+
 
 
 
     return (
         <motion.a
             ref={cardRef}
-            href={service.path}
+            href={`/${lang}/${service.slug}`}
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
@@ -80,15 +85,15 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
                     isHovered && "border-accent shadow-[0_25px_70px_-20px_hsl(var(--accent)/0.35)]",
                     isTouchDevice && "h-92"
                 )}
-                animate={!isTouchDevice ? (isHovered ? { height: "23rem" } : { height: "18rem" }) : undefined}
+                animate={!isTouchDevice ? (isHovered ? { height: "22rem" } : { height: "17rem" }) : undefined}
                 transition={{ duration: 0.1 }}
             >
                 {/* Background */}
                 <div className="absolute inset-0 opacity-15 group-hover:opacity-25 transition-opacity duration-500">
                     <Image
                         fill
-                        src={service.image}
-                        alt={service.title}
+                        src={urlFor(service.heroImage.source).url()}
+                        alt={service.heroImage.alt}
                         className="object-cover"
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-card via-card/80 to-card/40" />
@@ -127,11 +132,9 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
 
                     {/* Header */}
                     <div className="flex items-start justify-between">
-                        <div className="relative size-10 sm:size-14 flex items-center justify-center">
-                            <div className="absolute inset-0 bg-accent/10 border border-accent/20 rotate-45 group-hover:rotate-50 transition-transform" />
-                            <service.icon className="relative z-10 size-4 sm:size-6 text-accent" />
-                        </div>
-
+                       <span className="block text-sm tracking-[0.4em] text-accent font-semibold mb-1">
+                            {index > 9 ? index + 1 : `0${index + 1}`}
+                        </span>
 
                         <motion.div
                             className="size-10 border border-border hidden min-[370px]:flex items-center justify-center group-hover:border-accent group-hover:bg-accent transition-colors"
@@ -146,9 +149,7 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
 
 
                     <div>
-                        <span className="block text-[10px] tracking-[0.4em] text-accent font-semibold mb-1">
-                            {service.number}
-                        </span>
+                       
                         <motion.h3
                             className="text-xl lg:text-2xl font-bold tracking-tight font-display"
                             animate={{
@@ -184,7 +185,7 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mt-auto">
-                        {service.features.slice(0, 3).map((feature) => (
+                        {service.items.slice(0, 3).map((feature) => (
                             <span
                                 key={feature}
                                 className="text-[10px] tracking-wider px-2 py-1 bg-muted/50 text-muted-foreground border border-border/50 group-hover:border-accent/30 group-hover:text-foreground transition-all"
@@ -193,9 +194,9 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
                             </span>
                         ))}
 
-                        {service.features.length > 3 && (
+                        {service.items.length > 3 && (
                             <span className="text-[10px] px-2 py-1 bg-accent/10 text-accent border border-accent/30">
-                                +{service.features.length - 3} more
+                                +{service.items.length - 3} more
                             </span>
                         )}
                     </div>

@@ -1,13 +1,28 @@
 import { MongoClient } from "mongodb";
 
+const uri = process.env.MONGODB_URI!;
 
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-  throw new Error("MongoDB URI is missing.")
+declare global {
+  var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-const client = new MongoClient(uri);
-const db = client.db();
+let clientPromise: Promise<MongoClient>;
 
-export { db,client };
+if (!global._mongoClientPromise) {
+  const client = new MongoClient(uri);
+  global._mongoClientPromise = client.connect();
+}
+
+clientPromise = global._mongoClientPromise;
+
+export async function getMongo() {
+try {
+    const client = await clientPromise;
+    const db = client.db();
+    return { client, db };
+} catch (error) {
+  console.log(error);
+  const errMsg = error instanceof Error ? error.message : "Failed to connect to database";
+  throw new Error(errMsg);
+}
+}

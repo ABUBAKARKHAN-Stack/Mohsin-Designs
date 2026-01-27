@@ -1,18 +1,19 @@
 "use client"
 import { ContainerLayout } from "@/components/layout";
+import { SectionHeadingType } from "@/types/services.types";
 import { motion } from "motion/react"
 
 type Props = {
-    serviceOverview: string;
+    serviceOverviewSectionHeader: SectionHeadingType;
     features: string[]
 }
 const ServiceOverview = ({
     features,
-    serviceOverview
+    serviceOverviewSectionHeader
 }: Props) => {
     return (
         <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
-            
+
             {/* Background accent */}
             <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-accent/5 to-transparent pointer-events-none" />
 
@@ -26,10 +27,9 @@ const ServiceOverview = ({
                         transition={{ duration: 0.6 }}
                         className="lg:col-span-5 lg:sticky lg:top-32"
                     >
-                        <span className="inline-block text-accent text-xs tracking-[0.3em] font-medium mb-6 uppercase">Overview</span>
+                        <span className="inline-block text-accent text-xs tracking-[0.3em] font-medium mb-6 uppercase">{serviceOverviewSectionHeader.eyebrow}</span>
                         <h2 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter leading-[0.9]">
-                            What we<br />
-                            <span className="text-accent">deliver</span>
+                            {serviceOverviewSectionHeader.title}
                         </h2>
                         <div className="w-20 h-1 bg-accent mt-8" />
                     </motion.div>
@@ -42,7 +42,7 @@ const ServiceOverview = ({
                         className="lg:col-span-7"
                     >
                         <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed mb-12 font-light">
-                            {serviceOverview}
+                            {serviceOverviewSectionHeader.description}
                         </p>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                             {features.map((item, i) => (

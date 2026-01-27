@@ -9,9 +9,19 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubItem,
+    SidebarMenuSubButton,
     SidebarHeader,
     SidebarFooter,
 } from "@/components/ui/sidebar";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
+import { ChevronRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRoleBasedNavigation } from "@/hooks/useRoleBasedNavigation";
 import { Roles } from "@/types/auth.types";
@@ -34,7 +44,7 @@ export function AppSidebar() {
     const pathname = usePathname()
 
     const user = session.user;
-    const navigationItems = useRoleBasedNavigation(user.role as Roles)
+    const navigationGroups = useRoleBasedNavigation(user.role as Roles)
     const userInitial = user?.name.charAt(0).toUpperCase();
 
     const handleLogout = async () => await logout()
@@ -56,31 +66,76 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <SidebarGroup>
-                    <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {navigationItems.map((item) => {
-                                const isActive = pathname === item.url;
-                                return (
-                                    <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton
-                                            asChild
-                                            isActive={isActive}
-                                            tooltip={item.title}
+                {navigationGroups.map((group) => (
+                    <SidebarGroup key={group.label}>
+                        <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {group.items.map((item) => {
+                                    const isActive = pathname === item.url;
+                                    const hasSubItems = item.subItems && item.subItems.length > 0;
 
-                                        >
-                                            <Link href={item.url}>
-                                                <item.icon className="h-4 w-4" />
-                                                <span>{item.title}</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                );
-                            })}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+                                    if (hasSubItems) {
+                                        return (
+                                            <SidebarMenuItem key={item.title}>
+                                                <Accordion
+                                                    type="single"
+                                                    collapsible
+                                                    defaultValue={item.isOpenByDefault ? item.title : undefined}
+                                                    className="w-full"
+                                                >
+                                                    <AccordionItem value={item.title} className="border-none">
+                                                        <AccordionTrigger asChild>
+                                                            <SidebarMenuButton
+                                                                isActive={isActive || item.subItems?.some(sub => pathname === sub.url)}
+                                                                className="w-full justify-start gap-2 hover:[text-decoration:none] items-center group/item"
+                                                            >
+                                                                <item.icon className="h-4 w-4 shrink-0" />
+                                                                <span className="flex-1 text-left">{item.title}</span>
+                                                                <ChevronRight className="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]/item:rotate-90 ml-auto" />
+                                                            </SidebarMenuButton>
+                                                        </AccordionTrigger>
+                                                        <AccordionContent className="p-0 overflow-visible">
+                                                            <SidebarMenuSub>
+                                                                {item.subItems?.map((sub) => (
+                                                                    <SidebarMenuSubItem key={sub.title}>
+                                                                        <SidebarMenuSubButton
+                                                                            asChild
+                                                                            isActive={pathname === sub.url}
+                                                                        >
+                                                                            <Link href={sub.url}>
+                                                                                <span>{sub.title}</span>
+                                                                            </Link>
+                                                                        </SidebarMenuSubButton>
+                                                                    </SidebarMenuSubItem>
+                                                                ))}
+                                                            </SidebarMenuSub>
+                                                        </AccordionContent>
+                                                    </AccordionItem>
+                                                </Accordion>
+                                            </SidebarMenuItem>
+                                        );
+                                    }
+
+                                    return (
+                                        <SidebarMenuItem key={item.title}>
+                                            <SidebarMenuButton
+                                                asChild
+                                                isActive={isActive}
+                                                tooltip={item.title}
+                                            >
+                                                <Link href={item.url}>
+                                                    <item.icon className="h-4 w-4" />
+                                                    <span>{item.title}</span>
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                ))}
             </SidebarContent>
 
             <SidebarFooter className="border-t border-sidebar-border p-4">

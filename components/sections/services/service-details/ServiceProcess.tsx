@@ -1,15 +1,15 @@
 "use client"
 
 import { ContainerLayout } from "@/components/layout";
+import { uiT } from "@/i18n";
+import { SectionHeadingType, ServiceProcess as ServiceProcessType } from "@/types/services.types";
 import { motion, MotionValue, useScroll, useTransform } from "motion/react"
+import { useParams } from "next/navigation";
 import { useRef } from "react";
 
 type Props = {
-    process: {
-        title: string;
-        step: string;
-        desc: string
-    }[]
+    process: ServiceProcessType[];
+    processSectionHeader: SectionHeadingType
 }
 
 
@@ -21,7 +21,7 @@ const TimelineStep = ({
     scrollProgress,
     stepProgress
 }: {
-    step: { step: string; title: string; desc: string };
+    step: ServiceProcessType;
     index: number;
     isEven: boolean;
     isLast: boolean;
@@ -38,6 +38,7 @@ const TimelineStep = ({
     const nodeScale = useTransform(isActive, [0, 1], [0.8, 1]);
     const nodeBg = useTransform(isActive, [0, 1], ["hsl(var(--muted))", "hsl(var(--accent))"]);
     const textColor = useTransform(isActive, [0, 1], ["hsl(var(--muted-foreground))", "hsl(var(--accent))"]);
+    const { lang }: LanguageType = useParams()
 
     return (
         <motion.div
@@ -114,7 +115,7 @@ const TimelineStep = ({
                             <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-accent to-accent/70 flex items-center justify-center shadow-lg shadow-accent/25">
                                 <span className="text-accent-foreground font-display font-bold">{step.step}</span>
                             </div>
-                         
+
                         </div>
 
                         {/* Icon and Title row */}
@@ -129,7 +130,7 @@ const TimelineStep = ({
                                 </motion.h3>
                                 <div className={`flex items-center gap-2 ${isEven ? 'lg:justify-end' : ''}`}>
                                     <div className="h-0.5 w-8 bg-linear-to-r from-accent to-transparent rounded-full" />
-                                    <span className="text-xs text-muted-foreground font-medium">Step {index + 1}</span>
+                                    <span className="text-xs text-muted-foreground font-medium">{uiT(lang, 'common.step')} {index + 1}</span>
                                 </div>
                             </div>
                         </div>
@@ -168,7 +169,7 @@ const TimelineStep = ({
 
 
 
-const ServiceProcess = ({ process }: Props) => {
+const ServiceProcess = ({ process, processSectionHeader }: Props) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -195,13 +196,13 @@ const ServiceProcess = ({ process }: Props) => {
                     className="max-w-3xl mx-auto text-center mb-16"
                 >
                     <span className="inline-block text-accent text-xs tracking-[0.3em] font-medium mb-6 uppercase">
-                        Our Process
+                        {processSectionHeader.eyebrow}
                     </span>
                     <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight">
-                        How We Work<span className="text-accent">.</span>
+                        {processSectionHeader.title}<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-                        A proven methodology that delivers exceptional results, every time.
+                        {processSectionHeader.description}
                     </p>
                 </motion.div>
 
@@ -229,7 +230,7 @@ const ServiceProcess = ({ process }: Props) => {
 
                             return (
                                 <TimelineStep
-                                    key={step.title}
+                                    key={`${index}-${step.title}`}
                                     step={step}
                                     index={index}
                                     isEven={isEven}

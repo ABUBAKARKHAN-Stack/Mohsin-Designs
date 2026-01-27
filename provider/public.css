@@ -1,7 +1,3 @@
- @import "tailwindcss";
-
- @layer base {
-
      body {
          cursor: none;
      }
@@ -14,4 +10,4 @@
      select {
          cursor: none;
      }
- }
+ 

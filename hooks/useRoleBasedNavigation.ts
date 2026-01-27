@@ -9,72 +9,246 @@ import {
     Settings,
     User,
     Users,
+    Briefcase,
+    FolderOpen,
+    Wrench,
+    Inbox,
+    Menu as MenuIcon,
 } from "lucide-react";
 
-export const useRoleBasedNavigation = (role: Roles) => {
-    const baseNavigationItems = [
-        { title: "Website", url: "/", icon: Globe },
-        { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+export interface NavigationItem {
+    title: string;
+    url: string;
+    icon: any;
+    subItems?: {
+        title: string;
+        url: string;
+    }[];
+    isOpenByDefault?: boolean;
+}
+
+export interface NavigationGroup {
+    label: string;
+    items: NavigationItem[];
+}
+
+export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
+    const baseNavigationItems: NavigationGroup[] = [
+        {
+            label: "Navigation",
+            items: [
+                { title: "Website", url: "/", icon: Globe },
+                { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "Content Management",
+            items: [
+                {
+                    title: "Pages",
+                    url: "/admin/pages",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "Landing Page Content", url: "/admin/landing/page-content" },
+                        { title: "About Page Content", url: "/admin/about/page-content" },
+                        { title: "Services Page Content", url: "/admin/services/page-content" },
+                        { title: "Portfolio Page Content", url: "/admin/portfolio/page-content" },
+                        { title: "Blog Page Content", url: "/admin/blogs/page-content" },
+                        { title: "Contact", url: "/admin/pages/contact" },
+                    ]
+                }
+            ]
+        }
     ];
 
-    const adminNavigation = [
-        ...baseNavigationItems,
-        { title: "Users", url: "/users", icon: Users },
-
-        //* Pages & Content
-        { title: "Pages", url: "/pages", icon: FileText },
-        { title: "Services", url: "/services", icon: Layers },
-        { title: "Blogs", url: "/blogs", icon: FileText },
-        { title: "Portfolio", url: "/portfolio", icon: Image },
-
-        //* Reusable
-        { title: "Sections", url: "/sections", icon: Layers },
-
-        //* SEO & Media
-        { title: "SEO", url: "/seo", icon: Search },
-        { title: "Media", url: "/media", icon: Image },
-
-        //* System
-        { title: "Settings", url: "/settings", icon: Settings },
-        { title: "Profile", url: "/profile", icon: User },
+    const adminNavigation: NavigationGroup[] = [
+        {
+            label: "Navigation",
+            items: [
+                { title: "Website", url: "/", icon: Globe },
+                { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "Content Management",
+            items: [
+                {
+                    title: "Pages",
+                    url: "/admin/pages",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "Landing Page Content", url: "/admin/landing/page-content" },
+                        { title: "About Page Content", url: "/admin/about/page-content" },
+                        { title: "Services Page Content", url: "/admin/services/page-content" },
+                        { title: "Portfolio Page Content", url: "/admin/portfolio/page-content" },
+                        { title: "Blog Page Content", url: "/admin/blogs/page-content" },
+                        { title: "Contact", url: "/admin/pages/contact" },
+                    ]
+                },
+                { title: "Services", url: "/admin/services", icon: Briefcase },
+                {
+                    title: "Blogs",
+                    url: "/admin/blogs",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "All Blogs", url: "/admin/blogs" },
+                        { title: "Categories", url: "/admin/blogs/categories" },
+                        { title: "Locations", url: "/admin/blogs/locations" },
+                    ]
+                },
+                { title: "Portfolio", url: "/admin/portfolio", icon: Image },
+                { title: "Forms", url: "/admin/forms", icon: Layers },
+                { title: "Global Sections", url: "/admin/global-sections", icon: Layers },
+                { title: "Menus", url: "/admin/menus", icon: MenuIcon },
+                { title: "Contact Submissions", url: "/admin/contact-submissions", icon: Inbox },
+            ]
+        },
+        {
+            label: "Media & SEO",
+            items: [
+                { title: "Media", url: "/admin/media", icon: FolderOpen },
+                { title: "SEO", url: "/admin/seo", icon: Search },
+            ]
+        },
+        {
+            label: "Settings",
+            items: [
+                { title: "Services Settings", url: "/admin/services/settings", icon: Wrench },
+                { title: "Site Settings", url: "/admin/site-settings", icon: Wrench },
+                { title: "Users", url: "/admin/users", icon: Users },
+                { title: "Profile", url: "/admin/profile", icon: User },
+            ]
+        },
     ];
 
-    const contentWriterNavigation = [
-        ...baseNavigationItems,
-
-        //* Content Editing (Draft Only)
-        { title: "Pages", url: "/pages", icon: FileText },
-        { title: "Services", url: "/services", icon: Layers },
-        { title: "Blogs", url: "/blogs", icon: FileText },
-        { title: "Portfolio", url: "/portfolio", icon: Image },
-
-        //* Reusable Sections
-        { title: "Sections", url: "/sections", icon: Layers },
-
-        //* Limited Media
-        { title: "Media", url: "/media", icon: Image },
-
-        { title: "Profile", url: "/profile", icon: User },
+    const contentWriterNavigation: NavigationGroup[] = [
+        {
+            label: "Navigation",
+            items: [
+                { title: "Website", url: "/", icon: Globe },
+                { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "Content Management",
+            items: [
+                {
+                    title: "Pages",
+                    url: "/admin/pages",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "Landing Page Content", url: "/admin/landing/page-content" },
+                        { title: "About Page Content", url: "/admin/about/page-content" },
+                        { title: "Services Page Content", url: "/admin/services/page-content" },
+                        { title: "Portfolio Page Content", url: "/admin/portfolio/page-content" },
+                        { title: "Blog Page Content", url: "/admin/blogs/page-content" },
+                        { title: "Contact", url: "/admin/pages/contact" },
+                    ]
+                },
+                { title: "Services", url: "/admin/services", icon: Briefcase },
+                {
+                    title: "Blogs",
+                    url: "/admin/blogs",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "All Blogs", url: "/admin/blogs" },
+                        { title: "Categories", url: "/admin/blogs/categories" },
+                        { title: "Locations", url: "/admin/blogs/locations" },
+                    ]
+                },
+                { title: "Portfolio", url: "/admin/portfolio", icon: Image },
+                { title: "Forms", url: "/admin/forms", icon: Layers },
+                { title: "Global Sections", url: "/admin/global-sections", icon: Layers },
+                { title: "Contact Submissions", url: "/admin/contact-submissions", icon: Inbox },
+                { title: "Media", url: "/admin/media", icon: FolderOpen },
+            ]
+        },
+        {
+            label: "Account",
+            items: [
+                { title: "Profile", url: "/admin/profile", icon: User },
+            ]
+        },
     ];
 
-    const seoNavigation = [
-        ...baseNavigationItems,
-
-        //* SEO only (UI will handle basic vs advanced)
-        { title: "SEO", url: "/seo", icon: Search },
-
-        { title: "Profile", url: "/profile", icon: User },
+    const seoNavigation: NavigationGroup[] = [
+        {
+            label: "Navigation",
+            items: [
+                { title: "Website", url: "/", icon: Globe },
+                { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "Content Management",
+            items: [
+                {
+                    title: "Pages",
+                    url: "/admin/pages",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "Landing Page Content", url: "/admin/landing/page-content" },
+                        { title: "About Page Content", url: "/admin/about/page-content" },
+                        { title: "Services Page Content", url: "/admin/services/page-content" },
+                        { title: "Portfolio Page Content", url: "/admin/portfolio/page-content" },
+                        { title: "Blog Page Content", url: "/admin/blogs/page-content" },
+                        { title: "Contact", url: "/admin/pages/contact" },
+                    ]
+                }
+            ]
+        },
+        {
+            label: "SEO",
+            items: [
+                { title: "SEO", url: "/admin/seo", icon: Search },
+            ]
+        },
+        {
+            label: "Account",
+            items: [
+                { title: "Profile", url: "/admin/profile", icon: User },
+            ]
+        },
     ];
 
-    const userNavigation = [
-        ...baseNavigationItems,
-
-        //* View-only access
-        { title: "Pages", url: "/pages", icon: FileText },
-        { title: "Services", url: "/services", icon: Layers },
-        { title: "Blogs", url: "/blogs", icon: FileText },
-        { title: "Portfolio", url: "/portfolio", icon: Image },
-        { title: "Sections", url: "/sections", icon: Layers },
+    const userNavigation: NavigationGroup[] = [
+        {
+            label: "Navigation",
+            items: [
+                { title: "Website", url: "/", icon: Globe },
+                { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+            ]
+        },
+        {
+            label: "Content",
+            items: [
+                {
+                    title: "Pages",
+                    url: "/admin/pages",
+                    icon: FileText,
+                    isOpenByDefault: true,
+                    subItems: [
+                        { title: "Landing Page Content", url: "/admin/landing/page-content" },
+                        { title: "About Page Content", url: "/admin/about/page-content" },
+                        { title: "Services Page Content", url: "/admin/services/page-content" },
+                        { title: "Portfolio Page Content", url: "/admin/portfolio/page-content" },
+                        { title: "Blog Page Content", url: "/admin/blogs/page-content" },
+                        { title: "Contact", url: "/admin/pages/contact" },
+                    ]
+                },
+                { title: "Services", url: "/admin/services", icon: Briefcase },
+                { title: "Blogs", url: "/admin/blogs", icon: FileText },
+                { title: "Portfolio", url: "/admin/portfolio", icon: Image },
+                { title: "Forms", url: "/admin/forms", icon: Layers },
+                { title: "Contact Submissions", url: "/admin/contact-submissions", icon: Inbox },
+            ]
+        },
     ];
 
     switch (role) {

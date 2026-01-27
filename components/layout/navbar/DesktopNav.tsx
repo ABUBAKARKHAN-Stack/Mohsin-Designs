@@ -4,13 +4,16 @@ import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
 import ThemeToggle from "@/components/ui/theme-toggle";
-import { serviceItems } from '@/constants/services.constants'
 import { navLinks } from "@/constants/navlinks.constants";
 import Link from "next/link";
 import ContainerLayout from "../ContainerLayout";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import Logo from "@/components/ui/logo";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { uiT } from "@/i18n";
+import { useServices } from "@/context/ServiceContext";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 type Props = {
     isOpen: boolean
@@ -21,7 +24,7 @@ const DesktopNav: FC<Props> = ({
     isOpen,
     setIsOpen
 }) => {
-    const [servicesOpen, setServicesOpen] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState<number | null>(null);
     const [scrolled, setScrolled] = useState(false);
 
     const pathname = usePathname();
@@ -35,10 +38,36 @@ const DesktopNav: FC<Props> = ({
 
     //* Close dropdown when route changes
     useEffect(() => {
-        setServicesOpen(false);
+        setOpenDropdown(null);
     }, [pathname]);
 
-    const router = useRouter()
+    const { lang }: LanguageType = useParams();
+    const { lightWeightServices } = useServices()
+    const { settings } = useSiteSettings()
+
+    // Helper to resolve dynamic URLs
+    const resolveUrl = (item: any) => {
+        if (item.type === 'custom') return item.url || '#';
+        if (item.type === 'reference' && item.reference) {
+            if (item.reference._type === 'service') return `/${lang}/services/${item.reference.slug}`;
+            return `/${lang}/${item.reference.slug}`;
+        }
+        return '#';
+    };
+
+    const menuItems = settings?.headerMenu?.items || navLinks.map(link => ({
+        label: uiT(lang, `navigation.${link.name.toLowerCase().trim()}`),
+        url: `/${lang}${link.path}`,
+        type: 'custom',
+        hasDropdown: link.hasDropdown,
+        children: link.hasDropdown ? lightWeightServices.map(s => ({
+            label: s.title,
+            url: `/${lang}/services/${s.slug}`,
+            type: 'custom',
+            description: s.items.slice(0, 2).join(" ")
+        })) : []
+    })) as any[]
+
 
     return (
         <motion.header
@@ -53,7 +82,7 @@ const DesktopNav: FC<Props> = ({
                     <div className="flex items-center justify-between">
 
                         <MagneticButton strength={0.2}>
-                            <Link href="/" className="relative z-50">
+                            <Link href={`/${lang}`} className="relative z-50">
                                 <motion.div
                                     whileHover={{ scale: 1.05 }}
                                 >
@@ -65,99 +94,120 @@ const DesktopNav: FC<Props> = ({
 
                         {/* Center nav links */}
                         <div className="hidden lg:flex items-center gap-1">
-                            {navLinks.map((link) => (
-                                <div
-                                    key={link.path}
-                                    className="relative"
-                                    onMouseEnter={() => link.hasDropdown && setServicesOpen(true)}
-                                    onMouseLeave={() => link.hasDropdown && setServicesOpen(false)}
-                                >
-                                    <MagneticButton strength={0.1}>
-                                        <Link
-                                            href={link.path}
-                                            className={`relative px-5 py-2 text-sm tracking-wide transition-colors group inline-flex items-center gap-1 ${pathname === link.path || (link.hasDropdown && pathname.startsWith('/services'))
-                                                ? "text-accent"
-                                                : "text-foreground/70 hover:text-foreground"
-                                                }`}
-                                        >
-                                            <span className="relative z-10">{link.name}</span>
-                                            {link.hasDropdown && (
-                                                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`} />
-                                            )}
-                                            {(pathname === link.path || (link.hasDropdown && pathname.startsWith('/services'))) && (
-                                                <motion.div
-                                                    layoutId="activeNav"
-                                                    className="absolute inset-0 bg-accent/10 border border-accent/20"
-                                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                                />
-                                            )}
-                                        </Link>
-                                    </MagneticButton>
+                            {menuItems.map((item, index) => {
+                                const path = item.type === 'custom' && item.url?.startsWith('/') ? item.url : resolveUrl(item)
+                                const hasChildren = item.children && item.children.length > 0
 
-                                    {/* Services Dropdown */}
-                                    {link.hasDropdown && (
-                                        <AnimatePresence>
-                                            {servicesOpen && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: 10 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    exit={{ opacity: 0, y: 10 }}
-                                                    transition={{ duration: 0.2 }}
-                                                    className="absolute top-full left-0 pt-2 w-64"
-                                                >
-                                                    <div className="bg-background/95 backdrop-blur-xl border border-border shadow-xl">
-                                                        {serviceItems.map((service, i) => (
-                                                            <motion.div
-                                                                key={service.path}
-                                                                initial={{ opacity: 0, x: -10 }}
-                                                                animate={{ opacity: 1, x: 0 }}
-                                                                transition={{ delay: i * 0.05 }}
-                                                            >
-                                                                <Link
-                                                                    href={service.path}
-                                                                    className={`block px-5 py-4 group transition-colors border-b border-border/50 last:border-b-0 hover:bg-accent/10 ${pathname === service.path ? 'bg-accent/10' : ''
-                                                                        }`}
-                                                                >
-                                                                    <span className={`block text-sm font-medium group-hover:text-accent transition-colors ${pathname === service.path ? 'text-accent' : ''
-                                                                        }`}>
-                                                                        {service.name}
-                                                                    </span>
-                                                                    <span className="block text-xs text-muted-foreground mt-0.5">
-                                                                        {service.desc}
-                                                                    </span>
-                                                                </Link>
-                                                            </motion.div>
-                                                        ))}
-                                                        <div className="p-3 border-t border-border/50 bg-muted/30">
-                                                            <Link
-                                                                href="/services"
-                                                                className="flex items-center justify-between text-xs font-medium text-muted-foreground hover:text-accent transition-colors"
-                                                            >
-                                                                View all services
-                                                                <ArrowUpRight className="h-3 w-3" />
-                                                            </Link>
+                                return (
+                                    <div
+                                        key={index}
+                                        className="relative"
+                                        onMouseEnter={() => hasChildren && setOpenDropdown(index)}
+                                        onMouseLeave={() => hasChildren && setOpenDropdown(null)}
+                                    >
+                                        <MagneticButton strength={0.1}>
+                                            <Link
+                                                href={path}
+                                                className={`relative px-5 py-2 text-sm tracking-wide transition-colors group inline-flex items-center gap-1 ${pathname === path || (hasChildren && pathname.startsWith(`/${lang}/services`))
+                                                    ? "text-accent"
+                                                    : "text-foreground/70 hover:text-foreground"
+                                                    }`}
+                                            >
+                                                <span className="relative z-10">{item.label}</span>
+                                                {hasChildren && (
+                                                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${openDropdown === index ? 'rotate-180' : ''}`} />
+                                                )}
+                                                {(pathname === path || (hasChildren && pathname.startsWith(`/${lang}/services`))) && (
+                                                    <motion.div
+                                                        layoutId="activeNav"
+                                                        className="absolute inset-0 bg-accent/10 border border-accent/20"
+                                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                    />
+                                                )}
+                                            </Link>
+                                        </MagneticButton>
+
+                                        {/* Dynamic Dropdown */}
+                                        {hasChildren && (
+                                            <AnimatePresence>
+                                                {openDropdown === index && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: 10 }}
+                                                        transition={{ duration: 0.2 }}
+                                                        className="absolute top-full left-0 pt-2 w-64"
+                                                    >
+                                                        <div className="bg-background/95 backdrop-blur-xl border border-border shadow-xl overflow-hidden">
+                                                            <div className="max-h-[70vh] overflow-x-hidden overflow-y-auto">
+                                                                {item.children.map((child: any, i: number) => {
+                                                                    const childPath = resolveUrl(child)
+                                                                    return (
+                                                                        <motion.div
+                                                                            key={i}
+                                                                            initial={{ opacity: 0, x: -10 }}
+                                                                            animate={{ opacity: 1, x: 0 }}
+                                                                            transition={{ delay: i * 0.05 }}
+                                                                        >
+                                                                            <Link
+                                                                                href={childPath}
+                                                                                className={`block px-5 py-4 group transition-colors border-b border-border/50 last:border-b-0 hover:bg-accent/10 ${pathname === childPath ? 'bg-accent/10' : ''
+                                                                                    }`}
+                                                                            >
+                                                                                <span className={`block text-sm font-medium group-hover:text-accent transition-colors ${pathname === childPath ? 'text-accent' : ''
+                                                                                    }`}>
+                                                                                    {child.label}
+                                                                                </span>
+                                                                                {child.description ? (
+                                                                                    <span className="block text-[10px] text-muted-foreground mt-0.5">
+                                                                                        {child.description}
+                                                                                    </span>
+                                                                                ) : child.reference?.items && (
+                                                                                    <span className="block text-[10px] text-muted-foreground mt-0.5">
+                                                                                        {child.reference.items.slice(0, 2).map((item: any) => item).join(', ')}
+                                                                                    </span>
+                                                                                )}
+                                                                            </Link>
+                                                                        </motion.div>
+                                                                    )
+                                                                })}
+                                                            </div>
+                                                            {/* Special case for services view all */}
+                                                            {path.includes('/services') && (
+                                                                <div className="p-3 border-t border-border/50 bg-muted/30">
+                                                                    <Link
+                                                                        href={`/${lang}/services`}
+                                                                        className="flex items-center justify-between text-xs font-medium text-muted-foreground hover:text-accent transition-colors"
+                                                                    >
+                                                                        {uiT(lang, "common.viewAllServices")}
+                                                                        <ArrowUpRight className="h-3 w-3" />
+                                                                    </Link>
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    )}
-                                </div>
-                            ))}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        )}
+                                    </div>
+                                )
+                            })}
                         </div>
 
-                        <div className="hidden lg:flex items-center gap-6">
-                            <ThemeToggle />
+                        <div className="hidden lg:flex items-center gap-4">
                             <MagneticButton strength={0.25}>
                                 <Link
-                                    href="/contact"
+                                    href={`/${lang}/contact`}
                                     data-cursor-text="Go"
                                     className="group inline-flex h-10 items-center gap-2 text-sm font-medium bg-foreground text-background px-6 py-3 hover:bg-accent hover:text-accent-foreground transition-all duration-300"
                                 >
-                                    Start a Project
+                                    {uiT(lang, "common.startProject")}
                                     <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                 </Link>
                             </MagneticButton>
+                            <ThemeToggle />
+
+                            <LanguageSwitcher currentLang={lang} />
                         </div>
 
                         <div className="lg:hidden flex items-center gap-4">

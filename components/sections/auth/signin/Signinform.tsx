@@ -37,7 +37,7 @@ const Signinform = () => {
             email: formValues.email,
             password: formValues.password,
             rememberMe: formValues.rememberMe,
-            callbackURL: "/dashboard"
+            callbackURL: "/admin/dashboard"
         }, {
             onSuccess(_context) {
                 successToast("Login Successful!")

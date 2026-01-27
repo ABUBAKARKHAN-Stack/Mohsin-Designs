@@ -4,11 +4,28 @@ import SectionHeading from "@/components/ui/section-heading";
 import { Linkedin, Twitter, Mail } from "lucide-react";
 import Image from "next/image";
 import { ContainerLayout } from "@/components/layout";
-import HighlightedBrandname from "@/components/ui/highlighted-brandname";
-import { teamStructure } from "@/constants/about.constants";
+import { useGlobalContent } from "@/context/GlobalContentContext";
+import { getIconByName } from "@/lib/icon-mapper";
+import { useParams } from "next/navigation";
+import { uiT } from "@/i18n";
 
 
 const Leadership = () => {
+  const { globalContent } = useGlobalContent();
+  const { lang }: any = useParams()
+
+  const leadershipData = globalContent?.leadership;
+  const founderData = leadershipData?.founder;
+  const agencyStructure = leadershipData?.agencyStructure || [];
+
+  const getSocialIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'linkedin': return Linkedin;
+      case 'twitter': return Twitter;
+      case 'mail': case 'email': return Mail;
+      default: return Mail;
+    }
+  };
   return (
     <section className="lg:py-12.5 py-6.25 bg-muted/30 overflow-hidden">
 
@@ -41,12 +58,12 @@ const Leadership = () => {
 
               {/* Photo */}
               <div className="relative rounded-3xl overflow-hidden bg-linear-to-br from-accent/20 to-primary/20 p-1">
-              
+
                 <div className="aspect-square">
                   <Image
                     fill
-                    src={"/assets/about/founderImage.png"}
-                    alt="Mohsin - Founder & Creative Director"
+                    src={founderData?.image?.url || "/assets/about/founderImage.png"}
+                    alt={`${founderData?.name || "Mohsin"} - ${founderData?.role || "Founder & Creative Director"}`}
                     className="w-full object-cover rounded-2xl grayscale-20 hover:grayscale-0 transition-all duration-700"
                   />
 
@@ -65,26 +82,33 @@ const Leadership = () => {
                 >
                   <div className="bg-background/90 backdrop-blur-md rounded-2xl p-4 border border-border/50">
                     <h3 className="text-2xl md:text-3xl font-display font-bold">
-                      Mohsin
+                      {founderData?.name || "Mohsin"}
                     </h3>
                     <p className="text-accent font-medium">
-                      Founder & Creative Director
+                      {founderData?.role || "Founder & Creative Director"}
                     </p>
 
                     {/* Social links */}
-                    <div className="flex gap-3 mt-3">
-                      {[Linkedin, Twitter, Mail].map((Icon, i) => (
-                        <motion.a
-                          key={i}
-                          href="#"
-                          className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors duration-300"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Icon className="w-4 h-4" />
-                        </motion.a>
-                      ))}
-                    </div>
+                    {founderData?.socialLinks && founderData.socialLinks.length > 0 && (
+                      <div className="flex gap-3 mt-3">
+                        {founderData.socialLinks.map((social, i) => {
+                          const Icon = getSocialIcon(social.platform);
+                          return (
+                            <motion.a
+                              key={i}
+                              href={social.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors duration-300"
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <Icon className="w-4 h-4" />
+                            </motion.a>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               </div>
@@ -100,41 +124,48 @@ const Leadership = () => {
           >
 
             <SectionHeading
-              eyebrow="Leadership"
-              title="The Vision Behind the Brand"
+              eyebrow={leadershipData?.sectionHeading?.eyebrow || "Leadership"}
+              title={leadershipData?.sectionHeading?.title || "The Vision Behind the Brand"}
+              description={leadershipData?.sectionHeading?.description}
               className="mb-8"
             />
 
-            <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              <HighlightedBrandname /> is led by <span className="font-bold">Mohsin</span>, Founder and Creative Director, whose experience in branding, digital design, and creative strategy shapes the agency’s direction. Under this leadership, the agency operates as a collaborative studio where strategy, design, and technology work together seamlessly.
-            </p>
+            {leadershipData?.sectionHeading?.description && (
+              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+                {leadershipData.sectionHeading.description}
+              </p>
+            )}
 
 
             {/* Agency Structure */}
             <div className="bg-background border border-border/50 p-6 rounded-2xl">
               <h4 className="text-sm font-medium  text-muted-foreground uppercase tracking-wider mb-5 flex items-center gap-2">
-                Agency Structure
+                {uiT(lang, 'common.agencyStructure')}
               </h4>
 
               <div className="space-y-3">
-                {teamStructure.map((team, index) => (
-                  <motion.div
-                    key={team.title}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
-                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors duration-300 group"
-                  >
-                    <div className="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent group-hover:scale-110 transition-all duration-300">
-                      <team.icon className="w-5 h-5 text-accent group-hover:text-accent-foreground transition-colors duration-300" />
-                    </div>
-                    <div>
-                      <h5 className="font-medium">{team.title}</h5>
-                      <p className="text-sm text-muted-foreground">{team.description}</p>
-                    </div>
-                  </motion.div>
-                ))}
+                {agencyStructure.map((team, index) => {
+                  const IconComponent = getIconByName(team.iconName);
+
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
+                      className="flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors duration-300 group"
+                    >
+                      <div className="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent group-hover:scale-110 transition-all duration-300">
+                        <IconComponent className="w-5 h-5 text-accent group-hover:text-accent-foreground transition-colors duration-300" />
+                      </div>
+                      <div>
+                        <h5 className="font-medium">{team.title}</h5>
+                        <p className="text-sm text-muted-foreground">{team.description}</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
 
             </div>

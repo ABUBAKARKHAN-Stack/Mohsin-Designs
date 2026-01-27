@@ -42,7 +42,7 @@ const Signupform = () => {
             name: formValues.fullName,
             role: Roles.ADMIN,
             permissions: {},
-            callbackURL: "/dashboard"
+            callbackURL: "/admin/dashboard"
         }, {
             onSuccess(_context) {
                 successToast("Account Created Successfully!")

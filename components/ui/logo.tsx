@@ -1,4 +1,6 @@
+"use client"
 import { APP_NAME } from '@/constants/app.constants'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { cn } from '@/lib/utils'
 import Image, { ImageProps } from 'next/image'
 
@@ -8,10 +10,16 @@ interface LogoProps extends Omit<ImageProps, 'alt' | 'src'> {
 }
 
 const Logo = ({ className = "", ...props }: LogoProps) => {
+    const { settings } = useSiteSettings()
+
+    // Use dynamic logo from settings, or fallback to default
+    const logoSrc = settings?.logo?.url || "/assets/logo.webp"
+    const appName = settings?.siteName || APP_NAME
+
     return (
         <Image
-            src={"/assets/logo.webp"}
-            alt={APP_NAME}
+            src={logoSrc}
+            alt={settings?.logo?.altText || appName}
             height={50}
             width={50}
             {...props}

@@ -1,5 +1,5 @@
      body {
-         cursor: none;
+         cursor: default !important;
      }
 
      a,
@@ -8,6 +8,6 @@
      input,
      textarea,
      select {
-         cursor: none;
+         cursor: pointer !important;
      }
  

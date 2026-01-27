@@ -48,6 +48,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
     const [selectedLang, setSelectedLang] = useState("en")
+    const [isLiveSyncEnabled, setIsLiveSyncEnabled] = useState(false)
     const [isInitialMount, setIsInitialMount] = useState(true)
     const router = useRouter()
 
@@ -119,11 +120,28 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
 
 
     useEffect(() => {
-        const subscription = form.watch((value) => {
+        const subscription = form.watch((value, { name, type }) => {
+            // Auto-save draft
             saveDraft(value as Partial<ServiceFormValues>)
+
+            // Live sync for testing (English to all others)
+            if (isLiveSyncEnabled && name?.endsWith(".en") && type === "change") {
+                const baseName = name.replace(".en", "")
+                const newValue = (value as any)[name.split(".")[0]]
+
+                // Handle nested fields vs top-level fields
+                const val = name.split('.').reduce((obj: any, key) => obj?.[key], value);
+
+                ["ur", "es", "ar"].forEach(lang => {
+                    form.setValue(`${baseName}.${lang}` as any, val, {
+                        shouldValidate: true,
+                        shouldDirty: true
+                    })
+                })
+            }
         })
         return () => subscription.unsubscribe()
-    }, [form, saveDraft])
+    }, [form, saveDraft, isLiveSyncEnabled])
 
     const { fields: roleFields, append: appendRole, remove: removeRole } = useFieldArray({
         control: form.control,
@@ -274,6 +292,22 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                     <SelectItem value="ar">Arabic (AR)</SelectItem>
                                 </SelectContent>
                             </Select>
+                        </div>
+
+                        <div className="flex items-center gap-2 border-l pl-4">
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="live-sync"
+                                    checked={isLiveSyncEnabled}
+                                    onCheckedChange={(checked) => setIsLiveSyncEnabled(!!checked)}
+                                />
+                                <label
+                                    htmlFor="live-sync"
+                                    className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-amber-600 flex items-center gap-1"
+                                >
+                                    Live Sync (Test)
+                                </label>
+                            </div>
                         </div>
                     </div>
 

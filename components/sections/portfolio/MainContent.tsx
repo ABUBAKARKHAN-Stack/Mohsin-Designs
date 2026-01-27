@@ -1,29 +1,29 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { ArrowUpRight, TrendingUp, Eye, MousePointerClick, Sparkles } from "lucide-react";
+import { ArrowUpRight,  Sparkles } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
 import Link from "next/link";
-
-
 import { urlFor } from "@/sanity/lib/image";
+import { useParams } from "next/navigation";
 
 interface MainContentProps {
-  projects: any[]
+  projects: any[] 
 }
 
 const Portfolio = ({ projects }: MainContentProps) => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const { lang } = useParams();
 
   return (
 
-    <section className="pb-32">
+    <section className="pb-16">
       <ContainerLayout>
 
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 gap-8">
           <AnimatePresence mode="popLayout">
-            {projects.map((project, i) => (
+            {projects?.map((project, i) => (
               <motion.div
                 key={project._id}
                 layout
@@ -34,9 +34,9 @@ const Portfolio = ({ projects }: MainContentProps) => {
                 onHoverStart={() => setHoveredId(project._id)}
                 onHoverEnd={() => setHoveredId(null)}
               >
-                <Link href={`/portfolio/${project.slug}`} className="group block">
+                <Link href={`/${lang}/portfolio/${project.slug}`} className="group block">
                   {/* Image Container */}
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-2xl mb-5 bg-muted">
+                  <div className="relative aspect-z4/3 overflow-hidden rounded-2xl mb-5 bg-muted">
                     <img
                       src={urlFor(project.image).url()}
                       alt={project.title}
@@ -44,7 +44,7 @@ const Portfolio = ({ projects }: MainContentProps) => {
                     />
 
                     {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-linear-to-t from-primary/80 via-primary/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
 
                     {/* Stats Badge - Removed as it might not be in Sanity schema or use fallback */}
 

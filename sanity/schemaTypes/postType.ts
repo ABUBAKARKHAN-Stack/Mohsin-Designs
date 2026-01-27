@@ -11,11 +11,13 @@ export const postType = defineType({
       name: 'title',
       type: 'localizedString',
       title: 'Title',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'description',
       type: 'localizedText',
       title: 'Description',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'featured',
@@ -29,6 +31,7 @@ export const postType = defineType({
       options: {
         source: 'title.en',
       },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'readTime',
@@ -38,11 +41,13 @@ export const postType = defineType({
     defineField({
       name: 'author',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'tags',
       type: 'localizedArray',
       title: 'Tags',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'location',
@@ -83,6 +88,7 @@ export const postType = defineType({
       name: 'body',
       type: 'object',
       title: 'Body Content',
+      validation: (Rule) => Rule.required(),
       fields: [
         defineField({ name: 'en', type: 'blockContent', title: 'English' }),
         defineField({ name: 'ur', type: 'blockContent', title: 'Urdu' }),

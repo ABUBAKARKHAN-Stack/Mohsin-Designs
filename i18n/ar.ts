@@ -21,6 +21,7 @@ const ar = {
         agencyStructure: "هيكل الوكالة",
         viewAllProjects: "عرض جميع المشاريع",
         step: "الخطوة",
+        readArticle: "اقرأ المقال",
         readTime: "دقائق قراءة",
         areasCta: {
             title: "هل موقعك غير موجود؟",

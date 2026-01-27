@@ -1,7 +1,6 @@
 'use server'
 
 import { adminClient } from "@/sanity/lib/admin-client"
-import { sanityFetch } from "@/sanity/lib/live"
 import { revalidatePath } from "next/cache"
 import { blogPostSchema, BlogPostValues } from "@/lib/validations/blog"
 
@@ -80,12 +79,19 @@ export async function getDashboardPosts() {
 export async function getPostById(id: string) {
     try {
         const query = `*[_type == "post" && (_id == $id || _id == "drafts." + $id)] | order(_updatedAt desc)[0] {
-            ...,
+            _id,
+            _type,
+            title,
+            description,
+            featured,
             "slug": { "current": slug.current },
             readTime,
+            author,
+            tags,
             "location": location._ref,
             "service": service._ref,
             "categories": coalesce(categories[]._ref, []),
+            publishedAt,
             "mainImage": select(
                 mainImage.asset != null => {
                     "asset": mainImage.asset,
@@ -93,7 +99,8 @@ export async function getPostById(id: string) {
                     "_id": mainImage.asset->._id
                 },
                 null
-            )
+            ),
+            body
         }`
         const result = await adminClient.fetch(query, { id }, {
             perspective: "raw",
@@ -281,7 +288,6 @@ export async function updatePost(id: string, data: BlogPostValues) {
         if (toUnset.length > 0) patch.unset(toUnset)
         await patch.commit()
 
-        // Delete draft after update
         await adminClient.delete(`drafts.${id}`).catch(() => { })
 
         revalidatePath('/admin/blogs')

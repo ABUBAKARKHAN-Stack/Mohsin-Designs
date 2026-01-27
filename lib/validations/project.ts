@@ -1,35 +1,40 @@
 import { z } from "zod";
-import { requiredLocalizedStringSchema, requiredLocalizedTextSchema, localizedStringSchema, localizedTextSchema } from "./common";
+import {
+    requiredLocalizedStringSchema,
+    requiredLocalizedTextSchema,
+    requiredLocalizedArraySchema,
+} from "./common";
 
 export const projectSchema = z.object({
     title: requiredLocalizedStringSchema,
     slug: z.object({
         current: z.string().min(1, "Slug is required"),
     }),
-    category: localizedStringSchema.optional(),
+    category: requiredLocalizedStringSchema,
     description: requiredLocalizedTextSchema,
-    tags: z.object({
-        en: z.string().optional(),
-        ur: z.string().optional(),
-        es: z.string().optional(),
-        ar: z.string().optional(),
-    }).optional(),
-    mainImage: z.any().optional(),
+    tags: requiredLocalizedArraySchema,
+    mainImage: z.object({
+        _id: z.string().min(1, "Main image is required"),
+        url: z.string().optional(),
+    }),
     caseStudy: z.object({
-        title: localizedStringSchema.optional(),
-        beforeImage: z.any().optional(),
-        afterImage: z.any().optional(),
-        testimonial: localizedTextSchema.optional(),
-        slug: z.object({
-            current: z.string().optional(),
-        }).optional(),
+        title: requiredLocalizedStringSchema,
+        beforeImage: z.object({
+            _id: z.string().min(1, "Before image is required"),
+            url: z.string().optional(),
+        }),
+        afterImage: z.object({
+            _id: z.string().min(1, "After image is required"),
+            url: z.string().optional(),
+        }),
+        testimonial: requiredLocalizedTextSchema,
         results: z.array(z.object({
             _key: z.string().optional(),
             icon: z.string().min(1, "Icon is required"),
             value: requiredLocalizedStringSchema,
             label: requiredLocalizedStringSchema,
-        })).default([]),
-    }).default({ results: [] }),
+        })).min(1, "At least one result is required"),
+    }),
 });
 
 export type ProjectValues = z.infer<typeof projectSchema>;

@@ -53,13 +53,15 @@ export function ProjectForm({
     const router = useRouter()
     const [selectedLang, setSelectedLang] = useState("en")
     const [isSavingDraft, setIsSavingDraft] = useState(false)
-    const [currentProjectId] = useState(projectId)
+    const [currentProjectId, setCurrentProjectId] = useState(projectId)
     const [lastSaved, setLastSaved] = useState<Date | null>(
         initialData?._updatedAt ? new Date(initialData._updatedAt) : null
     )
     const [isInitialMount, setIsInitialMount] = useState(true)
     const isSubmittingRef = useRef(false)
 
+    console.log(initialData);
+    
     const form = useForm<ProjectValues>({
         resolver: zodResolver(projectSchema) as any,
         defaultValues: (initialData as ProjectValues) || {
@@ -70,7 +72,6 @@ export function ProjectForm({
             caseStudy: {
                 title: {},
                 testimonial: {},
-                slug: { current: "" },
                 results: []
             }
         },
@@ -84,12 +85,21 @@ export function ProjectForm({
     // Auto-save draft functionality
     const saveDraft = useCallback(
         debounce(async (data: Partial<ProjectValues>) => {
-            if (isInitialMount || !currentProjectId || isSubmittingRef.current) return
+            if (isInitialMount || isSubmittingRef.current) return
+
+            // For new projects, we only save if at least title is being filled
+            if (!currentProjectId && !data.title?.en) return
+
             setIsSavingDraft(true)
             try {
                 const result = await saveProjectDraft(currentProjectId, data)
                 if (result.success) {
                     setLastSaved(new Date())
+                    if (result.id && !currentProjectId) {
+                        setCurrentProjectId(result.id)
+                        // If we just got an ID, we should update the URL without refreshing to keep state
+                        window.history.replaceState(null, '', `/admin/portfolio/edit/${result.id}`)
+                    }
                 }
             } catch (error) {
                 console.error("Draft save failed:", error)
@@ -101,7 +111,7 @@ export function ProjectForm({
     )
 
     useEffect(() => {
-        const timer = setTimeout(() => setIsInitialMount(false), 1000)
+        const timer = setTimeout(() => setIsInitialMount(false), 500) // Shorter initial delay
         return () => clearTimeout(timer)
     }, [])
 
@@ -116,6 +126,7 @@ export function ProjectForm({
     }, [form, saveDraft])
 
     // Auto-save draft functionality
+
 
     function onSubmit(values: ProjectValues) {
         saveDraft.cancel()
@@ -292,7 +303,7 @@ export function ProjectForm({
                                         <LocalizedInput
                                             control={form.control}
                                             name="category"
-                                            label="Short Category"
+                                            label={<>Short Category <span className="text-destructive">*</span></>}
                                             activeLang={selectedLang}
                                             placeholder="e.g. Brand, Digital, UI/UX"
                                         />
@@ -306,7 +317,7 @@ export function ProjectForm({
                                         <LocalizedInput
                                             control={form.control}
                                             name="tags"
-                                            label="Tags (Comma separated)"
+                                            label={<>Tags (Comma separated) <span className="text-destructive">*</span></>}
                                             activeLang={selectedLang}
                                             placeholder="e.g. tech, design, ai"
                                         />
@@ -328,7 +339,7 @@ export function ProjectForm({
                                                         <ImageUpload
                                                             value={field.value}
                                                             onChange={field.onChange}
-                                                            label="Project Banner"
+                                                            label={<>Project Banner <span className="text-destructive">*</span></>}
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -357,9 +368,8 @@ export function ProjectForm({
                                         <LocalizedInput
                                             control={form.control}
                                             name="caseStudy.title"
-                                            label="Case Study Title"
+                                            label={<>Case Study Title <span className="text-destructive">*</span></>}
                                             activeLang={selectedLang}
-                                            optional
                                         />
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -372,7 +382,7 @@ export function ProjectForm({
                                                             <ImageUpload
                                                                 value={field.value}
                                                                 onChange={field.onChange}
-                                                                label="Before Image"
+                                                                label={<>Before Image <span className="text-destructive">*</span></>}
                                                             />
                                                         </FormControl>
                                                     </FormItem>
@@ -387,7 +397,7 @@ export function ProjectForm({
                                                             <ImageUpload
                                                                 value={field.value}
                                                                 onChange={field.onChange}
-                                                                label="After Image"
+                                                                label={<>After Image <span className="text-destructive">*</span></>}
                                                             />
                                                         </FormControl>
                                                     </FormItem>
@@ -398,10 +408,9 @@ export function ProjectForm({
                                         <LocalizedInput
                                             control={form.control}
                                             name="caseStudy.testimonial"
-                                            label="Client Testimonial"
+                                            label={<>Client Testimonial <span className="text-destructive">*</span></>}
                                             isTextarea
                                             activeLang={selectedLang}
-                                            optional
                                         />
                                     </CardContent>
                                 </Card>
@@ -451,7 +460,7 @@ export function ProjectForm({
                                                         <LocalizedInput
                                                             control={form.control}
                                                             name={`caseStudy.results.${index}.value`}
-                                                            label="Stat Value"
+                                                            label={<>Stat Value <span className="text-destructive">*</span></>}
                                                             activeLang={selectedLang}
                                                             compact
                                                             noBorder
@@ -460,7 +469,7 @@ export function ProjectForm({
                                                         <LocalizedInput
                                                             control={form.control}
                                                             name={`caseStudy.results.${index}.label`}
-                                                            label="Stat Label"
+                                                            label={<>Stat Label <span className="text-destructive">*</span></>}
                                                             activeLang={selectedLang}
                                                             compact
                                                             noBorder

@@ -19,7 +19,11 @@ interface PageCTAProps {
 }
 
 export default function PageCTA({ cta }: PageCTAProps) {
-    const ctaRef = useRef<HTMLDivElement>(null)
+  
+
+    if (!cta || !cta.form) return null
+
+      const ctaRef = useRef<HTMLDivElement>(null)
     const { scrollYProgress } = useScroll({
         target: ctaRef,
         offset: ["start end", "end start"],
@@ -27,9 +31,6 @@ export default function PageCTA({ cta }: PageCTAProps) {
 
     const ctaY = useTransform(scrollYProgress, [0, 1], [100, -50])
     const ctaOpacity = useTransform(scrollYProgress, [0, 0.3], [0, 1])
-
-    if (!cta || !cta.form) return null
-
     return (
         <motion.div
             ref={ctaRef}

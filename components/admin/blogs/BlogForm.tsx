@@ -333,7 +333,7 @@ export function BlogForm({
                                         <LocalizedInput
                                             control={form.control}
                                             name="tags"
-                                            label="Tags (Comma separated)"
+                                            label={<>Tags (Comma separated) <span className="text-destructive">*</span></>}
                                             activeLang={selectedLang}
                                             optional={false}
                                             placeholder="e.g. tech, design, ai"

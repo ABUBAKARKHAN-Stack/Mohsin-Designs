@@ -56,6 +56,13 @@ export const requiredLocalizedTextSchema = localizedTextSchema.superRefine(
     }
 );
 
+export const requiredLocalizedArraySchema = z.object({
+    en: z.string().min(1, "EN is required"),
+    ur: z.string().min(1, "UR is required"),
+    es: z.string().min(1, "ES is required"),
+    ar: z.string().min(1, "AR is required"),
+});
+
 export const sectionHeadingSchema = z.object({
     _key: z.string().optional(),
     eyebrow: localizedStringSchema.optional(),

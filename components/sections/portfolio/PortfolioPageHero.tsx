@@ -12,7 +12,7 @@ const PortfolioPageHero = ({ title, subtitle, description }: PortfolioPageHeroPr
             title={title}
             subtitle={subtitle}
             description={description}
-            breadcrumbs={[{ label: "Work" }]}
+            breadcrumbs={[{ label: "Our Work" }]}
         />
     )
 }

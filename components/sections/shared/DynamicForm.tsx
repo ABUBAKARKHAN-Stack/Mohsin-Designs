@@ -56,7 +56,7 @@ export default function DynamicForm({
 
         // Add more specific validations if needed based on fieldType
         if (field.fieldType === 'email') {
-            fieldSchema = fieldSchema.pipe(z.string().email("Invalid email address"))
+            fieldSchema = fieldSchema.pipe(z.email("Invalid email address"))
         }
 
         schemaShape[field.fieldName] = fieldSchema

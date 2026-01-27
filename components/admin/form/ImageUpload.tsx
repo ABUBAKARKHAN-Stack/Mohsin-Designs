@@ -15,14 +15,15 @@ import { MediaPicker } from "@/components/admin/media/MediaPicker"
 interface ImageUploadProps {
     value?: {
         url?: string
+        _id?: string
         asset?: {
             _ref?: string
             url?: string;
         }
-        altText: any;
+        altText?: any;
     }
     onChange: (value: any) => void
-    label: string
+    label: React.ReactNode | string
 }
 
 export function ImageUpload({ value, onChange, label }: ImageUploadProps) {

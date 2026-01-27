@@ -21,6 +21,7 @@ const ur = {
         step: "مرحلہ",
         readTime: "منٹ کی پڑھائی",
         industries: "صنعتیں",
+        readArticle: "مضمون پڑھیں",
         agencyStructure: "ایجنسی کا ڈھانچہ",
         areasCta: {
             title: "کیا آپ کی جگہ یہاں نہیں ہے؟",

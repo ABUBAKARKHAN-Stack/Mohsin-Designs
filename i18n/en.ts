@@ -18,6 +18,7 @@ const en = {
         continents: "Continents",
         countries: "Countries",
         industries: "Industries",
+        readArticle: "Read article",
         agencyStructure: "Agency Structure",
         viewAllProjects: "View All Projects",
         step: "Step",

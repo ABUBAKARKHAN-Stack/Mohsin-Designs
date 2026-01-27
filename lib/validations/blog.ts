@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { localizedStringSchema, localizedTextSchema, requiredLocalizedStringSchema, requiredLocalizedTextSchema } from "./common";
+import { localizedStringSchema, localizedTextSchema, requiredLocalizedArraySchema, requiredLocalizedStringSchema, requiredLocalizedTextSchema } from "./common";
 
 export const blogPostSchema = z.object({
     title: requiredLocalizedStringSchema,
@@ -10,12 +10,7 @@ export const blogPostSchema = z.object({
     }),
     readTime: z.number().min(1, "Read time must be at least 1 minute").optional(),
     author: z.string().min(1, "Author name is required"),
-    tags: z.object({
-        en: z.string().min(1, "English tags are required"),
-        ur: z.string().min(1, "Urdu tags are required"),
-        es: z.string().min(1, "Spanish tags are required"),
-        ar: z.string().min(1, "Arabic tags are required"),
-    }),
+    tags: requiredLocalizedArraySchema,
     location: z.string().nullable().optional(),
     service: z.string().nullable().optional(), // Reference ID
     publishedAt: z.string().optional(), // ISO date string

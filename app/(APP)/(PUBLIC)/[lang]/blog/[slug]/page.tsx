@@ -9,6 +9,7 @@ import PageHero from "@/components/ui/page-hero"
 import { ContainerLayout } from "@/components/layout"
 import { SUPPORTED_LANGS } from "@/constants/lang"
 import { uiT } from "@/i18n"
+import { ShareButtons } from "@/components/blog/ShareButtons"
 
 interface Props {
     params: Promise<{
@@ -101,7 +102,7 @@ export default async function BlogPostPage({ params }: Props) {
                     {post.readTime && (
                         <div className="flex items-center gap-2 text-accent">
                             <Clock className="h-4 w-4" />
-                            <span className="font-semibold uppercase tracking-wider">{post.readTime} {uiT(lang,"common.readTime")}</span>
+                            <span className="font-semibold uppercase tracking-wider">{post.readTime} {uiT(lang, "common.readTime")}</span>
                         </div>
                     )}
                 </div>
@@ -129,7 +130,7 @@ export default async function BlogPostPage({ params }: Props) {
                         {/* Tags Section */}
                         {post.tags && post.tags.length > 0 && (
                             <div className="pt-8 border-t border-border flex flex-wrap gap-2 mb-12">
-                                {post.tags.map((tag:string[], index:number) => (
+                                {post.tags.map((tag: string, index: number) => (
                                     <span
                                         key={index}
                                         className="px-4 py-1.5 text-xs uppercase tracking-widest bg-muted text-muted-foreground border border-border rounded-sm hover:border-accent hover:text-accent transition-all cursor-default"
@@ -146,10 +147,7 @@ export default async function BlogPostPage({ params }: Props) {
                                 <h3 className="font-display font-bold text-lg">Did you enjoy this article?</h3>
                                 <p className="text-muted-foreground text-sm">Share it with your network</p>
                             </div>
-                            <Button variant="outline" size="sm" className="uppercase tracking-widest text-xs h-10 px-6 font-semibold border-border hover:border-accent hover:text-accent transition-all">
-                                <Share2 className="h-4 w-4 mr-2" />
-                                Share
-                            </Button>
+                            <ShareButtons title={post.title} />
                         </div>
                     </div>
                 </div>

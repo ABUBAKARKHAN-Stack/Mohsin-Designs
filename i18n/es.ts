@@ -20,6 +20,7 @@ const es = {
         viewAllProjects: "Ver todos los proyectos",
         step: "Paso",
         readTime: "Min de lectura",
+        readArticle: "Leer artículo",
         industries: "Industrias",
         agencyStructure: "Estructura de la agencia",
         areasCta: {

@@ -19,8 +19,9 @@ const Portfolio = async ({ params }: Props) => {
   const pageContent = await getPortfolioPageContent(lang);
 
   if (!pageContent) {
-    return null; // Or show error
+    return null; 
   }
+ 
 
   return (
     <PageWrapper>

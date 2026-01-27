@@ -11,7 +11,7 @@ const sanitizeSanityData = (data: any): any => {
         const cleaned: any = {};
         for (const key in data) {
             // Strip Sanity internal fields and restricted keys
-            if (['_rev', '_createdAt', '_updatedAt'].includes(key)) continue;
+            if (['_rev', '_createdAt', '_updatedAt', '_id', '_type'].includes(key)) continue;
 
             // If this is a reference object, don't allow 'url' key
             if (key === 'url' && data._type === 'reference') {
@@ -24,6 +24,29 @@ const sanitizeSanityData = (data: any): any => {
     return data;
 };
 
+const flattenToPatch = (obj: any, prefix = ""): any => {
+    const patch: any = {};
+
+    const recurse = (obj: any, prefix = "") => {
+        if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return;
+
+        for (const key in obj) {
+            if (key === '_id' || key === '_type') continue;
+            const val = obj[key];
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+
+            if (val !== null && typeof val === 'object' && !Array.isArray(val) && !val._type) {
+                recurse(val, fullKey);
+            } else {
+                patch[fullKey] = val;
+            }
+        }
+    };
+
+    recurse(obj, prefix);
+    return patch;
+};
+
 export async function saveBlogDraft(id: string, data: Partial<BlogPostValues>) {
     try {
         if (!id) return { success: false, error: "ID required for draft" }
@@ -32,57 +55,51 @@ export async function saveBlogDraft(id: string, data: Partial<BlogPostValues>) {
         const cleanId = id.replace(/^(drafts\.)+/, '');
         const draftId = `drafts.${cleanId}`;
 
-        // Sanitize data to remove any incorrectly nested 'url' keys in references
+        // Sanitize data
         const sanitizedData = sanitizeSanityData(data);
 
-        const updateData: any = {
-            ...sanitizedData,
-            _type: 'post',
-            _id: draftId,
-        }
-
-        // Handle Slug object
-        if (updateData.slug) {
-            updateData.slug = {
-                _type: 'slug',
-                current: typeof updateData.slug === 'string' ? updateData.slug : (updateData.slug.current || "")
-            }
-        }
-
-        // Handle tags strings to arrays
-        if (updateData.tags) {
-            updateData.tags = {
-                en: typeof updateData.tags.en === 'string' ? updateData.tags.en.split(',').map((t: string) => t.trim()).filter(Boolean) : (updateData.tags.en || []),
-                ur: typeof updateData.tags.ur === 'string' ? updateData.tags.ur.split(',').map((t: string) => t.trim()).filter(Boolean) : (updateData.tags.ur || []),
-                es: typeof updateData.tags.es === 'string' ? updateData.tags.es.split(',').map((t: string) => t.trim()).filter(Boolean) : (updateData.tags.es || []),
-                ar: typeof updateData.tags.ar === 'string' ? updateData.tags.ar.split(',').map((t: string) => t.trim()).filter(Boolean) : (updateData.tags.ar || [])
-            };
-        }
-
+        // Build surgical patch
+        const toSet: any = {};
         const toUnset: string[] = [];
 
-        // Handle References (Location, Service)
-        if (updateData.location) {
-            if (updateData.location === 'none') {
+        // 1. Localized Basic Fields (Title, Description, Tags)
+        if (sanitizedData.title) Object.assign(toSet, flattenToPatch(sanitizedData.title, 'title'));
+        if (sanitizedData.description) Object.assign(toSet, flattenToPatch(sanitizedData.description, 'description'));
+
+        // 2. Tags
+        if (sanitizedData.tags) {
+            ['en', 'ur', 'es', 'ar'].forEach(lang => {
+                if (typeof sanitizedData.tags[lang] === 'string') {
+                    toSet[`tags.${lang}`] = sanitizedData.tags[lang].split(',').map((t: string) => t.trim()).filter(Boolean);
+                }
+            });
+        }
+
+        // 3. Featured & Metadata
+        if (typeof sanitizedData.featured === 'boolean') toSet.featured = sanitizedData.featured;
+        if (sanitizedData.author) toSet.author = sanitizedData.author;
+        if (typeof sanitizedData.readTime === 'number') toSet.readTime = sanitizedData.readTime;
+        if (sanitizedData.publishedAt) toSet.publishedAt = sanitizedData.publishedAt;
+
+        // 4. References (Location, Service)
+        if (sanitizedData.location) {
+            if (sanitizedData.location === 'none') {
                 toUnset.push('location');
-                delete updateData.location;
-            } else if (typeof updateData.location === 'string') {
-                updateData.location = { _type: 'reference', _ref: updateData.location };
+            } else {
+                toSet.location = { _type: 'reference', _ref: sanitizedData.location };
             }
         }
-
-        if (updateData.service) {
-            if (updateData.service === 'none') {
+        if (sanitizedData.service) {
+            if (sanitizedData.service === 'none') {
                 toUnset.push('service');
-                delete updateData.service;
-            } else if (typeof updateData.service === 'string') {
-                updateData.service = { _type: 'reference', _ref: updateData.service };
+            } else {
+                toSet.service = { _type: 'reference', _ref: sanitizedData.service };
             }
         }
 
-        // Handle Categories array of references
-        if (Array.isArray(updateData.categories)) {
-            updateData.categories = updateData.categories
+        // 5. Categories
+        if (Array.isArray(sanitizedData.categories)) {
+            toSet.categories = sanitizedData.categories
                 .filter((catId: string) => typeof catId === 'string' && catId !== 'none')
                 .map((catId: string) => ({
                     _type: 'reference',
@@ -91,53 +108,41 @@ export async function saveBlogDraft(id: string, data: Partial<BlogPostValues>) {
                 }));
         }
 
-        // Handle Main Image asset reference - RESTORED
-        if (updateData.mainImage?._id) {
-            updateData.mainImage = {
+        // 6. Main Image - SURGICAL
+        if (sanitizedData.mainImage?._id) {
+            toSet.mainImage = {
                 _type: 'image',
-                asset: {
-                    _type: 'reference',
-                    _ref: updateData.mainImage._id
-                }
+                asset: { _type: 'reference', _ref: sanitizedData.mainImage._id }
             };
-        } else if (updateData.mainImage?.asset?._ref) {
-            // Already a valid image structure, just ensure it's correct
-            updateData.mainImage = {
-                _type: 'image',
-                asset: {
-                    _type: 'reference',
-                    _ref: updateData.mainImage.asset._ref
-                }
-            };
-        } else {
-            // If mainImage is null or empty, unset it
-            toUnset.push('mainImage');
-            delete updateData.mainImage;
         }
 
-        // Create the draft document if it doesn't exist, then patch it
-        // This is more robust than createOrReplace as it allows partial updates if needed
-        // though we currently send the full form state.
+        // 7. Body Content
+        if (sanitizedData.body) {
+            ['en', 'ur', 'es', 'ar'].forEach(lang => {
+                if (Array.isArray(sanitizedData.body[lang])) {
+                    toSet[`body.${lang}`] = sanitizedData.body[lang];
+                }
+            });
+        }
 
-        console.log(`Saving draft to Sanity: ${draftId}`);
+        if (Object.keys(toSet).length === 0 && toUnset.length === 0) {
+            return { success: true, message: "No changes to save" };
+        }
 
-        // Ensure the base document exists (with at least _type)
+        // Ensure the base document exists
         await adminClient.createIfNotExists({
             _id: draftId,
             _type: 'post'
         });
 
-        // Clean updateData for patch (remove _id and _type to be safe, though patch handles it)
-        const { _id, _type, ...patchData } = updateData;
-
-        const patch = adminClient.patch(draftId).set(patchData);
+        const patch = adminClient.patch(draftId).set(toSet);
         if (toUnset.length > 0) patch.unset(toUnset);
         const result = await patch.commit();
 
-        console.log("Draft successfully patched:", result._id);
+        console.log("Blog draft successfully patched:", result._id);
         return { success: true }
     } catch (error: any) {
-        console.error("CRITICAL ERROR: Failed to save blog draft to Sanity:", error);
+        console.error("CRITICAL ERROR: Failed to save blog draft:", error);
         // Include more details if available
         if (error.details) {
             console.error("Error details:", JSON.stringify(error.details, null, 2));

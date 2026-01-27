@@ -63,7 +63,12 @@ export async function getDashboardProjects() {
 export async function getProjectById(id: string) {
     try {
         const query = `*[_type == "project" && (_id == $id || _id == "drafts." + $id)] | order(_updatedAt desc)[0] {
-            ...,
+            _id,
+            _type,
+            title,
+            category,
+            description,
+            tags,
             "slug": { "current": slug.current },
             "mainImage": select(
                 mainImage.asset != null => {
@@ -74,7 +79,8 @@ export async function getProjectById(id: string) {
                 null
             ),
             "caseStudy": {
-                ...,
+                "title": caseStudy.title,
+                "testimonial": caseStudy.testimonial,
                 "beforeImage": select(
                     caseStudy.beforeImage.asset != null => {
                         "asset": caseStudy.beforeImage.asset,
@@ -91,7 +97,12 @@ export async function getProjectById(id: string) {
                     },
                     null
                 ),
-                "slug": { "current": caseStudy.slug.current }
+                "results": caseStudy.results[] {
+                    _key,
+                    icon,
+                    value,
+                    label
+                }
             }
         }`
         const result = await adminClient.fetch(query, { id }, {
@@ -127,6 +138,7 @@ export async function createProject(data: ProjectValues, id?: string) {
                 current: validated.slug.current
             },
             description: validated.description,
+            category: validated.category,
             tags: validated.tags ? {
                 en: validated.tags.en?.split(',').map(t => t.trim()).filter(Boolean) || [],
                 ur: validated.tags.ur?.split(',').map(t => t.trim()).filter(Boolean) || [],
@@ -148,10 +160,6 @@ export async function createProject(data: ProjectValues, id?: string) {
                     asset: { _type: 'reference', _ref: validated.caseStudy.afterImage._id }
                 } : undefined,
                 testimonial: validated.caseStudy.testimonial,
-                slug: validated.caseStudy.slug?.current ? {
-                    _type: 'slug',
-                    current: validated.caseStudy.slug.current
-                } : undefined,
                 results: validated.caseStudy.results?.map(res => ({
                     _key: res._key || Math.random().toString(36).substring(2, 9),
                     icon: res.icon,
@@ -189,26 +197,37 @@ export async function updateProject(id: string, data: ProjectValues) {
                 current: validated.slug.current
             },
             description: validated.description,
-            tags: validated.tags ? {
+            category: validated.category,
+            tags: {
                 en: validated.tags.en?.split(',').map(t => t.trim()).filter(Boolean) || [],
                 ur: validated.tags.ur?.split(',').map(t => t.trim()).filter(Boolean) || [],
                 es: validated.tags.es?.split(',').map(t => t.trim()).filter(Boolean) || [],
                 ar: validated.tags.ar?.split(',').map(t => t.trim()).filter(Boolean) || []
-            } : undefined,
-            caseStudy: validated.caseStudy ? {
+            },
+            caseStudy: {
                 title: validated.caseStudy.title,
                 testimonial: validated.caseStudy.testimonial,
-                slug: validated.caseStudy.slug?.current ? {
-                    _type: 'slug',
-                    current: validated.caseStudy.slug.current
-                } : undefined,
                 results: validated.caseStudy.results?.map(res => ({
                     _key: res._key || Math.random().toString(36).substring(2, 9),
                     icon: res.icon,
                     value: res.value,
                     label: res.label
                 }))
-            } : undefined
+            }
+        }
+
+        // Handle images within the caseStudy object
+        if (validated.caseStudy.beforeImage?._id) {
+            toSet.caseStudy.beforeImage = {
+                _type: 'image',
+                asset: { _type: 'reference', _ref: validated.caseStudy.beforeImage._id }
+            }
+        }
+        if (validated.caseStudy.afterImage?._id) {
+            toSet.caseStudy.afterImage = {
+                _type: 'image',
+                asset: { _type: 'reference', _ref: validated.caseStudy.afterImage._id }
+            }
         }
 
         const toUnset = []
@@ -220,20 +239,6 @@ export async function updateProject(id: string, data: ProjectValues) {
             }
         } else {
             toUnset.push('mainImage')
-        }
-
-        if (validated.caseStudy?.beforeImage?._id) {
-            toSet['caseStudy.beforeImage'] = {
-                _type: 'image',
-                asset: { _type: 'reference', _ref: validated.caseStudy.beforeImage._id }
-            }
-        }
-
-        if (validated.caseStudy?.afterImage?._id) {
-            toSet['caseStudy.afterImage'] = {
-                _type: 'image',
-                asset: { _type: 'reference', _ref: validated.caseStudy.afterImage._id }
-            }
         }
 
         const patch = adminClient.patch(id).set(toSet)

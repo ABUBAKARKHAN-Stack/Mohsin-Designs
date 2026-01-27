@@ -7,6 +7,7 @@ import { ContainerLayout } from "@/components/layout"
 import { urlFor } from "@/sanity/lib/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { uiT } from "@/i18n"
 
 interface BlogPost {
     _id: string
@@ -35,11 +36,14 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
         ? posts
         : posts.filter(post => (post.categories || []).includes(activeCategory))
 
-    const featuredPost = posts[0]
+    const featuredPost = posts.find(p => p.featured) || posts[0]
     const remainingPosts = filteredPosts.filter(p => p._id !== featuredPost?._id)
 
+    console.log(posts);
+    
+
     return (
-        <section className="pb-32">
+        <section className="pb-16">
             <ContainerLayout>
                 {/* Categories */}
                 <motion.div
@@ -73,7 +77,7 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                         <Link href={`/${lang}/blog/${featuredPost.slug}`} className="grid lg:grid-cols-2 gap-8 items-center">
                             <div className="aspect-16/10 overflow-hidden relative">
                                 <img
-                                    src={urlFor(featuredPost.image).url()}
+                                    src={featuredPost.image?.url || (featuredPost.image ? urlFor(featuredPost.image).url() : '')}
                                     alt={featuredPost.title}
                                     className="w-full h-full object-cover  group-hover:scale-105 transition-all duration-700"
                                 />
@@ -100,12 +104,12 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Clock className="h-4 w-4" />
-                                        {featuredPost.readTime}
+                                        {featuredPost.readTime} {uiT(lang, "common.readTime")}
                                     </div>
                                 </div>
                                 <div className="mt-8">
                                     <span className="inline-flex items-center gap-2 text-sm uppercase tracking-widest group-hover:text-accent transition-colors">
-                                        Read article <ArrowUpRight className="h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                        {uiT(lang, "common.readArticle")} <ArrowUpRight className="h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                     </span>
                                 </div>
                             </div>
@@ -132,7 +136,7 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                             <Link href={`/${lang}/blog/${post.slug}`}>
                                 <div className="aspect-16/12 overflow-hidden mb-6">
                                     <img
-                                        src={urlFor(post.image).url()}
+                                        src={post.image?.url || (post.image ? urlFor(post.image).url() : '')}
                                         alt={post.title}
                                         className="w-full h-full object-cover   group-hover:scale-105 transition-all duration-700"
                                     />
@@ -154,10 +158,11 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                 <div className="flex items-center justify-between text-sm">
                                     <div className="flex items-center gap-2 text-muted-foreground">
                                         <Clock className="h-3 w-3" />
-                                        {post.readTime}
+                                        {post.readTime} {" "}
+                                        {uiT(lang, "common.readTime")}
                                     </div>
                                     <span className="inline-flex items-center gap-1 text-xs uppercase tracking-widest group-hover:text-accent transition-colors">
-                                        Read <ArrowUpRight className="h-3 w-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                        {uiT(lang, "common.readArticle")} <ArrowUpRight className="h-3 w-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                     </span>
                                 </div>
                             </Link>

@@ -25,6 +25,14 @@ export const localizedString = defineType({
       title: 'Arabic',
     }),
   ],
+  validation: (Rule) => Rule.custom((fields) => {
+    if (!fields) return true;
+    const missing = ['en', 'ur', 'es', 'ar'].filter(lang => !(fields as any)[lang]);
+    if (missing.length > 0) {
+      return `Missing translations: ${missing.join(', ').toUpperCase()}`;
+    }
+    return true;
+  })
 })
 
 
@@ -58,7 +66,14 @@ export const localizedText = defineType({
       rows: 3,
     }),
   ],
-
+  validation: (Rule) => Rule.custom((fields) => {
+    if (!fields) return true;
+    const missing = ['en', 'ur', 'es', 'ar'].filter(lang => !(fields as any)[lang]);
+    if (missing.length > 0) {
+      return `Missing translations: ${missing.join(', ').toUpperCase()}`;
+    }
+    return true;
+  })
 })
 
 export const localizedArray = defineType({

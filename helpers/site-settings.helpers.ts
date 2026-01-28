@@ -16,8 +16,9 @@ const SITE_SETTINGS_QUERY_BY_LOCALE = `{
   "seo": {
     "metaTitle": seo.metaTitle[$lang],
     "metaDescription": seo.metaDescription[$lang],
-    "keywords": seo.keywords[][$lang],
-    "schema": seo.schema
+    "focusKeyword": seo.focusKeyword[$lang],
+    "relatedKeywords": seo.relatedKeywords[][$lang],
+    "schemas": seo.schemas
   },
   "social": social,
   "contact": {
@@ -105,71 +106,72 @@ const SITE_SETTINGS_QUERY_BY_LOCALE = `{
 }`;
 
 export type MenuItemData = {
-    label: string;
-    description?: string;
-    type: 'reference' | 'custom';
-    url?: string;
-    reference?: {
-        _type: string;
-        title: string;
-        slug: string;
-    };
-    children?: MenuItemData[];
+  label: string;
+  description?: string;
+  type: 'reference' | 'custom';
+  url?: string;
+  reference?: {
+    _type: string;
+    title: string;
+    slug: string;
+  };
+  children?: MenuItemData[];
 };
 
 export type MenuData = {
-    title: string;
-    slug: string;
-    items: MenuItemData[];
+  title: string;
+  slug: string;
+  items: MenuItemData[];
 };
 
 export type SiteSettingsData = {
-    siteName: string;
-    tagline: string;
-    logo?: {
-        url: string;
-        altText?: string;
-    };
-    favicon?: {
-        url: string;
-        altText?: string;
-    };
-    seo: {
-        metaTitle: string;
-        metaDescription: string;
-        keywords: string[];
-        schema?: string;
-    };
-    social: {
-        facebook: string;
-        twitter: string;
-        linkedin: string;
-        instagram: string;
-    };
-    contact: {
-        email: string;
-        phone: string;
-        address: string;
-    };
-    footerText: string;
-    copyright: string;
-    headerMenu?: MenuData;
-    footerMenu?: MenuData;
+  siteName: string;
+  tagline: string;
+  logo?: {
+    url: string;
+    altText?: string;
+  };
+  favicon?: {
+    url: string;
+    altText?: string;
+  };
+  seo: {
+    metaTitle: string;
+    metaDescription: string;
+    focusKeyword?: string;
+    relatedKeywords?: string[];
+    schemas?: string[];
+  };
+  social: {
+    facebook: string;
+    twitter: string;
+    linkedin: string;
+    instagram: string;
+  };
+  contact: {
+    email: string;
+    phone: string;
+    address: string;
+  };
+  footerText: string;
+  copyright: string;
+  headerMenu?: MenuData;
+  footerMenu?: MenuData;
 };
 
 export const getSiteSettingsByLocale = async (lang: string) => {
-    try {
-        const { data } = await sanityFetch({
-            query: `*[_type == "siteSettings"][0] ${SITE_SETTINGS_QUERY_BY_LOCALE}`,
-            params: {
-                lang
-            },
-            perspective: "published"
-        })
-        const settings = data as SiteSettingsData;
-        return settings ?? null
-    } catch (error) {
-        console.log("Sanity Error :: ", error);
-        return null;
-    }
+  try {
+    const { data } = await sanityFetch({
+      query: `*[_type == "siteSettings"][0] ${SITE_SETTINGS_QUERY_BY_LOCALE}`,
+      params: {
+        lang
+      },
+      perspective: "published"
+    })
+    const settings = data as SiteSettingsData;
+    return settings ?? null
+  } catch (error) {
+    console.log("Sanity Error :: ", error);
+    return null;
+  }
 }

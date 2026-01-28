@@ -1,4 +1,5 @@
 import { PageWrapper } from "@/components/layout";
+import { JsonLd } from "@/components/SEO/JsonLd";
 import { CTA } from "@/components/sections/services/all-services";
 import {
     ServiceDetailsPageHero,
@@ -62,7 +63,7 @@ export async function generateMetadata(
     return {
         title,
         description,
-        keywords: service.seo.keywords,
+        keywords: [service.seo.focusKeyword, ...(service.seo.relatedKeywords || [])].filter(Boolean) as string[],
         publisher: APP_NAME,
         openGraph: {
             title,
@@ -105,7 +106,7 @@ const ServiceDetailPage = async ({
 }: Props) => {
     const { slug, lang } = await params;
     const service = await getServiceByLocale(lang, slug);
-     const cta = await getServicesCTA(lang)
+    const cta = await getServicesCTA(lang)
 
     if (!service) {
         return notFound();
@@ -114,6 +115,7 @@ const ServiceDetailPage = async ({
 
     return (
         <PageWrapper>
+            <JsonLd schemas={service.seo.schemas} />
 
             {/* Service Page Hero Section */}
 
@@ -193,6 +195,7 @@ const ServiceDetailPage = async ({
             />
 
             {/* FAQ Section */}
+
             <FAQSection
                 faqsSectionHeader={service.faqsSection}
                 faqs={service.faqs}
@@ -200,7 +203,7 @@ const ServiceDetailPage = async ({
 
             {/* Service CTA Section */}
             <CTA
-            cta={cta}
+                cta={cta}
             />
 
             {/* <ServiceBlogs

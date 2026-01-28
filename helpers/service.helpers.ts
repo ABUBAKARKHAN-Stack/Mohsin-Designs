@@ -139,8 +139,9 @@ const SERVICE_SEO_QUERY_BY_LOCALE = `{
   "seo": seo{
     "metaTitle": metaTitle[$lang],
     "metaDescription": metaDescription[$lang],
-    "keywords": keywords[][$lang],
-    schema
+    "focusKeyword": focusKeyword[$lang],
+    "relatedKeywords": relatedKeywords[][$lang],
+    "schemas": schemas
   }
 }`;
 

@@ -7,7 +7,8 @@ import {
     strictMultiLanguageSchema,
     strictMultiLanguageTextSchema,
     seoSchema,
-    baseLocalizedStringSchema
+    baseLocalizedStringSchema,
+    localizedArraySchema
 } from "./common";
 
 export const siteSettingsSchema = z.object({
@@ -36,8 +37,9 @@ export const siteSettingsSchema = z.object({
     seo: z.object({
         metaTitle: requiredLocalizedStringSchema,
         metaDescription: requiredLocalizedTextSchema,
-        schema: z.string().optional(),
-        keywords: z.array(baseLocalizedStringSchema).optional().default([]),
+        focusKeyword: localizedStringSchema.optional(),
+        relatedKeywords: localizedArraySchema.optional(),
+        schemas: z.array(z.string().min(1, "Schema cannot be empty")).optional(),
     }),
 
     social: z.object({

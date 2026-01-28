@@ -19,10 +19,10 @@ export const localizedTextSchema = z.object({
 });
 
 export const localizedArraySchema = z.object({
-    en: z.array(z.string()).optional().default([]),
-    ur: z.array(z.string()).optional().default([]),
-    es: z.array(z.string()).optional().default([]),
-    ar: z.array(z.string()).optional().default([]),
+    en: z.array(z.string()).optional(),
+    ur: z.array(z.string()).optional(),
+    es: z.array(z.string()).optional(),
+    ar: z.array(z.string()).optional(),
 });
 
 // For strictly required fields
@@ -118,8 +118,9 @@ export const strictMultiLanguageTextSchema = localizedTextSchema.superRefine(
 
 
 export const seoSchema = z.object({
-    metaTitle: strictMultiLanguageSchema.optional(),
-    metaDescription: strictMultiLanguageTextSchema.optional(),
-    schema: z.string().optional(),
-    keywords: z.array(baseLocalizedStringSchema).optional().default([]),
+    metaTitle: localizedStringSchema.optional(),
+    metaDescription: localizedTextSchema.optional(),
+    focusKeyword: localizedStringSchema.optional(),
+    relatedKeywords: localizedArraySchema.optional(),
+    schemas: z.array(z.string()).transform(arr => arr.filter(s => s.trim() !== "")).optional(),
 });

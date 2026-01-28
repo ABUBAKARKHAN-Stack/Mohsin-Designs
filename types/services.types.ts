@@ -39,12 +39,21 @@ export interface SectionHeadingType {
   title: string;
   description?: string
 }
+export interface SEOData {
+  metaTitle: string;
+  metaDescription: string;
+  focusKeyword?: string;
+  relatedKeywords?: string[];
+  schemas?: string[];
+}
+
 export interface ServiceData {
   slug: string;
   title: string;
   subtitle: string;
   description: string;
   heroImage: SanityImage;
+  seo: SEOData;
 
   // Intro Section
   introTagLine: string
@@ -92,15 +101,15 @@ export interface ServiceData {
 }
 
 export interface ServiceCTA {
-  badgeText:string;
-  title:string;
-  description:string;
-  url:string;
-  buttonText:string
+  badgeText: string;
+  title: string;
+  description: string;
+  url: string;
+  buttonText: string
 }
 
 export interface ServiceLightWeight {
-title:string;
-items:string[];
-slug:string
+  title: string;
+  items: string[];
+  slug: string
 }

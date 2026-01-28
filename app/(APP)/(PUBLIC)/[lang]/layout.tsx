@@ -3,6 +3,7 @@ import { Navbar, Footer } from "@/components/layout";
 import { AnimatePresence } from "framer-motion";
 import { ReactNode } from "react";
 import PublicProvider from "@/provider/PublicProvider";
+import { JsonLd } from "@/components/SEO/JsonLd";
 import { redirect } from "next/navigation";
 import { SUPPORTED_LANGS } from "@/constants/lang";
 import { ServicesProvider } from "@/context/ServiceContext";
@@ -58,6 +59,7 @@ export default async function LangLayout({ children, params }: Props) {
             <LandingPageContentProvider landingPageContent={landingPageContent}>
                 <AboutPageContentProvider aboutPageContent={aboutPageContent}>
                     <GlobalContentProvider globalContent={globalContent}>
+                        <JsonLd schemas={siteSettings?.seo?.schemas} />
                         <PublicProvider>
                             <div lang={lang} className="min-h-screen flex flex-col">
                                 <ServicesProvider services={services} lightWeightServices={lightWeightServices}>

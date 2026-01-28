@@ -20,7 +20,8 @@ import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Spinner } from "@/components/ui/spinner"
-import { SEOKeywordsInput } from "@/components/admin/form/SEOKeywordsInput"
+import { CommaKeywordsInput } from "@/components/admin/form/CommaKeywordsInput"
+import { SchemaListInput } from "@/components/admin/form/SchemaListInput"
 import { updateSiteSettings } from "@/app/actions/siteSettings"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Save, Globe, Info, Mail, Share2, Scale, AlertCircle, Languages, Menu as MenuIcon, ExternalLink } from "lucide-react"
@@ -73,8 +74,9 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
             seo: {
                 metaTitle: { en: "", ur: "", es: "", ar: "" },
                 metaDescription: { en: "", ur: "", es: "", ar: "" },
-                keywords: [],
-                schema: ""
+                focusKeyword: { en: "", ur: "", es: "", ar: "" },
+                relatedKeywords: { en: [], ur: [], es: [], ar: [] },
+                schemas: [""]
             },
             social: { facebook: "", twitter: "", linkedin: "", instagram: "" },
             contact: { email: "", phone: "", address: { en: "", ur: "", es: "", ar: "" } },
@@ -90,7 +92,7 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
 
     const formControl = form.control as any
 
-    async function onSubmit(values: SiteSettingsValues) {        
+    async function onSubmit(values: SiteSettingsValues) {
 
         setIsLoading(true)
         try {
@@ -244,7 +246,7 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                         label="Site Logo"
                                         onChange={(asset) => {
                                             console.log(asset);
-                                            
+
                                             if (!asset) {
                                                 form.setValue('logo', null as any)
                                                 return
@@ -291,20 +293,9 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                             <CardContent className="space-y-4">
                                 <LocalizedInput control={formControl} name="seo.metaTitle" label="Default Meta Title" activeLang={selectedLang} />
                                 <LocalizedInput control={formControl} name="seo.metaDescription" label="Default Meta Description" isTextarea activeLang={selectedLang} />
-                                <SEOKeywordsInput control={formControl} name="seo.keywords" label="Global Keywords" externalActiveLang={selectedLang} />
-                                <FormField
-                                    control={formControl}
-                                    name="seo.schema"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Global Schema Markup (JSON-LD)</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} value={field.value || ""} placeholder='{"@type": "Organization", ...}' />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <LocalizedInput control={formControl} name="seo.focusKeyword" label="Focus Keyword" activeLang={selectedLang} />
+                                <CommaKeywordsInput control={formControl} name="seo.relatedKeywords" label="Related Keywords" activeLang={selectedLang} />
+                                <SchemaListInput control={formControl} name="seo.schemas" label="Default Schema Markups (JSON-LD)" />
                             </CardContent>
                         </Card>
                     </TabsContent>

@@ -30,7 +30,8 @@ import { errorToast, successToast } from "@/lib/toastNotifications"
 import { slugify } from "@/lib/utils"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Spinner } from "@/components/ui/spinner"
-import { SEOKeywordsInput } from "@/components/admin/form/SEOKeywordsInput"
+import { CommaKeywordsInput } from "@/components/admin/form/CommaKeywordsInput"
+import { SchemaListInput } from "@/components/admin/form/SchemaListInput"
 import { debounce } from "lodash"
 
 
@@ -86,7 +87,13 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
             caseStudies: [{ _key: Math.random().toString(36).substring(2, 9), title: {}, problem: {}, solution: {}, result: {} }],
             faqsSection: { _key: Math.random().toString(36).substring(2, 9), title: {}, description: {}, eyebrow: {} },
             faqs: [{ _key: Math.random().toString(36).substring(2, 9), question: {}, answer: {} }],
-            seo: { keywords: [] }
+            seo: {
+                metaTitle: { en: "", ur: "", es: "", ar: "" },
+                metaDescription: { en: "", ur: "", es: "", ar: "" },
+                focusKeyword: { en: "", ur: "", es: "", ar: "" },
+                relatedKeywords: { en: [], ur: [], es: [], ar: [] },
+                schemas: [""]
+            }
         } as ServiceFormValues,
     })
 
@@ -869,20 +876,9 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                             <CardContent className="space-y-4">
                                 <LocalizedInput control={formControl} name="seo.metaTitle" label="Meta Title" activeLang={selectedLang} />
                                 <LocalizedInput control={formControl} name="seo.metaDescription" label="Meta Description" isTextarea activeLang={selectedLang} />
-                                <SEOKeywordsInput control={formControl} name="seo.keywords" label="Focus Keywords" externalActiveLang={selectedLang} />
-                                <FormField
-                                    control={formControl}
-                                    name="seo.schema"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Schema Markup (JSON-LD)</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} value={field.value || ""} placeholder='{"@type": "Service", ...}' />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <LocalizedInput control={formControl} name="seo.focusKeyword" label="Focus Keyword" activeLang={selectedLang} />
+                                <CommaKeywordsInput control={formControl} name="seo.relatedKeywords" label="Related Keywords" activeLang={selectedLang} />
+                                <SchemaListInput control={formControl} name="seo.schemas" label="Schema Markups (JSON-LD)" />
                             </CardContent>
                         </Card>
                     </TabsContent>

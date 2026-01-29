@@ -42,6 +42,7 @@ export function LocalizedInput({
 }: LocalizedInputProps) {
     const isActuallyTextarea = isTextarea || type === "textarea"
     const inputType = isUrl ? "url" : (type || "text")
+    const actualPlaceholder = placeholder || (isUrl ? "https://example.com or /contact" : undefined)
 
     return (
         <FormField
@@ -57,7 +58,7 @@ export function LocalizedInput({
                             <Textarea
                                 {...field}
                                 value={field.value || ""}
-                                placeholder={placeholder}
+                                placeholder={actualPlaceholder}
                                 rows={rows}
                                 className={cn(
                                     noBorder && "border-none shadow-none focus-visible:ring-0 px-0",
@@ -70,7 +71,7 @@ export function LocalizedInput({
                                 {...field}
                                 type={inputType}
                                 value={field.value || ""}
-                                placeholder={placeholder}
+                                placeholder={actualPlaceholder}
                                 className={cn(
                                     noBorder && "border-transparent px-0 bg-transparent focus-visible:ring-0 shadow-none",
                                     className

@@ -36,6 +36,7 @@ export async function updateServicesPageContent(data: ServicesPageContentValues)
                 guaranteePoints: validatedFields.whyChooseUs.guaranteePoints,
                 benefits: validatedFields.whyChooseUs.benefits,
             },
+            seo: validatedFields.seo
         }
 
         await adminClient.createOrReplace(updateData)

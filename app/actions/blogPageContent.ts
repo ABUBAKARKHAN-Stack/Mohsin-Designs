@@ -71,6 +71,7 @@ export async function updateBlogPageContent(data: BlogPageContentValues) {
                     _ref: validatedFields.cta.formReference
                 } : undefined
             } : undefined,
+            seo: validatedFields.seo
         }
 
         await adminClient.createOrReplace(updateData)

@@ -34,19 +34,46 @@ interface Props {
     services?: any[]
 }
 
+const ls = (val: any) => typeof val === 'object' ? (val?.en || "") : (val || "");
+
+function normalizeGlobalData(data: any): GlobalSectionsData {
+    if (!data) return {}
+    return {
+        ...data,
+        stats: {
+            since: { value: "", label: "", ...(data.stats?.since || {}) },
+            projectsDelivered: { value: "", label: "", suffix: "", ...(data.stats?.projectsDelivered || {}) },
+            yearsExperience: { value: "", label: "", suffix: "", ...(data.stats?.yearsExperience || {}) },
+            clientSatisfaction: { value: "", label: "", suffix: "", ...(data.stats?.clientSatisfaction || {}) },
+        },
+        leadership: {
+            ...data.leadership,
+            founder: {
+                ...data.leadership?.founder,
+                name: ls(data.leadership?.founder?.name),
+                role: ls(data.leadership?.founder?.role),
+                socialLinks: (data.leadership?.founder?.socialLinks || []).map((link: any) => ({
+                    ...link,
+                    iconName: link.iconName || "linkedin",
+                    label: ls(link.label),
+                    url: link.url || ""
+                }))
+            }
+        },
+        cta: data.cta ? {
+            ...data.cta,
+            formId: typeof data.cta.formId === 'object' ? data.cta.formId._ref : data.cta.formId
+        } : undefined
+    }
+}
+
 export function GlobalSectionsManageForm({ initialData, draftUpdatedAt, services = [] }: Props) {
     const [isLoading, setIsLoading] = useState(false)
     const [isSavingDraft, setIsSavingDraft] = useState(false)
     const [lastSaved, setLastSaved] = useState<Date | null>(draftUpdatedAt ? new Date(draftUpdatedAt) : null)
     const [isInitialMount, setIsInitialMount] = useState(true)
 
-    const normalizedInitialData = initialData ? {
-        ...initialData,
-        cta: initialData.cta ? {
-            ...initialData.cta,
-            formId: typeof initialData.cta.formId === 'object' ? initialData.cta.formId._ref : initialData.cta.formId
-        } : undefined
-    } : {}
+    const normalizedInitialData = normalizeGlobalData(initialData)
 
     const form = useForm<GlobalSectionsData>({
         defaultValues: normalizedInitialData,

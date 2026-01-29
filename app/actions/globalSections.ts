@@ -20,32 +20,33 @@ export async function ensureGlobalSectionsDocExists() {
                 _type: 'globalSections',
                 _id: GLOBAL_SECTIONS_ID,
                 stats: {
-                    projectsDelivered: { value: '', label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
-                    yearsExperience: { value: '', label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
-                    clientSatisfaction: { value: '', label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
+                    since: { value: '', label: '' },
+                    projectsDelivered: { value: '', label: '', suffix: '' },
+                    yearsExperience: { value: '', label: '', suffix: '' },
+                    clientSatisfaction: { value: '', label: '', suffix: '' },
                 },
-                servicesPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
-                whyChooseUs: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, benefits: [] },
-                ourApproach: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, steps: [] },
-                industriesWeServe: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, industries: [] },
+                servicesPreview: { sectionHeading: { title: '' } },
+                whyChooseUs: { sectionHeading: { title: '' }, benefits: [] },
+                ourApproach: { sectionHeading: { title: '' }, steps: [] },
+                industriesWeServe: { sectionHeading: { title: '' }, industries: [] },
                 faqs: {
-                    sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } },
+                    sectionHeading: { title: '' },
                     faqItems: []
                 },
                 leadership: {
-                    sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } },
+                    sectionHeading: { title: '' },
                     founder: {
-                        name: { en: '', ur: '', es: '', ar: '' },
-                        role: { en: '', ur: '', es: '', ar: '' },
+                        name: '',
+                        role: '',
                         image: null,
                         socialLinks: []
                     },
                     agencyStructure: []
                 },
                 cta: {
-                    badge: { en: '', ur: '', es: '', ar: '' },
-                    heading: { en: '', ur: '', es: '', ar: '' },
-                    description: { en: '', ur: '', es: '', ar: '' },
+                    badge: '',
+                    heading: '',
+                    description: '',
                     benefits: []
                 }
             }

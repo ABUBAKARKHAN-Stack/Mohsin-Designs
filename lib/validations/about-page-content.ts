@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { sectionHeadingSchema } from "./common";
+import { sectionHeadingSchema, seoSchema } from "./common";
 
 export const aboutPageContentSchema = z.object({
     // Hero Section
@@ -16,7 +16,6 @@ export const aboutPageContentSchema = z.object({
         description2: z.string().min(1, "Description 2 is required"),
         quote: z.string().optional(),
         mainImage: z.any().optional(), // Image type
-        sinceYear: z.number().min(1900).max(new Date().getFullYear()),
     }),
 
     // Mission & Vision Section
@@ -78,15 +77,8 @@ export const aboutPageContentSchema = z.object({
         quoteHighlight: z.string().optional(),
     }),
 
-    // Global Sections (Optional in this schema as they are managed globally)
-    stats: z.any().optional(),
-    servicesPreview: z.any().optional(),
-    whyChooseUs: z.any().optional(),
-    ourApproach: z.any().optional(),
-    industriesWeServe: z.any().optional(),
-    faqs: z.any().optional(),
-    leadership: z.any().optional(),
-    cta: z.any().optional(),
+    // SEO
+    seo: seoSchema.optional(),
 });
 
 export type AboutPageContentValues = z.infer<typeof aboutPageContentSchema>;

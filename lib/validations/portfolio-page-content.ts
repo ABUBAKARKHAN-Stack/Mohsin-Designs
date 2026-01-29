@@ -1,11 +1,7 @@
 import { z } from "zod";
-import { requiredLocalizedStringSchema, requiredLocalizedTextSchema, localizedStringSchema, localizedTextSchema } from "./common";
+import { requiredLocalizedStringSchema, requiredLocalizedTextSchema, localizedStringSchema, localizedTextSchema, sectionHeadingSchema, seoSchema } from "./common";
 
-const sectionHeadingSchema = z.object({
-    eyebrow: requiredLocalizedStringSchema.optional(),
-    title: requiredLocalizedStringSchema,
-    description: requiredLocalizedTextSchema.optional(),
-});
+
 
 export const portfolioPageContentSchema = z.object({
     hero: z.object({
@@ -20,6 +16,9 @@ export const portfolioPageContentSchema = z.object({
         sectionHeading: sectionHeadingSchema.optional(),
         formReference: z.string().optional(),
     }).optional(),
+
+    // SEO
+    seo: seoSchema.optional(),
 });
 
 export type PortfolioPageContentValues = z.infer<typeof portfolioPageContentSchema>;

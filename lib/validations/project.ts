@@ -3,6 +3,7 @@ import {
     requiredLocalizedStringSchema,
     requiredLocalizedTextSchema,
     requiredLocalizedArraySchema,
+    seoSchema
 } from "./common";
 
 export const projectSchema = z.object({
@@ -35,6 +36,7 @@ export const projectSchema = z.object({
             label: requiredLocalizedStringSchema,
         })).min(1, "At least one result is required"),
     }),
+    seo: seoSchema.optional(),
 });
 
 export type ProjectValues = z.infer<typeof projectSchema>;

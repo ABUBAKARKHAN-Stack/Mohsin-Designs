@@ -153,7 +153,8 @@ export async function createProject(data: ProjectValues, id?: string) {
                     value: res.value,
                     label: res.label
                 }))
-            } : undefined
+            } : undefined,
+            seo: validated.seo
         }
 
         if (id) {
@@ -195,7 +196,8 @@ export async function updateProject(id: string, data: ProjectValues) {
                     value: res.value,
                     label: res.label
                 }))
-            }
+            },
+            seo: validated.seo
         }
 
         if (validated.caseStudy.beforeImage?._id) {

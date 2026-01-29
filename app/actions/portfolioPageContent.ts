@@ -71,6 +71,7 @@ export async function updatePortfolioPageContent(data: PortfolioPageContentValue
                     _ref: validatedFields.cta.formReference
                 } : undefined
             } : undefined,
+            seo: validatedFields.seo
         }
 
         await adminClient.createOrReplace(updateData)

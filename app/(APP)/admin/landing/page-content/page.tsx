@@ -1,4 +1,4 @@
-import { getLandingPageContentForAdmin, getLandingPageDraft, getServiceOptions, getProjectOptions } from "@/app/actions/landingPageContent";
+import { getLandingPageContentForAdmin, getLandingPageDraft, getServiceOptions, getProjectOptions, getBlogPostOptions } from "@/app/actions/landingPageContent";
 import { getGlobalSectionsForAdmin, getGlobalSectionsDraft } from "@/app/actions/globalSections";
 import { LandingPageContentForm } from "@/components/admin/form/LandingPageContentForm";
 import { getFormOptions } from "@/app/actions/portfolioPageContent";
@@ -9,13 +9,14 @@ export const revalidate = 0
 
 export default async function LandingPageContentPage() {
     // Try to load draft first, fallback to published content
-    const [draft, published, globalDraft, globalPublished, services, projects, forms] = await Promise.all([
+    const [draft, published, globalDraft, globalPublished, services, projects, posts, forms] = await Promise.all([
         getLandingPageDraft(),
         getLandingPageContentForAdmin(),
         getGlobalSectionsDraft(),
         getGlobalSectionsForAdmin(),
         getServiceOptions(),
         getProjectOptions(),
+        getBlogPostOptions(),
         getFormOptions()
     ]);
 
@@ -43,6 +44,7 @@ export default async function LandingPageContentPage() {
                 draftUpdatedAt={draftUpdatedAt}
                 services={services}
                 projects={projects}
+                posts={posts}
                 forms={forms}
             />
         </div>

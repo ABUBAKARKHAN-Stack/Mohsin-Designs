@@ -90,6 +90,12 @@ export const postType = defineType({
       title: 'Body Content',
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: 'seo',
+      title: 'SEO Settings',
+      type: 'seo',
+      description: 'Custom SEO settings for this post'
+    }),
   ],
   preview: {
     select: {

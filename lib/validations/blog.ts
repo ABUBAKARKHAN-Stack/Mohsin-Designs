@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { requiredLocalizedArraySchema, requiredLocalizedStringSchema, requiredLocalizedTextSchema } from "./common";
+import { requiredLocalizedArraySchema, requiredLocalizedStringSchema, requiredLocalizedTextSchema, seoSchema } from "./common";
 
 export const blogPostSchema = z.object({
     title: requiredLocalizedStringSchema,
@@ -17,6 +17,7 @@ export const blogPostSchema = z.object({
     mainImage: z.any().optional(), // Image object
     categories: z.array(z.string()).optional(), // Array of Reference IDs
     body: z.array(z.any()).min(1, "Body content is required"),
+    seo: seoSchema.optional(),
 });
 
 export type BlogPostValues = z.infer<typeof blogPostSchema>;

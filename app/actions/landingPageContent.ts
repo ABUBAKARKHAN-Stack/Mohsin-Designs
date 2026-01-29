@@ -16,65 +16,29 @@ async function ensureDocumentExists() {
         // Document doesn't exist, create it
         if (error.statusCode === 404) {
             console.log('Creating initial landingPageContent document...')
-            const initialDoc = {
+            const initialDoc: any = {
                 _type: 'landingPageContent',
                 _id: LANDING_PAGE_CONTENT_ID,
-                // Minimal required fields - form will handle the rest
                 hero: {
                     badge: '',
                     headingLines: [],
                     descriptionParagraphs: [],
                     ctaButtons: []
                 },
-                servicesPreview: { sectionHeading: { title: '' } },
                 portfolioPreview: { sectionHeading: { title: '' } },
                 aboutPreview: {
                     sectionHeading: { title: '' },
-                    leftDescriptions: [
-                        { text: '' },
-                        { text: '' }
-                    ],
-                    rightDescriptions: [
-                        { text: '' },
-                        { text: '' }
-                    ],
+                    leftDescriptions: [{ text: '' }, { text: '' }],
+                    rightDescriptions: [{ text: '' }, { text: '' }],
                     ctaText: '',
                     ctaUrl: ''
                 },
-                stats: {
-                    projectsDelivered: { value: '', label: '', suffix: '' },
-                    yearsExperience: { value: '', label: '', suffix: '' },
-                    clientSatisfaction: { value: '', label: '', suffix: '' },
-                },
-                whyChooseUs: { sectionHeading: { title: '' } },
                 blogPreview: { sectionHeading: { title: '' } },
-                faqs: {
-                    sectionHeading: { title: '' },
-                    faqItems: []
-                },
                 serviceHighlightsMarquee: { highlights: [] },
                 trustedByBrands: { sectionHeading: { title: '' }, brandLogos: [] },
-                ourApproach: { sectionHeading: { title: '' }, steps: [] },
                 caseStudiesPreview: { sectionHeading: { title: '' } },
                 areasWeServe: { sectionHeading: { title: '' }, areas: [] },
-                industriesWeServe: { sectionHeading: { title: '' }, industries: [] },
                 testimonials: { sectionHeading: { title: '' }, testimonials: [] },
-                leadership: {
-                    sectionHeading: { title: '' },
-                    founder: {
-                        name: '',
-                        role: '',
-                        image: null,
-                        socialLinks: []
-                    },
-                    agencyStructure: []
-                },
-                cta: {
-                    badge: '',
-                    heading: '',
-                    description: '',
-                    benefits: []
-                }
             }
             return await adminClient.create(initialDoc)
         }
@@ -96,6 +60,14 @@ export async function getLandingPageContentForAdmin() {
             portfolioPreview {
                 ...,
                 "featuredProjects": featuredProjects[]._ref
+            },
+            blogPreview {
+                ...,
+                "featuredBlogs": featuredBlogs[]._ref
+            },
+            caseStudiesPreview {
+                ...,
+                "featuredCaseStudies": featuredCaseStudies[]._ref
             }
         }`
         const { data } = await sanityFetch({ query })
@@ -122,7 +94,6 @@ export async function updateLandingPageContent(data: LandingPageContentValues) {
                     _key: id
                 }))
             },
-            servicesPreview: validatedFields.servicesPreview,
             portfolioPreview: {
                 ...validatedFields.portfolioPreview,
                 featuredProjects: validatedFields.portfolioPreview.featuredProjects?.map(id => ({
@@ -132,25 +103,27 @@ export async function updateLandingPageContent(data: LandingPageContentValues) {
                 }))
             },
             aboutPreview: validatedFields.aboutPreview,
-            stats: validatedFields.stats,
-            whyChooseUs: validatedFields.whyChooseUs,
-            blogPreview: validatedFields.blogPreview,
-            faqs: validatedFields.faqs,
+            blogPreview: {
+                ...validatedFields.blogPreview,
+                featuredBlogs: validatedFields.blogPreview.featuredBlogs?.map(id => ({
+                    _type: 'reference',
+                    _ref: id,
+                    _key: id
+                }))
+            },
             serviceHighlightsMarquee: validatedFields.serviceHighlightsMarquee,
             trustedByBrands: validatedFields.trustedByBrands,
-            ourApproach: validatedFields.ourApproach,
-            caseStudiesPreview: validatedFields.caseStudiesPreview,
-            areasWeServe: validatedFields.areasWeServe,
-            industriesWeServe: validatedFields.industriesWeServe,
-            testimonials: validatedFields.testimonials,
-            leadership: validatedFields.leadership,
-            cta: {
-                ...validatedFields.cta,
-                formId: validatedFields.cta.formId ? {
+            caseStudiesPreview: {
+                ...validatedFields.caseStudiesPreview,
+                featuredCaseStudies: validatedFields.caseStudiesPreview.featuredCaseStudies?.map(id => ({
                     _type: 'reference',
-                    _ref: validatedFields.cta.formId
-                } : undefined
-            }
+                    _ref: id,
+                    _key: id
+                }))
+            },
+            areasWeServe: validatedFields.areasWeServe,
+            testimonials: validatedFields.testimonials,
+            seo: validatedFields.seo
         }
 
         await adminClient.createOrReplace(updateData)
@@ -195,13 +168,22 @@ export async function saveLandingPageDraft(data: Partial<LandingPageContentValue
             }))
         }
 
-        // Normalize CTA formId to reference if it's a string
-        if (updateData.cta && typeof updateData.cta.formId === 'string') {
-            updateData.cta.formId = {
+        if (updateData.blogPreview?.featuredBlogs) {
+            updateData.blogPreview.featuredBlogs = updateData.blogPreview.featuredBlogs.map((id: string) => ({
                 _type: 'reference',
-                _ref: updateData.cta.formId
-            }
+                _ref: id,
+                _key: id
+            }))
         }
+
+        if (updateData.caseStudiesPreview?.featuredCaseStudies) {
+            updateData.caseStudiesPreview.featuredCaseStudies = updateData.caseStudiesPreview.featuredCaseStudies.map((id: string) => ({
+                _type: 'reference',
+                _ref: id,
+                _key: id
+            }))
+        }
+
 
         await adminClient.createOrReplace(updateData)
 
@@ -229,9 +211,11 @@ export async function getLandingPageDraft() {
             if (draft.portfolioPreview && Array.isArray(draft.portfolioPreview.featuredProjects)) {
                 draft.portfolioPreview.featuredProjects = draft.portfolioPreview.featuredProjects.map((p: any) => p._ref || p)
             }
-            // Flatten CTA form reference
-            if (draft.cta?.formId?._ref) {
-                draft.cta.formId = draft.cta.formId._ref
+            if (draft.blogPreview && Array.isArray(draft.blogPreview.featuredBlogs)) {
+                draft.blogPreview.featuredBlogs = draft.blogPreview.featuredBlogs.map((p: any) => p._ref || p)
+            }
+            if (draft.caseStudiesPreview && Array.isArray(draft.caseStudiesPreview.featuredCaseStudies)) {
+                draft.caseStudiesPreview.featuredCaseStudies = draft.caseStudiesPreview.featuredCaseStudies.map((p: any) => p._ref || p)
             }
         }
         console.log('Draft fetched via getDocument:', draft ? 'Found' : 'Not found')
@@ -280,6 +264,17 @@ export async function getProjectOptions() {
         return projects || []
     } catch (error) {
         console.error("Failed to fetch project options:", error)
+        return []
+    }
+}
+
+export async function getBlogPostOptions() {
+    try {
+        const query = `*[_type == "post"] { _id, title }`
+        const posts = await adminClient.fetch(query)
+        return posts || []
+    } catch (error) {
+        console.error("Failed to fetch post options:", error)
         return []
     }
 }

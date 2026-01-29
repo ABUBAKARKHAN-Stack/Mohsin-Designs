@@ -193,7 +193,8 @@ export async function createPost(data: BlogPostValues, id?: string) {
                     _ref: validated.mainImage._id
                 }
             } : undefined,
-            body: validated.body
+            body: validated.body,
+            seo: validated.seo
         }
 
         if (id) {
@@ -233,6 +234,7 @@ export async function updatePost(id: string, data: BlogPostValues) {
                 ? validated.categories.map(catId => ({ _type: 'reference', _ref: catId, _key: catId }))
                 : [],
             body: validated.body,
+            seo: validated.seo
         }
 
         const toUnset = []

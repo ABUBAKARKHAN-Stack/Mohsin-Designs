@@ -5,6 +5,7 @@ import {
     Target, Users, TrendingUp, Zap, Shield, Award,
     // Communication & Social
     Mail, Phone, Send, Share2, MessageCircle, Bell,
+    Youtube, Github, Linkedin, Twitter, Facebook, Instagram, Dribbble, Globe, Link, ExternalLink,
     // Business & Finance
     Briefcase, DollarSign, TrendingDown, PieChart, BarChart3, LineChart,
     // Design & Creative
@@ -35,6 +36,7 @@ const iconMap: Record<string, LucideIcon> = {
     Target, Users, TrendingUp, Zap, Shield, Award,
     // Communication & Social
     Mail, Phone, Send, Share2, MessageCircle, Bell,
+    Youtube, Github, Linkedin, Twitter, Facebook, Instagram, Dribbble, Globe, Link, ExternalLink,
     // Business & Finance
     Briefcase, DollarSign, TrendingDown, PieChart, BarChart3, LineChart,
     // Design & Creative

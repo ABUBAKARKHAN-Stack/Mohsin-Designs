@@ -4,6 +4,10 @@ import { useState, useEffect, useCallback } from "react"
 import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { aboutPageContentSchema, AboutPageContentValues } from "@/lib/validations/about-page-content"
+import { globalSectionsSchema, GlobalSectionsValues } from "@/lib/validations/global-sections"
+
+type CombinedAboutValues = AboutPageContentValues & GlobalSectionsValues;
+const combinedSchema = aboutPageContentSchema.merge(globalSectionsSchema);
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -19,6 +23,7 @@ import { debounce } from "lodash"
 import { Input } from "@/components/ui/input"
 import { GlobalSectionsFormTabs } from "./GlobalSectionsFormTabs"
 import { SectionHeadingCard } from "./SharedFormComponents"
+import { SeoFormTab } from "./SeoFormTab"
 import { saveGlobalSectionsDraft, updateGlobalSections, discardGlobalSectionsDraft } from "@/app/actions/globalSections"
 
 interface AboutPageContentFormProps {
@@ -36,8 +41,8 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt, se
     )
     const [isInitialMount, setIsInitialMount] = useState(true)
 
-    const form = useForm<AboutPageContentValues>({
-        resolver: zodResolver(aboutPageContentSchema),
+    const form = useForm<CombinedAboutValues>({
+        resolver: zodResolver(combinedSchema),
         mode: "onChange",
         defaultValues: initialData ? mergeWithDefaults(initialData) : getDefaultValues(),
     })
@@ -46,7 +51,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt, se
 
     // Auto-save draft functionality
     const saveDraft = useCallback(
-        debounce(async (data: Partial<AboutPageContentValues>) => {
+        debounce(async (data: Partial<CombinedAboutValues>) => {
             if (isInitialMount) return
             setIsSavingDraft(true)
             try {
@@ -84,7 +89,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt, se
 
     useEffect(() => {
         const subscription = form.watch((value) => {
-            saveDraft(value as Partial<AboutPageContentValues>)
+            saveDraft(value as Partial<CombinedAboutValues>)
         })
         return () => subscription.unsubscribe()
     }, [form, saveDraft])
@@ -120,7 +125,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt, se
         name: "culture.values",
     })
 
-    async function onSubmit(values: AboutPageContentValues) {
+    async function onSubmit(values: CombinedAboutValues) {
         setIsLoading(true)
         try {
             // Split data
@@ -239,6 +244,10 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt, se
                         <TabsTrigger value="culture" className="relative data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
                             Culture
                             {formErrors.culture && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        </TabsTrigger>
+                        <TabsTrigger value="seo" className="relative data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+                            SEO
+                            {formErrors.seo && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
                         <TabsTrigger value="shared" className="relative bg-primary/10">
                             Shared Content
@@ -519,6 +528,10 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt, se
                         </Card>
                     </TabsContent>
 
+                    <TabsContent value="seo">
+                        <SeoFormTab control={formControl} />
+                    </TabsContent>
+
                     <TabsContent value="shared">
                         <GlobalSectionsFormTabs form={form} control={formControl} errors={formErrors} services={services} />
                     </TabsContent>
@@ -528,7 +541,7 @@ export function AboutPageContentForm({ initialData, hasDraft, draftUpdatedAt, se
     )
 }
 
-function getDefaultValues(): AboutPageContentValues {
+function getDefaultValues(): CombinedAboutValues {
     return {
         hero: {
             title: "",
@@ -588,11 +601,12 @@ function getDefaultValues(): AboutPageContentValues {
         },
         // Global Sections
         stats: {
+            since: { value: "", label: "" },
             projectsDelivered: { value: "", label: "", suffix: "" },
             yearsExperience: { value: "", label: "", suffix: "" },
             clientSatisfaction: { value: "", label: "", suffix: "" },
         },
-        servicesPreview: { sectionHeading: { eyebrow: "", title: "", description: "" } },
+        servicesPreview: { sectionHeading: { eyebrow: "", title: "", description: "" }, buttonText: "", buttonUrl: "" },
         whyChooseUs: { sectionHeading: { eyebrow: "", title: "", description: "" }, benefits: [] },
         ourApproach: { sectionHeading: { eyebrow: "", title: "", description: "" }, steps: [] },
         industriesWeServe: { sectionHeading: { eyebrow: "", title: "", description: "" }, industries: [] },
@@ -607,11 +621,20 @@ function getDefaultValues(): AboutPageContentValues {
             heading: "",
             description: "",
             benefits: [],
+        },
+        seo: {
+            metaTitle: "",
+            metaDescription: "",
+            focusKeyword: "",
+            relatedKeywords: [],
+            schemas: []
         }
-    } as AboutPageContentValues
+    } as CombinedAboutValues
 }
 
-function mergeWithDefaults(data: any): AboutPageContentValues {
+const ls = (val: any) => typeof val === 'object' ? (val?.en || "") : (val || "");
+
+function mergeWithDefaults(data: any): CombinedAboutValues {
     const defaults = getDefaultValues()
     return {
         ...data,
@@ -650,11 +673,17 @@ function mergeWithDefaults(data: any): AboutPageContentValues {
             quoteHighlight: data.culture?.quoteHighlight || defaults.culture.quoteHighlight,
         },
         stats: {
+            since: { ...defaults.stats?.since, ...data.stats?.since },
             projectsDelivered: { ...defaults.stats?.projectsDelivered, ...data.stats?.projectsDelivered },
             yearsExperience: { ...defaults.stats?.yearsExperience, ...data.stats?.yearsExperience },
             clientSatisfaction: { ...defaults.stats?.clientSatisfaction, ...data.stats?.clientSatisfaction },
         },
-        servicesPreview: { ...defaults.servicesPreview, ...data.servicesPreview },
+        servicesPreview: {
+            ...defaults.servicesPreview,
+            ...data.servicesPreview,
+            buttonText: data.servicesPreview?.buttonText || defaults.servicesPreview.buttonText,
+            buttonUrl: data.servicesPreview?.buttonUrl || defaults.servicesPreview.buttonUrl
+        },
         whyChooseUs: {
             sectionHeading: { ...defaults.whyChooseUs?.sectionHeading, ...data.whyChooseUs?.sectionHeading },
             benefits: data.whyChooseUs?.benefits || defaults.whyChooseUs?.benefits
@@ -675,7 +704,18 @@ function mergeWithDefaults(data: any): AboutPageContentValues {
         },
         leadership: {
             sectionHeading: { ...defaults.leadership?.sectionHeading, ...data.leadership?.sectionHeading },
-            founder: { ...defaults.leadership?.founder, ...data.leadership?.founder },
+            founder: {
+                ...defaults.leadership?.founder,
+                ...data.leadership?.founder,
+                name: ls(data.leadership?.founder?.name),
+                role: ls(data.leadership?.founder?.role),
+                socialLinks: (data.leadership?.founder?.socialLinks || defaults.leadership?.founder?.socialLinks || []).map((link: any) => ({
+                    ...link,
+                    iconName: link.iconName || "linkedin",
+                    label: ls(link.label),
+                    url: link.url || ""
+                }))
+            },
             agencyStructure: data.leadership?.agencyStructure || defaults.leadership?.agencyStructure
         },
         cta: {
@@ -684,6 +724,12 @@ function mergeWithDefaults(data: any): AboutPageContentValues {
             description: data.cta?.description || defaults.cta?.description,
             benefits: data.cta?.benefits || defaults.cta?.benefits,
             formId: typeof data.cta?.formId === 'object' ? data.cta.formId?._ref : data.cta?.formId || undefined
+        },
+        seo: {
+            ...defaults.seo,
+            ...data.seo,
+            relatedKeywords: data.seo?.relatedKeywords || defaults.seo?.relatedKeywords || [],
+            schemas: data.seo?.schemas || defaults.seo?.schemas || []
         }
-    } as AboutPageContentValues
+    } as CombinedAboutValues
 }

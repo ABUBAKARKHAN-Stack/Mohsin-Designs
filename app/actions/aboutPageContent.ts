@@ -101,7 +101,8 @@ export async function updateAboutPageContent(data: AboutPageContentValues) {
             missionVision: validatedFields.missionVision,
             philosophy: validatedFields.philosophy,
             globalReach: validatedFields.globalReach,
-            culture: validatedFields.culture
+            culture: validatedFields.culture,
+            seo: validatedFields.seo
         }
 
         await adminClient.createOrReplace(updateData)

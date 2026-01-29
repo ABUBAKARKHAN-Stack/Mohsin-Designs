@@ -13,6 +13,15 @@ export const globalSectionsType = defineType({
             title: 'Stats Section',
             type: 'object',
             fields: [
+                 defineField({
+                    name: 'since',
+                    title: 'Since',
+                    type: 'object',
+                    fields: [
+                        defineField({ name: 'value', type: 'string' }),
+                        defineField({ name: 'label', type: 'localizedString' }),
+                    ]
+                }),
                 defineField({
                     name: 'projectsDelivered',
                     title: 'Projects Delivered',
@@ -77,6 +86,17 @@ export const globalSectionsType = defineType({
                     description: 'Select services to display in the preview section (Max 8)',
                     of: [{ type: 'reference', to: [{ type: 'service' }] }],
                     validation: Rule => Rule.max(8)
+                }),
+                defineField({
+                    name: 'buttonText',
+                    title: 'CTA Button Text (Optional)',
+                    type: 'localizedString'
+                }),
+                defineField({
+                    name: 'buttonUrl',
+                    title: 'CTA Button URL (Optional)',
+                    type: 'localizedString', // Using localizedString to match 'faqs' schema pattern in this file
+                    description: 'e.g. /services'
                 })
             ]
         }),
@@ -355,16 +375,15 @@ export const globalSectionsType = defineType({
                                 type: 'object',
                                 fields: [
                                     defineField({
-                                        name: 'platform',
-                                        title: 'Platform',
+                                        name: 'label',
+                                        title: 'Platform Label',
                                         type: 'string',
-                                        options: {
-                                            list: [
-                                                { title: 'LinkedIn', value: 'linkedin' },
-                                                { title: 'Twitter', value: 'twitter' },
-                                                { title: 'Email', value: 'email' }
-                                            ]
-                                        },
+                                        validation: Rule => Rule.required()
+                                    }),
+                                    defineField({
+                                        name: 'iconName',
+                                        title: 'Icon Name',
+                                        type: 'string',
                                         validation: Rule => Rule.required()
                                     }),
                                     defineField({

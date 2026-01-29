@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sectionHeadingSchema, seoSchema } from "./common";
 
 // Heading Line Schema
 const headingLineSchema = z.object({
@@ -17,39 +18,10 @@ const descriptionParagraphSchema = z.object({
 const ctaButtonSchema = z.object({
     _key: z.string().optional(),
     text: z.string().min(1, "Text is required"),
-    url: z.string().url("Must be a valid URL").min(1, "Required"),
+    url: z.string("Must be a URL or Route").min(1, "Required"),
     variant: z.enum(['primary', 'secondary']),
 });
 
-// Stat Schema
-const statSchema = z.object({
-    _key: z.string().optional(),
-    value: z.string().min(1, "Value must be at least 1"),
-    label: z.string().min(1, "Label is required"),
-    suffix: z.string().min(1, "Suffix is required (e.g., +, %)"),
-});
-
-// Benefit Schema
-const benefitSchema = z.object({
-    _key: z.string().optional(),
-    title: z.string().min(1, "Title is required"),
-    description: z.string().min(1, "Description is required"),
-    iconName: z.string().min(1, "Icon name is required"),
-});
-
-// FAQ Schema
-const faqSchema = z.object({
-    _key: z.string().optional(),
-    question: z.string().min(1, "Question is required"),
-    answer: z.string().min(1, "Answer is required"),
-});
-
-// Section Heading Schema
-const sectionHeadingSchema = z.object({
-    eyebrow: z.string().optional(),
-    title: z.string().min(1, "Title is required"),
-    description: z.string().optional(),
-});
 
 // Main Landing Page Content Schema
 export const landingPageContentSchema = z.object({
@@ -62,15 +34,13 @@ export const landingPageContentSchema = z.object({
         featuredServices: z.array(z.string()).max(8).optional(),
     }),
 
-    // Services Preview Section
-    servicesPreview: z.object({
-        sectionHeading: sectionHeadingSchema,
-    }),
 
     // Portfolio Preview Section
     portfolioPreview: z.object({
         sectionHeading: sectionHeadingSchema,
         featuredProjects: z.array(z.string()).max(8).optional(),
+        buttonText: z.string().optional(),
+        buttonUrl: z.string().optional(),
     }),
 
     // About Preview Section
@@ -85,34 +55,18 @@ export const landingPageContentSchema = z.object({
             text: z.string().min(1, "Text is required")
         })).min(2, "Exactly 2 right descriptions required").max(2, "Exactly 2 right descriptions required"),
         ctaText: z.string().min(1, "CTA Text is required"),
-        ctaUrl: z.string().url("Must be a valid URL").min(1, "Required"),
+        ctaUrl: z.string().min(1, "Required"),
     }),
 
-    // Stats Section
-    stats: z.object({
-        projectsDelivered: statSchema,
-        yearsExperience: statSchema,
-        clientSatisfaction: statSchema,
-    }),
-
-    // Why Choose Us Section
-    whyChooseUs: z.object({
-        sectionHeading: sectionHeadingSchema,
-        benefits: z.array(benefitSchema).min(1, "At least one benefit is required"),
-    }),
 
     // Blog Preview Section
     blogPreview: z.object({
         sectionHeading: sectionHeadingSchema,
-    }),
-
-    // FAQs Section
-    faqs: z.object({
-        sectionHeading: sectionHeadingSchema,
-        faqItems: z.array(faqSchema).min(1, "At least one FAQ is required"),
+        featuredBlogs: z.array(z.string()).max(10).optional(),
         buttonText: z.string().optional(),
         buttonUrl: z.string().optional(),
     }),
+
 
     // Service Highlights Marquee
     serviceHighlightsMarquee: z.object({
@@ -128,21 +82,13 @@ export const landingPageContentSchema = z.object({
         brandLogos: z.array(z.any()).min(1, "At least one brand logo is required"), // Array of Sanity image references
     }),
 
-    // Our Approach
-    ourApproach: z.object({
-        sectionHeading: sectionHeadingSchema,
-        steps: z.array(z.object({
-            _key: z.string().optional(),
-            title: z.string().min(1, "Title is required"),
-            description: z.string().min(1, "Description is required"),
-            featured: z.boolean().optional(),
-            iconName: z.string().min(1, "Icon is required"),
-        })).min(1, "At least one step is required"),
-    }),
 
     // Case Studies Preview
     caseStudiesPreview: z.object({
         sectionHeading: sectionHeadingSchema,
+        featuredCaseStudies: z.array(z.string()).max(8).optional(),
+        buttonText: z.string().optional(),
+        buttonUrl: z.string().optional(),
     }),
 
     // Areas We Serve
@@ -158,16 +104,6 @@ export const landingPageContentSchema = z.object({
         })).min(1, "At least one region is required"),
     }),
 
-    // Industries We Serve
-    industriesWeServe: z.object({
-        sectionHeading: sectionHeadingSchema,
-        industries: z.array(z.object({
-            _key: z.string().optional(),
-            name: z.string().min(1, "Name is required"),
-            description: z.string().optional(),
-            iconName: z.string().min(1, "Icon name is required"),
-        })).min(1, "At least one industry is required"),
-    }),
 
     // Testimonials
     testimonials: z.object({
@@ -182,40 +118,8 @@ export const landingPageContentSchema = z.object({
         })).min(1, "At least one testimonial is required"),
     }),
 
-    // Leadership
-    leadership: z.object({
-        sectionHeading: sectionHeadingSchema,
-        founder: z.object({
-            name: z.string().min(1, "Name is required"),
-            role: z.string().min(1, "Role is required"),
-            image: z.any(), // Image type
-            socialLinks: z.array(z.object({
-                _key: z.string().optional(),
-                platform: z.enum(['linkedin', 'twitter', 'email']),
-                url: z.string().url("Must be a valid URL"),
-            })).optional(),
-        }),
-        agencyStructure: z.array(z.object({
-            _key: z.string().optional(),
-            title: z.string().min(1, "Title is required"),
-            description: z.string().min(1, "Description is required"),
-            featured: z.boolean().optional(),
-            iconName: z.string().min(1, "Icon is required"),
-        })).min(1, "At least one team is required"),
-    }),
-
-    // CTA
-    cta: z.object({
-        badge: z.string().min(1, "Badge is required"),
-        heading: z.string().min(1, "Heading is required"),
-        description: z.string().min(1, "Description is required"),
-        benefits: z.array(z.object({
-            _key: z.string().optional(),
-            text: z.string().min(1, "Text is required"),
-        })).min(1, "At least one benefit is required"),
-        formId: z.string().optional(), // Reference to form document
-    }),
-
+    // SEO
+    seo: seoSchema.optional(),
 });
 
 export type LandingPageContentValues = z.infer<typeof landingPageContentSchema>;

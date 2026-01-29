@@ -138,6 +138,12 @@ export const projectType = defineType({
                 }),
             ]
         }),
+        defineField({
+            name: 'seo',
+            title: 'SEO Settings',
+            type: 'seo',
+            description: 'Custom SEO settings for this project'
+        }),
     ],
     preview: {
         select: {

@@ -4,6 +4,10 @@ import { useState, useEffect, useCallback } from "react"
 import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { landingPageContentSchema, LandingPageContentValues } from "@/lib/validations/landing-page-content"
+import { globalSectionsSchema, GlobalSectionsValues } from "@/lib/validations/global-sections"
+
+type CombinedValues = LandingPageContentValues & GlobalSectionsValues;
+const combinedSchema = landingPageContentSchema.merge(globalSectionsSchema);
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -24,13 +28,15 @@ import { ReferenceSelector } from "./ReferenceSelector"
 import { debounce } from "lodash"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
+import { SeoFormTab } from "./SeoFormTab"
 
 interface LandingPageContentFormProps {
-    initialData?: LandingPageContentValues & { _updatedAt?: string }
+    initialData?: CombinedValues & { _updatedAt?: string }
     hasDraft?: boolean
     draftUpdatedAt?: string | null
     services?: any[]
     projects?: any[]
+    posts?: any[]
     forms?: { _id: string, name: string }[]
 }
 
@@ -40,6 +46,7 @@ export function LandingPageContentForm({
     draftUpdatedAt,
     services = [],
     projects = [],
+    posts = [],
     forms = []
 }: LandingPageContentFormProps) {
     const [isLoading, setIsLoading] = useState(false)
@@ -50,8 +57,8 @@ export function LandingPageContentForm({
     const [isInitialMount, setIsInitialMount] = useState(true)
     const [serviceSearchTerm, setServiceSearchTerm] = useState("")
 
-    const form = useForm<LandingPageContentValues>({
-        resolver: zodResolver(landingPageContentSchema),
+    const form = useForm<CombinedValues>({
+        resolver: zodResolver(combinedSchema),
         mode: "onChange",
         defaultValues: initialData ? mergeWithDefaults(initialData) : getDefaultValues(),
     })
@@ -60,7 +67,7 @@ export function LandingPageContentForm({
 
     // Auto-save draft functionality
     const saveDraft = useCallback(
-        debounce(async (data: Partial<LandingPageContentValues>) => {
+        debounce(async (data: Partial<CombinedValues>) => {
             if (isInitialMount) return
 
             setIsSavingDraft(true)
@@ -101,7 +108,7 @@ export function LandingPageContentForm({
 
     useEffect(() => {
         const subscription = form.watch((value) => {
-            saveDraft(value as Partial<LandingPageContentValues>)
+            saveDraft(value as Partial<CombinedValues>)
         })
         return () => subscription.unsubscribe()
     }, [form, saveDraft])
@@ -147,7 +154,7 @@ export function LandingPageContentForm({
         name: "testimonials.testimonials",
     })
 
-    async function onSubmit(values: LandingPageContentValues) {
+    async function onSubmit(values: CombinedValues) {
         setIsLoading(true)
         try {
             // Split data
@@ -257,6 +264,10 @@ export function LandingPageContentForm({
                         <TabsTrigger value="blog" className="relative">
                             Blog
                             {formErrors.blogPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        </TabsTrigger>
+                        <TabsTrigger value="seo" className="relative">
+                            SEO
+                            {formErrors.seo && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
                         <TabsTrigger value="shared" className="relative bg-primary/10">
                             Shared Content
@@ -486,6 +497,14 @@ export function LandingPageContentForm({
                                     label="Featured Projects"
                                     placeholder="Search projects..."
                                 />
+
+                                <div className="grid gap-4 pt-4 border-t">
+                                    <h4 className="font-medium text-sm">Call to Action Button</h4>
+                                    <div className="grid sm:grid-cols-2 gap-4">
+                                        <LocalizedInput control={formControl} name="portfolioPreview.buttonText" label="Button Text" />
+                                        <LocalizedInput control={formControl} name="portfolioPreview.buttonUrl" label="Button URL" isUrl />
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -495,8 +514,26 @@ export function LandingPageContentForm({
                         <SectionHeadingCard control={formControl} baseName="caseStudiesPreview.sectionHeading" title="Case Studies Preview" />
                         <Card>
                             <CardHeader><CardTitle>Case Studies</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Detailed case studies are managed separately and are automatically added dynamically to this section.</p>
+                            <CardContent className="space-y-6">
+                                <p className="text-muted-foreground text-sm leading-relaxed">
+                                    Detailed case studies are managed separately. You can manually select which case studies (projects with case study details) to feature here.
+                                </p>
+
+                                <ReferenceSelector
+                                    form={form}
+                                    fieldName="caseStudiesPreview.featuredCaseStudies"
+                                    items={projects}
+                                    label="Featured Case Studies"
+                                    placeholder="Search case studies..."
+                                />
+
+                                <div className="grid gap-4 pt-4 border-t">
+                                    <h4 className="font-medium text-sm">Call to Action Button</h4>
+                                    <div className="grid sm:grid-cols-2 gap-4">
+                                        <LocalizedInput control={formControl} name="caseStudiesPreview.buttonText" label="Button Text" />
+                                        <LocalizedInput control={formControl} name="caseStudiesPreview.buttonUrl" label="Button URL" isUrl />
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -633,10 +670,34 @@ export function LandingPageContentForm({
                         <SectionHeadingCard control={formControl} baseName="blogPreview.sectionHeading" title="Blog Preview" />
                         <Card>
                             <CardHeader><CardTitle>Blog Posts</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Recent blog posts are automatically displayed in this section from your published blog library.</p>
+                            <CardContent className="space-y-6">
+                                <p className="text-muted-foreground text-sm leading-relaxed">
+                                    Recent blog posts are managed in the <strong>Blog</strong> section.
+                                    You can manually select and order which posts appear in this section below.
+                                </p>
+
+                                <ReferenceSelector
+                                    form={form}
+                                    fieldName="blogPreview.featuredBlogs"
+                                    items={posts}
+                                    label="Featured Blog Posts"
+                                    placeholder="Search blog posts..."
+                                />
+
+                                <div className="grid gap-4 pt-4 border-t">
+                                    <h4 className="font-medium text-sm">Call to Action Button</h4>
+                                    <div className="grid sm:grid-cols-2 gap-4">
+                                        <LocalizedInput control={formControl} name="blogPreview.buttonText" placeholder="Button Text" label="Button Text" />
+                                        <LocalizedInput control={formControl} name="blogPreview.buttonUrl" label="Button URL" />
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
+                    </TabsContent>
+
+                    {/* SEO */}
+                    <TabsContent value="seo">
+                        <SeoFormTab control={formControl} />
                     </TabsContent>
 
                 </Tabs>
@@ -688,11 +749,11 @@ function NestedLocationsField({ control, areaIndex }: { control: any; areaIndex:
     )
 }
 
-function getDefaultValues(): LandingPageContentValues {
+function getDefaultValues(): CombinedValues {
     return {
         hero: { badge: "", headingLines: [], descriptionParagraphs: [], ctaButtons: [], featuredServices: [] },
-        servicesPreview: { sectionHeading: { eyebrow: "", title: "", description: "" } },
-        portfolioPreview: { sectionHeading: { eyebrow: "", title: "", description: "" } },
+        servicesPreview: { sectionHeading: { eyebrow: "", title: "", description: "" }, buttonText: "", buttonUrl: "" },
+        portfolioPreview: { sectionHeading: { eyebrow: "", title: "", description: "" }, buttonText: "", buttonUrl: "" },
         aboutPreview: {
             sectionHeading: { eyebrow: "", title: "", description: "" },
             leftDescriptions: [
@@ -707,23 +768,24 @@ function getDefaultValues(): LandingPageContentValues {
             ctaUrl: ""
         },
         stats: {
+            since: { value: "", label: "" },
             projectsDelivered: { value: "", label: "", suffix: "" },
             yearsExperience: { value: "", label: "", suffix: "" },
             clientSatisfaction: { value: "", label: "", suffix: "" },
         },
         whyChooseUs: { sectionHeading: { eyebrow: "", title: "", description: "" }, benefits: [] },
-        blogPreview: { sectionHeading: { eyebrow: "", title: "", description: "" } },
+        blogPreview: { sectionHeading: { eyebrow: "", title: "", description: "" }, featuredBlogs: [], buttonText: "", buttonUrl: "" },
         faqs: { sectionHeading: { eyebrow: "", title: "", description: "" }, faqItems: [] },
         serviceHighlightsMarquee: { highlights: [] },
         trustedByBrands: { sectionHeading: { eyebrow: "", title: "", description: "" }, brandLogos: [] },
         ourApproach: { sectionHeading: { eyebrow: "", title: "", description: "" }, steps: [] },
-        caseStudiesPreview: { sectionHeading: { eyebrow: "", title: "", description: "" } },
+        caseStudiesPreview: { sectionHeading: { eyebrow: "", title: "", description: "" }, featuredCaseStudies: [], buttonText: "", buttonUrl: "" },
         areasWeServe: { sectionHeading: { eyebrow: "", title: "", description: "" }, areas: [] },
         industriesWeServe: { sectionHeading: { eyebrow: "", title: "", description: "" }, industries: [] },
         testimonials: { sectionHeading: { eyebrow: "", title: "", description: "" }, testimonials: [] },
         leadership: {
             sectionHeading: { eyebrow: "", title: "", description: "" },
-            founder: { name: "", role: "", image: null, socialLinks: [{ platform: "linkedin", url: "" }] },
+            founder: { name: "", role: "", image: null, socialLinks: [] },
             agencyStructure: []
         },
         cta: {
@@ -731,11 +793,20 @@ function getDefaultValues(): LandingPageContentValues {
             heading: "",
             description: "",
             benefits: [],
+        },
+        seo: {
+            metaTitle: "",
+            metaDescription: "",
+            focusKeyword: "",
+            relatedKeywords: [],
+            schemas: []
         }
-    } as LandingPageContentValues
+    } as CombinedValues
 }
 
-function mergeWithDefaults(data: any): LandingPageContentValues {
+const ls = (val: any) => typeof val === 'object' ? (val?.en || "") : (val || "");
+
+function mergeWithDefaults(data: any): CombinedValues {
     const defaults = getDefaultValues()
     return {
         ...data,
@@ -744,8 +815,18 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
             ...data.hero,
             featuredServices: data.hero?.featuredServices || []
         },
-        servicesPreview: { ...defaults.servicesPreview, ...data.servicesPreview },
-        portfolioPreview: { ...defaults.portfolioPreview, ...data.portfolioPreview },
+        servicesPreview: {
+            ...defaults.servicesPreview,
+            ...data.servicesPreview,
+            buttonText: data.servicesPreview?.buttonText || defaults.servicesPreview.buttonText,
+            buttonUrl: data.servicesPreview?.buttonUrl || defaults.servicesPreview.buttonUrl
+        },
+        portfolioPreview: {
+            ...defaults.portfolioPreview,
+            ...data.portfolioPreview,
+            buttonText: data.portfolioPreview?.buttonText || defaults.portfolioPreview.buttonText,
+            buttonUrl: data.portfolioPreview?.buttonUrl || defaults.portfolioPreview.buttonUrl
+        },
         aboutPreview: {
             sectionHeading: { ...defaults.aboutPreview.sectionHeading, ...data.aboutPreview?.sectionHeading },
             leftDescriptions: data.aboutPreview?.leftDescriptions?.length > 0 ? data.aboutPreview.leftDescriptions : defaults.aboutPreview.leftDescriptions,
@@ -754,6 +835,7 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
             ctaUrl: data.aboutPreview?.ctaUrl || defaults.aboutPreview.ctaUrl
         },
         stats: {
+            since: { ...defaults.stats.since, ...data.stats?.since },
             projectsDelivered: { ...defaults.stats.projectsDelivered, ...data.stats?.projectsDelivered },
             yearsExperience: { ...defaults.stats.yearsExperience, ...data.stats?.yearsExperience },
             clientSatisfaction: { ...defaults.stats.clientSatisfaction, ...data.stats?.clientSatisfaction },
@@ -762,7 +844,12 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
             sectionHeading: { ...defaults.whyChooseUs.sectionHeading, ...data.whyChooseUs?.sectionHeading },
             benefits: data.whyChooseUs?.benefits || defaults.whyChooseUs.benefits
         },
-        blogPreview: { ...defaults.blogPreview, ...data.blogPreview },
+        blogPreview: {
+            sectionHeading: { ...defaults.blogPreview.sectionHeading, ...data.blogPreview?.sectionHeading },
+            featuredBlogs: data.blogPreview?.featuredBlogs || [],
+            buttonText: data.blogPreview?.buttonText || defaults.blogPreview.buttonText,
+            buttonUrl: data.blogPreview?.buttonUrl || defaults.blogPreview.buttonUrl
+        },
         faqs: {
             sectionHeading: { ...defaults.faqs.sectionHeading, ...data.faqs?.sectionHeading },
             faqItems: data.faqs?.faqItems || defaults.faqs.faqItems,
@@ -778,7 +865,12 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
             sectionHeading: { ...defaults.ourApproach.sectionHeading, ...data.ourApproach?.sectionHeading },
             steps: data.ourApproach?.steps || defaults.ourApproach.steps
         },
-        caseStudiesPreview: { ...defaults.caseStudiesPreview, ...data.caseStudiesPreview },
+        caseStudiesPreview: {
+            sectionHeading: { ...defaults.caseStudiesPreview.sectionHeading, ...data.caseStudiesPreview?.sectionHeading },
+            featuredCaseStudies: data.caseStudiesPreview?.featuredCaseStudies || [],
+            buttonText: data.caseStudiesPreview?.buttonText || defaults.caseStudiesPreview.buttonText,
+            buttonUrl: data.caseStudiesPreview?.buttonUrl || defaults.caseStudiesPreview.buttonUrl
+        },
         areasWeServe: {
             sectionHeading: { ...defaults.areasWeServe.sectionHeading, ...data.areasWeServe?.sectionHeading },
             areas: data.areasWeServe?.areas || defaults.areasWeServe.areas
@@ -793,7 +885,18 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
         },
         leadership: {
             sectionHeading: { ...defaults.leadership.sectionHeading, ...data.leadership?.sectionHeading },
-            founder: { ...defaults.leadership.founder, ...data.leadership?.founder },
+            founder: {
+                ...defaults.leadership.founder,
+                ...data.leadership?.founder,
+                name: ls(data.leadership?.founder?.name),
+                role: ls(data.leadership?.founder?.role),
+                socialLinks: (data.leadership?.founder?.socialLinks || []).map((link: any) => ({
+                    ...link,
+                    iconName: link.iconName || "linkedin",
+                    label: ls(link.label),
+                    url: link.url || ""
+                }))
+            },
             agencyStructure: data.leadership?.agencyStructure || defaults.leadership.agencyStructure
         },
         cta: {
@@ -802,6 +905,12 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
             description: data.cta?.description || defaults.cta.description,
             benefits: data.cta?.benefits || defaults.cta.benefits,
             formId: typeof data.cta?.formId === 'object' ? data.cta.formId?._ref : data.cta?.formId || undefined
+        },
+        seo: {
+            ...defaults.seo,
+            ...data.seo,
+            relatedKeywords: data.seo?.relatedKeywords || defaults.seo?.relatedKeywords || [],
+            schemas: data.seo?.schemas || defaults.seo?.schemas || []
         }
-    } as LandingPageContentValues
+    } as CombinedValues
 }

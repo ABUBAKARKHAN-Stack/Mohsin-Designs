@@ -220,6 +220,13 @@ export const servicesPageContentType = defineType({
                 }),
             ]
         }),
+        // SEO SECTION
+        defineField({
+            name: 'seo',
+            title: 'SEO Settings',
+            type: 'seo',
+            description: 'Custom SEO settings for this page'
+        }),
     ],
 
     preview: {

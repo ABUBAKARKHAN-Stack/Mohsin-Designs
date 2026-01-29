@@ -34,6 +34,11 @@ const sectionHeadingSchema = z.object({
 export const globalSectionsSchema = z.object({
     // Stats Section
     stats: z.object({
+        since: z.object({
+            _key: z.string().optional(),
+            value: z.string().min(1, "Value must be at least 1"),
+            label: requiredLocalizedStringSchema,
+        }),
         projectsDelivered: statSchema,
         yearsExperience: statSchema,
         clientSatisfaction: statSchema,
@@ -43,6 +48,8 @@ export const globalSectionsSchema = z.object({
     servicesPreview: z.object({
         sectionHeading: sectionHeadingSchema,
         featuredServices: z.array(z.string()).max(8).optional(),
+        buttonText: requiredLocalizedStringSchema.optional(),
+        buttonUrl: requiredLocalizedStringSchema.optional(),
     }),
 
     // Why Choose Us Section
@@ -90,7 +97,8 @@ export const globalSectionsSchema = z.object({
             image: z.any(), // Image type
             socialLinks: z.array(z.object({
                 _key: z.string().optional(),
-                platform: z.enum(['linkedin', 'twitter', 'email']),
+                iconName: z.string().min(1, "Icon is required"),
+                label: requiredLocalizedStringSchema,
                 url: z.string().url("Must be a valid URL"),
             })).optional(),
         }),

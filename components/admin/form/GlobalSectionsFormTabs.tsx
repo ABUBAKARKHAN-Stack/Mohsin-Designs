@@ -4,18 +4,18 @@ import { useFieldArray } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form"
 import { TabsContent, Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Input } from "@/components/ui/input"
 import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
 import { IconSelect } from "@/components/admin/form/IconSelect"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { StatItemCard, SectionHeadingCard } from "./SharedFormComponents"
 import { ReferenceSelector } from "./ReferenceSelector"
-import { Plus, Trash2, ExternalLink, Globe, Info, AlertTriangle } from "lucide-react"
+import { Plus, Trash2, ExternalLink, Globe, Info, AlertTriangle, CheckCircle2, Database } from "lucide-react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { cn } from "@/lib/utils"
 
 interface GlobalSectionsFormTabsProps {
     form: any
@@ -55,6 +55,11 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
     const { fields: ctaBenefitsFields, append: appendCtaBenefit, remove: removeCtaBenefit } = useFieldArray({
         control,
         name: "cta.benefits",
+    })
+
+    const { fields: socialFields, append: appendSocial, remove: removeSocial } = useFieldArray({
+        control,
+        name: "leadership.founder.socialLinks",
     })
 
     const isSharedMode = mode === 'shared';
@@ -173,6 +178,7 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                 <p className="text-sm text-muted-foreground">Manage the three core metrics displayed across the site.</p>
                             </div>
                             <div className="grid grid-cols-1 gap-6 pt-4">
+                                <StatItemCard hasSuffix={false} control={control} name="stats.since" title="Since" />
                                 <StatItemCard control={control} name="stats.projectsDelivered" title="Projects Delivered" />
                                 <StatItemCard control={control} name="stats.yearsExperience" title="Years Experience" />
                                 <StatItemCard control={control} name="stats.clientSatisfaction" title="Client Satisfaction" />
@@ -198,6 +204,14 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                     label="Featured Services"
                                     placeholder="Search services..."
                                 />
+
+                                <div className="grid gap-4 pt-4 border-t">
+                                    <h4 className="font-medium text-sm">Call to Action Button</h4>
+                                    <div className="grid sm:grid-cols-2 gap-4">
+                                        <LocalizedInput control={control} name="servicesPreview.buttonText" label="Button Text" placeholder="Button Text" />
+                                        <LocalizedInput control={control} name="servicesPreview.buttonUrl" label="Button URL" isUrl />
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -344,8 +358,8 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                     {/* LEADERSHIP */}
                     <TabsContent value="leadership" className="mt-0 space-y-6 focus-visible:outline-none pt-2">
                         <SectionHeadingCard control={control} baseName="leadership.sectionHeading" title="Leadership & Team" />
-                        <div className="grid lg:grid-cols-12 gap-6 items-start">
-                            <Card className="lg:col-span-5 shadow-sm border-2">
+                        <div className="grid lg:grid-cols-1 gap-6 items-start">
+                            <Card className="shadow-sm border-2">
                                 <CardHeader className="bg-primary/5 py-3 border-b"><CardTitle className="text-lg flex items-center gap-2 text-primary"><Globe className="h-4 w-4" /> Founder Information</CardTitle></CardHeader>
                                 <CardContent className="space-y-4 pt-6 p-6">
                                     <LocalizedInput control={control} name="leadership.founder.name" label="Full Name" />
@@ -375,10 +389,54 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                             </FormItem>
                                         )} />
                                     </div>
+
+                                    <div className="space-y-4 pt-4 border-t">
+                                        <div className="flex justify-between items-center">
+                                            <FormLabel className="text-sm font-bold text-foreground/80">Social Links</FormLabel>
+                                            <Button type="button" size="sm" variant="outline" onClick={() => appendSocial({ iconName: "linkedin", label: "", url: "" })}>
+                                                <Plus className="h-3 w-3 mr-1" /> Add
+                                            </Button>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {socialFields.map((field, index) => (
+                                                <div key={field.id} className="border rounded-lg p-4 space-y-4 hover:border-primary/40 transition-shadow shadow-sm bg-background/50">
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Link {index + 1}</span>
+                                                        <Button type="button" size="sm" variant="ghost" onClick={() => removeSocial(index)} className="text-destructive h-8 w-8 p-0">
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                    <div className="grid gap-4">
+                                                        <FormField
+                                                            control={control}
+                                                            name={`leadership.founder.socialLinks.${index}.iconName`}
+                                                            render={({ field }) => (
+                                                                <IconSelect field={field} type="social" label="Icon" />
+                                                            )}
+                                                        />
+                                                        <LocalizedInput
+                                                            control={control}
+                                                            name={`leadership.founder.socialLinks.${index}.label`}
+                                                            label="Label (e.g. LinkedIn, Portfolio)"
+                                                        />
+                                                        <LocalizedInput
+                                                            control={control}
+                                                            name={`leadership.founder.socialLinks.${index}.url`}
+                                                            label="URL"
+                                                            isUrl
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {socialFields.length === 0 && (
+                                                <p className="text-[10px] text-muted-foreground italic text-center py-2">No social links added.</p>
+                                            )}
+                                        </div>
+                                    </div>
                                 </CardContent>
                             </Card>
 
-                            <Card className="lg:col-span-7">
+                            <Card className="shadow-sm border-2">
                                 <CardHeader className="flex flex-row justify-between items-center py-4">
                                     <CardTitle className="text-lg">Agency Structure</CardTitle>
                                     <Button type="button" size="sm" variant="outline" onClick={() => appendAgencyTeam({ title: "", description: "", iconName: "" })} className="bg-background">
@@ -478,46 +536,7 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
     )
 }
 
-function CheckCircle2(props: any) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-            <path d="m9 12 2 2 4-4" />
-        </svg>
-    )
-}
 
-function Database(props: any) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <ellipse cx="12" cy="5" rx="9" ry="3" />
-            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-            <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
-        </svg>
-    )
-}
 
 function FormSelectorDropdown({ field }: { field: any }) {
     const [forms, setForms] = useState<any[]>([])

@@ -27,7 +27,7 @@ export const serviceType = defineType({
         defineField({
             name: 'slug',
             type: 'slug',
-            options: { source: 'title.en' },
+            options: { source: 'title' },
             validation: Rule => Rule.required()
         }),
 
@@ -316,8 +316,8 @@ export const serviceType = defineType({
 
     preview: {
         select: {
-            title: 'title.en',
-            subtitle: 'subtitle.en',
+            title: 'title',
+            subtitle: 'subtitle',
             media: 'heroImage',
         },
         prepare({ title, subtitle, media, }) {

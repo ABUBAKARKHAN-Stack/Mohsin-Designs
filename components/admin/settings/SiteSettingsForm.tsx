@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useForm, useFieldArray } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { siteSettingsSchema, SiteSettingsValues } from "@/lib/validations/site-settings"
 import { Button } from "@/components/ui/button"
@@ -17,15 +17,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Spinner } from "@/components/ui/spinner"
 import { CommaKeywordsInput } from "@/components/admin/form/CommaKeywordsInput"
 import { SchemaListInput } from "@/components/admin/form/SchemaListInput"
 import { updateSiteSettings } from "@/app/actions/siteSettings"
 import { errorToast, successToast } from "@/lib/toastNotifications"
-import { Save, Globe, Info, Mail, Share2, Scale, AlertCircle, Languages, Menu as MenuIcon, ExternalLink } from "lucide-react"
-import { useEffect } from "react"
+import { Save, Globe, Info, Mail, Share2, Scale, AlertCircle, Menu as MenuIcon, ExternalLink } from "lucide-react"
 import {
     Select,
     SelectContent,
@@ -40,48 +39,27 @@ interface SiteSettingsFormProps {
     menus: any[]
 }
 
-const hasLangError = (error: any, lang: string): boolean => {
-    if (!error) return false;
-
-    // If it's a localized error object (has language sub-keys)
-    // We check if the specific language has an error
-    const isLocalized = error.en || error.ur || error.es || error.ar;
-    if (isLocalized) {
-        return !!error[lang];
-    }
-
-    // If it's a direct field error (has message/type, e.g. email, phone, logo)
-    if (error.message || error.type) return true;
-
-    // Recurse for nested objects (like seo, contact)
-    if (typeof error === 'object') {
-        return Object.values(error).some(child => hasLangError(child, lang));
-    }
-    return false;
-}
-
 export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSettingsFormProps) {
     const [isLoading, setIsLoading] = useState(false)
-    const [selectedLang, setSelectedLang] = useState("en")
 
     const form = useForm<SiteSettingsValues>({
         resolver: zodResolver(siteSettingsSchema) as any,
         defaultValues: initialData || {
-            siteName: { en: "", ur: "", es: "", ar: "" },
-            tagline: { en: "", ur: "", es: "", ar: "" },
+            siteName: "",
+            tagline: "",
             logo: undefined as any,
             favicon: undefined as any,
             seo: {
-                metaTitle: { en: "", ur: "", es: "", ar: "" },
-                metaDescription: { en: "", ur: "", es: "", ar: "" },
-                focusKeyword: { en: "", ur: "", es: "", ar: "" },
-                relatedKeywords: { en: [], ur: [], es: [], ar: [] },
+                metaTitle: "",
+                metaDescription: "",
+                focusKeyword: "",
+                relatedKeywords: [],
                 schemas: [""]
             },
             social: { facebook: "", twitter: "", linkedin: "", instagram: "" },
-            contact: { email: "", phone: "", address: { en: "", ur: "", es: "", ar: "" } },
-            footerText: { en: "", ur: "", es: "", ar: "" },
-            copyright: { en: "", ur: "", es: "", ar: "" },
+            contact: { email: "", phone: "", address: "" },
+            footerText: "",
+            copyright: "",
             headerMenu: { _type: 'reference', _ref: "" },
             footerMenu: { _type: 'reference', _ref: "" },
         } as SiteSettingsValues,
@@ -93,7 +71,6 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
     const formControl = form.control as any
 
     async function onSubmit(values: SiteSettingsValues) {
-
         setIsLoading(true)
         try {
             const result = await updateSiteSettings(values)
@@ -110,11 +87,8 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
     }
 
     const formErrors = form.formState.errors;
-
-    // Check for form errors to show a global message if needed
     const hasErrors = Object.keys(formErrors).length > 0
 
-    // Tab-specific error detection
     const tabErrors = {
         branding: !!(formErrors.siteName || formErrors.tagline || formErrors.logo || formErrors.favicon),
         seo: !!formErrors.seo,
@@ -133,42 +107,11 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                         <p className="text-muted-foreground text-xs sm:text-sm">Manage global configurations for your website.</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-lg border">
-                            <div className="flex items-center gap-1.5 px-2 text-xs font-medium text-muted-foreground border-r pr-2 shadow-sm">
-                                <Languages className="h-3.5 w-3.5" />
-                                <span>Language</span>
-                            </div>
-                            <Select value={selectedLang} onValueChange={setSelectedLang}>
-                                <SelectTrigger className="h-8 border-none bg-transparent shadow-none focus:ring-0 min-w-[110px]">
-                                    <SelectValue placeholder="Language" />
-                                </SelectTrigger>
-                                <SelectContent align="end">
-                                    <SelectItem value="en">English (EN)</SelectItem>
-                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
-                                    <SelectItem value="es">Spanish (ES)</SelectItem>
-                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
                         {hasErrors && (
-                            <div className="flex flex-col items-end gap-1">
-                                <div className="flex items-center gap-2 text-destructive text-xs font-semibold px-3 py-1 bg-destructive/10 rounded-full border border-destructive/20 animate-in fade-in slide-in-from-right-2">
-                                    <AlertCircle className="h-3 w-3" />
-                                    <span className="hidden sm:inline">Missing required info</span>
-                                    <span className="sm:hidden">Missing info</span>
-                                </div>
-                                <div className="text-[10px] text-destructive italic max-w-[200px] text-right hidden sm:block">
-                                    Check {selectedLang.toUpperCase()}: {
-                                        Object.entries(formErrors)
-                                            .filter(([_, error]) => hasLangError(error, selectedLang))
-                                            .map(([key, _]) => {
-                                                if (key === 'siteName') return 'Site Name';
-                                                if (key === 'footerText') return 'Footer Text';
-                                                return key.charAt(0).toUpperCase() + key.slice(1);
-                                            })
-                                            .join(", ")
-                                    }
-                                </div>
+                            <div className="flex items-center gap-2 text-destructive text-xs font-semibold px-3 py-1 bg-destructive/10 rounded-full border border-destructive/20 animate-in fade-in slide-in-from-right-2">
+                                <AlertCircle className="h-3 w-3" />
+                                <span className="hidden sm:inline">Missing required info</span>
+                                <span className="sm:hidden">Missing info</span>
                             </div>
                         )}
                         <Button type="submit" disabled={isLoading} className="w-full sm:w-auto min-w-[120px] h-9 sm:h-10 text-sm sm:text-base">
@@ -237,16 +180,14 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Site Identity</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="siteName" label="Site Name" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="tagline" label="Tagline" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="siteName" label="Site Name" />
+                                <LocalizedInput control={formControl} name="tagline" label="Tagline" />
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <ImageUpload
                                         value={form.watch('logo') as any}
                                         label="Site Logo"
                                         onChange={(asset) => {
-                                            console.log(asset);
-
                                             if (!asset) {
                                                 form.setValue('logo', null as any)
                                                 return
@@ -291,11 +232,11 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Default SEO Settings</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="seo.metaTitle" label="Default Meta Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="seo.metaDescription" label="Default Meta Description" isTextarea activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="seo.focusKeyword" label="Focus Keyword" activeLang={selectedLang} />
-                                <CommaKeywordsInput control={formControl} name="seo.relatedKeywords" label="Related Keywords" activeLang={selectedLang} />
-                                <SchemaListInput control={formControl} name="seo.schemas" label="Default Schema Markups (JSON-LD)" />
+                                <LocalizedInput control={formControl} name="seo.metaTitle" label="Default Meta Title" />
+                                <LocalizedInput control={formControl} name="seo.metaDescription" label="Default Meta Description" isTextarea />
+                                <LocalizedInput control={formControl} name="seo.focusKeyword" label="Focus Keyword" />
+                                <CommaKeywordsInput name="seo.relatedKeywords" label="Related Keywords" />
+                                <SchemaListInput name="seo.schemas" label="Default Schema Markups (JSON-LD)" />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -334,7 +275,7 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                         )}
                                     />
                                 </div>
-                                <LocalizedInput control={formControl} name="contact.address" label="Office Address" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="contact.address" label="Office Address" isTextarea />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -398,7 +339,6 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                             </FormItem>
                                         )}
                                     />
-
                                 </div>
                             </CardContent>
                         </Card>
@@ -410,8 +350,8 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Footer & Legal</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="footerText" label="Footer About Text" isTextarea activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="copyright" label="Copyright Notice" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="footerText" label="Footer About Text" isTextarea />
+                                <LocalizedInput control={formControl} name="copyright" label="Copyright Notice" />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -496,7 +436,6 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                         )}
                                     />
                                 </div>
-
                             </CardContent>
                         </Card>
                     </TabsContent>

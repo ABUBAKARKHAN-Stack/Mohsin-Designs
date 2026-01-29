@@ -35,7 +35,7 @@ export async function saveServiceDraft(id: string, data: Partial<ServiceFormValu
             _id: `drafts.${id}`,
         }
 
-        // Transform numeric/object fields if necessary (consistent with updateService)
+        // Transform numeric/object fields if necessary
         if (updateData.slug) {
             updateData.slug = { _type: 'slug', current: updateData.slug }
         }

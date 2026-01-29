@@ -58,7 +58,13 @@ export async function ensureGlobalSectionsDocExists() {
 export async function getGlobalSectionsForAdmin() {
     try {
         await ensureGlobalSectionsDocExists()
-        const query = `*[_type == "globalSections" && _id == "${GLOBAL_SECTIONS_ID}"][0]`
+        const query = `*[_type == "globalSections" && _id == "${GLOBAL_SECTIONS_ID}"][0] {
+            ...,
+            servicesPreview {
+                ...,
+                "featuredServices": featuredServices[]._ref
+            }
+        }`
         const { data } = await sanityFetch({ query })
         return data
     } catch (error) {
@@ -75,7 +81,13 @@ export async function updateGlobalSections(data: GlobalSectionsValues) {
             _type: 'globalSections',
             _id: GLOBAL_SECTIONS_ID,
             stats: validatedFields.stats,
-            servicesPreview: validatedFields.servicesPreview,
+            servicesPreview: {
+                ...validatedFields.servicesPreview,
+                featuredServices: validatedFields.servicesPreview.featuredServices?.map(id => ({
+                    _type: 'reference',
+                    _ref: id
+                }))
+            },
             whyChooseUs: validatedFields.whyChooseUs,
             ourApproach: validatedFields.ourApproach,
             industriesWeServe: validatedFields.industriesWeServe,
@@ -149,6 +161,14 @@ export async function saveGlobalSectionsDraft(data: Partial<GlobalSectionsValues
             _id: `drafts.${GLOBAL_SECTIONS_ID}`,
         }
 
+        // Normalize Services references
+        if (updateData.servicesPreview?.featuredServices) {
+            updateData.servicesPreview.featuredServices = updateData.servicesPreview.featuredServices.map((id: string) => ({
+                _type: 'reference',
+                _ref: id
+            }))
+        }
+
         // Normalize CTA formId to reference if it's a string
         if (updateData.cta && typeof updateData.cta.formId === 'string') {
             updateData.cta.formId = {
@@ -168,6 +188,16 @@ export async function saveGlobalSectionsDraft(data: Partial<GlobalSectionsValues
 export async function getGlobalSectionsDraft() {
     try {
         const draft = await adminClient.getDocument(`drafts.${GLOBAL_SECTIONS_ID}`)
+        if (draft) {
+            // Flatten Services references
+            if (draft.servicesPreview?.featuredServices) {
+                draft.servicesPreview.featuredServices = draft.servicesPreview.featuredServices.map((ref: any) => ref._ref || ref)
+            }
+            // Flatten CTA form reference
+            if (draft.cta?.formId?._ref) {
+                draft.cta.formId = draft.cta.formId._ref
+            }
+        }
         return draft
     } catch (error: any) {
         if (error.statusCode === 404) return null

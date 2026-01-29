@@ -15,11 +15,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
 import { SectionHeadingInput } from "@/components/admin/form/SectionHeadingInput"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, Trash2, ArrowLeft, AlertCircle, Clock } from "lucide-react"
+import { Plus, Trash2, ArrowLeft, Clock } from "lucide-react"
 import { createService } from "@/app/actions/createService"
 import { updateService } from "@/app/actions/updateService"
 import { saveServiceDraft } from "@/app/actions/serviceDraftActions"
@@ -42,71 +41,63 @@ interface ServiceFormProps {
     draftUpdatedAt?: string | null
 }
 
-export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }: ServiceFormProps) {
+export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceFormProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [isSavingDraft, setIsSavingDraft] = useState(false)
     const [lastSaved, setLastSaved] = useState<Date | null>(
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
-    const [selectedLang, setSelectedLang] = useState("en")
-    const [isLiveSyncEnabled, setIsLiveSyncEnabled] = useState(false)
     const [isInitialMount, setIsInitialMount] = useState(true)
     const router = useRouter()
 
     const form = useForm<ServiceFormValues>({
         resolver: zodResolver(serviceFormSchema) as any,
         defaultValues: initialData || {
-            title: {},
-            subtitle: {},
-            description: {},
+            title: "",
+            subtitle: "",
+            description: "",
             slug: "",
-            heroImageAlt: {},
-            introTagLine: {},
-            introTitle: {},
-            introContent: {},
-            roleTitle: {},
-            roleContent: [{ _key: Math.random().toString(36).substring(2, 9) }],
-            howWeHelpSection: { _key: Math.random().toString(36).substring(2, 9), title: {}, description: {}, eyebrow: {} },
-            howWeHelpPoints: [{ _key: Math.random().toString(36).substring(2, 9), title: {}, description: {} }],
-            overviewSection: { _key: Math.random().toString(36).substring(2, 9), title: {}, description: {}, eyebrow: {} },
-            items: [
-                { _key: Math.random().toString(36).substring(2, 9) },
-                { _key: Math.random().toString(36).substring(2, 9) }
-            ],
-            processSection: { _key: Math.random().toString(36).substring(2, 9), title: {}, description: {}, eyebrow: {} },
-            process: [{ _key: Math.random().toString(36).substring(2, 9), step: "01", title: {}, desc: {} }],
-            areasSection: { _key: Math.random().toString(36).substring(2, 9), title: {}, description: {}, eyebrow: {} },
-            areas: [{ _key: Math.random().toString(36).substring(2, 9), region: {}, locations: [{ _key: Math.random().toString(36).substring(2, 9) }], featured: false, clients: 0, flag: "" }],
-            industriesSection: { _key: Math.random().toString(36).substring(2, 9), title: {}, description: {}, eyebrow: {} },
-            industries: [{ _key: Math.random().toString(36).substring(2, 9), name: {}, description: {} }],
-            benifitsSection: { _key: Math.random().toString(36).substring(2, 9), title: {}, description: {}, eyebrow: {} },
-            benefits: [{ _key: Math.random().toString(36).substring(2, 9) }],
-            whyChooseUsSection: { _key: Math.random().toString(36).substring(2, 9), title: {}, description: {}, eyebrow: {} },
-            whyChooseUsPoints: [{ _key: Math.random().toString(36).substring(2, 9), title: {}, description: {} }],
-            caseStudiesSection: { _key: Math.random().toString(36).substring(2, 9), title: {}, description: {}, eyebrow: {} },
-            caseStudies: [{ _key: Math.random().toString(36).substring(2, 9), title: {}, problem: {}, solution: {}, result: {} }],
-            faqsSection: { _key: Math.random().toString(36).substring(2, 9), title: {}, description: {}, eyebrow: {} },
-            faqs: [{ _key: Math.random().toString(36).substring(2, 9), question: {}, answer: {} }],
+            heroImageAlt: "",
+            introTagLine: "",
+            introTitle: "",
+            introContent: "",
+            roleTitle: "",
+            roleContent: [""],
+            howWeHelpSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
+            howWeHelpPoints: [{ _key: Math.random().toString(36).substring(2, 9), title: "", description: "" }],
+            overviewSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
+            items: ["", ""],
+            processSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
+            process: [{ _key: Math.random().toString(36).substring(2, 9), step: "01", title: "", desc: "" }],
+            areasSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
+            areas: [{ _key: Math.random().toString(36).substring(2, 9), region: "", locations: [""], featured: false, clients: 0, flag: "" }],
+            industriesSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
+            industries: [{ _key: Math.random().toString(36).substring(2, 9), name: "", description: "" }],
+            benifitsSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
+            benefits: [""],
+            whyChooseUsSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
+            whyChooseUsPoints: [{ _key: Math.random().toString(36).substring(2, 9), title: "", description: "" }],
+            caseStudiesSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
+            caseStudies: [{ _key: Math.random().toString(36).substring(2, 9), title: "", problem: "", solution: "", result: "" }],
+            faqsSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
+            faqs: [{ _key: Math.random().toString(36).substring(2, 9), question: "", answer: "" }],
             seo: {
-                metaTitle: { en: "", ur: "", es: "", ar: "" },
-                metaDescription: { en: "", ur: "", es: "", ar: "" },
-                focusKeyword: { en: "", ur: "", es: "", ar: "" },
-                relatedKeywords: { en: [], ur: [], es: [], ar: [] },
+                metaTitle: "",
+                metaDescription: "",
+                focusKeyword: "",
+                relatedKeywords: [],
                 schemas: [""]
             }
         } as ServiceFormValues,
     })
 
-    // Type cast to avoid complex type inference issues
-    const formControl = form.control as any
+    const formControl = form.control
 
-    // Auto-save draft functionality
     const saveDraft = useCallback(
         debounce(async (data: Partial<ServiceFormValues>) => {
             if (isInitialMount || !serviceId) return
             setIsSavingDraft(true)
             try {
-                // Ensure slug is correctly handled if partial
                 const result = await saveServiceDraft(serviceId, data)
                 if (result.success) {
                     setLastSaved(new Date())
@@ -127,83 +118,64 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
 
 
     useEffect(() => {
-        const subscription = form.watch((value, { name, type }) => {
-            // Auto-save draft
+        const subscription = form.watch((value) => {
             saveDraft(value as Partial<ServiceFormValues>)
-
-            // Live sync for testing (English to all others)
-            if (isLiveSyncEnabled && name?.endsWith(".en") && type === "change") {
-                const baseName = name.replace(".en", "")
-                const newValue = (value as any)[name.split(".")[0]]
-
-                // Handle nested fields vs top-level fields
-                const val = name.split('.').reduce((obj: any, key) => obj?.[key], value);
-
-                ["ur", "es", "ar"].forEach(lang => {
-                    form.setValue(`${baseName}.${lang}` as any, val, {
-                        shouldValidate: true,
-                        shouldDirty: true
-                    })
-                })
-            }
         })
         return () => subscription.unsubscribe()
-    }, [form, saveDraft, isLiveSyncEnabled])
+    }, [form, saveDraft])
 
     const { fields: roleFields, append: appendRole, remove: removeRole } = useFieldArray({
         control: form.control,
-        name: "roleContent",
+        name: "roleContent" as any,
     })
 
     const { fields: helpFields, append: appendHelp, remove: removeHelp } = useFieldArray({
         control: form.control,
-        name: "howWeHelpPoints",
+        name: "howWeHelpPoints" as any,
     })
 
     const { fields: itemFields, append: appendItem, remove: removeItem } = useFieldArray({
         control: form.control,
-        name: "items",
+        name: "items" as any,
     })
 
     const { fields: processFields, append: appendProcess, remove: removeProcess } = useFieldArray({
         control: form.control,
-        name: "process",
+        name: "process" as any,
     })
 
     const { fields: areaFields, append: appendArea, remove: removeArea } = useFieldArray({
         control: form.control,
-        name: "areas",
+        name: "areas" as any,
     })
 
     const { fields: industryFields, append: appendIndustry, remove: removeIndustry } = useFieldArray({
         control: form.control,
-        name: "industries",
+        name: "industries" as any,
     })
 
     const { fields: benefitFields, append: appendBenefit, remove: removeBenefit } = useFieldArray({
         control: form.control,
-        name: "benefits",
+        name: "benefits" as any,
     })
 
     const { fields: whyChooseFields, append: appendWhyChoose, remove: removeWhyChoose } = useFieldArray({
         control: form.control,
-        name: "whyChooseUsPoints",
+        name: "whyChooseUsPoints" as any,
     })
 
     const { fields: caseStudyFields, append: appendCaseStudy, remove: removeCaseStudy } = useFieldArray({
         control: form.control,
-        name: "caseStudies",
+        name: "caseStudies" as any,
     })
 
     const { fields: faqFields, append: appendFaq, remove: removeFaq } = useFieldArray({
         control: form.control,
-        name: "faqs",
+        name: "faqs" as any,
     })
 
     async function onSubmit(data: ServiceFormValues) {
         setIsLoading(true)
-
-
         try {
             const result = serviceId
                 ? await updateService(serviceId, data)
@@ -222,33 +194,6 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
         } finally {
             setIsLoading(false)
         }
-    }
-
-    const formErrors = form.formState.errors
-    const hasErrors = Object.keys(formErrors).length > 0
-
-    // Helper to check if a specific language has errors anywhere in the form
-    const hasLangError = (langCode: string) => {
-        const checkErrors = (obj: any): boolean => {
-            if (!obj) return false
-            if (obj.message && typeof obj.message === 'string') return false
-            if (obj[langCode] && obj[langCode].message) return true
-            return Object.values(obj).some(val => typeof val === 'object' && checkErrors(val))
-        }
-        return checkErrors(formErrors)
-    }
-
-    const currentLangHasError = hasLangError(selectedLang)
-
-    // Helper to check if any field in a list has an error
-    const hasTabError = (fields: string[]) => {
-        return fields.some(field => {
-            if (field.includes('.')) {
-                const [parent, child] = field.split('.')
-                return !!(formErrors as any)[parent]?.[child] || !!(formErrors as any)[parent]
-            }
-            return !!(formErrors as any)[field]
-        })
     }
 
     return (
@@ -285,46 +230,9 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 </div>
                             </div>
                         </div>
-
-                        <div className="flex items-center gap-2 border-l pl-4">
-                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden sm:inline">Language:</span>
-                            <Select value={selectedLang} onValueChange={setSelectedLang}>
-                                <SelectTrigger className="w-[140px] h-9 bg-primary/5 border-primary/20 font-medium font-display">
-                                    <SelectValue placeholder="Language" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="en">English (EN)</SelectItem>
-                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
-                                    <SelectItem value="es">Spanish (ES)</SelectItem>
-                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="flex items-center gap-2 border-l pl-4">
-                            <div className="flex items-center space-x-2">
-                                <Checkbox
-                                    id="live-sync"
-                                    checked={isLiveSyncEnabled}
-                                    onCheckedChange={(checked) => setIsLiveSyncEnabled(!!checked)}
-                                />
-                                <label
-                                    htmlFor="live-sync"
-                                    className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-amber-600 flex items-center gap-1"
-                                >
-                                    Live Sync (Test)
-                                </label>
-                            </div>
-                        </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        {currentLangHasError && (
-                            <div className="flex items-center gap-2 text-destructive text-xs font-semibold px-3 py-1 bg-destructive/10 rounded-full border border-destructive/20">
-                                <AlertCircle className="h-3 w-3" />
-                                <span>Fix {selectedLang.toUpperCase()} errors</span>
-                            </div>
-                        )}
                         <Button type="submit" disabled={isLoading} className="w-full sm:w-auto h-9 min-w-[120px]">
                             {isLoading ? (
                                 <><Spinner className="mr-2 h-4 w-4" /> Saving...</>
@@ -338,84 +246,19 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                 <Tabs defaultValue="general" className="w-full">
                     <div className="relative mb-6">
                         <TabsList className="flex w-full h-auto flex-wrap gap-1 p-1 bg-muted/50 rounded-lg justify-start">
-                            <TabsTrigger value="general" className="relative px-4 py-2 text-xs sm:text-sm">
-                                General
-                                {hasTabError(['title', 'subtitle', 'description', 'slug', 'heroImage', 'heroImageAlt']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="intro" className="relative px-4 py-2 text-xs sm:text-sm">
-                                Intro
-                                {hasTabError(['introTagLine', 'introTitle', 'introContent']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="role" className="relative px-4 py-2 text-xs sm:text-sm">
-                                Role
-                                {hasTabError(['roleTitle', 'roleContent']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="help" className="relative px-4 py-2 text-xs sm:text-sm">
-                                Help
-                                {hasTabError(['howWeHelpSection', 'howWeHelpPoints']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="overview" className="relative px-4 py-2 text-xs sm:text-sm">
-                                Overview
-                                {hasTabError(['overviewSection', 'items']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="process" className="relative px-4 py-2 text-xs sm:text-sm">
-                                Process
-                                {hasTabError(['processSection', 'process']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="areas" className="relative px-4 py-2 text-xs sm:text-sm">
-                                Areas
-                                {hasTabError(['areasSection', 'areas']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="industries" className="relative px-4 py-2 text-xs sm:text-sm">
-                                Industries
-                                {hasTabError(['industriesSection', 'industries']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="benefits" className="relative px-4 py-2 text-xs sm:text-sm">
-                                Benefits
-                                {hasTabError(['benifitsSection', 'benefits']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="whyChooseUs" className="relative px-4 py-2 text-xs sm:text-sm">
-                                Why Us
-                                {hasTabError(['whyChooseUsSection', 'whyChooseUsPoints']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="caseStudies" className="relative px-4 py-2 text-xs sm:text-sm">
-                                Case Studies
-                                {hasTabError(['caseStudiesSection', 'caseStudies']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="faqs" className="relative px-4 py-2 text-xs sm:text-sm">
-                                FAQs
-                                {hasTabError(['faqsSection', 'faqs']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="seo" className="relative px-4 py-2 text-xs sm:text-sm">
-                                SEO
-                                {hasTabError(['seo']) && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
-                                )}
-                            </TabsTrigger>
+                            <TabsTrigger value="general" className="px-4 py-2 text-xs sm:text-sm">General</TabsTrigger>
+                            <TabsTrigger value="intro" className="px-4 py-2 text-xs sm:text-sm">Intro</TabsTrigger>
+                            <TabsTrigger value="role" className="px-4 py-2 text-xs sm:text-sm">Role</TabsTrigger>
+                            <TabsTrigger value="help" className="px-4 py-2 text-xs sm:text-sm">Help</TabsTrigger>
+                            <TabsTrigger value="overview" className="px-4 py-2 text-xs sm:text-sm">Overview</TabsTrigger>
+                            <TabsTrigger value="process" className="px-4 py-2 text-xs sm:text-sm">Process</TabsTrigger>
+                            <TabsTrigger value="areas" className="px-4 py-2 text-xs sm:text-sm">Areas</TabsTrigger>
+                            <TabsTrigger value="industries" className="px-4 py-2 text-xs sm:text-sm">Industries</TabsTrigger>
+                            <TabsTrigger value="benefits" className="px-4 py-2 text-xs sm:text-sm">Benefits</TabsTrigger>
+                            <TabsTrigger value="whyUs" className="px-4 py-2 text-xs sm:text-sm">Why Us</TabsTrigger>
+                            <TabsTrigger value="caseStudies" className="px-4 py-2 text-xs sm:text-sm">Case Studies</TabsTrigger>
+                            <TabsTrigger value="faqs" className="px-4 py-2 text-xs sm:text-sm">FAQs</TabsTrigger>
+                            <TabsTrigger value="seo" className="px-4 py-2 text-xs sm:text-sm">SEO</TabsTrigger>
                         </TabsList>
                     </div>
 
@@ -425,9 +268,9 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>Basic Information</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="title" label="Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="subtitle" label="Subtitle" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="description" label="Description" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="title" label="Title" />
+                                <LocalizedInput control={formControl} name="subtitle" label="Subtitle" />
+                                <LocalizedInput control={formControl} name="description" label="Description" type="textarea" />
 
                                 <div className="space-y-2">
                                     <FormField
@@ -447,7 +290,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                         size="sm"
                                                         className="w-full sm:w-auto"
                                                         onClick={() => {
-                                                            const title = form.getValues("title.en")
+                                                            const title = form.getValues("title")
                                                             if (title) {
                                                                 const slug = slugify(title)
                                                                 form.setValue("slug", slug)
@@ -482,7 +325,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                     label="Hero Image"
                                 />
 
-                                <LocalizedInput control={formControl} name="heroImageAlt" label="Hero Image Alt Text" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="heroImageAlt" label="Hero Image Alt Text" />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -493,9 +336,9 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>Intro Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="introTagLine" label="Intro Tag Line" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="introTitle" label="Intro Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="introContent" label="Intro Content" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="introTagLine" label="Intro Tag Line" />
+                                <LocalizedInput control={formControl} name="introTitle" label="Intro Title" />
+                                <LocalizedInput control={formControl} name="introContent" label="Intro Content" type="textarea" />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -506,7 +349,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>Role Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="roleTitle" label="Role Title" activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="roleTitle" label="Role Title" />
                                 <div className="space-y-4">
                                     <FormLabel>Role Content Points</FormLabel>
                                     {roleFields.map((field, index) => (
@@ -517,7 +360,6 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                     name={`roleContent.${index}`}
                                                     label={`Point ${index + 1}`}
                                                     isTextarea
-                                                    activeLang={selectedLang}
                                                 />
                                             </div>
                                             {roleFields.length > 1 && (
@@ -541,7 +383,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>How We Help Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <SectionHeadingInput control={formControl} name="howWeHelpSection" label="Section Heading" activeLang={selectedLang} />
+                                <SectionHeadingInput control={formControl} name="howWeHelpSection" label="Section Heading" />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Help Points</FormLabel>
                                     {helpFields.map((field, index) => (
@@ -553,11 +395,11 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                     </Button>
                                                 </div>
                                             )}
-                                            <LocalizedInput control={formControl} name={`howWeHelpPoints.${index}.title`} label="Title" activeLang={selectedLang} />
-                                            <LocalizedInput control={formControl} name={`howWeHelpPoints.${index}.description`} label="Description" isTextarea activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`howWeHelpPoints.${index}.title`} label="Title" />
+                                            <LocalizedInput control={formControl} name={`howWeHelpPoints.${index}.description`} label="Description" type="textarea" />
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendHelp({ _key: Math.random().toString(36).substring(2, 9), title: {}, description: {} })}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendHelp({ _key: Math.random().toString(36).substring(2, 9), title: "", description: "" })}>
                                         <Plus className="mr-2 h-4 w-4" /> Add Help Point
                                     </Button>
                                 </div>
@@ -571,7 +413,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>Overview Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <SectionHeadingInput control={formControl} name="overviewSection" label="Section Heading" activeLang={selectedLang} />
+                                <SectionHeadingInput control={formControl} name="overviewSection" label="Section Heading" />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Items</FormLabel>
                                     {itemFields.map((field, index) => (
@@ -581,7 +423,6 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                     control={formControl}
                                                     name={`items.${index}`}
                                                     label={`Item ${index + 1}`}
-                                                    activeLang={selectedLang}
                                                 />
                                             </div>
                                             {itemFields.length > 1 && (
@@ -605,7 +446,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>Process Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <SectionHeadingInput control={formControl} name="processSection" label="Section Heading" activeLang={selectedLang} />
+                                <SectionHeadingInput control={formControl} name="processSection" label="Section Heading" />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Process Steps</FormLabel>
                                     {processFields.map((field, index) => (
@@ -619,7 +460,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                             )}
                                             <FormField
                                                 control={formControl}
-                                                name={`process.${index}.step`}
+                                                name={`process.${index}.step` as any}
                                                 render={({ field }) => (
                                                     <FormItem>
                                                         <FormLabel>Step Number</FormLabel>
@@ -630,11 +471,11 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                     </FormItem>
                                                 )}
                                             />
-                                            <LocalizedInput control={formControl} name={`process.${index}.title`} label="Title" activeLang={selectedLang} />
-                                            <LocalizedInput control={formControl} name={`process.${index}.desc`} label="Description" isTextarea activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`process.${index}.title`} label="Title" />
+                                            <LocalizedInput control={formControl} name={`process.${index}.desc`} label="Description" type="textarea" />
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendProcess({ _key: Math.random().toString(36).substring(2, 9), step: `0${processFields.length + 1}`, title: {}, desc: {} })}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendProcess({ _key: Math.random().toString(36).substring(2, 9), step: `0${processFields.length + 1}`, title: "", desc: "" })}>
                                         <Plus className="mr-2 h-4 w-4" /> Add Process Step
                                     </Button>
                                 </div>
@@ -648,7 +489,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>Areas Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <SectionHeadingInput control={formControl} name="areasSection" label="Section Heading" activeLang={selectedLang} />
+                                <SectionHeadingInput control={formControl} name="areasSection" label="Section Heading" />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Areas</FormLabel>
                                     {areaFields.map((field, index) => (
@@ -658,15 +499,15 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`areas.${index}.region`} label="Region" activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`areas.${index}.region`} label="Region" />
                                             <div className="space-y-2">
                                                 <FormLabel>Locations</FormLabel>
-                                                <LocalizedInput control={formControl} name={`areas.${index}.locations.0`} label="Location" activeLang={selectedLang} />
+                                                <LocalizedInput control={formControl} name={`areas.${index}.locations.0`} label="Location" />
                                             </div>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <FormField
                                                     control={formControl}
-                                                    name={`areas.${index}.clients`}
+                                                    name={`areas.${index}.clients` as any}
                                                     render={({ field }) => (
                                                         <FormItem>
                                                             <FormLabel>Number of Clients</FormLabel>
@@ -679,7 +520,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                 />
                                                 <FormField
                                                     control={formControl}
-                                                    name={`areas.${index}.flag`}
+                                                    name={`areas.${index}.flag` as any}
                                                     render={({ field }) => (
                                                         <FormItem>
                                                             <FormLabel>Flag Emoji</FormLabel>
@@ -693,7 +534,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                             </div>
                                             <FormField
                                                 control={formControl}
-                                                name={`areas.${index}.featured`}
+                                                name={`areas.${index}.featured` as any}
                                                 render={({ field }) => (
                                                     <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                                                         <FormControl>
@@ -710,7 +551,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                             />
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendArea({ _key: Math.random().toString(36).substring(2, 9), region: {}, locations: [{ _key: Math.random().toString(36).substring(2, 9) }], featured: false, clients: 0, flag: "" })}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendArea({ _key: Math.random().toString(36).substring(2, 9), region: "", locations: [{ _key: Math.random().toString(36).substring(2, 9) }], featured: false, clients: 0, flag: "" })}>
                                         <Plus className="mr-2 h-4 w-4" /> Add Area
                                     </Button>
                                 </div>
@@ -724,7 +565,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>Industries Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <SectionHeadingInput control={formControl} name="industriesSection" label="Section Heading" activeLang={selectedLang} />
+                                <SectionHeadingInput control={formControl} name="industriesSection" label="Section Heading" />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Industries</FormLabel>
                                     {industryFields.map((field, index) => (
@@ -734,11 +575,11 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`industries.${index}.name`} label="Industry Name" activeLang={selectedLang} />
-                                            <LocalizedInput control={formControl} name={`industries.${index}.description`} label="Description" isTextarea activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`industries.${index}.name`} label="Industry Name" />
+                                            <LocalizedInput control={formControl} name={`industries.${index}.description`} label="Description" type="textarea" />
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendIndustry({ _key: Math.random().toString(36).substring(2, 9), name: {}, description: {} })}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendIndustry({ _key: Math.random().toString(36).substring(2, 9), name: "", description: "" })}>
                                         <Plus className="mr-2 h-4 w-4" /> Add Industry
                                     </Button>
                                 </div>
@@ -752,7 +593,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>Benefits Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <SectionHeadingInput control={formControl} name="benifitsSection" label="Section Heading" activeLang={selectedLang} />
+                                <SectionHeadingInput control={formControl} name="benifitsSection" label="Section Heading" />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Benefits</FormLabel>
                                     {benefitFields.map((field, index) => (
@@ -762,7 +603,6 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                     control={formControl}
                                                     name={`benefits.${index}`}
                                                     label={`Benefit ${index + 1}`}
-                                                    activeLang={selectedLang}
                                                 />
                                             </div>
                                             {benefitFields.length > 1 && (
@@ -780,13 +620,13 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                         </Card>
                     </TabsContent>
 
-                    <TabsContent value="whyChooseUs" className="space-y-6">
+                    <TabsContent value="whyUs" className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Why Choose Us Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <SectionHeadingInput control={formControl} name="whyChooseUsSection" label="Section Heading" activeLang={selectedLang} />
+                                <SectionHeadingInput control={formControl} name="whyChooseUsSection" label="Section Heading" />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Points</FormLabel>
                                     {whyChooseFields.map((field, index) => (
@@ -798,12 +638,12 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                     </Button>
                                                 </div>
                                             )}
-                                            <LocalizedInput control={formControl} name={`whyChooseUsPoints.${index}.title`} label="Title" activeLang={selectedLang} />
-                                            <LocalizedInput control={formControl} name={`whyChooseUsPoints.${index}.description`} label="Description" isTextarea activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`whyChooseUsPoints.${index}.title`} label="Title" />
+                                            <LocalizedInput control={formControl} name={`whyChooseUsPoints.${index}.description`} label="Description" type="textarea" />
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendWhyChoose({ _key: Math.random().toString(36).substring(2, 9), title: {}, description: {} })}>
-                                        <Plus className="mr-2 h-4 w-4" /> Add Point
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendWhyChoose({ _key: Math.random().toString(36).substring(2, 9), title: "", description: "" })}>
+                                        <Plus className="mr-2 h-4 w-4" /> Add Why Us Point
                                     </Button>
                                 </div>
                             </CardContent>
@@ -816,7 +656,7 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>Case Studies Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <SectionHeadingInput control={formControl} name="caseStudiesSection" label="Section Heading" activeLang={selectedLang} />
+                                <SectionHeadingInput control={formControl} name="caseStudiesSection" label="Section Heading" />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>Case Studies</FormLabel>
                                     {caseStudyFields.map((field, index) => (
@@ -826,13 +666,13 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.title`} label="Title" activeLang={selectedLang} />
-                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.problem`} label="Problem" isTextarea activeLang={selectedLang} />
-                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.solution`} label="Solution" isTextarea activeLang={selectedLang} />
-                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.result`} label="Result" isTextarea activeLang={selectedLang} />
+                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.title`} label="Title" />
+                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.problem`} label="Problem" type="textarea" />
+                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.solution`} label="Solution" type="textarea" />
+                                            <LocalizedInput control={formControl} name={`caseStudies.${index}.result`} label="Result" type="textarea" />
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendCaseStudy({ _key: Math.random().toString(36).substring(2, 9), title: {}, problem: {}, solution: {}, result: {} })}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendCaseStudy({ _key: Math.random().toString(36).substring(2, 9), title: "", problem: "", solution: "", result: "" })}>
                                         <Plus className="mr-2 h-4 w-4" /> Add Case Study
                                     </Button>
                                 </div>
@@ -846,21 +686,23 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>FAQs Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <SectionHeadingInput control={formControl} name="faqsSection" label="Section Heading" activeLang={selectedLang} />
+                                <SectionHeadingInput control={formControl} name="faqsSection" label="Section Heading" />
                                 <div className="space-y-4 mt-6">
                                     <FormLabel>FAQs</FormLabel>
                                     {faqFields.map((field, index) => (
                                         <div key={field.id} className="border p-4 rounded-md space-y-4 relative">
-                                            <div className="absolute right-2 top-2">
-                                                <Button type="button" variant="destructive" size="icon" onClick={() => removeFaq(index)}>
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                            <LocalizedInput control={formControl} name={`faqs.${index}.question`} label="Question" activeLang={selectedLang} />
-                                            <LocalizedInput control={formControl} name={`faqs.${index}.answer`} label="Answer" isTextarea activeLang={selectedLang} />
+                                            {faqFields.length > 1 && (
+                                                <div className="absolute right-2 top-2">
+                                                    <Button type="button" variant="destructive" size="icon" onClick={() => removeFaq(index)}>
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            )}
+                                            <LocalizedInput control={formControl} name={`faqs.${index}.question`} label="Question" />
+                                            <LocalizedInput control={formControl} name={`faqs.${index}.answer`} label="Answer" type="textarea" />
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendFaq({ _key: Math.random().toString(36).substring(2, 9), question: {}, answer: {} })}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendFaq({ _key: Math.random().toString(36).substring(2, 9), question: "", answer: "" })}>
                                         <Plus className="mr-2 h-4 w-4" /> Add FAQ
                                     </Button>
                                 </div>
@@ -874,11 +716,11 @@ export function ServiceForm({ initialData, serviceId, hasDraft, draftUpdatedAt }
                                 <CardTitle>SEO Settings</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="seo.metaTitle" label="Meta Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="seo.metaDescription" label="Meta Description" isTextarea activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="seo.focusKeyword" label="Focus Keyword" activeLang={selectedLang} />
-                                <CommaKeywordsInput control={formControl} name="seo.relatedKeywords" label="Related Keywords" activeLang={selectedLang} />
-                                <SchemaListInput control={formControl} name="seo.schemas" label="Schema Markups (JSON-LD)" />
+                                <LocalizedInput control={formControl} name="seo.metaTitle" label="Meta Title" />
+                                <LocalizedInput control={formControl} name="seo.metaDescription" label="Meta Description" type="textarea" />
+                                <LocalizedInput control={formControl} name="seo.focusKeyword" label="Focus Keyword" />
+                                <CommaKeywordsInput name="seo.relatedKeywords" label="Related Keywords" />
+                                <SchemaListInput name="seo.schemas" label="JSON-LD Schemas" />
                             </CardContent>
                         </Card>
                     </TabsContent>

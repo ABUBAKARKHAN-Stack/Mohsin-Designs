@@ -36,8 +36,8 @@ export async function updateServiceCta(data: ServiceCtaValues) {
             const cleanUrl: any = {};
             let hasUrl = false;
             (['en', 'ur', 'es', 'ar'] as const).forEach(lang => {
-                if (validatedFields.ctaButtonUrl?.[lang]) {
-                    cleanUrl[lang] = validatedFields.ctaButtonUrl[lang];
+                if (validatedFields.ctaButtonUrl?.[lang as keyof typeof validatedFields.ctaButtonUrl]) {
+                    cleanUrl[lang] = validatedFields.ctaButtonUrl[lang as keyof typeof validatedFields.ctaButtonUrl];
                     hasUrl = true;
                 }
             });

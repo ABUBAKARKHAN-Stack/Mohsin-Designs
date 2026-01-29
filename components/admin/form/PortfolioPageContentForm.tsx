@@ -33,7 +33,6 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
     const [lastSaved, setLastSaved] = useState<Date | null>(
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
-    const [selectedLang, setSelectedLang] = useState("en")
     const [isInitialMount, setIsInitialMount] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
 
@@ -41,18 +40,18 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
         resolver: zodResolver(portfolioPageContentSchema),
         defaultValues: initialData || {
             hero: {
-                title: { en: "", ur: "", es: "", ar: "" },
-                subtitle: { en: "", ur: "", es: "", ar: "" },
-                description: { en: "", ur: "", es: "", ar: "" },
+                title: "",
+                subtitle: "",
+                description: "",
             },
             portfolioList: {
                 projects: [],
             },
             cta: {
                 sectionHeading: {
-                    eyebrow: { en: "", ur: "", es: "", ar: "" },
-                    title: { en: "", ur: "", es: "", ar: "" },
-                    description: { en: "", ur: "", es: "", ar: "" },
+                    eyebrow: "",
+                    title: "",
+                    description: "",
                 },
                 formReference: "",
             },
@@ -158,17 +157,6 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Select value={selectedLang} onValueChange={setSelectedLang}>
-                            <SelectTrigger className="w-[140px]">
-                                <SelectValue placeholder="Language" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="en">English (EN)</SelectItem>
-                                <SelectItem value="ur">Urdu (UR)</SelectItem>
-                                <SelectItem value="es">Spanish (ES)</SelectItem>
-                                <SelectItem value="ar">Arabic (AR)</SelectItem>
-                            </SelectContent>
-                        </Select>
                         <Button type="submit" disabled={isLoading}>
                             {isLoading ? <Spinner className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
                             Save Content
@@ -202,9 +190,9 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
                         <Card>
                             <CardHeader><CardTitle>Hero Configuration</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="hero.title" label="Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="hero.subtitle" label="Subtitle" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="hero.description" label="Description" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="hero.title" label="Title" />
+                                <LocalizedInput control={formControl} name="hero.subtitle" label="Subtitle" />
+                                <LocalizedInput control={formControl} name="hero.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -330,9 +318,9 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
                         <Card>
                             <CardHeader><CardTitle>Call to Action Configuration</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.eyebrow" label="Eyebrow" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.title" label="Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.description" label="Description" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="cta.sectionHeading.eyebrow" label="Eyebrow" />
+                                <LocalizedInput control={formControl} name="cta.sectionHeading.title" label="Title" />
+                                <LocalizedInput control={formControl} name="cta.sectionHeading.description" label="Description" isTextarea />
 
                                 <FormField
                                     control={form.control}
@@ -361,7 +349,7 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
                     </TabsContent>
                 </Tabs>
             </form>
-        </Form>
+        </Form >
     )
 }
 

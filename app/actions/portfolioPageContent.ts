@@ -120,7 +120,7 @@ export async function discardPortfolioPageDraft() {
 
 export async function getPortfolioFormOptions() {
     try {
-        const query = `*[_type == "project"] { _id, "title": title.en }`
+        const query = `*[_type == "project"] { _id, title }`
         const projects = await adminClient.fetch(query)
         return projects || []
     } catch (error) {

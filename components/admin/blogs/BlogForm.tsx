@@ -14,12 +14,11 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { useState, useTransition, useCallback, useEffect, useRef } from "react"
 import { createPost, updatePost } from "@/app/actions/blog"
 import { saveBlogDraft } from "@/app/actions/blogDraftActions"
 import { useRouter } from "next/navigation"
-import { Loader2, Plus, Save } from "lucide-react"
+import { Loader2, Save } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
 import {
@@ -40,10 +39,11 @@ import {
 } from "@/components/ui/select"
 import Link from "next/link"
 import { debounce } from "lodash"
-import { ArrowLeft, Languages } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
+import { CommaKeywordsInput } from "@/components/admin/form/CommaKeywordsInput"
 
 interface BlogFormProps {
     initialData?: BlogPostValues & { _id?: string }
@@ -61,13 +61,11 @@ export function BlogForm({
     categories,
     locations,
     blogId,
-    hasDraft,
     draftUpdatedAt
 }: BlogFormProps) {
     const isPublished = initialData?._id && !initialData._id.startsWith('drafts.')
     const [isPending, startTransition] = useTransition()
     const router = useRouter()
-    const [selectedLang, setSelectedLang] = useState("en")
     const [isSavingDraft, setIsSavingDraft] = useState(false)
     const [currentBlogId] = useState(blogId)
     const [lastSaved, setLastSaved] = useState<Date | null>(
@@ -79,23 +77,22 @@ export function BlogForm({
     const form = useForm<BlogPostValues>({
         resolver: zodResolver(blogPostSchema),
         defaultValues: initialData || {
-            title: {},
-            description: {},
+            title: "",
+            description: "",
             slug: { current: "" },
             publishedAt: new Date().toISOString(),
             featured: false,
             author: "Mohsin Ali",
-            tags: {},
+            tags: [],
             categories: categories
                 .filter(cat => cat.title?.toLowerCase() === 'all')
                 .map(cat => cat._id),
-            body: {},
+            body: [],
             service: "none",
             location: "none"
         },
     })
 
-    // Auto-save draft functionality
     const saveDraft = useCallback(
         debounce(async (data: Partial<BlogPostValues>) => {
             if (isInitialMount || !currentBlogId || isSubmittingRef.current) return
@@ -104,7 +101,6 @@ export function BlogForm({
                 const result = await saveBlogDraft(currentBlogId, data)
                 if (result.success) {
                     setLastSaved(new Date())
-                    // If this was a new post (no initial ID), update URL to preserve context
                     if (!initialData?._id && typeof window !== 'undefined') {
                         const newUrl = `/admin/blogs/edit/${currentBlogId}`
                         if (window.location.pathname !== newUrl) {
@@ -136,9 +132,7 @@ export function BlogForm({
         }
     }, [form, saveDraft])
 
-    // Auto-generate slug from title if it's a new post and slug is empty
-    const titleObj = form.watch("title") as any
-    const title = titleObj?.en
+    const title = form.watch("title")
     const currentSlug = form.watch("slug.current")
     useEffect(() => {
         if (!isPublished && title && !currentSlug) {
@@ -148,13 +142,11 @@ export function BlogForm({
     }, [title, isPublished, form, currentSlug])
 
     function onSubmit(values: BlogPostValues) {
-        // Cancel any pending draft saves immediately
         saveDraft.cancel()
         isSubmittingRef.current = true
 
         startTransition(async () => {
             try {
-                // If it's published, we update. If it's a draft or new, we create (publish).
                 const result = (isPublished
                     ? await updatePost(initialData!._id!, values)
                     : await createPost(values, currentBlogId)) as any
@@ -174,8 +166,6 @@ export function BlogForm({
         })
     }
 
-    // Body editor state handled by form
-
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-8">
@@ -187,7 +177,7 @@ export function BlogForm({
                             </Link>
                         </Button>
                         <div>
-                            <h1 className="text-xl font-bold">{isPublished ? `Edit: ${initialData.title?.en || 'Untitled'}` : (initialData?._id ? "Edit Draft" : "Create New Post")}</h1>
+                            <h1 className="text-xl font-bold">{isPublished ? `Edit: ${initialData.title || 'Untitled'}` : (initialData?._id ? "Edit Draft" : "Create New Post")}</h1>
                             <div className="flex items-center gap-2 text-xs text-muted-foreground min-h-[20px]">
                                 {isSavingDraft && (
                                     <span className="flex items-center gap-1 text-yellow-600">
@@ -208,23 +198,6 @@ export function BlogForm({
                         </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-lg border">
-                            <div className="flex items-center gap-1.5 px-2 text-xs font-medium text-muted-foreground border-r pr-2 shadow-sm">
-                                <Languages className="h-3.5 w-3.5" />
-                                <span>Language</span>
-                            </div>
-                            <Select value={selectedLang} onValueChange={setSelectedLang}>
-                                <SelectTrigger className="h-8 border-none bg-transparent shadow-none focus:ring-0 min-w-[110px]">
-                                    <SelectValue placeholder="Language" />
-                                </SelectTrigger>
-                                <SelectContent align="end">
-                                    <SelectItem value="en">English (EN)</SelectItem>
-                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
-                                    <SelectItem value="es">Spanish (ES)</SelectItem>
-                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
                         <Button type="submit" disabled={isPending} className="min-w-[140px]">
                             {isPending ? <Spinner className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
                             {isPublished ? "Update Post" : "Publish Post"}
@@ -240,31 +213,18 @@ export function BlogForm({
                                 <CardDescription>Main information about the post.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <FormField
+                                <LocalizedInput
                                     control={form.control}
                                     name="title"
-                                    render={({ field: _ }) => (
-                                        <LocalizedInput
-                                            control={form.control}
-                                            name="title"
-                                            label={<>Post Title <span className="text-destructive">*</span></>}
-                                            activeLang={selectedLang}
-                                        />
-                                    )}
+                                    label="Post Title"
+                                    placeholder="Enter post title"
                                 />
-                                <FormField
+                                <LocalizedInput
                                     control={form.control}
                                     name="description"
-                                    render={({ field: _ }) => (
-                                        <LocalizedInput
-                                            control={form.control}
-                                            name="description"
-                                            label={<>Short Description <span className="text-destructive">*</span></>}
-                                            isTextarea
-                                            activeLang={selectedLang}
-                                            optional={false}
-                                        />
-                                    )}
+                                    label="Short Description"
+                                    isTextarea
+                                    placeholder="Enter a brief summary"
                                 />
                                 <FormField
                                     control={form.control}
@@ -280,7 +240,7 @@ export function BlogForm({
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => {
-                                                            const genSlug = (form.getValues("title") as any)?.en?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || ''
+                                                            const genSlug = form.getValues("title").toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || ''
                                                             form.setValue("slug.current", genSlug)
                                                         }}
                                                     >
@@ -326,19 +286,10 @@ export function BlogForm({
                                         )}
                                     />
                                 </div>
-                                <FormField
-                                    control={form.control}
+                                <CommaKeywordsInput
                                     name="tags"
-                                    render={({ field: _ }) => (
-                                        <LocalizedInput
-                                            control={form.control}
-                                            name="tags"
-                                            label={<>Tags (Comma separated) <span className="text-destructive">*</span></>}
-                                            activeLang={selectedLang}
-                                            optional={false}
-                                            placeholder="e.g. tech, design, ai"
-                                        />
-                                    )}
+                                    label="Tags"
+                                    placeholder="Type keyword and press comma or enter..."
                                 />
                             </CardContent>
                         </Card>
@@ -367,12 +318,8 @@ export function BlogForm({
                             </CardContent>
                         </Card>
                         <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardHeader>
                                 <CardTitle className={cn(form.formState.errors.body && "text-destructive")}>Body Content <span className="text-destructive">*</span></CardTitle>
-                                <div className="flex items-center space-x-2 text-sm text-muted-foreground bg-muted py-1 px-3 rounded-md">
-                                    <Languages className="h-4 w-4" />
-                                    <span className="font-medium uppercase">{selectedLang}</span>
-                                </div>
                             </CardHeader>
                             <CardContent className={cn("p-0", form.formState.errors.body && "border-2 border-destructive/20 rounded-b-lg")}>
                                 <FormField
@@ -382,35 +329,18 @@ export function BlogForm({
                                         <FormItem>
                                             <FormControl>
                                                 <CustomPortableTextEditor
-                                                    key={selectedLang}
-                                                    value={field.value?.[selectedLang as keyof typeof field.value] || []}
-                                                    setValue={(newValue) => {
-                                                        const currentBody = field.value || {};
-                                                        field.onChange({
-                                                            ...currentBody,
-                                                            [selectedLang]: newValue
-                                                        });
-                                                    }}
+                                                    value={field.value || []}
+                                                    setValue={(newValue) => field.onChange(newValue)}
                                                 />
                                             </FormControl>
                                             <div className="p-4 pt-0">
                                                 <FormMessage />
-                                                {form.formState.errors.body && (
-                                                    <div className="flex flex-wrap gap-1 mt-2">
-                                                        {Object.keys(form.formState.errors.body).filter(k => k !== selectedLang && k !== 'root').map(lang => (
-                                                            <span key={lang} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20 uppercase">
-                                                                Missing: {lang}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                )}
                                             </div>
                                         </FormItem>
                                     )}
                                 />
                             </CardContent>
                         </Card>
-
                     </div>
 
                     <div className="space-y-6">

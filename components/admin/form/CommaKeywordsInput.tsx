@@ -1,119 +1,109 @@
 "use client"
 
+import React, { useState, useEffect } from "react"
 import { useFormContext } from "react-hook-form"
-import { useEffect, useState } from "react"
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    FormDescription,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent } from "@/components/ui/tabs"
-import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { X, Hash } from "lucide-react"
 
 interface CommaKeywordsInputProps {
-    control: any
     name: string
     label: string
-    activeLang?: string
     placeholder?: string
 }
 
-const LANGUAGES = [
-    { code: 'en', label: 'English', dir: 'ltr' },
-    { code: 'ur', label: 'Urdu', dir: 'rtl' },
-    { code: 'es', label: 'Spanish', dir: 'ltr' },
-    { code: 'ar', label: 'Arabic', dir: 'rtl' },
-]
-
 export function CommaKeywordsInput({
-    control,
     name,
     label,
-    activeLang,
-    placeholder
+    placeholder = "Type keyword and press comma or enter...",
 }: CommaKeywordsInputProps) {
-    const { setValue, watch, trigger } = useFormContext()
+    const { control, setValue, watch } = useFormContext()
+    const [inputValue, setInputValue] = useState("")
 
-    // We keep track of the string value for each language to make it easier to edit
-    // without constant array conversion artifacts
-    const [viewValues, setViewValues] = useState<Record<string, string>>({
-        en: "", ur: "", es: "", ar: ""
-    })
+    // Watch the array in the form state
+    const watchedValue = watch(name)
+    const keywords: string[] = Array.isArray(watchedValue) ? watchedValue : []
 
-    const fieldValues = watch(name)
+    const handleAddKeyword = (val: string) => {
+        const trimmed = val.trim()
+        if (trimmed && !keywords.includes(trimmed)) {
+            const newKeywords = [...keywords, trimmed]
+            setValue(name, newKeywords, { shouldDirty: true, shouldValidate: true })
+        }
+        setInputValue("")
+    }
 
-    // Sync from field values (arrays) to view values (strings) on mount or if they change externally
-    useEffect(() => {
-        const newViewValues: Record<string, string> = { ...viewValues }
-        let changed = false
+    const removeKeyword = (keywordToRemove: string) => {
+        const newKeywords = keywords.filter((k) => k !== keywordToRemove)
+        setValue(name, newKeywords, { shouldDirty: true, shouldValidate: true })
+    }
 
-        LANGUAGES.forEach(lang => {
-            const arr = fieldValues?.[lang.code] || []
-            const str = Array.isArray(arr) ? arr.join(", ") : ""
-            if (newViewValues[lang.code] !== str && !isCurrentlyEditing(lang.code)) {
-                newViewValues[lang.code] = str
-                changed = true
-            }
-        })
-
-        if (changed) setViewValues(newViewValues)
-    }, [fieldValues])
-
-    const [editingLang, setEditingLang] = useState<string | null>(null)
-    const isCurrentlyEditing = (code: string) => editingLang === code
-
-    const handleChange = (code: string, value: string) => {
-        // Update local view value immediately for responsive typing
-        setViewValues(prev => ({ ...prev, [code]: value }))
-
-        // Convert string to array: split by comma, trim, filter empty
-        const arr = value.split(",")
-            .map(k => k.trim())
-            .filter(k => k !== "")
-
-        setValue(`${name}.${code}`, arr, { shouldDirty: true, shouldValidate: true })
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "," || e.key === "Enter") {
+            e.preventDefault()
+            handleAddKeyword(inputValue)
+        } else if (e.key === "Backspace" && !inputValue && keywords.length > 0) {
+            removeKeyword(keywords[keywords.length - 1])
+        }
     }
 
     return (
-        <div className="space-y-4 border p-4 rounded-md bg-card/50">
-            <FormLabel>{label}</FormLabel>
-            <Tabs value={activeLang || "en"} className="w-full">
-                {LANGUAGES.map((lang) => (
-                    <TabsContent
-                        key={lang.code}
-                        value={lang.code}
-                        forceMount
-                        className={cn(
-                            "mt-0",
-                            (activeLang || "en") !== lang.code && "hidden"
-                        )}
-                    >
-                        <FormField
-                            control={control}
-                            name={`${name}.${lang.code}`}
-                            render={() => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input
-                                            value={viewValues[lang.code]}
-                                            onChange={(e) => handleChange(lang.code, e.target.value)}
-                                            onFocus={() => setEditingLang(lang.code)}
-                                            onBlur={() => {
-                                                setEditingLang(null)
-                                                // Trigger validation for the whole object to catch sibling errors
-                                                trigger(name)
-                                            }}
-                                            dir={lang.dir}
-                                            placeholder={placeholder || `Enter keywords separated by commas in ${lang.label}...`}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                    <p className="text-[10px] text-muted-foreground mt-1 italic">
-                                        Use commas to separate multiple keywords. Example: web design, developer, ui
-                                    </p>
-                                </FormItem>
-                            )}
+        <FormField
+            control={control}
+            name={name}
+            render={() => (
+                <FormItem className="space-y-3">
+                    <div className="flex items-center justify-between">
+                        <FormLabel className="flex items-center gap-2">
+                            <Hash className="h-4 w-4" />
+                            {label}
+                        </FormLabel>
+                        <Badge variant="secondary" className="text-[10px] font-normal uppercase tracking-wider">
+                            {keywords.length} Keywords
+                        </Badge>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 p-2 min-h-[45px] border rounded-md bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 transition-all">
+                        {keywords.map((keyword, index) => (
+                            <Badge
+                                key={`${keyword}-${index}`}
+                                variant="secondary"
+                                className="pl-2 pr-1 py-1 flex items-center gap-1 group transition-colors hover:bg-secondary/80 animate-in fade-in zoom-in duration-200"
+                            >
+                                <span className="text-xs font-medium">{keyword}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => removeKeyword(keyword)}
+                                    className="ml-1 rounded-full p-0.5 outline-none hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                                >
+                                    <X className="h-3 w-3" />
+                                </button>
+                            </Badge>
+                        ))}
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            onBlur={() => handleAddKeyword(inputValue)}
+                            placeholder={keywords.length === 0 ? placeholder : ""}
+                            className="flex-1 bg-transparent outline-none text-sm min-w-[120px] placeholder:text-muted-foreground"
                         />
-                    </TabsContent>
-                ))}
-            </Tabs>
-        </div>
+                    </div>
+                    <FormDescription className="text-[11px]">
+                        Separate keywords with commas or press Enter.
+                    </FormDescription>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
     )
 }

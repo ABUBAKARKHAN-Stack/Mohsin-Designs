@@ -42,6 +42,7 @@ export const globalSectionsSchema = z.object({
     // Services Preview Section
     servicesPreview: z.object({
         sectionHeading: sectionHeadingSchema,
+        featuredServices: z.array(z.string()).max(8).optional(),
     }),
 
     // Why Choose Us Section

@@ -9,7 +9,7 @@ export const imageAssetType = defineType({
             name: 'altText',
             title: 'Alt Text',
             type: 'localizedString',
-            description: 'Alternative text for accessibility and SEO (required for all languages)',
+            description: 'Alternative text for accessibility and SEO',
         }),
         defineField({
             name: 'caption',

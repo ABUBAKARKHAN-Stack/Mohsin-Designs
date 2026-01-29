@@ -29,7 +29,7 @@ export const postType = defineType({
       name: 'slug',
       type: 'slug',
       options: {
-        source: 'title.en',
+        source: 'title',
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -86,20 +86,14 @@ export const postType = defineType({
     }),
     defineField({
       name: 'body',
-      type: 'object',
+      type: 'blockContent',
       title: 'Body Content',
       validation: (Rule) => Rule.required(),
-      fields: [
-        defineField({ name: 'en', type: 'blockContent', title: 'English' }),
-        defineField({ name: 'ur', type: 'blockContent', title: 'Urdu' }),
-        defineField({ name: 'es', type: 'blockContent', title: 'Spanish' }),
-        defineField({ name: 'ar', type: 'blockContent', title: 'Arabic' }),
-      ]
     }),
   ],
   preview: {
     select: {
-      title: 'title.en',
+      title: 'title',
       author: 'author',
       media: 'mainImage',
     },

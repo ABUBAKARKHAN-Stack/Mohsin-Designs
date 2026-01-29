@@ -9,6 +9,7 @@ import { IconSelect } from "@/components/admin/form/IconSelect"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { StatItemCard, SectionHeadingCard } from "./SharedFormComponents"
+import { ReferenceSelector } from "./ReferenceSelector"
 import { Plus, Trash2, ExternalLink, Globe, Info, AlertTriangle } from "lucide-react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
@@ -17,13 +18,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils"
 
 interface GlobalSectionsFormTabsProps {
+    form: any
     control: any
     errors: any
     mode?: 'global' | 'shared'
-    activeLang?: string
+    services?: any[]
 }
 
-export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activeLang }: GlobalSectionsFormTabsProps) {
+export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared', services = [] }: GlobalSectionsFormTabsProps) {
     // Field arrays
     const { fields: benefitFields, append: appendBenefit, remove: removeBenefit } = useFieldArray({
         control,
@@ -171,34 +173,42 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
                                 <p className="text-sm text-muted-foreground">Manage the three core metrics displayed across the site.</p>
                             </div>
                             <div className="grid grid-cols-1 gap-6 pt-4">
-                                <StatItemCard control={control} name="stats.projectsDelivered" title="Projects Delivered" activeLang={activeLang} />
-                                <StatItemCard control={control} name="stats.yearsExperience" title="Years Experience" activeLang={activeLang} />
-                                <StatItemCard control={control} name="stats.clientSatisfaction" title="Client Satisfaction" activeLang={activeLang} />
+                                <StatItemCard control={control} name="stats.projectsDelivered" title="Projects Delivered" />
+                                <StatItemCard control={control} name="stats.yearsExperience" title="Years Experience" />
+                                <StatItemCard control={control} name="stats.clientSatisfaction" title="Client Satisfaction" />
                             </div>
                         </div>
                     </TabsContent>
 
                     {/* SERVICES PREVIEW */}
                     <TabsContent value="services" className="mt-0 space-y-6 focus-visible:outline-none pt-2">
-                        <SectionHeadingCard control={control} baseName="servicesPreview.sectionHeading" title="Services Preview" activeLang={activeLang} />
+                        <SectionHeadingCard control={control} baseName="servicesPreview.sectionHeading" title="Services Preview" />
                         <Card>
                             <CardHeader><CardTitle>Services List</CardTitle></CardHeader>
-                            <CardContent>
+                            <CardContent className="space-y-6">
                                 <p className="text-muted-foreground text-sm leading-relaxed">
                                     Individual services are managed separately in the <strong>Services</strong> section.
-                                    They are automatically pulled into this preview section to maintain a dynamic and synced workflow.
+                                    You can manually select and order which services appear in this section below.
                                 </p>
+
+                                <ReferenceSelector
+                                    form={form}
+                                    fieldName="servicesPreview.featuredServices"
+                                    items={services}
+                                    label="Featured Services"
+                                    placeholder="Search services..."
+                                />
                             </CardContent>
                         </Card>
                     </TabsContent>
 
                     {/* WHY CHOOSE US */}
                     <TabsContent value="whyUs" className="mt-0 space-y-6 focus-visible:outline-none pt-2">
-                        <SectionHeadingCard control={control} baseName="whyChooseUs.sectionHeading" title="Why Choose Us" activeLang={activeLang} />
+                        <SectionHeadingCard control={control} baseName="whyChooseUs.sectionHeading" title="Why Choose Us" />
                         <Card shadow-none border-dashed>
                             <CardHeader className="flex flex-row justify-between items-center py-4">
                                 <CardTitle className="text-lg">Core Benefits</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendBenefit({ title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "" })} className="bg-background">
+                                <Button type="button" size="sm" variant="outline" onClick={() => appendBenefit({ title: "", description: "", iconName: "" })} className="bg-background">
                                     <Plus className="h-4 w-4 mr-2" /> Add Benefit
                                 </Button>
                             </CardHeader>
@@ -217,8 +227,8 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
                                             </Button>
                                         </div>
                                         <div className="grid gap-4">
-                                            <LocalizedInput control={control} name={`whyChooseUs.benefits.${index}.title`} label="Title" activeLang={activeLang} />
-                                            <LocalizedInput control={control} name={`whyChooseUs.benefits.${index}.description`} label="Description" isTextarea activeLang={activeLang} />
+                                            <LocalizedInput control={control} name={`whyChooseUs.benefits.${index}.title`} label="Title" />
+                                            <LocalizedInput control={control} name={`whyChooseUs.benefits.${index}.description`} label="Description" isTextarea />
                                             <FormField control={control} name={`whyChooseUs.benefits.${index}.iconName`} render={({ field }) => (
                                                 <IconSelect field={field} type="benefit" label="Visual Icon" />
                                             )} />
@@ -231,11 +241,11 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
 
                     {/* OUR APPROACH */}
                     <TabsContent value="approach" className="mt-0 space-y-6 focus-visible:outline-none pt-2">
-                        <SectionHeadingCard control={control} baseName="ourApproach.sectionHeading" title="Our Approach" activeLang={activeLang} />
+                        <SectionHeadingCard control={control} baseName="ourApproach.sectionHeading" title="Our Approach" />
                         <Card>
                             <CardHeader className="flex flex-row justify-between items-center py-4">
                                 <CardTitle className="text-lg">Strategic Steps</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendStep({ title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "" })} className="bg-background">
+                                <Button type="button" size="sm" variant="outline" onClick={() => appendStep({ title: "", description: "", iconName: "" })} className="bg-background">
                                     <Plus className="h-4 w-4 mr-2" /> Add Step
                                 </Button>
                             </CardHeader>
@@ -249,8 +259,8 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
                                             </Button>
                                         </div>
                                         <div className="grid gap-4">
-                                            <LocalizedInput control={control} name={`ourApproach.steps.${index}.title`} label="Step Name" activeLang={activeLang} />
-                                            <LocalizedInput control={control} name={`ourApproach.steps.${index}.description`} label="Process Description" isTextarea activeLang={activeLang} />
+                                            <LocalizedInput control={control} name={`ourApproach.steps.${index}.title`} label="Step Name" />
+                                            <LocalizedInput control={control} name={`ourApproach.steps.${index}.description`} label="Process Description" isTextarea />
                                             <FormField control={control} name={`ourApproach.steps.${index}.iconName`} render={({ field }) => (
                                                 <IconSelect field={field} type="step" label="Visual Icon" />
                                             )} />
@@ -263,11 +273,11 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
 
                     {/* INDUSTRIES */}
                     <TabsContent value="industries" className="mt-0 space-y-6 focus-visible:outline-none pt-2">
-                        <SectionHeadingCard control={control} baseName="industriesWeServe.sectionHeading" title="Industries We Serve" activeLang={activeLang} />
+                        <SectionHeadingCard control={control} baseName="industriesWeServe.sectionHeading" title="Industries We Serve" />
                         <Card>
                             <CardHeader className="flex flex-row justify-between items-center py-4">
                                 <CardTitle className="text-lg">Industry Sectors</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendIndustry({ name: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "" })} className="bg-background">
+                                <Button type="button" size="sm" variant="outline" onClick={() => appendIndustry({ name: "", description: "", iconName: "" })} className="bg-background">
                                     <Plus className="h-4 w-4 mr-2" /> Add Industry
                                 </Button>
                             </CardHeader>
@@ -281,8 +291,8 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
                                             </Button>
                                         </div>
                                         <div className="grid gap-4">
-                                            <LocalizedInput control={control} name={`industriesWeServe.industries.${index}.name`} label="Industry Name" activeLang={activeLang} />
-                                            <LocalizedInput control={control} name={`industriesWeServe.industries.${index}.description`} label="Sector Description" isTextarea activeLang={activeLang} />
+                                            <LocalizedInput control={control} name={`industriesWeServe.industries.${index}.name`} label="Industry Name" />
+                                            <LocalizedInput control={control} name={`industriesWeServe.industries.${index}.description`} label="Sector Description" isTextarea />
                                             <FormField control={control} name={`industriesWeServe.industries.${index}.iconName`} render={({ field }) => (
                                                 <IconSelect field={field} type="industry" label="Visual Icon" />
                                             )} />
@@ -295,11 +305,11 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
 
                     {/* FAQS */}
                     <TabsContent value="faqs" className="mt-0 space-y-6 focus-visible:outline-none pt-2">
-                        <SectionHeadingCard control={control} baseName="faqs.sectionHeading" title="Frequently Asked Questions" activeLang={activeLang} />
+                        <SectionHeadingCard control={control} baseName="faqs.sectionHeading" title="Frequently Asked Questions" />
                         <Card>
                             <CardHeader className="flex flex-row justify-between items-center py-4">
                                 <CardTitle className="text-lg">Q&A Items</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendFaq({ question: { en: "", ur: "", es: "", ar: "" }, answer: { en: "", ur: "", es: "", ar: "" } })} className="bg-background">
+                                <Button type="button" size="sm" variant="outline" onClick={() => appendFaq({ question: "", answer: "" })} className="bg-background">
                                     <Plus className="h-4 w-4 mr-2" /> Add Question
                                 </Button>
                             </CardHeader>
@@ -313,8 +323,8 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
                                             </Button>
                                         </div>
                                         <div className="grid gap-4">
-                                            <LocalizedInput control={control} name={`faqs.faqItems.${index}.question`} label="Question" activeLang={activeLang} />
-                                            <LocalizedInput control={control} name={`faqs.faqItems.${index}.answer`} label="Detailed Answer" isTextarea activeLang={activeLang} />
+                                            <LocalizedInput control={control} name={`faqs.faqItems.${index}.question`} label="Question" />
+                                            <LocalizedInput control={control} name={`faqs.faqItems.${index}.answer`} label="Detailed Answer" isTextarea />
                                         </div>
                                     </div>
                                 ))}
@@ -324,8 +334,8 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
                             <CardHeader className="py-4"><CardTitle className="text-lg flex items-center gap-2"><Globe className="h-4 w-4 text-primary" /> Support Redirect Button</CardTitle></CardHeader>
                             <CardContent className="space-y-4 px-6 pb-6">
                                 <div className="grid md:grid-cols-2 gap-4">
-                                    <LocalizedInput control={control} name="faqs.buttonText" label="Button Label (e.g. Contact Support)" activeLang={activeLang} />
-                                    <LocalizedInput control={control} name="faqs.buttonUrl" label="Destination URL" isUrl activeLang={activeLang} />
+                                    <LocalizedInput control={control} name="faqs.buttonText" label="Button Label (e.g. Contact Support)" />
+                                    <LocalizedInput control={control} name="faqs.buttonUrl" label="Destination URL" isUrl />
                                 </div>
                             </CardContent>
                         </Card>
@@ -333,13 +343,13 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
 
                     {/* LEADERSHIP */}
                     <TabsContent value="leadership" className="mt-0 space-y-6 focus-visible:outline-none pt-2">
-                        <SectionHeadingCard control={control} baseName="leadership.sectionHeading" title="Leadership & Team" activeLang={activeLang} />
+                        <SectionHeadingCard control={control} baseName="leadership.sectionHeading" title="Leadership & Team" />
                         <div className="grid lg:grid-cols-12 gap-6 items-start">
                             <Card className="lg:col-span-5 shadow-sm border-2">
                                 <CardHeader className="bg-primary/5 py-3 border-b"><CardTitle className="text-lg flex items-center gap-2 text-primary"><Globe className="h-4 w-4" /> Founder Information</CardTitle></CardHeader>
                                 <CardContent className="space-y-4 pt-6 p-6">
-                                    <LocalizedInput control={control} name="leadership.founder.name" label="Full Name" activeLang={activeLang} />
-                                    <LocalizedInput control={control} name="leadership.founder.role" label="Official Position/Title" activeLang={activeLang} />
+                                    <LocalizedInput control={control} name="leadership.founder.name" label="Full Name" />
+                                    <LocalizedInput control={control} name="leadership.founder.role" label="Official Position/Title" />
                                     <div className="space-y-4 pt-2">
                                         <FormLabel className="text-sm font-bold text-foreground/80">Founder Profile Image</FormLabel>
                                         <FormField control={control} name="leadership.founder.image" render={({ field }) => (
@@ -371,7 +381,7 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
                             <Card className="lg:col-span-7">
                                 <CardHeader className="flex flex-row justify-between items-center py-4">
                                     <CardTitle className="text-lg">Agency Structure</CardTitle>
-                                    <Button type="button" size="sm" variant="outline" onClick={() => appendAgencyTeam({ title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" }, iconName: "" })} className="bg-background">
+                                    <Button type="button" size="sm" variant="outline" onClick={() => appendAgencyTeam({ title: "", description: "", iconName: "" })} className="bg-background">
                                         <Plus className="h-4 w-4 mr-2" /> Add Team Block
                                     </Button>
                                 </CardHeader>
@@ -385,8 +395,8 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
                                                 </Button>
                                             </div>
                                             <div className="grid gap-4">
-                                                <LocalizedInput control={control} name={`leadership.agencyStructure.${index}.title`} label="Group Title (e.g. Design Team)" activeLang={activeLang} />
-                                                <LocalizedInput control={control} name={`leadership.agencyStructure.${index}.description`} label="Team Overview" isTextarea activeLang={activeLang} />
+                                                <LocalizedInput control={control} name={`leadership.agencyStructure.${index}.title`} label="Group Title (e.g. Design Team)" />
+                                                <LocalizedInput control={control} name={`leadership.agencyStructure.${index}.description`} label="Team Overview" isTextarea />
                                                 <FormField control={control} name={`leadership.agencyStructure.${index}.iconName`} render={({ field }) => (
                                                     <IconSelect field={field} type="benefit" label="Aesthetic Group Icon" />
                                                 )} />
@@ -411,14 +421,14 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
                             <CardContent className="px-0 space-y-8">
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-6">
-                                        <LocalizedInput control={control} name="cta.badge" label="Marketing Badge (e.g. Limited Offer)" activeLang={activeLang} />
-                                        <LocalizedInput control={control} name="cta.heading" label="Primary Punchy Heading" activeLang={activeLang} />
-                                        <LocalizedInput control={control} name="cta.description" label="Persuasive Subtext" isTextarea activeLang={activeLang} />
+                                        <LocalizedInput control={control} name="cta.badge" label="Marketing Badge (e.g. Limited Offer)" />
+                                        <LocalizedInput control={control} name="cta.heading" label="Primary Punchy Heading" />
+                                        <LocalizedInput control={control} name="cta.description" label="Persuasive Subtext" isTextarea />
                                     </div>
                                     <div className="p-5 rounded-xl border-2 border-dashed border-primary/20 space-y-4">
                                         <div className="flex justify-between items-center">
                                             <h3 className="font-bold text-primary flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Value Props / Benefits</h3>
-                                            <Button type="button" size="sm" variant="outline" onClick={() => appendCtaBenefit({ text: { en: "", ur: "", es: "", ar: "" } })} className="bg-background">
+                                            <Button type="button" size="sm" variant="outline" onClick={() => appendCtaBenefit({ text: "" })} className="bg-background">
                                                 <Plus className="h-3 w-3 mr-1.5" /> Add
                                             </Button>
                                         </div>
@@ -427,7 +437,7 @@ export function GlobalSectionsFormTabs({ control, errors, mode = 'shared', activ
                                             {ctaBenefitsFields.map((field, index) => (
                                                 <div key={field.id} className="flex gap-2 items-start group">
                                                     <div className="flex-1 bg-background px-3 py-2 rounded-lg border focus-within:border-primary/40 transition-all">
-                                                        <LocalizedInput control={control} name={`cta.benefits.${index}.text`} label={`Point ${index + 1}`} activeLang={activeLang} />
+                                                        <LocalizedInput control={control} name={`cta.benefits.${index}.text`} label={`Point ${index + 1}`} />
                                                     </div>
                                                     <Button type="button" size="sm" variant="destructive" onClick={() => removeCtaBenefit(index)}>
                                                         <Trash2 className="h-4 w-4" />

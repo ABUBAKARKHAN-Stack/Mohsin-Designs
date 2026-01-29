@@ -8,8 +8,8 @@ export async function getDashboardPosts() {
     try {
         const query = `*[_type == "post"] | order(_updatedAt desc) {
             _id,
-            "title": title.en,  
-            "description": description.en,
+            title,  
+            description,
             "slug": select(
                 slug.current != null => slug.current,
                 _id
@@ -18,7 +18,7 @@ export async function getDashboardPosts() {
             publishedAt,
             author,
             "location": location->title,
-            "service": service->{"title": title.en},
+            "service": service->{title},
             "mainImage": coalesce(mainImage.asset->url, mainImage.url, null),
             readTime,
             _updatedAt
@@ -29,15 +29,11 @@ export async function getDashboardPosts() {
             useCdn: false
         })
 
-        // Post-process to merge drafts and published docs
         const postMap = new Map<string, any>()
 
         data.forEach((post: any) => {
             const isDraft = post._id.startsWith('drafts.')
-            // Robustly strip ALL leading "drafts." occurrences
             const baseId = post._id.replace(/^(drafts\.)+/, '');
-
-            // Ensure slug is a string (it should be from projection, but spread might bring raw object)
             const slugString = typeof post.slug === 'string' ? post.slug : post.slug?.current || baseId
 
             if (!postMap.has(baseId)) {
@@ -107,14 +103,6 @@ export async function getPostById(id: string) {
             useCdn: false
         })
 
-        if (result && result.tags) {
-            result.tags = {
-                en: Array.isArray(result.tags.en) ? result.tags.en.join(", ") : (result.tags.en || ""),
-                ur: Array.isArray(result.tags.ur) ? result.tags.ur.join(", ") : (result.tags.ur || ""),
-                es: Array.isArray(result.tags.es) ? result.tags.es.join(", ") : (result.tags.es || ""),
-                ar: Array.isArray(result.tags.ar) ? result.tags.ar.join(", ") : (result.tags.ar || "")
-            }
-        }
 
         return result
     } catch (error) {
@@ -135,7 +123,7 @@ export async function getPostForView(id: string) {
             publishedAt,
             featured,
             readTime,
-            "service": service->{"title": title.en},
+            "service": service->{title},
             "categories": categories[]->title,
             "mainImageUrl": mainImage.asset->url,
             body,
@@ -154,8 +142,8 @@ export async function getPostForView(id: string) {
 
 export async function getBlogFormOptions() {
     try {
-        const servicesQuery = `*[_type == "service"] { _id, "title": title.en }`
-        const categoriesQuery = `*[_type == "category"] { _id, "title": title.en }`
+        const servicesQuery = `*[_type == "service"] { _id, title }`
+        const categoriesQuery = `*[_type == "category"] { _id, title }`
         const locationsQuery = `*[_type == "location"] { _id, title }`
 
         const [services, categories, locations] = await Promise.all([
@@ -191,12 +179,7 @@ export async function createPost(data: BlogPostValues, id?: string) {
             },
             readTime: validated.readTime,
             author: validated.author,
-            tags: {
-                en: validated.tags.en?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                ur: validated.tags.ur?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                es: validated.tags.es?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                ar: validated.tags.ar?.split(',').map(t => t.trim()).filter(Boolean) || []
-            },
+            tags: validated.tags.map((t: string) => t.trim()).filter(Boolean),
             location: (validated.location && validated.location !== 'none') ? { _type: 'reference', _ref: validated.location } : undefined,
             publishedAt: validated.publishedAt,
             service: (validated.service && validated.service !== 'none') ? { _type: 'reference', _ref: validated.service } : undefined,
@@ -216,7 +199,6 @@ export async function createPost(data: BlogPostValues, id?: string) {
         if (id) {
             const docWithId = { ...doc, _id: id }
             const result = await adminClient.createOrReplace(docWithId)
-            // Delete draft after publishing
             await adminClient.delete(`drafts.${id}`).catch(() => { })
             revalidatePath('/admin/blogs')
             return { success: true, id: result._id }
@@ -245,12 +227,7 @@ export async function updatePost(id: string, data: BlogPostValues) {
             },
             readTime: validated.readTime,
             author: validated.author,
-            tags: {
-                en: validated.tags.en?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                ur: validated.tags.ur?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                es: validated.tags.es?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                ar: validated.tags.ar?.split(',').map(t => t.trim()).filter(Boolean) || []
-            },
+            tags: validated.tags.map((t: string) => t.trim()).filter(Boolean),
             publishedAt: validated.publishedAt,
             categories: (validated.categories && validated.categories.length > 0)
                 ? validated.categories.map(catId => ({ _type: 'reference', _ref: catId, _key: catId }))
@@ -302,7 +279,6 @@ export async function updatePost(id: string, data: BlogPostValues) {
 export async function deletePost(id: string) {
     try {
         await adminClient.delete(id)
-        // Also delete draft if exists
         await adminClient.delete(`drafts.${id}`).catch(() => { })
 
         revalidatePath('/admin/blogs')

@@ -18,7 +18,7 @@ export const projectType = defineType({
             name: 'slug',
             type: 'slug',
             options: {
-                source: 'title.en',
+                source: 'title',
             },
             validation: (Rule) => Rule.required(),
         }),
@@ -128,8 +128,8 @@ export const projectType = defineType({
                             ],
                             preview: {
                                 select: {
-                                    title: 'label.en',
-                                    subtitle: 'value.en',
+                                    title: 'label',
+                                    subtitle: 'value',
                                 }
                             }
                         })
@@ -141,8 +141,8 @@ export const projectType = defineType({
     ],
     preview: {
         select: {
-            title: 'title.en',
-            subtitle: 'category.en',
+            title: 'title',
+            subtitle: 'category',
             media: 'mainImage',
         },
     },

@@ -97,8 +97,8 @@ export async function deleteMenu(id: string) {
 
 export async function getLinkableContent() {
     try {
-        const servicesQuery = `*[_type == "service"] { _id, "title": title.en }`
-        const pagesQuery = `*[_type == "page"] { _id, "title": title.en }`
+        const servicesQuery = `*[_type == "service"] { _id, title }`
+        const pagesQuery = `*[_type == "page"] { _id, title }`
 
         const [services, pages] = await Promise.all([
             sanityFetch({ query: servicesQuery }),

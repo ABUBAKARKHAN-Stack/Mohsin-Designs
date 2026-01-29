@@ -69,6 +69,14 @@ export const globalSectionsType = defineType({
                     title: 'Section Heading',
                     type: 'sectionHeading',
                     validation: Rule => Rule.required()
+                }),
+                defineField({
+                    name: 'featuredServices',
+                    title: 'Featured Services',
+                    type: 'array',
+                    description: 'Select services to display in the preview section (Max 8)',
+                    of: [{ type: 'reference', to: [{ type: 'service' }] }],
+                    validation: Rule => Rule.max(8)
                 })
             ]
         }),

@@ -4,10 +4,7 @@ import {
     localizedStringSchema,
     requiredLocalizedTextSchema,
     localizedTextSchema,
-    strictMultiLanguageSchema,
-    strictMultiLanguageTextSchema,
     seoSchema,
-    baseLocalizedStringSchema,
     localizedArraySchema
 } from "./common";
 

@@ -144,6 +144,14 @@ export const landingPageContentType = defineType({
                         }
                     }]
                 }),
+                defineField({
+                    name: 'featuredServices',
+                    title: 'Featured Services',
+                    type: 'array',
+                    description: 'Select services to highlight in the hero section (Max 8)',
+                    of: [{ type: 'reference', to: [{ type: 'service' }] }],
+                    validation: Rule => Rule.max(8)
+                }),
             ]
         }),
 
@@ -227,6 +235,14 @@ export const landingPageContentType = defineType({
                     title: 'Section Heading',
                     type: 'sectionHeading',
                     validation: Rule => Rule.required()
+                }),
+                defineField({
+                    name: 'featuredProjects',
+                    title: 'Featured Projects',
+                    type: 'array',
+                    description: 'Select projects to display in the portfolio section (Max 8)',
+                    of: [{ type: 'reference', to: [{ type: 'project' }] }],
+                    validation: Rule => Rule.max(8)
                 })
             ]
         }),

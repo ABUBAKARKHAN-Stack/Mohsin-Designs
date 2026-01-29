@@ -31,36 +31,35 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
     const [lastSaved, setLastSaved] = useState<Date | null>(
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
-    const [selectedLang, setSelectedLang] = useState("en")
     const [isInitialMount, setIsInitialMount] = useState(true)
 
     const form = useForm<ServicesPageContentValues>({
         resolver: zodResolver(servicesPageContentSchema),
         defaultValues: initialData || {
             hero: {
-                title: { en: "", ur: "", es: "", ar: "" },
-                subtitle: { en: "", ur: "", es: "", ar: "" },
-                description: { en: "", ur: "", es: "", ar: "" },
+                title: "",
+                subtitle: "",
+                description: "",
             },
             intro: {
-                badgeText: { en: "", ur: "", es: "", ar: "" },
-                heading: { en: "", ur: "", es: "", ar: "" },
-                headingAccent: { en: "", ur: "", es: "", ar: "" },
-                description: { en: "", ur: "", es: "", ar: "" },
+                badgeText: "",
+                heading: "",
+                headingAccent: "",
+                description: "",
             },
             process: {
                 sectionHeading: {
-                    eyebrow: { en: "", ur: "", es: "", ar: "" },
-                    title: { en: "", ur: "", es: "", ar: "" },
-                    description: { en: "", ur: "", es: "", ar: "" },
+                    eyebrow: "",
+                    title: "",
+                    description: "",
                 },
                 steps: [],
             },
             whyChooseUs: {
                 sectionHeading: {
-                    eyebrow: { en: "", ur: "", es: "", ar: "" },
-                    title: { en: "", ur: "", es: "", ar: "" },
-                    description: { en: "", ur: "", es: "", ar: "" },
+                    eyebrow: "",
+                    title: "",
+                    description: "",
                 },
                 guaranteePoints: [],
                 benefits: [],
@@ -137,19 +136,6 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
     const formErrors = form.formState.errors
     const hasErrors = Object.keys(formErrors).length > 0
 
-    // Helper to check if a specific language has errors anywhere in the form
-    const hasLangError = (langCode: string) => {
-        const checkErrors = (obj: any): boolean => {
-            if (!obj) return false
-            if (obj.message && typeof obj.message === 'string') return false
-            if (obj[langCode] && obj[langCode].message) return true
-            return Object.values(obj).some(val => typeof val === 'object' && checkErrors(val))
-        }
-        return checkErrors(formErrors)
-    }
-
-    const currentLangHasError = hasLangError(selectedLang)
-
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -173,28 +159,7 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                         </div>
                     </div>
                     <div className="flex items-center gap-4 w-full sm:w-auto">
-                        <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden sm:inline">Language:</span>
-                            <Select value={selectedLang} onValueChange={setSelectedLang}>
-                                <SelectTrigger className="w-[140px] h-9 bg-primary/5 border-primary/20 font-medium">
-                                    <SelectValue placeholder="Language" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="en">English (EN)</SelectItem>
-                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
-                                    <SelectItem value="es">Spanish (ES)</SelectItem>
-                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
                         <div className="flex items-center gap-2 border-l pl-4">
-                            {currentLangHasError && (
-                                <div className="flex items-center gap-2 text-destructive text-xs font-semibold px-3 py-1 bg-destructive/10 rounded-full border border-destructive/20">
-                                    <AlertCircle className="h-3 w-3" />
-                                    <span>Fix {selectedLang.toUpperCase()} errors</span>
-                                </div>
-                            )}
                             <Button type="submit" disabled={isLoading} className="w-full sm:w-auto min-w-[120px]">
                                 {isLoading ? (
                                     <>
@@ -245,9 +210,9 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                 <CardTitle>Hero Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="hero.title" label="Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="hero.subtitle" label="Subtitle" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="hero.description" label="Description" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="hero.title" label="Title" />
+                                <LocalizedInput control={formControl} name="hero.subtitle" label="Subtitle" />
+                                <LocalizedInput control={formControl} name="hero.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -259,10 +224,10 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                 <CardTitle>Introduction Section</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="intro.badgeText" label="Badge Text" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="intro.heading" label="Main Heading" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="intro.headingAccent" label="Heading Accent (Highlighted)" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="intro.description" label="Description" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="intro.badgeText" label="Badge Text" />
+                                <LocalizedInput control={formControl} name="intro.heading" label="Main Heading" />
+                                <LocalizedInput control={formControl} name="intro.headingAccent" label="Heading Accent (Highlighted)" />
+                                <LocalizedInput control={formControl} name="intro.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -274,9 +239,9 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                 <CardTitle>Section Heading</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="process.sectionHeading.eyebrow" label="Eyebrow Text" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="process.sectionHeading.title" label="Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="process.sectionHeading.description" label="Description" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="process.sectionHeading.eyebrow" label="Eyebrow Text" />
+                                <LocalizedInput control={formControl} name="process.sectionHeading.title" label="Title" />
+                                <LocalizedInput control={formControl} name="process.sectionHeading.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
 
@@ -288,9 +253,9 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                     variant="outline"
                                     size="sm"
                                     onClick={() => appendStep({
-                                        title: { en: "", ur: "", es: "", ar: "" },
-                                        description: { en: "", ur: "", es: "", ar: "" },
-                                        duration: { en: "", ur: "", es: "", ar: "" },
+                                        title: "",
+                                        description: "",
+                                        duration: "",
                                         iconName: "",
                                     })}
                                 >
@@ -311,9 +276,9 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`process.steps.${index}.title`} label="Title" activeLang={selectedLang} />
-                                        <LocalizedInput control={formControl} name={`process.steps.${index}.description`} label="Description" isTextarea activeLang={selectedLang} />
-                                        <LocalizedInput control={formControl} name={`process.steps.${index}.duration`} label="Duration" activeLang={selectedLang} />
+                                        <LocalizedInput control={formControl} name={`process.steps.${index}.title`} label="Title" />
+                                        <LocalizedInput control={formControl} name={`process.steps.${index}.description`} label="Description" isTextarea />
+                                        <LocalizedInput control={formControl} name={`process.steps.${index}.duration`} label="Duration" />
                                         <FormField
                                             control={formControl}
                                             name={`process.steps.${index}.iconName`}
@@ -337,9 +302,9 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                 <CardTitle>Section Heading</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="whyChooseUs.sectionHeading.eyebrow" label="Eyebrow Text" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="whyChooseUs.sectionHeading.title" label="Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="whyChooseUs.sectionHeading.description" label="Description" isTextarea activeLang={selectedLang} />
+                                <LocalizedInput control={formControl} name="whyChooseUs.sectionHeading.eyebrow" label="Eyebrow Text" />
+                                <LocalizedInput control={formControl} name="whyChooseUs.sectionHeading.title" label="Title" />
+                                <LocalizedInput control={formControl} name="whyChooseUs.sectionHeading.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
 
@@ -350,7 +315,7 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                     type="button"
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => appendGuarantee({ en: "", ur: "", es: "", ar: "" })}
+                                    onClick={() => appendGuarantee("")}
                                 >
                                     <Plus className="h-4 w-4 mr-2" /> Add Point
                                 </Button>
@@ -369,7 +334,7 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`whyChooseUs.guaranteePoints.${index}`} label="Guarantee Statement" activeLang={selectedLang} />
+                                        <LocalizedInput control={formControl} name={`whyChooseUs.guaranteePoints.${index}`} label="Guarantee Statement" />
                                     </div>
                                 ))}
                             </CardContent>
@@ -383,8 +348,8 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                     variant="outline"
                                     size="sm"
                                     onClick={() => appendBenefit({
-                                        title: { en: "", ur: "", es: "", ar: "" },
-                                        description: { en: "", ur: "", es: "", ar: "" },
+                                        title: "",
+                                        description: "",
                                         iconName: "",
                                     })}
                                 >
@@ -405,8 +370,8 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`whyChooseUs.benefits.${index}.title`} label="Title" activeLang={selectedLang} />
-                                        <LocalizedInput control={formControl} name={`whyChooseUs.benefits.${index}.description`} label="Description" isTextarea activeLang={selectedLang} />
+                                        <LocalizedInput control={formControl} name={`whyChooseUs.benefits.${index}.title`} label="Title" />
+                                        <LocalizedInput control={formControl} name={`whyChooseUs.benefits.${index}.description`} label="Description" isTextarea />
                                         <FormField
                                             control={formControl}
                                             name={`whyChooseUs.benefits.${index}.iconName`}

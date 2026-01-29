@@ -13,16 +13,18 @@ import { Textarea } from "@/components/ui/textarea"
 import { Plus, Trash2, Code } from "lucide-react"
 
 interface SchemaListInputProps {
-    control: any // Still accepting control for compatibility, though we'll use Context
+    control?: any // Optional since we use useFormContext
     name: string
     label: string
 }
 
-export function SchemaListInput({ name, label }: SchemaListInputProps) {
-    const { watch, setValue, control } = useFormContext()
+export function SchemaListInput({ control: propControl, name, label }: SchemaListInputProps) {
+    const { watch, setValue, control: contextControl } = useFormContext()
+    const control = propControl || contextControl
 
     // Watch the schemas array
-    const schemas: string[] = watch(name) || []
+    const watchedValue = watch(name)
+    const schemas: string[] = Array.isArray(watchedValue) ? watchedValue : []
 
     const addSchema = () => {
         setValue(name, [...schemas, ""], { shouldDirty: true, shouldValidate: true })

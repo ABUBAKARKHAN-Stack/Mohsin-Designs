@@ -16,7 +16,7 @@ export const menuItemType = defineType({
             name: 'description',
             title: 'Description (Optional)',
             type: 'localizedString',
-            initialValue: { en: "", ur: "", es: "", ar: "" }
+            initialValue: ""
         }),
         defineField({
             name: 'type',
@@ -55,10 +55,10 @@ export const menuItemType = defineType({
     ],
     preview: {
         select: {
-            title: 'label.en',
+            title: 'label',
             type: 'type',
-            serviceTitle: 'reference.title.en',
-            pageTitle: 'reference.title.en'
+            serviceTitle: 'reference.title',
+            pageTitle: 'reference.title'
         },
         prepare({ title, type, serviceTitle, pageTitle }) {
             const subtitle = type === 'reference'

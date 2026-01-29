@@ -7,17 +7,16 @@ export default async function SiteSettingsPage() {
     const menus = await getMenus();
 
     // Transform sanity data into form values if needed
-    // The query already handles resolving urls for logo and favicon
     const initialData = siteSettings ? {
-        siteName: siteSettings.siteName || {},
-        tagline: siteSettings.tagline || {},
+        siteName: siteSettings.siteName || "",
+        tagline: siteSettings.tagline || "",
         logo: siteSettings.logo,
         favicon: siteSettings.favicon,
-        seo: siteSettings.seo || { keywords: [] },
+        seo: siteSettings.seo || { relatedKeywords: [], schemas: [] },
         social: siteSettings.social || { facebook: "", twitter: "", linkedin: "", instagram: "" },
-        contact: siteSettings.contact || { email: "", phone: "", address: {} },
-        footerText: siteSettings.footerText || {},
-        copyright: siteSettings.copyright || {},
+        contact: siteSettings.contact || { email: "", phone: "", address: "" },
+        footerText: siteSettings.footerText || "",
+        copyright: siteSettings.copyright || "",
         headerMenu: siteSettings.headerMenu || { _type: 'reference', _ref: "" },
         footerMenu: siteSettings.footerMenu || { _type: 'reference', _ref: "" },
     } : undefined;

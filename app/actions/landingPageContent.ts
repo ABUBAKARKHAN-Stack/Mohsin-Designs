@@ -21,58 +21,58 @@ async function ensureDocumentExists() {
                 _id: LANDING_PAGE_CONTENT_ID,
                 // Minimal required fields - form will handle the rest
                 hero: {
-                    badge: { en: '', ur: '', es: '', ar: '' },
+                    badge: '',
                     headingLines: [],
                     descriptionParagraphs: [],
                     ctaButtons: []
                 },
-                servicesPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
-                portfolioPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
+                servicesPreview: { sectionHeading: { title: '' } },
+                portfolioPreview: { sectionHeading: { title: '' } },
                 aboutPreview: {
-                    sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } },
+                    sectionHeading: { title: '' },
                     leftDescriptions: [
-                        { text: { en: '', ur: '', es: '', ar: '' } },
-                        { text: { en: '', ur: '', es: '', ar: '' } }
+                        { text: '' },
+                        { text: '' }
                     ],
                     rightDescriptions: [
-                        { text: { en: '', ur: '', es: '', ar: '' } },
-                        { text: { en: '', ur: '', es: '', ar: '' } }
+                        { text: '' },
+                        { text: '' }
                     ],
-                    ctaText: { en: '', ur: '', es: '', ar: '' },
-                    ctaUrl: { en: '', ur: '', es: '', ar: '' }
+                    ctaText: '',
+                    ctaUrl: ''
                 },
                 stats: {
-                    projectsDelivered: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
-                    yearsExperience: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
-                    clientSatisfaction: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
+                    projectsDelivered: { value: '', label: '', suffix: '' },
+                    yearsExperience: { value: '', label: '', suffix: '' },
+                    clientSatisfaction: { value: '', label: '', suffix: '' },
                 },
-                whyChooseUs: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, benefits: [] },
-                blogPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
+                whyChooseUs: { sectionHeading: { title: '' } },
+                blogPreview: { sectionHeading: { title: '' } },
                 faqs: {
-                    sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } },
+                    sectionHeading: { title: '' },
                     faqItems: []
                 },
                 serviceHighlightsMarquee: { highlights: [] },
-                trustedByBrands: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, brandLogos: [] },
-                ourApproach: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, steps: [] },
-                caseStudiesPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
-                areasWeServe: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, areas: [] },
-                industriesWeServe: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, industries: [] },
-                testimonials: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, testimonials: [] },
+                trustedByBrands: { sectionHeading: { title: '' }, brandLogos: [] },
+                ourApproach: { sectionHeading: { title: '' }, steps: [] },
+                caseStudiesPreview: { sectionHeading: { title: '' } },
+                areasWeServe: { sectionHeading: { title: '' }, areas: [] },
+                industriesWeServe: { sectionHeading: { title: '' }, industries: [] },
+                testimonials: { sectionHeading: { title: '' }, testimonials: [] },
                 leadership: {
-                    sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } },
+                    sectionHeading: { title: '' },
                     founder: {
-                        name: { en: '', ur: '', es: '', ar: '' },
-                        role: { en: '', ur: '', es: '', ar: '' },
+                        name: '',
+                        role: '',
                         image: null,
                         socialLinks: []
                     },
                     agencyStructure: []
                 },
                 cta: {
-                    badge: { en: '', ur: '', es: '', ar: '' },
-                    heading: { en: '', ur: '', es: '', ar: '' },
-                    description: { en: '', ur: '', es: '', ar: '' },
+                    badge: '',
+                    heading: '',
+                    description: '',
                     benefits: []
                 }
             }
@@ -87,7 +87,17 @@ export async function getLandingPageContentForAdmin() {
         // Ensure document exists first
         await ensureDocumentExists()
 
-        const query = `*[_type == "landingPageContent"][0]`
+        const query = `*[_type == "landingPageContent"][0] {
+            ...,
+            hero {
+                ...,
+                "featuredServices": featuredServices[]._ref
+            },
+            portfolioPreview {
+                ...,
+                "featuredProjects": featuredProjects[]._ref
+            }
+        }`
         const { data } = await sanityFetch({ query })
         return data
     } catch (error) {
@@ -104,9 +114,23 @@ export async function updateLandingPageContent(data: LandingPageContentValues) {
         const updateData: any = {
             _type: 'landingPageContent',
             _id: LANDING_PAGE_CONTENT_ID,
-            hero: validatedFields.hero,
+            hero: {
+                ...validatedFields.hero,
+                featuredServices: validatedFields.hero.featuredServices?.map(id => ({
+                    _type: 'reference',
+                    _ref: id,
+                    _key: id
+                }))
+            },
             servicesPreview: validatedFields.servicesPreview,
-            portfolioPreview: validatedFields.portfolioPreview,
+            portfolioPreview: {
+                ...validatedFields.portfolioPreview,
+                featuredProjects: validatedFields.portfolioPreview.featuredProjects?.map(id => ({
+                    _type: 'reference',
+                    _ref: id,
+                    _key: id
+                }))
+            },
             aboutPreview: validatedFields.aboutPreview,
             stats: validatedFields.stats,
             whyChooseUs: validatedFields.whyChooseUs,
@@ -155,6 +179,22 @@ export async function saveLandingPageDraft(data: Partial<LandingPageContentValue
             _id: `drafts.${LANDING_PAGE_CONTENT_ID}`,
         }
 
+        if (updateData.hero?.featuredServices) {
+            updateData.hero.featuredServices = updateData.hero.featuredServices.map((id: string) => ({
+                _type: 'reference',
+                _ref: id,
+                _key: id
+            }))
+        }
+
+        if (updateData.portfolioPreview?.featuredProjects) {
+            updateData.portfolioPreview.featuredProjects = updateData.portfolioPreview.featuredProjects.map((id: string) => ({
+                _type: 'reference',
+                _ref: id,
+                _key: id
+            }))
+        }
+
         // Normalize CTA formId to reference if it's a string
         if (updateData.cta && typeof updateData.cta.formId === 'string') {
             updateData.cta.formId = {
@@ -178,17 +218,25 @@ export async function saveLandingPageDraft(data: Partial<LandingPageContentValue
     }
 }
 
-// Get draft version - USE getDocument instead of GROQ query!
+// Get draft version
 export async function getLandingPageDraft() {
     try {
-        // Use getDocument instead of fetch - GROQ queries don't work for drafts!
         const draft = await adminClient.getDocument(`drafts.${LANDING_PAGE_CONTENT_ID}`)
-
+        if (draft) {
+            if (draft.hero && Array.isArray(draft.hero.featuredServices)) {
+                draft.hero.featuredServices = draft.hero.featuredServices.map((p: any) => p._ref || p)
+            }
+            if (draft.portfolioPreview && Array.isArray(draft.portfolioPreview.featuredProjects)) {
+                draft.portfolioPreview.featuredProjects = draft.portfolioPreview.featuredProjects.map((p: any) => p._ref || p)
+            }
+            // Flatten CTA form reference
+            if (draft.cta?.formId?._ref) {
+                draft.cta.formId = draft.cta.formId._ref
+            }
+        }
         console.log('Draft fetched via getDocument:', draft ? 'Found' : 'Not found')
-
         return draft
     } catch (error: any) {
-        // getDocument throws error if document doesn't exist, which is normal
         if (error.statusCode === 404) {
             console.log('No draft found (404 - this is normal)')
             return null
@@ -202,10 +250,8 @@ export async function getLandingPageDraft() {
 export async function discardLandingPageDraft() {
     try {
         await adminClient.delete(`drafts.${LANDING_PAGE_CONTENT_ID}`)
-
         // Clear Next.js cache
         revalidatePath('/admin/landing/page-content')
-
         return { success: true }
     } catch (error: any) {
         console.error("Failed to discard draft:", error)
@@ -213,5 +259,27 @@ export async function discardLandingPageDraft() {
             success: false,
             error: error.message || "Failed to discard draft"
         }
+    }
+}
+
+export async function getServiceOptions() {
+    try {
+        const query = `*[_type == "service"] { _id, title }`
+        const services = await adminClient.fetch(query)
+        return services || []
+    } catch (error) {
+        console.error("Failed to fetch service options:", error)
+        return []
+    }
+}
+
+export async function getProjectOptions() {
+    try {
+        const query = `*[_type == "project"] { _id, title }`
+        const projects = await adminClient.fetch(query)
+        return projects || []
+    } catch (error) {
+        console.error("Failed to fetch project options:", error)
+        return []
     }
 }

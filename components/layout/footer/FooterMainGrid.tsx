@@ -8,20 +8,17 @@ import Link from "next/link";
 import Logo from "@/components/ui/logo";
 import { useServices } from "@/context/ServiceContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 
 const FooterMainGrid = () => {
     const { lightWeightServices } = useServices()
-    const { lang }: LanguageType = useParams()
     const { settings } = useSiteSettings()
 
     // Helper to resolve dynamic URLs
     const resolveUrl = (item: any) => {
         if (item.type === 'custom') return item.url || '#';
         if (item.type === 'reference' && item.reference) {
-            if (item.reference._type === 'service') return `/${lang}/services/${item.reference.slug}`;
-            return `/${lang}/${item.reference.slug}`;
+            if (item.reference._type === 'service') return `/services/${item.reference.slug}`;
+            return `/${item.reference.slug}`;
         }
         return '#';
     };
@@ -30,8 +27,8 @@ const FooterMainGrid = () => {
         ...navLinks,
         { name: "FAQs", path: "/faq" },
     ].map(item => ({
-        label: (item as any).name ? uiT(lang, `navigation.${(item as any).name.toLowerCase().trim()}`) : (item as any).label,
-        url: (item as any).path ? `/${lang}${(item as any).path}` : resolveUrl(item),
+        label: (item as any).name ? (item as any).name : (item as any).label,
+        url: (item as any).path ? `/${(item as any).path}` : resolveUrl(item),
         type: 'custom'
     }))
 
@@ -87,7 +84,7 @@ const FooterMainGrid = () => {
                 /* Fallback for when no Footer Menu is defined */
                 <>
                     <div>
-                        <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">{uiT(lang, "common.navigation")}</h4>
+                        <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Navigation</h4>
                         <ul className="space-y-4">
                             {footerNavItems.map((item, index) => (
                                 <li key={index}>
@@ -103,12 +100,12 @@ const FooterMainGrid = () => {
                         </ul>
                     </div>
                     <div>
-                        <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">{uiT(lang, "common.services")}</h4>
+                        <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Services</h4>
                         <ul className="space-y-4">
                             {lightWeightServices.map((item) => (
                                 <li key={item.slug}>
                                     <Link
-                                        href={`/${lang}/services/${item.slug}`}
+                                        href={`/services/${item.slug}`}
                                         className="text-sm text-foreground/70 hover:text-accent transition-colors inline-flex items-center gap-2 group"
                                     >
                                         {item.title}
@@ -123,7 +120,7 @@ const FooterMainGrid = () => {
 
             {/* Contact */}
             <div>
-                <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">{uiT(lang, "common.getInTouch")}</h4>
+                <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Get in Touch</h4>
                 <ul className="space-y-4">
                     <li>
                         <a href={`mailto:${settings?.contact.email || "hello@mohsindesigns.com"}`} className="flex items-center gap-3 text-sm text-foreground/70 hover:text-accent transition-colors">

@@ -5,13 +5,11 @@ import { uiT } from "@/i18n"
 import { ArrowUpRight } from "lucide-react"
 import { motion } from "motion/react"
 import Link from "next/link"
-import { useParams } from "next/navigation"
 
 type Props = { slug: string }
 
 const OtherServices = ({ slug }: Props) => {
     const { services } = useServices();
-    const { lang }: LanguageType = useParams()
     return (
         <section className="lg:py-12.5 py-6.25 bg-muted/30 relative">
 
@@ -23,16 +21,16 @@ const OtherServices = ({ slug }: Props) => {
                     className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16"
                 >
                     <div>
-                        <span className="inline-block text-accent text-xs tracking-[0.3em] font-medium mb-4 uppercase">{uiT(lang, "common.keepExploring")}</span>
+                        <span className="inline-block text-accent text-xs tracking-[0.3em] font-medium mb-4 uppercase">Keep Exploring</span>
                         <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tighter">
-                            {uiT(lang, "common.otherServices")}
+                            Other Services
                         </h2>
                     </div>
                     <Link
-                        href={`/${lang}/services`}
+                        href={`/services`}
                         className="text-accent hover:underline underline-offset-4 inline-flex items-center gap-2"
                     >
-                        {uiT(lang, "common.viewAllServices")} <ArrowUpRight className="h-4 w-4" />
+                        View All Services <ArrowUpRight className="h-4 w-4" />
                     </Link>
                 </motion.div>
 
@@ -70,7 +68,7 @@ const OtherServices = ({ slug }: Props) => {
                                                 {s.description}
                                             </p>
                                             <span className="inline-flex items-center gap-2 text-sm font-medium text-accent opacity-0 group-hover:opacity-100 transition-opacity">
-                                                {uiT(lang, "common.learnMore")} <ArrowUpRight className="h-4 w-4" />
+                                                Learn More<ArrowUpRight className="h-4 w-4" />
                                             </span>
                                         </div>
 

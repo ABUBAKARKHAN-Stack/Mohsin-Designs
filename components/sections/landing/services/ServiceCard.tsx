@@ -1,4 +1,3 @@
-import { services } from "@/constants/services.constants";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import {
@@ -6,13 +5,12 @@ import {
     useMotionValue,
     useSpring,
     useTransform,
-} from "framer-motion";
+} from "motion/react";
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { useIsTouchDevice } from "@/hooks/useIsTouchDevice";
 import { ServiceData } from "@/types/services.types";
 import { urlFor } from "@/sanity/lib/image";
-import { useParams } from "next/navigation";
 
 interface ServiceCardProps {
     service: ServiceData;
@@ -50,15 +48,12 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
         setIsHovered(false);
     };
 
-    const {lang}:LanguageType = useParams()
-
-
 
 
     return (
         <motion.a
             ref={cardRef}
-            href={`/${lang}/${service.slug}`}
+            href={`/${service.slug}`}
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}

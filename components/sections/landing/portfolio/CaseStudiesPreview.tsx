@@ -9,8 +9,6 @@ import { projects } from "@/constants/portfolio.constants";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useLandingPageContent } from "@/context/LandingPageContentContext";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 
 const BeforeAfterSlider = ({ beforeImage, afterImage }: { beforeImage: string; afterImage: string }) => {
     const [sliderPosition, setSliderPosition] = useState(50);
@@ -91,7 +89,6 @@ const CaseStudiesPreview = () => {
     const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
     const { landingPageContent } = useLandingPageContent();
 
-    const { lang }: LanguageType = useParams()
     const caseStudiesPreviewData = landingPageContent?.caseStudiesPreview;
 
     const caseStudies = projects.filter((p) => p.caseStudy !== null).map(p => p.caseStudy)
@@ -126,10 +123,10 @@ const CaseStudiesPreview = () => {
                         className="hidden lg:block"
                     >
                         <Link
-                            href={`/${lang}/portfolio`}
+                            href={`/portfolio`}
                             className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300 shadow-[0_10px_30px_-10px_hsl(var(--accent)/0.5)]"
                         >
-                            <span>{uiT(lang, "common.viewAllProjects")}</span>
+                            <span>View All Projects</span>
                             <ArrowUpRight className="size-4.5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
                         </Link>
                     </motion.div>
@@ -226,10 +223,10 @@ const CaseStudiesPreview = () => {
                     className="mt-12 lg:hidden text-center"
                 >
                     <Link
-                        href={`/${lang}/portfolio`}
+                        href={`/portfolio`}
                         className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300"
                     >
-                        {uiT(lang, "common.viewAllProjects")}
+                        View All Projects
                         <ArrowUpRight className="size-4.5" />
                     </Link>
                 </motion.div>

@@ -8,10 +8,8 @@ import { navLinks } from "@/constants/navlinks.constants";
 import Link from "next/link";
 import ContainerLayout from "../ContainerLayout";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import {  usePathname } from "next/navigation";
 import Logo from "@/components/ui/logo";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { uiT } from "@/i18n";
 import { useServices } from "@/context/ServiceContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
@@ -41,7 +39,6 @@ const DesktopNav: FC<Props> = ({
         setOpenDropdown(null);
     }, [pathname]);
 
-    const { lang }: LanguageType = useParams();
     const { lightWeightServices } = useServices()
     const { settings } = useSiteSettings()
 
@@ -49,20 +46,20 @@ const DesktopNav: FC<Props> = ({
     const resolveUrl = (item: any) => {
         if (item.type === 'custom') return item.url || '#';
         if (item.type === 'reference' && item.reference) {
-            if (item.reference._type === 'service') return `/${lang}/services/${item.reference.slug}`;
-            return `/${lang}/${item.reference.slug}`;
+            if (item.reference._type === 'service') return `/services/${item.reference.slug}`;
+            return `/${item.reference.slug}`;
         }
         return '#';
     };
 
     const menuItems = settings?.headerMenu?.items || navLinks.map(link => ({
-        label: uiT(lang, `navigation.${link.name.toLowerCase().trim()}`),
-        url: `/${lang}${link.path}`,
+        label: link.name.toLowerCase().trim(),
+        url: `/${link.path}`,
         type: 'custom',
         hasDropdown: link.hasDropdown,
         children: link.hasDropdown ? lightWeightServices.map(s => ({
             label: s.title,
-            url: `/${lang}/services/${s.slug}`,
+            url: `/services/${s.slug}`,
             type: 'custom',
             description: s.items.slice(0, 2).join(" ")
         })) : []
@@ -82,7 +79,7 @@ const DesktopNav: FC<Props> = ({
                     <div className="flex items-center justify-between">
 
                         <MagneticButton strength={0.2}>
-                            <Link href={`/${lang}`} className="relative z-50">
+                            <Link href={"/"} className="relative z-50">
                                 <motion.div
                                     whileHover={{ scale: 1.05 }}
                                 >
@@ -108,7 +105,7 @@ const DesktopNav: FC<Props> = ({
                                         <MagneticButton strength={0.1}>
                                             <Link
                                                 href={path}
-                                                className={`relative px-5 py-2 text-sm tracking-wide transition-colors group inline-flex items-center gap-1 ${pathname === path || (hasChildren && pathname.startsWith(`/${lang}/services`))
+                                                className={`relative px-5 py-2 text-sm tracking-wide transition-colors group inline-flex items-center gap-1 ${pathname === path || (hasChildren && pathname.startsWith(`/services`))
                                                     ? "text-accent"
                                                     : "text-foreground/70 hover:text-foreground"
                                                     }`}
@@ -117,7 +114,7 @@ const DesktopNav: FC<Props> = ({
                                                 {hasChildren && (
                                                     <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${openDropdown === index ? 'rotate-180' : ''}`} />
                                                 )}
-                                                {(pathname === path || (hasChildren && pathname.startsWith(`/${lang}/services`))) && (
+                                                {(pathname === path || (hasChildren && pathname.startsWith(`/services`))) && (
                                                     <motion.div
                                                         layoutId="activeNav"
                                                         className="absolute inset-0 bg-accent/10 border border-accent/20"
@@ -176,10 +173,10 @@ const DesktopNav: FC<Props> = ({
                                                             {path.includes('/services') && (
                                                                 <div className="p-3 border-t border-border/50 bg-muted/30">
                                                                     <Link
-                                                                        href={`/${lang}/services`}
+                                                                        href={`/services`}
                                                                         className="flex items-center justify-between text-xs font-medium text-muted-foreground hover:text-accent transition-colors"
                                                                     >
-                                                                        {uiT(lang, "common.viewAllServices")}
+                                                                        View All Services
                                                                         <ArrowUpRight className="h-3 w-3" />
                                                                     </Link>
                                                                 </div>
@@ -197,17 +194,16 @@ const DesktopNav: FC<Props> = ({
                         <div className="hidden lg:flex items-center gap-4">
                             <MagneticButton strength={0.25}>
                                 <Link
-                                    href={`/${lang}/contact`}
+                                    href={`/contact`}
                                     data-cursor-text="Go"
                                     className="group inline-flex h-10 items-center gap-2 text-sm font-medium bg-foreground text-background px-6 py-3 hover:bg-accent hover:text-accent-foreground transition-all duration-300"
                                 >
-                                    {uiT(lang, "common.startProject")}
+                                    Start a Project
                                     <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                 </Link>
                             </MagneticButton>
                             <ThemeToggle />
 
-                            <LanguageSwitcher currentLang={lang} />
                         </div>
 
                         <div className="lg:hidden flex items-center gap-4">

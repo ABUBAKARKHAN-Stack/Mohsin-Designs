@@ -6,8 +6,6 @@ import SectionHeading from "@/components/ui/section-heading";
 import { ContainerLayout } from "@/components/layout";
 import { cn } from "@/lib/utils";
 import { Areas, SectionHeadingType } from "@/types/services.types";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 import Link from "next/link";
 
 
@@ -30,7 +28,6 @@ const AreasWeServe = ({
 
     const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
     const globeRotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
-    const { lang }: LanguageType = useParams()
 
     return (
         <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-muted/30 relative overflow-hidden">
@@ -98,20 +95,20 @@ const AreasWeServe = ({
                         <div className="text-center">
                             <div className="text-4xl font-display font-bold text-accent">{areas.length}</div>
                             <div className="text-sm text-muted-foreground">
-                                {uiT(lang, "common.continents")}
+                               Continents
                             </div>
                         </div>
                         <div className="text-center">
                             <div className="text-4xl font-display font-bold text-accent">
                                 {areas.reduce((total, area) => total += area.locations.length, 0)}+
                             </div>
-                            <div className="text-sm text-muted-foreground">{uiT(lang, "common.countries")}</div>
+                            <div className="text-sm text-muted-foreground">Countries</div>
                         </div>
                         <div className="text-center">
                             <div className="text-4xl font-display font-bold text-accent">
                                 {areas.reduce((total, area) => total += area.clients, 0)}+
                             </div>
-                            <div className="text-sm text-muted-foreground">{uiT(lang, "common.clients")}</div>
+                            <div className="text-sm text-muted-foreground">Clients</div>
                         </div>
                     </motion.div>
                 </div>
@@ -151,7 +148,7 @@ const AreasWeServe = ({
                                     <span className="text-4xl">{area.flag}</span>
                                     <div>
                                         <h3 className="text-xl font-display font-bold">{area.region}</h3>
-                                        <span className="text-xs text-muted-foreground">{area.clients} {uiT(lang, "common.clients")}</span>
+                                        <span className="text-xs text-muted-foreground">{area.clients} Clients</span>
                                     </div>
                                 </div>
 
@@ -178,8 +175,8 @@ const AreasWeServe = ({
 
                                 >
                                     <Link className="flex items-center gap-2 text-accent text-sm font-medium"
-                                        href={`/${lang}/portfolio`}>
-                                        <span>{uiT(lang, "common.viewAllProjects")}</span>
+                                        href={`/portfolio`}>
+                                        <span>View All Projects</span>
                                         <ArrowRight className="w-4 h-4" />
                                     </Link>
                                 </motion.div>
@@ -206,19 +203,19 @@ const AreasWeServe = ({
                                     <Globe className="w-7 h-7 text-accent" />
                                 </div>
                                 <div>
-                                    <h4 className="text-lg font-display font-bold">{uiT(lang, 'common.areasCta.title')}</h4>
+                                    <h4 className="text-lg font-display font-bold">Don't see your location?</h4>
                                     <p className="text-muted-foreground text-sm">
-                                        {uiT(lang, 'common.areasCta.description')}
+                                      We work with clients worldwide. Let's connect!
                                     </p>
                                 </div>
                             </div>
                             <motion.a
-                                href={`/${lang}/contact`}
+                                href={`/contact`}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="px-8 py-3 bg-accent text-accent-foreground font-medium rounded-full flex items-center gap-2 shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-shadow"
                             >
-                                <span>{uiT(lang, 'common.getInTouch')}</span>
+                                <span>Get in Touch</span>
                                 <ArrowRight className="w-4 h-4" />
                             </motion.a>
                         </div>

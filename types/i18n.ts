@@ -1,1 +1,0 @@
-type LanguageType = { lang: string }

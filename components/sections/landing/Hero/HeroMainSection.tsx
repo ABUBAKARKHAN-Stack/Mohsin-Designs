@@ -1,17 +1,12 @@
-
 import { motion, MotionValue, } from "motion/react";
 import { ArrowRight, ArrowUpRight, CheckCircle2, Star } from "lucide-react";
-import { BorderBeam } from "@/components/ui/border-beam";
 import Link from "next/link";
-import { serviceItems } from "@/constants/services.constants";
 import Logo from "@/components/ui/logo";
 import MagneticButton from "@/components/MagneticButton";
-import HighlightedBrandname from "@/components/ui/highlighted-brandname";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import { useServices } from "@/context/ServiceContext";
-import { uiT } from "@/i18n";
-import { useParams } from "next/navigation";
 import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 
 type Props = {
     y: MotionValue<number>
@@ -20,8 +15,8 @@ type Props = {
 const HeroMainSection = ({
     y
 }: Props) => {
-    const { lang }: LanguageType = useParams()
     const { lightWeightServices } = useServices()
+    const { globalContent } = useGlobalContent()
     const { landingPageContent } = useLandingPageContent()
 
     const heroData = landingPageContent?.hero
@@ -63,7 +58,7 @@ const HeroMainSection = ({
                                 animate={{ y: 0 }}
                                 transition={{ duration: 0.7, delay: 0.3 + (index * 0.1), ease: [0.16, 1, 0.3, 1] }}
                                 className={`text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] font-display font-bold leading-[1.02] tracking-tight ${line.style === 'stroke' ? 'text-stroke' :
-                                        line.style === 'gradient' ? 'gradient-text' : ''
+                                    line.style === 'gradient' ? 'gradient-text' : ''
                                     }`}
                             >
                                 {line.text}
@@ -99,8 +94,8 @@ const HeroMainSection = ({
                                 <Link
                                     href={button.url}
                                     className={`group inline-flex items-center gap-3 px-8 py-4 font-semibold text-sm uppercase tracking-wider transition-all duration-300 ${button.variant === 'primary'
-                                            ? 'border-2 border-transparent bg-accent text-accent-foreground hover:bg-foreground hover:text-background shadow-lg shadow-accent/20'
-                                            : 'border-2 border-border hover:border-accent hover:text-accent'
+                                        ? 'border-2 border-transparent bg-accent text-accent-foreground hover:bg-foreground hover:text-background shadow-lg shadow-accent/20'
+                                        : 'border-2 border-border hover:border-accent hover:text-accent'
                                         }`}
                                 >
                                     {button.text}
@@ -151,7 +146,7 @@ const HeroMainSection = ({
                                     transition={{ delay: 0.7 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                                 >
                                     <Link
-                                        href={`/${lang}/services/${service.slug}`}
+                                        href={`/services/${service.slug}`}
                                         className="flex items-center gap-3 p-3.5 bg-muted/50 border border-border hover:border-accent/30 hover:bg-accent/5 transition-all group"
                                     >
                                         <div className="w-7 h-7 bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
@@ -189,7 +184,7 @@ const HeroMainSection = ({
                         transition={{ delay: 1 }}
                         className="absolute -top-6 -left-6 bg-foreground text-background px-4 py-2 text-xs font-semibold tracking-wider uppercase"
                     >
-                        {uiT(lang, "common.since2019")}
+                        {globalContent?.stats?.since?.value || "2019"}   {globalContent?.stats?.since?.label || "Since"}
                     </motion.div>
                 </div>
             </motion.div>

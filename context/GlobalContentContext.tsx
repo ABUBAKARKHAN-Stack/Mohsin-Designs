@@ -4,6 +4,7 @@ import { createContext, useContext, ReactNode } from "react";
 
 export type GlobalContentData = {
     stats?: {
+        since?: {value:string,label:string}
         projectsDelivered?: { value: string; label: string; suffix: string };
         yearsExperience?: { value: string; label: string; suffix: string };
         clientSatisfaction?: { value: string; label: string; suffix: string };

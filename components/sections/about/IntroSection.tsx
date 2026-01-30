@@ -2,15 +2,15 @@
 
 import { ContainerLayout } from "@/components/layout";
 import { useAboutPageContent } from "@/context/AboutPageContentContext";
-import { uiT } from "@/i18n";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 import { useScroll, useTransform,motion } from "motion/react";
-import { useParams } from "next/navigation";
 import { useRef } from "react";
 
 
 export const IntroSection = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { aboutPageContent } = useAboutPageContent();
+    const {globalContent} = useGlobalContent()
     const introData = aboutPageContent?.intro;
 
     const { scrollYProgress } = useScroll({
@@ -18,7 +18,6 @@ export const IntroSection = () => {
         offset: ["start end", "end start"],
     });
     const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-    const { lang }: LanguageType = useParams()
 
     return (
         <section ref={containerRef} className="lg:py-12.5 py-6.25 relative overflow-hidden">
@@ -85,9 +84,11 @@ export const IntroSection = () => {
                             className="absolute -bottom-6 -left-6 bg-accent text-accent-foreground p-6 md:p-8"
                         >
                             <div className="text-4xl md:text-5xl font-bold">
-                                {introData?.sinceYear || "2019"}
+                                {globalContent?.stats?.since?.value || "2019"}
                             </div>
-                            <div className="text-base mt-1 font-medium">{uiT(lang, "common.since")}</div>
+                            <div className="text-base mt-1 font-medium">
+                                {globalContent?.stats?.since?.label || "Since"}
+                            </div>
                         </motion.div>
                     </motion.div>
                 </div>

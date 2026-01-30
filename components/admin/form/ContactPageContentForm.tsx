@@ -95,17 +95,6 @@ export function ContactPageContentForm({ initialData, hasDraft, draftUpdatedAt, 
         }
     }
 
-    async function handleDiscardDraft() {
-        if (!confirm("Are you sure you want to discard your draft changes?")) return
-        const result = await discardContactPageDraft()
-        if (result.success) {
-            successToast("Draft discarded")
-            setLastSaved(null)
-            window.location.reload()
-        } else {
-            errorToast("Failed to discard draft")
-        }
-    }
 
     const formErrors = form.formState.errors
     const hasErrors = Object.keys(formErrors).length > 0
@@ -135,11 +124,7 @@ export function ContactPageContentForm({ initialData, hasDraft, draftUpdatedAt, 
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 border-l pl-4">
-                            {hasDraft && (
-                                <Button type="button" variant="outline" size="sm" onClick={handleDiscardDraft}>
-                                    <X className="mr-2 h-4 w-4" /> Discard Draft
-                                </Button>
-                            )}
+                           
                             {hasErrors && (
                                 <div className="flex items-center gap-2 text-destructive text-xs px-3 py-1 bg-destructive/10 rounded">
                                     <AlertCircle className="h-3 w-3" />

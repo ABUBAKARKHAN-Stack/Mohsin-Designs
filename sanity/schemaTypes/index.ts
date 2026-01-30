@@ -26,6 +26,7 @@ import { menuItemType } from './objects/menuItemType'
 import { locationType } from './locationType'
 import { projectType } from './projectType'
 import { imageAssetType } from './imageAssetType'
+import { contactPageContentType } from './document/contactPageContentType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -54,8 +55,11 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     menuItemType,
     locationType,
     projectType,
+    contactPageContentType,
     portfolioPageContentType,
     blogPageContentType,
     imageAssetType,
   ],
 }
+
+

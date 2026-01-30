@@ -6,7 +6,6 @@ import {
     Layers,
     LayoutDashboard,
     Search,
-    Settings,
     User,
     Users,
     Briefcase,
@@ -107,10 +106,9 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
             ]
         },
         {
-            label: "Media & SEO",
+            label: "Media Management",
             items: [
                 { title: "Media", url: "/admin/media", icon: FolderOpen },
-                { title: "SEO", url: "/admin/seo", icon: Search },
             ]
         },
         {

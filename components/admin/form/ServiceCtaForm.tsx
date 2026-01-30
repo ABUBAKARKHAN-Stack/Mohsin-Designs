@@ -93,7 +93,9 @@ export function ServiceCtaForm({ initialData }: ServiceCtaFormProps) {
                                 </div>
                                 <div className="space-y-6">
                                     <h3 className="font-medium text-sm text-muted-foreground">Button URL</h3>
-                                    <FormInput control={formControl} name="ctaButtonUrl" label="Destination URL" />
+                                    <FormInput control={formControl} name="ctaButtonUrl"
+                                        placeholder="https://example.com or /contact"
+                                        label="Destination URL" />
                                 </div>
                             </div>
                         </CardContent>

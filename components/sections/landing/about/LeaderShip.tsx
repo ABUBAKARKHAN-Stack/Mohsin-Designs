@@ -1,31 +1,20 @@
 "use client"
 import { motion } from "framer-motion";
 import SectionHeading from "@/components/ui/section-heading";
-import { Linkedin, Twitter, Mail } from "lucide-react";
 import Image from "next/image";
 import { ContainerLayout } from "@/components/layout";
 import { useGlobalContent } from "@/context/GlobalContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 
 
 const Leadership = () => {
   const { globalContent } = useGlobalContent();
-  const { lang }: any = useParams()
 
   const leadershipData = globalContent?.leadership;
   const founderData = leadershipData?.founder;
   const agencyStructure = leadershipData?.agencyStructure || [];
 
-  const getSocialIcon = (platform: string) => {
-    switch (platform.toLowerCase()) {
-      case 'linkedin': return Linkedin;
-      case 'twitter': return Twitter;
-      case 'mail': case 'email': return Mail;
-      default: return Mail;
-    }
-  };
+
   return (
     <section className="lg:py-12.5 py-6.25 bg-muted/30 overflow-hidden">
 
@@ -89,10 +78,10 @@ const Leadership = () => {
                     </p>
 
                     {/* Social links */}
-                    {founderData?.socialLinks && founderData.socialLinks.length > 0 && (
+                    {/* {founderData?.socialLinks && founderData.socialLinks.length > 0 && (
                       <div className="flex gap-3 mt-3">
                         {founderData.socialLinks.map((social, i) => {
-                          const Icon = getSocialIcon(social.platform);
+                          // const Icon = getIconByName(social.iconName);
                           return (
                             <motion.a
                               key={i}
@@ -108,7 +97,7 @@ const Leadership = () => {
                           );
                         })}
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </motion.div>
               </div>
@@ -139,8 +128,9 @@ const Leadership = () => {
 
             {/* Agency Structure */}
             <div className="bg-background border border-border/50 p-6 rounded-2xl">
+            
               <h4 className="text-sm font-medium  text-muted-foreground uppercase tracking-wider mb-5 flex items-center gap-2">
-                {uiT(lang, 'common.agencyStructure')}
+                Agency Structure
               </h4>
 
               <div className="space-y-3">

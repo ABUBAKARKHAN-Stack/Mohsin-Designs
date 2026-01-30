@@ -342,7 +342,7 @@ export function MediaLibrary() {
                                     selectedIds.includes(asset._id) ? "opacity-0" : "opacity-100"
                                 )}
                             >
-                                {asset.altText?.en || asset.altText?.ur || asset.altText?.es || asset.altText?.ar ? (
+                                {asset.altText && typeof asset.altText === 'string' ? (
                                     <div className="bg-green-500/90 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
                                         <Check className="h-3 w-3" />
                                         ALT
@@ -432,7 +432,7 @@ export function MediaLibrary() {
                                 </Button>
                             </div>
                             <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] p-1 truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                                {asset.altText?.en || asset.originalFilename || "No description"}
+                                {(typeof asset.altText === 'string' ? asset.altText : null) || asset.originalFilename || "No description"}
                             </div>
                         </Card>
                     ))}
@@ -481,7 +481,7 @@ export function MediaLibrary() {
                                     <td className="p-3">
                                         <div className="flex flex-col gap-2">
                                             {/* Overall Status */}
-                                            {asset.altText?.en || asset.altText?.ur || asset.altText?.es || asset.altText?.ar ? (
+                                            {asset.altText && typeof asset.altText === 'string' ? (
                                                 <div className="bg-green-500/20 text-green-700 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-md flex items-center gap-1 w-fit">
                                                     <Check className="h-3 w-3" />
                                                     Has Alt Text
@@ -492,25 +492,6 @@ export function MediaLibrary() {
                                                 </div>
                                             )}
 
-                                            {/* Locale Status */}
-                                            <div className="flex flex-wrap gap-1">
-                                                {[
-                                                    { code: 'en', label: 'EN' },
-                                                    { code: 'ur', label: 'UR' },
-                                                    { code: 'es', label: 'ES' },
-                                                    { code: 'ar', label: 'AR' }
-                                                ].map(locale => (
-                                                    <span
-                                                        key={locale.code}
-                                                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${asset.altText?.[locale.code as keyof typeof asset.altText]
-                                                            ? 'bg-green-500/30 text-green-700 dark:text-green-300'
-                                                            : 'bg-red-500/30 text-red-700 dark:text-red-300'
-                                                            }`}
-                                                    >
-                                                        {locale.label}
-                                                    </span>
-                                                ))}
-                                            </div>
                                         </div>
                                     </td>
                                     <td className="p-3 text-muted-foreground">{formatBytes(asset.size)}</td>

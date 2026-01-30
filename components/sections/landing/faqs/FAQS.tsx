@@ -13,7 +13,6 @@ import { ArrowRight } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
 import { useGlobalContent } from "@/context/GlobalContentContext";
 import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 import Link from "next/link";
 
 

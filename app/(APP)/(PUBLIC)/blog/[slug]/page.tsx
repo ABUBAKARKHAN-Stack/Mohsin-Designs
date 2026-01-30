@@ -14,7 +14,6 @@ import { Badge } from "@/components/ui/badge"
 
 interface Props {
     params: Promise<{
-        lang: string;
         slug: string;
     }>;
 }
@@ -23,18 +22,15 @@ interface Props {
 export async function generateStaticParams() {
     const slugs = await getBlogSlugs()
 
-    return slugs.flatMap(({ slug }) =>
-        SUPPORTED_LANGS.map((lang) => ({
-            lang,
-            slug,
-        }))
-    )
+    return slugs.map(({ slug }) => ({
+        slug,
+    }))
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { lang, slug } = await params
-    const post = await getBlogPost(lang, slug)
+    const { slug } = await params
+    const post = await getBlogPost(slug)
 
     if (!post) {
         return {
@@ -56,16 +52,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-    const { lang, slug } = await params
+    const { slug } = await params
 
-    const post = await getBlogPost(lang, slug)
+    const post = await getBlogPost(slug)
 
     if (!post) {
         notFound()
     }
 
     const formattedDate = post.publishedAt
-        ? new Date(post.publishedAt).toLocaleDateString(lang, {
+        ? new Date(post.publishedAt).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -106,7 +102,7 @@ export default async function BlogPostPage({ params }: Props) {
                             <span className="w-1 h-1 bg-border rounded-full hidden md:block" />
                             <div className="flex items-center gap-2 text-accent/80">
                                 <Clock className="h-4 w-4" />
-                                <span className="font-semibold uppercase tracking-wider text-[10px]">{post.readTime} {uiT(lang, "common.readTime")}</span>
+                                <span className="font-semibold uppercase tracking-wider text-[10px]">{post.readTime} {uiT('en', "common.readTime")}</span>
                             </div>
                         </div>
                     )}

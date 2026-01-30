@@ -25,20 +25,20 @@ import { notFound } from "next/navigation";
 
 
 type Props = {
-    params: Promise<{ lang: string, slug: string }>
+    params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
     const services = await getServicesForSSG()
-    return services.flatMap((s) => SUPPORTED_LANGS.map(lang => ({ lang, slug: s.slug })))
+    return services.map((s) => ({ slug: s.slug }))
 }
 
 export async function generateMetadata(
     { params }: Props,
     _parent: ResolvingMetadata,
 ): Promise<Metadata> {
-    const { slug, lang } = await params;
-    const service = await getServiceSeoByLocale(lang, slug);
+    const { slug } = await params;
+    const service = await getServiceSeoByLocale(slug);
 
     if (!service) {
         return {
@@ -58,7 +58,7 @@ export async function generateMetadata(
         .format("jpg")
         .url();
     const imageAlt = service.heroImage.alt;
-    const servicesBaseUrl = `/${lang}/services/${slug}`;
+    const servicesBaseUrl = `/services/${slug}`;
 
     return {
         title,
@@ -104,9 +104,9 @@ export async function generateMetadata(
 const ServiceDetailPage = async ({
     params
 }: Props) => {
-    const { slug, lang } = await params;
-    const service = await getServiceByLocale(lang, slug);
-    const cta = await getServicesCTA(lang)
+    const { slug } = await params;
+    const service = await getServiceByLocale(slug);
+    const cta = await getServicesCTA()
 
     if (!service) {
         return notFound();

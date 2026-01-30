@@ -187,7 +187,7 @@ export const landingPageContentType = defineType({
                     name: 'buttonUrl',
                     title: 'Button URL',
                     type: 'string',
-                    description: 'e.g. /portfolio or https://example.com'
+                    description: 'Enter a relative path (e.g., /portfolio) or a full URL (e.g., https://example.com)'
                 })
             ]
         }),
@@ -251,7 +251,7 @@ export const landingPageContentType = defineType({
                     name: 'ctaUrl',
                     title: 'CTA Button URL',
                     type: 'string',
-                    description: 'Internal path (e.g., /about)',
+                    description: 'Enter a relative path (e.g., /about) or a full URL (e.g., https://example.com)',
                     validation: Rule => Rule.required()
                 })
             ]
@@ -290,7 +290,7 @@ export const landingPageContentType = defineType({
                     name: 'buttonUrl',
                     title: 'Button URL',
                     type: 'string',
-                    description: 'e.g. /blog or https://example.com'
+                    description: 'Enter a relative path (e.g., /blog) or a full URL (e.g., https://example.com)'
                 })
             ]
         }),
@@ -394,7 +394,7 @@ export const landingPageContentType = defineType({
                     name: 'buttonUrl',
                     title: 'Button URL',
                     type: 'string',
-                    description: 'e.g. /case-studies'
+                    description: 'Enter a relative path (e.g., /portfolio) or a full URL (e.g., https://example.com)'
                 })
             ]
         }),

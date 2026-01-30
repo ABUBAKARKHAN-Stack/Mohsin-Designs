@@ -9,18 +9,12 @@ export const metadata: Metadata = {
   title: "Journal"
 }
 
-type Props = {
-  params: Promise<LanguageType>
-}
-
-const Blog = async ({ params }: Props) => {
-  const { lang } = await params
-  const pageContent = await getBlogPageContent(lang)
+const Blog = async () => {
+  const pageContent = await getBlogPageContent()
 
   if (!pageContent) {
     return null
   }
-  
 
   return (
     <PageWrapper>

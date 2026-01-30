@@ -13,7 +13,7 @@ import { createCategory, updateCategory } from "@/app/actions/category"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
 import { categorySchema, CategoryValues } from "@/lib/validations/category"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 
 interface CategoryFormProps {
     initialData?: any
@@ -81,13 +81,13 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
                         <CardTitle>Category Details</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <LocalizedInput
+                        <FormInput
                             control={form.control}
                             name="title"
                             label="Title"
                             placeholder="e.g. Design"
                         />
-                        <LocalizedInput
+                        <FormInput
                             control={form.control}
                             name="description"
                             label="Description"

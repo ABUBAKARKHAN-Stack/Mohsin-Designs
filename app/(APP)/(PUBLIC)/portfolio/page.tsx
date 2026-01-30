@@ -10,18 +10,12 @@ export const metadata: Metadata = {
 import { getPortfolioPageContent } from "@/helpers/portfolio-page-content.helpers";
 import PageCTA from "@/components/sections/shared/PageCTA";
 
-type Props = {
-  params: Promise<LanguageType>
-}
-
-const Portfolio = async ({ params }: Props) => {
-  const { lang } = await params;
-  const pageContent = await getPortfolioPageContent(lang);
+const Portfolio = async () => {
+  const pageContent = await getPortfolioPageContent();
 
   if (!pageContent) {
-    return null; 
+    return null;
   }
- 
 
   return (
     <PageWrapper>

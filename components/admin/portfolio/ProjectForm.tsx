@@ -20,7 +20,7 @@ import { saveProjectDraft } from "@/app/actions/projectDraftActions"
 import { useRouter } from "next/navigation"
 import { Loader2, Plus, Save, ArrowLeft, Clock, X, Info } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
 import { debounce } from "lodash"
@@ -191,7 +191,7 @@ export function ProjectForm({
                                         <CardDescription>Basic information for the project card.</CardDescription>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
-                                        <LocalizedInput
+                                        <FormInput
                                             control={form.control}
                                             name="title"
                                             label="Project Title"
@@ -222,13 +222,13 @@ export function ProjectForm({
                                                 </FormItem>
                                             )}
                                         />
-                                        <LocalizedInput
+                                        <FormInput
                                             control={form.control}
                                             name="category"
                                             label="Short Category"
                                             placeholder="e.g. Brand, Digital, UI/UX"
                                         />
-                                        <LocalizedInput
+                                        <FormInput
                                             control={form.control}
                                             name="description"
                                             label="Description"
@@ -282,7 +282,7 @@ export function ProjectForm({
                                         <CardDescription>Detailed results and testimonials for this project.</CardDescription>
                                     </CardHeader>
                                     <CardContent className="space-y-6 pt-6">
-                                        <LocalizedInput
+                                        <FormInput
                                             control={form.control}
                                             name="caseStudy.title"
                                             label="Case Study Title"
@@ -321,7 +321,7 @@ export function ProjectForm({
                                             />
                                         </div>
 
-                                        <LocalizedInput
+                                        <FormInput
                                             control={form.control}
                                             name="caseStudy.testimonial"
                                             label="Client Testimonial"
@@ -372,13 +372,13 @@ export function ProjectForm({
                                                                 <IconSelect field={field} type="benefit" label="Icon" />
                                                             )}
                                                         />
-                                                        <LocalizedInput
+                                                        <FormInput
                                                             control={form.control}
                                                             name={`caseStudy.results.${index}.value`}
                                                             label="Stat Value"
                                                             placeholder="+340%"
                                                         />
-                                                        <LocalizedInput
+                                                        <FormInput
                                                             control={form.control}
                                                             name={`caseStudy.results.${index}.label`}
                                                             label="Stat Label"

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form"
 import { TabsContent, Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { IconSelect } from "@/components/admin/form/IconSelect"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -208,8 +208,8 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                 <div className="grid gap-4 pt-4 border-t">
                                     <h4 className="font-medium text-sm">Call to Action Button</h4>
                                     <div className="grid sm:grid-cols-2 gap-4">
-                                        <LocalizedInput control={control} name="servicesPreview.buttonText" label="Button Text" placeholder="Button Text" />
-                                        <LocalizedInput control={control} name="servicesPreview.buttonUrl" label="Button URL" isUrl />
+                                        <FormInput control={control} name="servicesPreview.buttonText" label="Button Text" placeholder="Button Text" />
+                                        <FormInput control={control} name="servicesPreview.buttonUrl" label="Button URL"  />
                                     </div>
                                 </div>
                             </CardContent>
@@ -241,8 +241,8 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                             </Button>
                                         </div>
                                         <div className="grid gap-4">
-                                            <LocalizedInput control={control} name={`whyChooseUs.benefits.${index}.title`} label="Title" />
-                                            <LocalizedInput control={control} name={`whyChooseUs.benefits.${index}.description`} label="Description" isTextarea />
+                                            <FormInput control={control} name={`whyChooseUs.benefits.${index}.title`} label="Title" />
+                                            <FormInput control={control} name={`whyChooseUs.benefits.${index}.description`} label="Description" isTextarea />
                                             <FormField control={control} name={`whyChooseUs.benefits.${index}.iconName`} render={({ field }) => (
                                                 <IconSelect field={field} type="benefit" label="Visual Icon" />
                                             )} />
@@ -273,8 +273,8 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                             </Button>
                                         </div>
                                         <div className="grid gap-4">
-                                            <LocalizedInput control={control} name={`ourApproach.steps.${index}.title`} label="Step Name" />
-                                            <LocalizedInput control={control} name={`ourApproach.steps.${index}.description`} label="Process Description" isTextarea />
+                                            <FormInput control={control} name={`ourApproach.steps.${index}.title`} label="Step Name" />
+                                            <FormInput control={control} name={`ourApproach.steps.${index}.description`} label="Process Description" isTextarea />
                                             <FormField control={control} name={`ourApproach.steps.${index}.iconName`} render={({ field }) => (
                                                 <IconSelect field={field} type="step" label="Visual Icon" />
                                             )} />
@@ -305,8 +305,8 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                             </Button>
                                         </div>
                                         <div className="grid gap-4">
-                                            <LocalizedInput control={control} name={`industriesWeServe.industries.${index}.name`} label="Industry Name" />
-                                            <LocalizedInput control={control} name={`industriesWeServe.industries.${index}.description`} label="Sector Description" isTextarea />
+                                            <FormInput control={control} name={`industriesWeServe.industries.${index}.name`} label="Industry Name" />
+                                            <FormInput control={control} name={`industriesWeServe.industries.${index}.description`} label="Sector Description" isTextarea />
                                             <FormField control={control} name={`industriesWeServe.industries.${index}.iconName`} render={({ field }) => (
                                                 <IconSelect field={field} type="industry" label="Visual Icon" />
                                             )} />
@@ -337,8 +337,8 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                             </Button>
                                         </div>
                                         <div className="grid gap-4">
-                                            <LocalizedInput control={control} name={`faqs.faqItems.${index}.question`} label="Question" />
-                                            <LocalizedInput control={control} name={`faqs.faqItems.${index}.answer`} label="Detailed Answer" isTextarea />
+                                            <FormInput control={control} name={`faqs.faqItems.${index}.question`} label="Question" />
+                                            <FormInput control={control} name={`faqs.faqItems.${index}.answer`} label="Detailed Answer" isTextarea />
                                         </div>
                                     </div>
                                 ))}
@@ -348,8 +348,8 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                             <CardHeader className="py-4"><CardTitle className="text-lg flex items-center gap-2"><Globe className="h-4 w-4 text-primary" /> Support Redirect Button</CardTitle></CardHeader>
                             <CardContent className="space-y-4 px-6 pb-6">
                                 <div className="grid md:grid-cols-2 gap-4">
-                                    <LocalizedInput control={control} name="faqs.buttonText" label="Button Label (e.g. Contact Support)" />
-                                    <LocalizedInput control={control} name="faqs.buttonUrl" label="Destination URL" isUrl />
+                                    <FormInput control={control} name="faqs.buttonText" label="Button Label (e.g. Contact Support)" />
+                                    <FormInput control={control} name="faqs.buttonUrl" label="Destination URL"  />
                                 </div>
                             </CardContent>
                         </Card>
@@ -362,8 +362,8 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                             <Card className="shadow-sm border-2">
                                 <CardHeader className="bg-primary/5 py-3 border-b"><CardTitle className="text-lg flex items-center gap-2 text-primary"><Globe className="h-4 w-4" /> Founder Information</CardTitle></CardHeader>
                                 <CardContent className="space-y-4 pt-6 p-6">
-                                    <LocalizedInput control={control} name="leadership.founder.name" label="Full Name" />
-                                    <LocalizedInput control={control} name="leadership.founder.role" label="Official Position/Title" />
+                                    <FormInput control={control} name="leadership.founder.name" label="Full Name" />
+                                    <FormInput control={control} name="leadership.founder.role" label="Official Position/Title" />
                                     <div className="space-y-4 pt-2">
                                         <FormLabel className="text-sm font-bold text-foreground/80">Founder Profile Image</FormLabel>
                                         <FormField control={control} name="leadership.founder.image" render={({ field }) => (
@@ -414,12 +414,12 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                                                 <IconSelect field={field} type="social" label="Icon" />
                                                             )}
                                                         />
-                                                        <LocalizedInput
+                                                        <FormInput
                                                             control={control}
                                                             name={`leadership.founder.socialLinks.${index}.label`}
                                                             label="Label (e.g. LinkedIn, Portfolio)"
                                                         />
-                                                        <LocalizedInput
+                                                        <FormInput
                                                             control={control}
                                                             name={`leadership.founder.socialLinks.${index}.url`}
                                                             label="URL"
@@ -453,8 +453,8 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                                 </Button>
                                             </div>
                                             <div className="grid gap-4">
-                                                <LocalizedInput control={control} name={`leadership.agencyStructure.${index}.title`} label="Group Title (e.g. Design Team)" />
-                                                <LocalizedInput control={control} name={`leadership.agencyStructure.${index}.description`} label="Team Overview" isTextarea />
+                                                <FormInput control={control} name={`leadership.agencyStructure.${index}.title`} label="Group Title (e.g. Design Team)" />
+                                                <FormInput control={control} name={`leadership.agencyStructure.${index}.description`} label="Team Overview" isTextarea />
                                                 <FormField control={control} name={`leadership.agencyStructure.${index}.iconName`} render={({ field }) => (
                                                     <IconSelect field={field} type="benefit" label="Aesthetic Group Icon" />
                                                 )} />
@@ -479,9 +479,9 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                             <CardContent className="px-0 space-y-8">
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-6">
-                                        <LocalizedInput control={control} name="cta.badge" label="Marketing Badge (e.g. Limited Offer)" />
-                                        <LocalizedInput control={control} name="cta.heading" label="Primary Punchy Heading" />
-                                        <LocalizedInput control={control} name="cta.description" label="Persuasive Subtext" isTextarea />
+                                        <FormInput control={control} name="cta.badge" label="Marketing Badge (e.g. Limited Offer)" />
+                                        <FormInput control={control} name="cta.heading" label="Primary Punchy Heading" />
+                                        <FormInput control={control} name="cta.description" label="Persuasive Subtext" isTextarea />
                                     </div>
                                     <div className="p-5 rounded-xl border-2 border-dashed border-primary/20 space-y-4">
                                         <div className="flex justify-between items-center">
@@ -495,7 +495,7 @@ export function GlobalSectionsFormTabs({ form, control, errors, mode = 'shared',
                                             {ctaBenefitsFields.map((field, index) => (
                                                 <div key={field.id} className="flex gap-2 items-start group">
                                                     <div className="flex-1 bg-background px-3 py-2 rounded-lg border focus-within:border-primary/40 transition-all">
-                                                        <LocalizedInput control={control} name={`cta.benefits.${index}.text`} label={`Point ${index + 1}`} />
+                                                        <FormInput control={control} name={`cta.benefits.${index}.text`} label={`Point ${index + 1}`} />
                                                     </div>
                                                     <Button type="button" size="sm" variant="destructive" onClick={() => removeCtaBenefit(index)}>
                                                         <Trash2 className="h-4 w-4" />

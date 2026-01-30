@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/accordion"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { CustomPortableTextEditor } from "@/components/admin/form/PortableTextEditor"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import {
     Select,
     SelectContent,
@@ -213,13 +213,13 @@ export function BlogForm({
                                 <CardDescription>Main information about the post.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput
+                                <FormInput
                                     control={form.control}
                                     name="title"
                                     label="Post Title"
                                     placeholder="Enter post title"
                                 />
-                                <LocalizedInput
+                                <FormInput
                                     control={form.control}
                                     name="description"
                                     label="Short Description"

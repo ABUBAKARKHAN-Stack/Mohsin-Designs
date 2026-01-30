@@ -139,28 +139,14 @@ export async function getContactPageContent() {
             contactForm {
                 ...,
                 "form": formReference-> {
-                    ...,
-                    fields[] {
-                        ...,
-                        label { en, ar }
-                    },
-                    submitButtonText { en, ar },
-                    successMessage { en, ar }
+                    ...
                 }
             },
             faqs {
-                ...,
-                faqItems[] {
-                    question { en, ar },
-                    answer { en, ar }
-                }
+                ...
             },
             seo {
-                metaTitle { en, ar },
-                metaDescription { en, ar },
-                focusKeyword { en, ar },
-                relatedKeywords { en, ar },
-                schemas
+                ...
             }
         }`
         const { data } = await sanityFetch({ query })

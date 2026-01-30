@@ -1,67 +1,66 @@
 import { sanityFetch } from "@/sanity/lib/live";
 import { ServiceCTA, ServiceData, ServiceLightWeight } from "@/types/services.types";
 
-const SERVICE_QUERY_BY_LOCALE = `{
-
-  "title": title[$lang],
-  "subtitle": subtitle[$lang],
-  "description":description[$lang],
+const SERVICE_QUERY = `{
+  "title": title,
+  "subtitle": subtitle,
+  "description": description,
   "slug": slug.current,
   heroImage{
-    "alt": alt[$lang],
+    "alt": alt,
     "source": asset._ref
   },
 
   // Intro Section
-  "introTagLine": introTagLine[$lang],
-  "introTitle": introTitle[$lang],
-  "introContent": introContent[$lang],
+  "introTagLine": introTagLine,
+  "introTitle": introTitle,
+  "introContent": introContent,
 
   // Role Section
-  "roleTitle": roleTitle[$lang],
-  "roleContent": roleContent[][$lang],
+  "roleTitle": roleTitle,
+  "roleContent": roleContent[],
 
   // How We Help Section
   "howWeHelpSection": {
-    "eyebrow": howWeHelpSection.eyebrow[$lang],
-    "title": howWeHelpSection.title[$lang],
-    "description": howWeHelpSection.description[$lang]
+    "eyebrow": howWeHelpSection.eyebrow,
+    "title": howWeHelpSection.title,
+    "description": howWeHelpSection.description
   },
 
   "howWeHelpPoints": howWeHelpPoints[]{
-    "title": title[$lang],
-    "description": description[$lang]
+    "title": title,
+    "description": description
   },
 
   // Overview & Items
   "overviewSection": {
-    "eyebrow": overviewSection.eyebrow[$lang],
-    "title": overviewSection.title[$lang],
-    "description": overviewSection.description[$lang]
+    "eyebrow": overviewSection.eyebrow,
+    "title": overviewSection.title,
+    "description": overviewSection.description
   },
-  "items": items[][$lang],
+  "items": items[],
 
   // Process Section
   "processSection": {
-    "eyebrow": processSection.eyebrow[$lang],
-    "title": processSection.title[$lang],
-    "description": processSection.description[$lang]
+    "eyebrow": processSection.eyebrow,
+    "title": processSection.title,
+    "description": processSection.description
   },
   "process": process[]{
     step,
-    "title": title[$lang],
-    "desc": desc[$lang]
+    "title": title,
+    "desc": desc
   },
 
   // Areas Section
   "areasSection": {
-    "eyebrow": areasSection.eyebrow[$lang],
-    "title": areasSection.title[$lang],
-    "description": areasSection.description[$lang]
+    "eyebrow": areasSection.eyebrow,
+    "title": areasSection.title,
+    "description": areasSection.description
   },
   "areas": areas[]{
-    "region": region[$lang],
-    "locations": locations[][$lang],
+    "region": region,
+    "locations": locations[],
     featured,
     clients,
     flag
@@ -69,91 +68,89 @@ const SERVICE_QUERY_BY_LOCALE = `{
 
   // Industries Section
   "industriesSection": {
-    "eyebrow": industriesSection.eyebrow[$lang],
-    "title": industriesSection.title[$lang],
-    "description": industriesSection.description[$lang]
+    "eyebrow": industriesSection.eyebrow,
+    "title": industriesSection.title,
+    "description": industriesSection.description
   },
   "industries": industries[]{
-    "name": name[$lang],
-    "description": description[$lang]
+    "name": name,
+    "description": description
   },
 
   // Benefits
    "benifitsSection": {
-    "eyebrow": benifitsSection.eyebrow[$lang],
-    "title": benifitsSection.title[$lang],
-    "description": benifitsSection.description[$lang]
+    "eyebrow": benifitsSection.eyebrow,
+    "title": benifitsSection.title,
+    "description": benifitsSection.description
   },
-  "benefits": benefits[][$lang],
+  "benefits": benefits[],
 
   // Why Choose Us
    "whyChooseUsSection": {
-    "eyebrow": whyChooseUsSection.eyebrow[$lang],
-    "title": whyChooseUsSection.title[$lang],
-    "description": whyChooseUsSection.description[$lang]
+    "eyebrow": whyChooseUsSection.eyebrow,
+    "title": whyChooseUsSection.title,
+    "description": whyChooseUsSection.description
   },
   "whyChooseUsPoints": whyChooseUsPoints[]{
-    "title": title[$lang],
-    "description": description[$lang]
+    "title": title,
+    "description": description
   },
 
   // Case Studies
   "caseStudiesSection": {
-    "eyebrow": caseStudiesSection.eyebrow[$lang],
-    "title": caseStudiesSection.title[$lang],
-    "description": caseStudiesSection.description[$lang]
+    "eyebrow": caseStudiesSection.eyebrow,
+    "title": caseStudiesSection.title,
+    "description": caseStudiesSection.description
   },
   "caseStudies": caseStudies[]{
-    "title": title[$lang],
-    "problem": problem[$lang],
-    "solution": solution[$lang],
-    "result": result[$lang]
+    "title": title,
+    "problem": problem,
+    "solution": solution,
+    "result": result
   },
 
   // FAQs
   "faqsSection": {
-    "eyebrow": faqsSection.eyebrow[$lang],
-    "title": faqsSection.title[$lang],
-    "description": faqsSection.description[$lang]
+    "eyebrow": faqsSection.eyebrow,
+    "title": faqsSection.title,
+    "description": faqsSection.description
   },
   "faqs": faqs[]{
-    "question": question[$lang],
-    "answer": answer[$lang]
+    "question": question,
+    "answer": answer
   },
 
 }`;
 
-const SERVICE_QUERY_LIGHT_WEIGHT_BY_LOCALE = `{
-  "title": title[$lang],
+const SERVICE_QUERY_LIGHT_WEIGHT = `{
+  "title": title,
   "slug": slug.current,
-  "items": items[][$lang],
+  "items": items[],
 }`
 
-const SERVICE_SEO_QUERY_BY_LOCALE = `{
+const SERVICE_SEO_QUERY = `{
   "slug": slug.current,
 
   heroImage{
-    "alt": alt[$lang],
+    "alt": alt,
     "source": asset._ref
   },
   "seo": seo{
-    "metaTitle": metaTitle[$lang],
-    "metaDescription": metaDescription[$lang],
-    "focusKeyword": focusKeyword[$lang],
-    "relatedKeywords": relatedKeywords[][$lang],
+    "metaTitle": metaTitle,
+    "metaDescription": metaDescription,
+    "focusKeyword": focusKeyword,
+    "relatedKeywords": relatedKeywords[],
     "schemas": schemas
   }
 }`;
 
-const SERVICE_CTA_QUERY_BY_LOCALE = `{
-  "badgeText": ctaBadgeText[$lang],
-  "title": ctaTitle[$lang],
-  "description":ctaDescription[$lang],
-  "buttonText": ctaButtonText[$lang],
-  "url": ctaButtonUrl[$lang],
+const SERVICE_CTA_QUERY = `{
+  "badgeText": ctaBadgeText,
+  "title": ctaTitle,
+  "description":ctaDescription,
+  "buttonText": ctaButtonText,
+  "url": ctaButtonUrl,
 }`;
-
-
 
 const getServicesForSSG = async () => {
   try {
@@ -169,13 +166,10 @@ const getServicesForSSG = async () => {
   }
 }
 
-const getServicesByLocale = async (lang: string) => {
+const getServicesByLocale = async () => {
   try {
     const { data } = await sanityFetch({
-      query: `*[_type == "service"] ${SERVICE_QUERY_BY_LOCALE}`,
-      params: {
-        lang
-      },
+      query: `*[_type == "service"] ${SERVICE_QUERY}`,
       perspective: "published"
     })
     const services = data as ServiceData[];
@@ -187,13 +181,10 @@ const getServicesByLocale = async (lang: string) => {
 
 }
 
-const getLightWeightServicesByLocale = async (lang: string) => {
+const getLightWeightServicesByLocale = async () => {
   try {
     const { data } = await sanityFetch({
-      query: `*[_type == "service"] ${SERVICE_QUERY_LIGHT_WEIGHT_BY_LOCALE}`,
-      params: {
-        lang
-      },
+      query: `*[_type == "service"] ${SERVICE_QUERY_LIGHT_WEIGHT}`,
       perspective: "published"
     })
     const services = data as ServiceLightWeight[];
@@ -206,14 +197,12 @@ const getLightWeightServicesByLocale = async (lang: string) => {
 }
 
 const getServiceByLocale = async (
-  lang: string,
   slug: string
 ) => {
   try {
     const { data } = await sanityFetch({
-      query: `*[_type == "service" && slug.current == $slug][0] ${SERVICE_QUERY_BY_LOCALE}`,
+      query: `*[_type == "service" && slug.current == $slug][0] ${SERVICE_QUERY}`,
       params: {
-        lang,
         slug
       },
       perspective: "published"
@@ -227,16 +216,13 @@ const getServiceByLocale = async (
 
 }
 
-
 const getServiceSeoByLocale = async (
-  lang: string,
   slug: string
 ) => {
   try {
     const { data } = await sanityFetch({
-      query: `*[_type == "service" && slug.current == $slug][0] ${SERVICE_SEO_QUERY_BY_LOCALE}`,
+      query: `*[_type == "service" && slug.current == $slug][0] ${SERVICE_SEO_QUERY}`,
       params: {
-        lang,
         slug
       },
       perspective: "published"
@@ -250,16 +236,10 @@ const getServiceSeoByLocale = async (
 
 }
 
-
-const getServicesCTA = async (
-  lang: string,
-) => {
+const getServicesCTA = async () => {
   try {
     const { data } = await sanityFetch({
-      query: `*[_type == "serviceCta"][0] ${SERVICE_CTA_QUERY_BY_LOCALE}`,
-      params: {
-        lang,
-      },
+      query: `*[_type == "serviceCta"][0] ${SERVICE_CTA_QUERY}`,
       perspective: "published"
     })
     const cta = data as ServiceCTA;

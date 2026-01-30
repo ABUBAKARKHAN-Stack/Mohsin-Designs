@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useFieldArray, Control, UseFormSetValue, useWatch } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { Trash2, Plus, ArrowUp, ArrowDown, Link as LinkIcon, Layers, ChevronRight, ChevronDown, Hash } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
@@ -176,14 +176,14 @@ export function MenuItemEditor({
                 <CardContent className="p-4 space-y-6 animate-in slide-in-from-top-2 duration-200">
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-1 border-r pr-6 space-y-4">
-                            <LocalizedInput
+                            <FormInput
                                 control={control}
                                 name={`${fieldPath}.label`}
                                 label={location === 'footer' && depth === 0 ? "Column Heading" : "Link Title"}
                                 compact
                             />
 
-                            <LocalizedInput
+                            <FormInput
                                 control={control}
                                 name={`${fieldPath}.description`}
                                 label="Description (Optional)"
@@ -266,7 +266,7 @@ export function MenuItemEditor({
                                         )}
                                     />
                                 ) : (
-                                    <LocalizedInput
+                                    <FormInput
                                         control={control}
                                         name={`${fieldPath}.url`}
                                         label="External or Relative URL"

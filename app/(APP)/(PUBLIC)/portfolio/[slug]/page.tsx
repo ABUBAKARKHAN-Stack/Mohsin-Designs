@@ -10,7 +10,6 @@ import { Quote } from "lucide-react"
 
 interface Props {
     params: Promise<{
-        lang: string
         slug: string
     }>
 }
@@ -19,18 +18,15 @@ interface Props {
 export async function generateStaticParams() {
     const slugs = await getProjectSlugs()
 
-    return slugs.flatMap(({ slug }) =>
-        SUPPORTED_LANGS.map((lang) => ({
-            lang,
-            slug,
-        }))
-    )
+    return slugs.map(({ slug }) => ({
+        slug,
+    }))
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { lang, slug } = await params
-    const project = await getProject(lang, slug)
+    const { slug } = await params
+    const project = await getProject(slug)
 
     if (!project) {
         return {
@@ -50,8 +46,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PortfolioDetailsPage({ params }: Props) {
-    const { lang, slug } = await params
-    const project = await getProject(lang, slug)
+    const { slug } = await params
+    const project = await getProject(slug)
 
     if (!project) {
         notFound()
@@ -65,7 +61,6 @@ export default async function PortfolioDetailsPage({ params }: Props) {
                 title={project.title}
                 category={project.category}
                 mainImage={project.mainImage}
-                lang={lang}
             />
 
             <ContainerLayout>

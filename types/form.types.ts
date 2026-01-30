@@ -28,30 +28,22 @@ export interface Project {
     image: SanityImageWithAlt;
 }
 
-export type LocalizedString = {
-    en: string;
-    ur: string;
-    es: string;
-    ar: string;
-    _key?: string;
-};
-
 export type FormField = {
-
     _key?: string;
     fieldType: string;
     fieldName: string;
-    label: LocalizedString;
-    placeholder?: LocalizedString;
+    label: string;
+    placeholder?: string;
     required: boolean;
     validation?: string;
-    options?: { label: LocalizedString; value: string }[];
+    options?: { label: string; value: string }[];
 };
 
 export type FormData = {
     _id: string;
     name: string;
-    submitButtonText: LocalizedString;
-    successMessage: LocalizedString;
+    submitButtonText: string;
+    successMessage: string;
+    redirectUrl?: string;
     fields: FormField[];
 };

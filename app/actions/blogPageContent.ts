@@ -14,6 +14,10 @@ export async function getBlogPageContentForAdmin() {
             blogList {
                 ...,
                 "posts": posts[]._ref
+            },
+            cta {
+                ...,
+                "formReference": formReference._ref
             }
         }`
         const { data } = await sanityFetch({ query })
@@ -38,8 +42,13 @@ export async function getFormOptions() {
 export async function getBlogPageDraft() {
     try {
         const draft = await adminClient.getDocument(`drafts.${BLOG_PAGE_CONTENT_ID}`)
-        if (draft && draft.blogList && Array.isArray(draft.blogList.posts)) {
-            draft.blogList.posts = draft.blogList.posts.map((p: any) => p._ref || p)
+        if (draft) {
+            if (draft.blogList && Array.isArray(draft.blogList.posts)) {
+                draft.blogList.posts = draft.blogList.posts.map((p: any) => p._ref || p)
+            }
+            if (draft.cta && draft.cta.formReference) {
+                draft.cta.formReference = draft.cta.formReference._ref || draft.cta.formReference
+            }
         }
         return draft
     } catch (error: any) {
@@ -100,6 +109,13 @@ export async function saveBlogPageDraft(data: Partial<BlogPageContentValues>) {
             }))
         }
 
+        if (data.cta?.formReference) {
+            updateData.cta.formReference = {
+                _type: 'reference',
+                _ref: data.cta.formReference
+            }
+        }
+
         await adminClient.createOrReplace(updateData)
         return { success: true }
     } catch (error: any) {
@@ -121,7 +137,7 @@ export async function discardBlogPageDraft() {
 
 export async function getBlogFormOptions() {
     try {
-        const query = `*[_type == "post"] { _id, "title": title.en }`
+        const query = `*[_type == "post"] { _id, title }`
         const posts = await adminClient.fetch(query)
         return posts || []
     } catch (error) {

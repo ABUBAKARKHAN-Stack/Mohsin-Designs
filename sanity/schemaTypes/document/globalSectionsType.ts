@@ -13,7 +13,7 @@ export const globalSectionsType = defineType({
             title: 'Stats Section',
             type: 'object',
             fields: [
-                 defineField({
+                defineField({
                     name: 'since',
                     title: 'Since',
                     type: 'object',
@@ -95,8 +95,8 @@ export const globalSectionsType = defineType({
                 defineField({
                     name: 'buttonUrl',
                     title: 'CTA Button URL (Optional)',
-                    type: 'localizedString', // Using localizedString to match 'faqs' schema pattern in this file
-                    description: 'e.g. /services'
+                    type: 'localizedString',
+                    description: 'Enter a relative path (e.g., /services) or a full URL (e.g., https://example.com)'
                 })
             ]
         }),
@@ -326,7 +326,7 @@ export const globalSectionsType = defineType({
                     name: 'buttonUrl',
                     title: 'CTA Button URL (Optional)',
                     type: 'localizedString',
-                    description: 'Leave empty to use default /contact URL'
+                    description: 'Enter a relative path (e.g., /contact) or a full URL (e.g., https://example.com). Leave empty to use default /contact URL'
                 })
             ]
         }),
@@ -389,7 +389,8 @@ export const globalSectionsType = defineType({
                                     defineField({
                                         name: 'url',
                                         title: 'URL',
-                                        type: 'url',
+                                        type: 'string',
+                                        description: 'Enter a relative path (e.g., /contact) or a full URL (e.g., https://example.com)',
                                         validation: Rule => Rule.required()
                                     })
                                 ],

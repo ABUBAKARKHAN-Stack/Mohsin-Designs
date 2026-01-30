@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { IconSelect } from "@/components/admin/form/IconSelect"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SeoFormTab } from "./SeoFormTab"
@@ -159,9 +159,9 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                         <Card>
                             <CardHeader><CardTitle>Hero Section</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="hero.title" label="Title" />
-                                <LocalizedInput control={formControl} name="hero.subtitle" label="Subtitle" />
-                                <LocalizedInput control={formControl} name="hero.description" label="Description" isTextarea />
+                                <FormInput control={formControl} name="hero.title" label="Title" />
+                                <FormInput control={formControl} name="hero.subtitle" label="Subtitle" />
+                                <FormInput control={formControl} name="hero.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -170,10 +170,10 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                         <Card>
                             <CardHeader><CardTitle>Introduction Section</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="intro.badgeText" label="Badge Text" />
-                                <LocalizedInput control={formControl} name="intro.heading" label="Main Heading" />
-                                <LocalizedInput control={formControl} name="intro.headingAccent" label="Heading Accent (Highlighted)" />
-                                <LocalizedInput control={formControl} name="intro.description" label="Description" isTextarea />
+                                <FormInput control={formControl} name="intro.badgeText" label="Badge Text" />
+                                <FormInput control={formControl} name="intro.heading" label="Main Heading" />
+                                <FormInput control={formControl} name="intro.headingAccent" label="Heading Accent (Highlighted)" />
+                                <FormInput control={formControl} name="intro.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -182,9 +182,9 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                         <Card>
                             <CardHeader><CardTitle>Section Heading</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="process.sectionHeading.eyebrow" label="Eyebrow Text" />
-                                <LocalizedInput control={formControl} name="process.sectionHeading.title" label="Title" />
-                                <LocalizedInput control={formControl} name="process.sectionHeading.description" label="Description" isTextarea />
+                                <FormInput control={formControl} name="process.sectionHeading.eyebrow" label="Eyebrow Text" />
+                                <FormInput control={formControl} name="process.sectionHeading.title" label="Title" />
+                                <FormInput control={formControl} name="process.sectionHeading.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
                         <Card>
@@ -203,9 +203,9 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`process.steps.${index}.title`} label="Title" />
-                                        <LocalizedInput control={formControl} name={`process.steps.${index}.description`} label="Description" isTextarea />
-                                        <LocalizedInput control={formControl} name={`process.steps.${index}.duration`} label="Duration" />
+                                        <FormInput control={formControl} name={`process.steps.${index}.title`} label="Title" />
+                                        <FormInput control={formControl} name={`process.steps.${index}.description`} label="Description" isTextarea />
+                                        <FormInput control={formControl} name={`process.steps.${index}.duration`} label="Duration" />
                                         <FormField control={formControl} name={`process.steps.${index}.iconName`} render={({ field }) => <IconSelect field={field} type="process" label="Icon" />} />
                                     </div>
                                 ))}
@@ -217,9 +217,9 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                         <Card>
                             <CardHeader><CardTitle>Section Heading</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="whyChooseUs.sectionHeading.eyebrow" label="Eyebrow Text" />
-                                <LocalizedInput control={formControl} name="whyChooseUs.sectionHeading.title" label="Title" />
-                                <LocalizedInput control={formControl} name="whyChooseUs.sectionHeading.description" label="Description" isTextarea />
+                                <FormInput control={formControl} name="whyChooseUs.sectionHeading.eyebrow" label="Eyebrow Text" />
+                                <FormInput control={formControl} name="whyChooseUs.sectionHeading.title" label="Title" />
+                                <FormInput control={formControl} name="whyChooseUs.sectionHeading.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
                         <Card>
@@ -238,7 +238,7 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`whyChooseUs.guaranteePoints.${index}`} label="Guarantee Statement" />
+                                        <FormInput control={formControl} name={`whyChooseUs.guaranteePoints.${index}`} label="Guarantee Statement" />
                                     </div>
                                 ))}
                             </CardContent>
@@ -259,8 +259,8 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`whyChooseUs.benefits.${index}.title`} label="Title" />
-                                        <LocalizedInput control={formControl} name={`whyChooseUs.benefits.${index}.description`} label="Description" isTextarea />
+                                        <FormInput control={formControl} name={`whyChooseUs.benefits.${index}.title`} label="Title" />
+                                        <FormInput control={formControl} name={`whyChooseUs.benefits.${index}.description`} label="Description" isTextarea />
                                         <FormField control={formControl} name={`whyChooseUs.benefits.${index}.iconName`} render={({ field }) => <IconSelect field={field} type="benefit" label="Icon" />} />
                                     </div>
                                 ))}

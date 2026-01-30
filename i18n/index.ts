@@ -1,22 +1,15 @@
 import en from "./en";
-import es from "./es";
-import ur from "./ur";
-import ar from "./ar";
 
 const dictionaries: Record<string, any> = {
-  en,
-  es,
-  ur,
-  ar
+  en
 };
 
 export function uiT(
-  lang: string,
-  key: string,
-  fallback = "en"
+  lang: string | null | undefined, // Keeping signature for minimal breakage during transition
+  key: string
 ) {
   const keys = key.split(".");
-  let value = dictionaries[lang] || dictionaries[fallback];
+  let value = dictionaries.en;
 
   for (const k of keys) {
     value = value?.[k];

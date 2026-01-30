@@ -1,65 +1,65 @@
 import { sanityFetch } from "@/sanity/lib/live";
 
-const SITE_SETTINGS_QUERY_BY_LOCALE = `{
-  "siteName": siteName[$lang],
-  "tagline": tagline[$lang],
+const SITE_SETTINGS_QUERY = `{
+  "siteName": siteName,
+  "tagline": tagline,
   "logo": logo.asset->{
     _id,
     url,
-    "altText": altText[$lang]
+    "altText": altText
   },
   "favicon": favicon.asset->{
     _id,
     url,
-    "altText": altText[$lang]
+    "altText": altText
   },
   "seo": {
-    "metaTitle": seo.metaTitle[$lang],
-    "metaDescription": seo.metaDescription[$lang],
-    "focusKeyword": seo.focusKeyword[$lang],
-    "relatedKeywords": seo.relatedKeywords[][$lang],
+    "metaTitle": seo.metaTitle,
+    "metaDescription": seo.metaDescription,
+    "focusKeyword": seo.focusKeyword,
+    "relatedKeywords": seo.relatedKeywords[],
     "schemas": seo.schemas
   },
   "social": social,
   "contact": {
     "email": contact.email,
     "phone": contact.phone,
-    "address": contact.address[$lang]
+    "address": contact.address
   },
-  "footerText": footerText[$lang],
-  "copyright": copyright[$lang],
+  "footerText": footerText,
+  "copyright": copyright,
   "headerMenu": headerMenu-> {
     "title": title,
     "slug": slug.current,
     "items": items[] {
-      "label": label[$lang],
-      "description": description[$lang],
+      "label": label,
+      "description": description,
       type,
-      "url": url[$lang],
+      "url": url,
       "reference": reference-> {
         _type,
-        "title": title[$lang],
-        "items": items[][$lang],
+        "title": title,
+        "items": items[],
         "slug": slug.current
       },
       "children": children[] {
-        "label": label[$lang],
-        "description": description[$lang],
+        "label": label,
+        "description": description,
         type,
-        "url": url[$lang],
+        "url": url,
         "reference": reference-> {
           _type,
-          "title": title[$lang],
+          "title": title,
           "slug": slug.current
         },
         "children": children[] {
-          "label": label[$lang],
-          "description": description[$lang],
+          "label": label,
+          "description": description,
           type,
-          "url": url[$lang],
+          "url": url,
           "reference": reference-> {
             _type,
-            "title": title[$lang],
+            "title": title,
             "slug": slug.current
           }
         }
@@ -70,33 +70,33 @@ const SITE_SETTINGS_QUERY_BY_LOCALE = `{
     "title": title,
     "slug": slug.current,
     "items": items[] {
-      "label": label[$lang],
-      "description": description[$lang],
+      "label": label,
+      "description": description,
       type,
-      "url": url[$lang],
+      "url": url,
       "reference": reference-> {
         _type,
-        "title": title[$lang],
+        "title": title,
         "slug": slug.current
       },
       "children": children[] {
-        "label": label[$lang],
-        "description": description[$lang],
+        "label": label,
+        "description": description,
         type,
-        "url": url[$lang],
+        "url": url,
         "reference": reference-> {
           _type,
-          "title": title[$lang],
+          "title": title,
           "slug": slug.current
         },
         "children": children[] {
-          "label": label[$lang],
-          "description": description[$lang],
+          "label": label,
+          "description": description,
           type,
-          "url": url[$lang],
+          "url": url,
           "reference": reference-> {
             _type,
-            "title": title[$lang],
+            "title": title,
             "slug": slug.current
           }
         }
@@ -159,13 +159,10 @@ export type SiteSettingsData = {
   footerMenu?: MenuData;
 };
 
-export const getSiteSettingsByLocale = async (lang: string) => {
+export const getSiteSettings = async () => {
   try {
     const { data } = await sanityFetch({
-      query: `*[_type == "siteSettings"][0] ${SITE_SETTINGS_QUERY_BY_LOCALE}`,
-      params: {
-        lang
-      },
+      query: `*[_type == "siteSettings"][0] ${SITE_SETTINGS_QUERY}`,
       perspective: "published"
     })
     const settings = data as SiteSettingsData;

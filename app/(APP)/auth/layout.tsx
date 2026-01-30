@@ -1,13 +1,13 @@
 import { SiteSettingsProvider } from '@/context/SiteSettingsContext'
 import { getServerSession } from '@/helpers/getServerSession'
-import { getSiteSettingsByLocale } from '@/helpers/site-settings.helpers'
+import { getSiteSettings } from '@/helpers/site-settings.helpers'
 import PublicProvider from '@/provider/PublicProvider'
 import { redirect } from 'next/navigation'
 import { ReactNode } from 'react'
 
 
 const AuthLayout = async ({ children }: { children: ReactNode }) => {
-    const siteSettings = await getSiteSettingsByLocale("en")
+    const siteSettings = await getSiteSettings()
     const session = await getServerSession()
 
     if (session) {

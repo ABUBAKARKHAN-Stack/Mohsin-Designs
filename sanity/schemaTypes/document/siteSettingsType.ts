@@ -55,10 +55,10 @@ export const siteSettings = defineType({
       type: "object",
       validation: Rule => Rule.required(),
       fields: [
-        defineField({ name: "facebook", type: "url", validation: Rule => Rule.required() }),
-        defineField({ name: "twitter", type: "url", validation: Rule => Rule.required() }),
-        defineField({ name: "linkedin", type: "url", validation: Rule => Rule.required() }),
-        defineField({ name: "instagram", type: "url", validation: Rule => Rule.required() }),
+        defineField({ name: "facebook", type: "string", validation: Rule => Rule.required() }),
+        defineField({ name: "twitter", type: "string", validation: Rule => Rule.required() }),
+        defineField({ name: "linkedin", type: "string", validation: Rule => Rule.required() }),
+        defineField({ name: "instagram", type: "string", validation: Rule => Rule.required() }),
 
       ],
     }),

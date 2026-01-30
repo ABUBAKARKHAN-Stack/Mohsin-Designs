@@ -4,44 +4,44 @@ import { PortfolioPageContentData } from "@/types/form.types";
 
 export const PORTFOLIO_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "portfolioPageContent"][0] {
   "hero": {
-    "title": hero.title[$lang],
-    "subtitle": hero.subtitle[$lang],
-    "description": hero.description[$lang]
+    "title": hero.title,
+    "subtitle": hero.subtitle,
+    "description": hero.description
   },
   "portfolioList": {
     "projects": portfolioList.projects[]->{
       _id,
-      "title": title[$lang],
+      "title": title,
       "slug": slug.current,
-      "category": category[$lang],
+      "category": category,
       "image": mainImage.asset->{
         _id,
         url,
-        "altText": altText[$lang]
+        "altText": altText
       },
-      "description": description[$lang]
+      "description": description
     }
   },
   "cta": {
     "sectionHeading": {
-      "eyebrow": cta.sectionHeading.eyebrow[$lang],
-      "title": cta.sectionHeading.title[$lang],
-      "description": cta.sectionHeading.description[$lang]
+      "eyebrow": cta.sectionHeading.eyebrow,
+      "title": cta.sectionHeading.title,
+      "description": cta.sectionHeading.description
     },
     "form": cta.formReference->{
       _id,
       name,
-      "submitButtonText": submitButtonText[$lang],
-      "successMessage": successMessage[$lang],
+      "submitButtonText": submitButtonText,
+      "successMessage": successMessage,
       fields[]{
         fieldType,
         fieldName,
-        "label": label[$lang],
-        "placeholder": placeholder[$lang],
+        "label": label,
+        "placeholder": placeholder,
         required,
         validation,
         options[]{
-          "label": label[$lang],
+          "label": label,
           value
         }
       }
@@ -49,11 +49,10 @@ export const PORTFOLIO_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "portfolioPa
   }
 }`);
 
-export async function getPortfolioPageContent(lang: string) {
+export async function getPortfolioPageContent() {
   try {
     const { data } = await sanityFetch({
       query: PORTFOLIO_PAGE_CONTENT_QUERY,
-      params: { lang },
       perspective: "published"
     });
     return data as PortfolioPageContentData;

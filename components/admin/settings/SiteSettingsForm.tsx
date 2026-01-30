@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Spinner } from "@/components/ui/spinner"
@@ -180,8 +180,8 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Site Identity</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="siteName" label="Site Name" />
-                                <LocalizedInput control={formControl} name="tagline" label="Tagline" />
+                                <FormInput control={formControl} name="siteName" label="Site Name" />
+                                <FormInput control={formControl} name="tagline" label="Tagline" />
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <ImageUpload
@@ -232,9 +232,9 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Default SEO Settings</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="seo.metaTitle" label="Default Meta Title" />
-                                <LocalizedInput control={formControl} name="seo.metaDescription" label="Default Meta Description" isTextarea />
-                                <LocalizedInput control={formControl} name="seo.focusKeyword" label="Focus Keyword" />
+                                <FormInput control={formControl} name="seo.metaTitle" label="Default Meta Title" />
+                                <FormInput control={formControl} name="seo.metaDescription" label="Default Meta Description" isTextarea />
+                                <FormInput control={formControl} name="seo.focusKeyword" label="Focus Keyword" />
                                 <CommaKeywordsInput name="seo.relatedKeywords" label="Related Keywords" />
                                 <SchemaListInput name="seo.schemas" label="Default Schema Markups (JSON-LD)" />
                             </CardContent>
@@ -275,7 +275,7 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                         )}
                                     />
                                 </div>
-                                <LocalizedInput control={formControl} name="contact.address" label="Office Address" isTextarea />
+                                <FormInput control={formControl} name="contact.address" label="Office Address" isTextarea />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -350,8 +350,8 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Footer & Legal</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="footerText" label="Footer About Text" isTextarea />
-                                <LocalizedInput control={formControl} name="copyright" label="Copyright Notice" />
+                                <FormInput control={formControl} name="footerText" label="Footer About Text" isTextarea />
+                                <FormInput control={formControl} name="copyright" label="Copyright Notice" />
                             </CardContent>
                         </Card>
                     </TabsContent>

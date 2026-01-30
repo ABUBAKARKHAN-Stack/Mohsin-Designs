@@ -24,7 +24,7 @@ import { useParams } from "next/navigation";
 import { uiT } from "@/i18n";
 
 const CTA = () => {
-  const { lang }: any = useParams();
+  useParams();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -88,7 +88,7 @@ const CTA = () => {
   const onSubmit = async (data: any) => {
     try {
       if (dynamicForm) {
-        const result = await submitDynamicForm(dynamicForm._id, data, lang);
+        const result = await submitDynamicForm(dynamicForm._id, data);
 
         if (result.success) {
           successToast(result.message || "Form submitted successfully!");
@@ -180,7 +180,7 @@ const CTA = () => {
                 <span className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
                   <Send className="w-5 h-5 text-accent-foreground" />
                 </span>
-                {uiT(lang, "common.sendUsMessage")}
+                {uiT('en', "common.sendUsMessage")}
               </h3>
 
               {isLoadingForm ? (
@@ -201,13 +201,13 @@ const CTA = () => {
                             render={({ field: rField, fieldState }) => (
                               <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel htmlFor={field.fieldName}>
-                                  {field.label[lang] || field.label.en} {field.required && "*"}
+                                  {field.label} {field.required && "*"}
                                 </FieldLabel>
                                 {field.fieldType === 'textarea' ? (
                                   <Textarea
                                     {...rField}
                                     id={field.fieldName}
-                                    placeholder={field.placeholder?.[lang] || field.placeholder?.en}
+                                    placeholder={field.placeholder}
                                     className={cn(fieldBaseClass, "resize-none")}
                                   />
                                 ) : (
@@ -215,7 +215,7 @@ const CTA = () => {
                                     {...rField}
                                     id={field.fieldName}
                                     type={field.fieldType === 'email' ? 'email' : 'text'}
-                                    placeholder={field.placeholder?.[lang] || field.placeholder?.en}
+                                    placeholder={field.placeholder}
                                     className={fieldBaseClass}
                                     autoComplete="off"
                                   />
@@ -335,7 +335,7 @@ const CTA = () => {
                         <Spinner className="size-4.5!" />
                       ) : (
                         <>
-                          {(dynamicForm?.submitButtonText && (dynamicForm.submitButtonText[lang] || dynamicForm.submitButtonText.en)) || "Start Your Project"}
+                          {dynamicForm?.submitButtonText || "Start Your Project"}
                           <Send className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                         </>
                       )}

@@ -11,10 +11,9 @@ interface PortfolioHeroProps {
         url: string
         alt?: string
     }
-    lang: string
 }
 
-export const PortfolioHero: React.FC<PortfolioHeroProps> = ({ title, category, mainImage, lang }) => {
+export const PortfolioHero: React.FC<PortfolioHeroProps> = ({ title, category, mainImage }) => {
     return (
         <section className="relative pt-32 pb-16 overflow-hidden bg-background">
             <ContainerLayout>
@@ -23,7 +22,7 @@ export const PortfolioHero: React.FC<PortfolioHeroProps> = ({ title, category, m
                         <BreadcrumbList>
                             <BreadcrumbItem>
                                 <BreadcrumbLink asChild>
-                                    <Link href={`/${lang}/portfolio`}>Portfolio</Link>
+                                    <Link href={`/portfolio`}>Portfolio</Link>
                                 </BreadcrumbLink>
                             </BreadcrumbItem>
                             <BreadcrumbSeparator />

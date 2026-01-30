@@ -3,49 +3,48 @@ import { defineQuery } from "next-sanity";
 
 export const SERVICES_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "servicesPageContent"][0] {
   "hero": {
-    "title": hero.title[$lang],
-    "subtitle": hero.subtitle[$lang],
-    "description": hero.description[$lang]
+    "title": hero.title,
+    "subtitle": hero.subtitle,
+    "description": hero.description
   },
   "intro": {
-    "badgeText": intro.badgeText[$lang],
-    "heading": intro.heading[$lang],
-    "headingAccent": intro.headingAccent[$lang],
-    "description": intro.description[$lang]
+    "badgeText": intro.badgeText,
+    "heading": intro.heading,
+    "headingAccent": intro.headingAccent,
+    "description": intro.description
   },
   "process": {
     "sectionHeading": {
-      "eyebrow": process.sectionHeading.eyebrow[$lang],
-      "title": process.sectionHeading.title[$lang],
-      "description": process.sectionHeading.description[$lang]
+      "eyebrow": process.sectionHeading.eyebrow,
+      "title": process.sectionHeading.title,
+      "description": process.sectionHeading.description
     },
     "steps": process.steps[]{
-      "title": title[$lang],
-      "description": description[$lang],
-      "duration": duration[$lang],
+      "title": title,
+      "description": description,
+      "duration": duration,
       iconName
     }
   },
   "whyChooseUs": {
     "sectionHeading": {
-      "eyebrow": whyChooseUs.sectionHeading.eyebrow[$lang],
-      "title": whyChooseUs.sectionHeading.title[$lang],
-      "description": whyChooseUs.sectionHeading.description[$lang]
+      "eyebrow": whyChooseUs.sectionHeading.eyebrow,
+      "title": whyChooseUs.sectionHeading.title,
+      "description": whyChooseUs.sectionHeading.description
     },
-    "guaranteePoints": whyChooseUs.guaranteePoints[][$lang],
+    "guaranteePoints": whyChooseUs.guaranteePoints[],
     "benefits": whyChooseUs.benefits[]{
-      "title": title[$lang],
-      "description": description[$lang],
+      "title": title,
+      "description": description,
       iconName
     }
   }
 }`);
 
-export async function getServicesPageContent(lang: string) {
+export async function getServicesPageContent() {
   try {
     const { data } = await sanityFetch({
       query: SERVICES_PAGE_CONTENT_QUERY,
-      params: { lang },
       perspective: "published"
     });
     return data;

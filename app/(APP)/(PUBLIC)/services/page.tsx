@@ -16,19 +16,10 @@ export const metadata: Metadata = {
     title: "Our Services"
 }
 
-type Props = {
-    params: Promise<LanguageType>
-}
-
-const ServicesPage = async ({
-    params
-}: Props) => {
-
-    const { lang } = await params;
-  
+const ServicesPage = async () => {
     const [ctaResult, pageContentResult] = await Promise.allSettled([
-        getServicesCTA(lang),
-        getServicesPageContent(lang)
+        getServicesCTA(),
+        getServicesPageContent()
     ]);
 
 

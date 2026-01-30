@@ -7,17 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, GripVertical } from "lucide-react";
-import { ControlledLocalizedInput } from "./ControlledLocalizedInput";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FormField, LocalizedString } from "@/types/form.types";
+import { Textarea } from "@/components/ui/textarea";
+import { FormField } from "@/types/form.types";
 
 type FormEditorProps = {
     fields: FormField[];
     onChange: (fields: FormField[]) => void;
-    submitButtonText: LocalizedString;
-    onSubmitButtonTextChange: (text: LocalizedString) => void;
-    successMessage: LocalizedString;
-    onSuccessMessageChange: (message: LocalizedString) => void;
+    submitButtonText: string;
+    onSubmitButtonTextChange: (text: string) => void;
+    successMessage: string;
+    onSuccessMessageChange: (message: string) => void;
+    redirectUrl: string;
+    onRedirectUrlChange: (url: string) => void;
 };
 
 export function FormEditor({
@@ -26,7 +28,9 @@ export function FormEditor({
     submitButtonText,
     onSubmitButtonTextChange,
     successMessage,
-    onSuccessMessageChange
+    onSuccessMessageChange,
+    redirectUrl,
+    onRedirectUrlChange
 }: FormEditorProps) {
     const [expandedField, setExpandedField] = useState<number | null>(null);
 
@@ -35,8 +39,8 @@ export function FormEditor({
             _key: `field_${Date.now()}`,
             fieldType: "text",
             fieldName: "",
-            label: { en: "", ur: "", es: "", ar: "" },
-            placeholder: { en: "", ur: "", es: "", ar: "" },
+            label: "",
+            placeholder: "",
             required: false
         };
         onChange([...fields, newField]);
@@ -91,7 +95,7 @@ export function FormEditor({
                                     <div className="flex items-center gap-2">
                                         <GripVertical className="w-4 h-4 text-muted-foreground cursor-move" />
                                         <h4 className="font-medium">
-                                            {field.label?.en || `Field ${index + 1}`}
+                                            {field.label || `Field ${index + 1}`}
                                         </h4>
                                         <span className="text-sm text-muted-foreground">
                                             ({field.fieldType})
@@ -148,19 +152,23 @@ export function FormEditor({
                                             </div>
                                         </div>
 
-                                        <ControlledLocalizedInput
-                                            name={`field-${index}-label`}
-                                            label="Label"
-                                            value={field.label}
-                                            onChange={(value) => updateField(index, { label: value })}
-                                        />
+                                        <div className="space-y-2">
+                                            <Label>Label</Label>
+                                            <Input
+                                                value={field.label}
+                                                onChange={(e) => updateField(index, { label: e.target.value })}
+                                                placeholder="Field Label"
+                                            />
+                                        </div>
 
-                                        <ControlledLocalizedInput
-                                            name={`field-${index}-placeholder`}
-                                            label="Placeholder"
-                                            value={field.placeholder}
-                                            onChange={(value) => updateField(index, { placeholder: value })}
-                                        />
+                                        <div className="space-y-2">
+                                            <Label>Placeholder</Label>
+                                            <Input
+                                                value={field.placeholder}
+                                                onChange={(e) => updateField(index, { placeholder: e.target.value })}
+                                                placeholder="Field Placeholder"
+                                            />
+                                        </div>
 
                                         <div className="flex items-center space-x-2">
                                             <Checkbox
@@ -183,19 +191,29 @@ export function FormEditor({
                     <CardTitle>Form Settings</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <ControlledLocalizedInput
-                        name="submitButtonText"
-                        label="Submit Button Text"
-                        value={submitButtonText}
-                        onChange={onSubmitButtonTextChange}
-                    />
-                    <ControlledLocalizedInput
-                        name="successMessage"
-                        label="Success Message"
-                        value={successMessage}
-                        onChange={onSuccessMessageChange}
-                        isTextarea
-                    />
+                    <div className="space-y-2">
+                        <Label>Submit Button Text</Label>
+                        <Input
+                            value={submitButtonText}
+                            onChange={(e) => onSubmitButtonTextChange(e.target.value)}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Success Message</Label>
+                        <Textarea
+                            value={successMessage}
+                            onChange={(e) => onSuccessMessageChange(e.target.value)}
+                            rows={3}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Redirect URL (Optional)</Label>
+                        <Input
+                            value={redirectUrl}
+                            onChange={(e) => onRedirectUrlChange(e.target.value)}
+                            placeholder="e.g., /thanks or https://example.com"
+                        />
+                    </div>
                 </CardContent>
             </Card>
         </div>

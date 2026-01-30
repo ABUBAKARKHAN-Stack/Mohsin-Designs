@@ -9,7 +9,7 @@ import { SUPPORTED_LANGS } from "@/constants/lang";
 import { ServicesProvider } from "@/context/ServiceContext";
 import { getLightWeightServicesByLocale, getServicesByLocale } from "@/helpers/service.helpers";
 import { SanityLive } from "@/sanity/lib/live";
-import { getSiteSettingsByLocale } from "@/helpers/site-settings.helpers";
+import { getSiteSettings } from "@/helpers/site-settings.helpers";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import { LandingPageContentProvider } from "@/context/LandingPageContentContext";
 import { getLandingPageContent } from "@/helpers/landing-page-content.helpers";
@@ -22,27 +22,25 @@ import { getGlobalSections } from "@/helpers/global-sections.helpers";
 
 interface Props {
     children: ReactNode;
-    params: Promise<LanguageType>
 }
 
-export default async function LangLayout({ children, params }: Props) {
-    const {
-        lang
-    } = await params
-
-    if (!SUPPORTED_LANGS.includes(lang as any)) {
-        redirect("/en");
-    }
+export default async function PublicLayout({ children }: Props) {
 
 
-
-    const [servicesResult, lightWeightServicesResult, siteSettingsResult, landingPageContentResult, aboutPageContentResult, globalContentResult] = await Promise.allSettled([
-        getServicesByLocale(lang),
-        getLightWeightServicesByLocale(lang),
-        getSiteSettingsByLocale(lang),
-        getLandingPageContent(lang),
-        getAboutPageContent(lang),
-        getGlobalSections(lang),
+    const [
+        servicesResult,
+        lightWeightServicesResult,
+        siteSettingsResult,
+        landingPageContentResult,
+        aboutPageContentResult,
+        globalContentResult
+    ] = await Promise.allSettled([
+        getServicesByLocale(),
+        getLightWeightServicesByLocale(),
+        getSiteSettings(),
+        getLandingPageContent(),
+        getAboutPageContent(),
+        getGlobalSections(),
     ])
 
     const services = servicesResult.status === "fulfilled" ? servicesResult.value : [];
@@ -61,12 +59,12 @@ export default async function LangLayout({ children, params }: Props) {
                     <GlobalContentProvider globalContent={globalContent}>
                         <JsonLd schemas={siteSettings?.seo?.schemas} />
                         <PublicProvider>
-                            <div lang={lang} className="min-h-screen flex flex-col">
+                            <div className="min-h-screen flex flex-col">
                                 <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
                                     <SanityLive />
                                     <Navbar />
 
-                                    <main dir={lang === "ur" || lang === "ar" ? "rtl" : "ltr"} className="flex-1 pt-20">
+                                    <main className="flex-1 pt-20">
                                         <AnimatePresence mode="wait">
                                             {children}
                                         </AnimatePresence>

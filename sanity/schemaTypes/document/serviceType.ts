@@ -40,7 +40,7 @@ export const serviceType = defineType({
             options: { hotspot: true },
             fields: [
                 defineField({
-                    name: 'alt',
+                    name: 'heroImageAlt',
                     type: 'localizedString',
                     title: 'Alternative text',
                     validation: Rule => Rule.required(),

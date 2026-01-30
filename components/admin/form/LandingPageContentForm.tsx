@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { BulkImageUpload } from "@/components/admin/form/BulkImageUpload"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -282,7 +282,7 @@ export function LandingPageContentForm({
                         <Card>
                             <CardHeader><CardTitle>Hero Section</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="hero.badge" label="Badge Text" />
+                                <FormInput control={formControl} name="hero.badge" label="Badge Text" />
 
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
@@ -299,7 +299,7 @@ export function LandingPageContentForm({
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.headingLines.${index}.text`} label="Text" />
+                                            <FormInput control={formControl} name={`hero.headingLines.${index}.text`} label="Text" />
                                             <FormField control={formControl} name={`hero.headingLines.${index}.style`} render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Style</FormLabel>
@@ -333,7 +333,7 @@ export function LandingPageContentForm({
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.descriptionParagraphs.${index}.text`} label="Text" isTextarea />
+                                            <FormInput control={formControl} name={`hero.descriptionParagraphs.${index}.text`} label="Text" isTextarea />
                                         </div>
                                     ))}
                                 </div>
@@ -353,8 +353,8 @@ export function LandingPageContentForm({
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.ctaButtons.${index}.text`} label="Text" />
-                                            <LocalizedInput control={formControl} name={`hero.ctaButtons.${index}.url`} label="URL" isUrl />
+                                            <FormInput control={formControl} name={`hero.ctaButtons.${index}.text`} label="Text" />
+                                            <FormInput control={formControl} name={`hero.ctaButtons.${index}.url`} label="URL"  />
                                             <FormField control={formControl} name={`hero.ctaButtons.${index}.variant`} render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Variant</FormLabel>
@@ -405,7 +405,7 @@ export function LandingPageContentForm({
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`serviceHighlightsMarquee.highlights.${index}.text`} label="Text" />
+                                        <FormInput control={formControl} name={`serviceHighlightsMarquee.highlights.${index}.text`} label="Text" />
                                     </div>
                                 ))}
                             </CardContent>
@@ -446,7 +446,7 @@ export function LandingPageContentForm({
                                         <div className="flex justify-between">
                                             <span className="font-medium">Paragraph {index + 1}</span>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`aboutPreview.leftDescriptions.${index}.text`} label="Text" isTextarea />
+                                        <FormInput control={formControl} name={`aboutPreview.leftDescriptions.${index}.text`} label="Text" isTextarea />
                                     </div>
                                 ))}
                             </CardContent>
@@ -463,7 +463,7 @@ export function LandingPageContentForm({
                                         <div className="flex justify-between">
                                             <span className="font-medium">Paragraph {index + 1}</span>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`aboutPreview.rightDescriptions.${index}.text`} label="Text" isTextarea />
+                                        <FormInput control={formControl} name={`aboutPreview.rightDescriptions.${index}.text`} label="Text" isTextarea />
                                     </div>
                                 ))}
                             </CardContent>
@@ -473,8 +473,8 @@ export function LandingPageContentForm({
                         <Card>
                             <CardHeader><CardTitle>Call to Action</CardTitle></CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="aboutPreview.ctaText" label="Button Text" />
-                                <LocalizedInput control={formControl} name="aboutPreview.ctaUrl" label="Button URL" isUrl />
+                                <FormInput control={formControl} name="aboutPreview.ctaText" label="Button Text" />
+                                <FormInput control={formControl} name="aboutPreview.ctaUrl" label="Button URL" />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -501,8 +501,8 @@ export function LandingPageContentForm({
                                 <div className="grid gap-4 pt-4 border-t">
                                     <h4 className="font-medium text-sm">Call to Action Button</h4>
                                     <div className="grid sm:grid-cols-2 gap-4">
-                                        <LocalizedInput control={formControl} name="portfolioPreview.buttonText" label="Button Text" />
-                                        <LocalizedInput control={formControl} name="portfolioPreview.buttonUrl" label="Button URL" isUrl />
+                                        <FormInput control={formControl} name="portfolioPreview.buttonText" label="Button Text" />
+                                        <FormInput control={formControl} name="portfolioPreview.buttonUrl" label="Button URL"  />
                                     </div>
                                 </div>
                             </CardContent>
@@ -530,8 +530,8 @@ export function LandingPageContentForm({
                                 <div className="grid gap-4 pt-4 border-t">
                                     <h4 className="font-medium text-sm">Call to Action Button</h4>
                                     <div className="grid sm:grid-cols-2 gap-4">
-                                        <LocalizedInput control={formControl} name="caseStudiesPreview.buttonText" label="Button Text" />
-                                        <LocalizedInput control={formControl} name="caseStudiesPreview.buttonUrl" label="Button URL" isUrl />
+                                        <FormInput control={formControl} name="caseStudiesPreview.buttonText" label="Button Text" />
+                                        <FormInput control={formControl} name="caseStudiesPreview.buttonUrl" label="Button URL"  />
                                     </div>
                                 </div>
                             </CardContent>
@@ -564,7 +564,7 @@ export function LandingPageContentForm({
                                             </Button>
                                         </div>
 
-                                        <LocalizedInput control={formControl} name={`areasWeServe.areas.${index}.region`} label="Region Name" />
+                                        <FormInput control={formControl} name={`areasWeServe.areas.${index}.region`} label="Region Name" />
 
                                         <FormField control={formControl} name={`areasWeServe.areas.${index}.flag`} render={({ field }) => (
                                             <FormItem>
@@ -626,10 +626,10 @@ export function LandingPageContentForm({
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.quote`} label="Quote" isTextarea />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.author`} label="Author" />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.role`} label="Role" />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.company`} label="Company" />
+                                        <FormInput control={formControl} name={`testimonials.testimonials.${index}.quote`} label="Quote" isTextarea />
+                                        <FormInput control={formControl} name={`testimonials.testimonials.${index}.author`} label="Author" />
+                                        <FormInput control={formControl} name={`testimonials.testimonials.${index}.role`} label="Role" />
+                                        <FormInput control={formControl} name={`testimonials.testimonials.${index}.company`} label="Company" />
 
                                         <div className="space-y-2">
                                             <FormLabel>Avatar Image</FormLabel>
@@ -687,8 +687,8 @@ export function LandingPageContentForm({
                                 <div className="grid gap-4 pt-4 border-t">
                                     <h4 className="font-medium text-sm">Call to Action Button</h4>
                                     <div className="grid sm:grid-cols-2 gap-4">
-                                        <LocalizedInput control={formControl} name="blogPreview.buttonText" placeholder="Button Text" label="Button Text" />
-                                        <LocalizedInput control={formControl} name="blogPreview.buttonUrl" label="Button URL" />
+                                        <FormInput control={formControl} name="blogPreview.buttonText" placeholder="Button Text" label="Button Text" />
+                                        <FormInput control={formControl} name="blogPreview.buttonUrl" label="Button URL" />
                                     </div>
                                 </div>
                             </CardContent>
@@ -728,7 +728,7 @@ function NestedLocationsField({ control, areaIndex }: { control: any; areaIndex:
             {fields.map((field, index) => (
                 <div key={field.id} className="flex gap-2 items-start">
                     <div className="flex-1">
-                        <LocalizedInput
+                        <FormInput
                             control={control}
                             name={`areasWeServe.areas.${areaIndex}.locations.${index}`}
                             label={`Location ${index + 1}`}

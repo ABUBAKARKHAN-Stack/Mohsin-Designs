@@ -9,15 +9,15 @@ export const requiredLocalizedArraySchema = z.array(z.string()).min(1, "At least
 
 export const sectionHeadingSchema = z.object({
     _key: z.string().optional(),
-    eyebrow: localizedStringSchema.optional(),
-    title: requiredLocalizedStringSchema,
-    description: localizedTextSchema.optional(),
+    eyebrow: z.string().optional(),
+    title: z.string().min(1, "Required"),
+    description: z.string().optional(),
 });
 
 export const seoSchema = z.object({
-    metaTitle: localizedStringSchema.optional(),
-    metaDescription: localizedTextSchema.optional(),
-    focusKeyword: localizedStringSchema.optional(),
-    relatedKeywords: localizedArraySchema.optional(),
+    metaTitle: z.string().optional(),
+    metaDescription: z.string().optional(),
+    focusKeyword: z.string().optional(),
+    relatedKeywords: z.array(z.string()).optional(),
     schemas: z.array(z.string()).transform(arr => arr.filter(s => s.trim() !== "")).optional(),
 });

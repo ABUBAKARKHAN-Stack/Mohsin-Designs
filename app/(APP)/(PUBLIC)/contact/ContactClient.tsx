@@ -14,12 +14,11 @@ import { submitDynamicForm } from "@/app/actions/formActions"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 
 interface ContactClientProps {
-    lang: string
     pageData: any
     siteSettings: any
 }
 
-export default function ContactClient({ lang, pageData, siteSettings }: ContactClientProps) {
+export default function ContactClient({ pageData, siteSettings }: ContactClientProps) {
     const [loading, setLoading] = useState(false)
     const [submitted, setSubmitted] = useState(false)
     const [errors, setErrors] = useState<Record<string, string>>({})
@@ -74,11 +73,11 @@ export default function ContactClient({ lang, pageData, siteSettings }: ContactC
             return
         }
 
-        // Basic validation for required fields (can be enhanced if formConfig has validation rules)
+        // Basic validation for required fields
         const newErrors: Record<string, string> = {}
         formConfig.fields?.forEach((field: any) => {
             if (field.required && !formData[field.fieldName]) {
-                const label = field.label?.[lang] || field.label?.en || field.fieldName
+                const label = field.label || field.fieldName
                 newErrors[field.fieldName] = `${label} is required`
             }
         })
@@ -90,7 +89,7 @@ export default function ContactClient({ lang, pageData, siteSettings }: ContactC
 
         setLoading(true)
         try {
-            const result = await submitDynamicForm(formConfig._id, formData, lang)
+            const result = await submitDynamicForm(formConfig._id, formData)
             if (result.success) {
                 setSubmitted(true)
                 successToast(result.message || "Message sent successfully")
@@ -104,7 +103,7 @@ export default function ContactClient({ lang, pageData, siteSettings }: ContactC
         }
     }
 
-    const t = (val: any) => val?.[lang] || val?.en || ""
+    const t = (val: any) => val || ""
 
     return (
         <PageWrapper>

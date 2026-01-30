@@ -8,7 +8,6 @@ import { CategoryActions } from "@/components/admin/categories/CategoryActions"
 
 export default async function CategoriesPage() {
     const categories = await getCategories()
-
     return (
         <div className="container mx-auto pb-10 max-w-5xl">
             <div className="flex items-center justify-between py-6">
@@ -46,9 +45,9 @@ export default async function CategoriesPage() {
                                     <TableRow key={category._id}>
                                         <TableCell className="font-medium flex items-center gap-2">
                                             <Tag className="h-4 w-4 text-muted-foreground" />
-                                            {category.title?.en || "Untitled"}
+                                            {category.title || "Untitled"}
                                         </TableCell>
-                                        <TableCell>{category.description?.en || "-"}</TableCell>
+                                        <TableCell>{category?.description || "-"}</TableCell>
                                         <TableCell>
                                             <CategoryActions id={category._id} />
                                         </TableCell>

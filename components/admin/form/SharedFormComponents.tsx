@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
@@ -10,9 +10,9 @@ export function SectionHeadingCard({ control, baseName, title }: { control: any;
         <Card>
             <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-                <LocalizedInput control={control} name={`${baseName}.eyebrow`} label="Eyebrow" />
-                <LocalizedInput control={control} name={`${baseName}.title`} label="Title" />
-                <LocalizedInput control={control} name={`${baseName}.description`} label="Description" isTextarea />
+                <FormInput control={control} name={`${baseName}.eyebrow`} label="Eyebrow" />
+                <FormInput control={control} name={`${baseName}.title`} label="Title" />
+                <FormInput control={control} name={`${baseName}.description`} label="Description" isTextarea />
             </CardContent>
         </Card>
     )
@@ -54,7 +54,7 @@ export function StatItemCard({ control, name, title, hasSuffix = true }: { contr
                     )}
                 </div>
                 <div className="lg:col-span-7">
-                    <LocalizedInput
+                    <FormInput
                         control={control}
                         name={`${name}.label`}
                         label="Display Label"

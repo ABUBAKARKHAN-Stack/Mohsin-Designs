@@ -2,7 +2,7 @@
 
 import { Control } from "react-hook-form"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LocalizedInput } from "./LocalizedInput"
+import { FormInput } from "./FormInput"
 import { CommaKeywordsInput } from "./CommaKeywordsInput"
 import { SchemaListInput } from "./SchemaListInput"
 import { Globe } from "lucide-react"
@@ -25,13 +25,13 @@ export function SeoFormTab({ control, baseName = "seo" }: SeoFormTabProps) {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <LocalizedInput
+                    <FormInput
                         control={control}
                         name={getFieldName("metaTitle")}
                         label="Meta Title"
                         placeholder="Page title displayed in search results"
                     />
-                    <LocalizedInput
+                    <FormInput
                         control={control}
                         name={getFieldName("metaDescription")}
                         label="Meta Description"
@@ -47,7 +47,7 @@ export function SeoFormTab({ control, baseName = "seo" }: SeoFormTabProps) {
                     <CardTitle>Keywords</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <LocalizedInput
+                    <FormInput
                         control={control}
                         name={getFieldName("focusKeyword")}
                         label="Focus Keyword"

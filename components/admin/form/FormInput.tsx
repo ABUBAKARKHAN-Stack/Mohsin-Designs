@@ -13,7 +13,7 @@ import { Control } from "react-hook-form"
 import React from "react"
 import { cn } from "@/lib/utils"
 
-interface LocalizedInputProps extends Omit<React.ComponentPropsWithoutRef<"input">, "name" | "type"> {
+interface FormInputProps extends Omit<React.ComponentPropsWithoutRef<"input">, "name" | "type"> {
     control: Control<any>
     name: string
     label: string
@@ -26,7 +26,7 @@ interface LocalizedInputProps extends Omit<React.ComponentPropsWithoutRef<"input
     className?: string
 }
 
-export function LocalizedInput({
+export function FormInput({
     control,
     name,
     label,
@@ -39,7 +39,7 @@ export function LocalizedInput({
     isUrl = false,
     className,
     ...props
-}: LocalizedInputProps) {
+}: FormInputProps) {
     const isActuallyTextarea = isTextarea || type === "textarea"
     const inputType = isUrl ? "url" : (type || "text")
     const actualPlaceholder = placeholder || (isUrl ? "https://example.com or /contact" : undefined)

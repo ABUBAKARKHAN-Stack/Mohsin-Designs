@@ -4,18 +4,18 @@ import { defineQuery } from "next-sanity";
 // Query for single project with full content
 const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug][0] {
   _id,
-  "title": title[$lang],
+  "title": title,
   "slug": slug.current,
-  "category": category[$lang],
-  "description": description[$lang],
-  "tags": tags[$lang],
+  "category": category,
+  "description": description,
+  "tags": tags,
   "mainImage": {
     "url": mainImage.asset->url,
     "alt": mainImage.alt
   },
   "caseStudy": {
-    "title": caseStudy.title[$lang],
-    "category": caseStudy.category[$lang],
+    "title": caseStudy.title,
+    "category": caseStudy.category,
     "beforeImage": {
       "url": caseStudy.beforeImage.asset->url,
       "alt": "Before"
@@ -24,11 +24,11 @@ const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug
       "url": caseStudy.afterImage.asset->url,
       "alt": "After"
     },
-    "testimonial": caseStudy.testimonial[$lang],
+    "testimonial": caseStudy.testimonial,
     "results": caseStudy.results[] {
       "icon": icon,
-      "value": value[$lang],
-      "label": label[$lang]
+      "value": value,
+      "label": label
     },
     "slug": caseStudy.slug.current
   }
@@ -39,11 +39,11 @@ const PROJECT_SLUGS_QUERY = defineQuery(`*[_type == "project"] {
   "slug": slug.current
 }`);
 
-export async function getProject(lang: string, slug: string) {
+export async function getProject(slug: string) {
   try {
     const { data } = await sanityFetch({
       query: PROJECT_QUERY,
-      params: { lang, slug },
+      params: { slug },
       perspective: "published"
     });
     return data;

@@ -27,14 +27,14 @@ export async function saveProjectDraft(id: string | undefined, data: Partial<Pro
             // For new projects, create a new draft document with ALL fields initialized
             const newDoc = {
                 _type: 'project',
-                title: data.title || { en: "", ur: "", es: "", ar: "" },
+                title: data.title || "",
                 slug: { _type: 'slug', current: "" },
-                category: data.category || { en: "", ur: "", es: "", ar: "" },
-                description: data.description || { en: "", ur: "", es: "", ar: "" },
-                tags: { en: [], ur: [], es: [], ar: [] },
+                category: data.category || "",
+                description: data.description || "",
+                tags: [],
                 caseStudy: {
-                    title: data.caseStudy?.title || { en: "", ur: "", es: "", ar: "" },
-                    testimonial: data.caseStudy?.testimonial || { en: "", ur: "", es: "", ar: "" },
+                    title: data.caseStudy?.title || "",
+                    testimonial: data.caseStudy?.testimonial || "",
                     results: []
                 }
             };
@@ -95,12 +95,11 @@ export async function saveProjectDraft(id: string | undefined, data: Partial<Pro
 
                 // TAGS HANDLING (Comma string to Array)
                 if (fullKey === "tags") {
-                    const tagObj: any = {};
-                    ['en', 'ur', 'es', 'ar'].forEach(lang => {
-                        const tags = val[lang]?.split(',').map((t: string) => t.trim()).filter(Boolean) || [];
-                        tagObj[lang] = tags;
-                    });
-                    toSet[fullKey] = tagObj;
+                    if (typeof val === 'string') {
+                        toSet[fullKey] = val.split(',').map((t: string) => t.trim()).filter(Boolean);
+                    } else if (Array.isArray(val)) {
+                        toSet[fullKey] = val;
+                    }
                     continue;
                 }
 
@@ -110,16 +109,10 @@ export async function saveProjectDraft(id: string | undefined, data: Partial<Pro
                         toSet[fullKey] = val.map(res => ({
                             _key: res._key || Math.random().toString(36).substring(2, 9),
                             icon: res.icon || "TrendingUp",
-                            value: res.value || {},
-                            label: res.label || {}
+                            value: res.value || "",
+                            label: res.label || ""
                         }));
                     }
-                    continue;
-                }
-
-                // LOCALIZED OBJECTS PER LANG (Surgical)
-                if (['en', 'ur', 'es', 'ar'].includes(key) && prefix) {
-                    toSet[fullKey] = val || "";
                     continue;
                 }
 

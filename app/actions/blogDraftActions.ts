@@ -62,17 +62,17 @@ export async function saveBlogDraft(id: string, data: Partial<BlogPostValues>) {
         const toSet: any = {};
         const toUnset: string[] = [];
 
-        // 1. Localized Basic Fields (Title, Description, Tags)
-        if (sanitizedData.title) Object.assign(toSet, flattenToPatch(sanitizedData.title, 'title'));
-        if (sanitizedData.description) Object.assign(toSet, flattenToPatch(sanitizedData.description, 'description'));
+        // 1. Basic Fields (Title, Description)
+        if (sanitizedData.title) toSet.title = sanitizedData.title;
+        if (sanitizedData.description) toSet.description = sanitizedData.description;
 
         // 2. Tags
         if (sanitizedData.tags) {
-            ['en', 'ur', 'es', 'ar'].forEach(lang => {
-                if (typeof sanitizedData.tags[lang] === 'string') {
-                    toSet[`tags.${lang}`] = sanitizedData.tags[lang].split(',').map((t: string) => t.trim()).filter(Boolean);
-                }
-            });
+            if (typeof sanitizedData.tags === 'string') {
+                toSet.tags = sanitizedData.tags.split(',').map((t: string) => t.trim()).filter(Boolean);
+            } else if (Array.isArray(sanitizedData.tags)) {
+                toSet.tags = sanitizedData.tags;
+            }
         }
 
         // 3. Featured & Metadata
@@ -118,11 +118,7 @@ export async function saveBlogDraft(id: string, data: Partial<BlogPostValues>) {
 
         // 7. Body Content
         if (sanitizedData.body) {
-            ['en', 'ur', 'es', 'ar'].forEach(lang => {
-                if (Array.isArray(sanitizedData.body[lang])) {
-                    toSet[`body.${lang}`] = sanitizedData.body[lang];
-                }
-            });
+            toSet.body = sanitizedData.body;
         }
 
         if (Object.keys(toSet).length === 0 && toUnset.length === 0) {
@@ -157,12 +153,7 @@ export async function getBlogDraft(id: string) {
         const draft = await adminClient.getDocument(`drafts.${id}`)
 
         if (draft && draft.tags) {
-            draft.tags = {
-                en: Array.isArray(draft.tags.en) ? draft.tags.en.join(", ") : (draft.tags.en || ""),
-                ur: Array.isArray(draft.tags.ur) ? draft.tags.ur.join(", ") : (draft.tags.ur || ""),
-                es: Array.isArray(draft.tags.es) ? draft.tags.es.join(", ") : (draft.tags.es || ""),
-                ar: Array.isArray(draft.tags.ar) ? draft.tags.ar.join(", ") : (draft.tags.ar || "")
-            };
+            draft.tags = Array.isArray(draft.tags) ? draft.tags.join(", ") : (draft.tags || "");
         }
 
         return draft

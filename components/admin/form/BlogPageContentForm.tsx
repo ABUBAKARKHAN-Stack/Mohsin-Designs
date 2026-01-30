@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SeoFormTab } from "./SeoFormTab"
 import { updateBlogPageContent, saveBlogPageDraft } from "@/app/actions/blogPageContent"
@@ -179,9 +179,9 @@ export function BlogPageContentForm({ initialData, hasDraft, draftUpdatedAt, pos
                         <Card>
                             <CardHeader><CardTitle>Hero Configuration</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="hero.title" label="Title" />
-                                <LocalizedInput control={formControl} name="hero.subtitle" label="Subtitle" />
-                                <LocalizedInput control={formControl} name="hero.description" label="Description" isTextarea />
+                                <FormInput control={formControl} name="hero.title" label="Title" />
+                                <FormInput control={formControl} name="hero.subtitle" label="Subtitle" />
+                                <FormInput control={formControl} name="hero.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -291,9 +291,9 @@ export function BlogPageContentForm({ initialData, hasDraft, draftUpdatedAt, pos
                         <Card>
                             <CardHeader><CardTitle>Call to Action Configuration</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.eyebrow" label="Eyebrow" />
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.title" label="Title" />
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.description" label="Description" isTextarea />
+                                <FormInput control={formControl} name="cta.sectionHeading.eyebrow" label="Eyebrow" />
+                                <FormInput control={formControl} name="cta.sectionHeading.title" label="Title" />
+                                <FormInput control={formControl} name="cta.sectionHeading.description" label="Description" isTextarea />
 
                                 <FormField
                                     control={form.control}

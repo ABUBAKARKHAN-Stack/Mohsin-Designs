@@ -9,7 +9,7 @@ import {
     Form,
 } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { updateServiceCta } from "@/app/actions/serviceCta"
 import { errorToast, successToast } from "@/lib/toastNotifications"
@@ -82,18 +82,18 @@ export function ServiceCtaForm({ initialData }: ServiceCtaFormProps) {
                             <CardTitle>Call to Action Content</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <LocalizedInput control={formControl} name="ctaBadgeText" label="Badge Text" />
-                            <LocalizedInput control={formControl} name="ctaTitle" label="Main Title" />
-                            <LocalizedInput control={formControl} name="ctaDescription" label="Description" isTextarea />
+                            <FormInput control={formControl} name="ctaBadgeText" label="Badge Text" />
+                            <FormInput control={formControl} name="ctaTitle" label="Main Title" />
+                            <FormInput control={formControl} name="ctaDescription" label="Description" isTextarea />
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                                 <div className="space-y-6">
                                     <h3 className="font-medium text-sm text-muted-foreground">Button Text</h3>
-                                    <LocalizedInput control={formControl} name="ctaButtonText" label="Button Label" />
+                                    <FormInput control={formControl} name="ctaButtonText" label="Button Label" />
                                 </div>
                                 <div className="space-y-6">
                                     <h3 className="font-medium text-sm text-muted-foreground">Button URL</h3>
-                                    <LocalizedInput control={formControl} name="ctaButtonUrl" label="Destination URL" />
+                                    <FormInput control={formControl} name="ctaButtonUrl" label="Destination URL" />
                                 </div>
                             </div>
                         </CardContent>

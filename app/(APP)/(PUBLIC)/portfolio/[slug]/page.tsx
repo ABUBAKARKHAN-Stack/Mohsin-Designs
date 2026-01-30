@@ -5,7 +5,6 @@ import { PortfolioHero } from "@/components/portfolio/PortfolioHero"
 import { CaseStudyResults } from "@/components/portfolio/CaseStudyResults"
 import { BeforeAfter } from "@/components/portfolio/BeforeAfter"
 import { ContainerLayout } from "@/components/layout"
-import { SUPPORTED_LANGS } from "@/constants/lang"
 import { Quote } from "lucide-react"
 
 interface Props {

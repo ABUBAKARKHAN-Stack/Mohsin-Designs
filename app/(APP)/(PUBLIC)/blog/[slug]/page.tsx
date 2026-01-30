@@ -4,11 +4,8 @@ import Image from "next/image"
 import { Clock, User, Share2 } from "lucide-react"
 import { getBlogPost, getBlogSlugs } from "@/helpers/blog.helpers"
 import { BlogContent } from "@/components/blog/BlogContent"
-import { Button } from "@/components/ui/button"
 import PageHero from "@/components/ui/page-hero"
 import { ContainerLayout } from "@/components/layout"
-import { SUPPORTED_LANGS } from "@/constants/lang"
-import { uiT } from "@/i18n"
 import { ShareButtons } from "@/components/blog/ShareButtons"
 import { Badge } from "@/components/ui/badge"
 
@@ -18,7 +15,7 @@ interface Props {
     }>;
 }
 
-// Generate static params for all blog posts
+//* Generate static params for all blog posts
 export async function generateStaticParams() {
     const slugs = await getBlogSlugs()
 
@@ -102,7 +99,7 @@ export default async function BlogPostPage({ params }: Props) {
                             <span className="w-1 h-1 bg-border rounded-full hidden md:block" />
                             <div className="flex items-center gap-2 text-accent/80">
                                 <Clock className="h-4 w-4" />
-                                <span className="font-semibold uppercase tracking-wider text-[10px]">{post.readTime} {uiT('en', "common.readTime")}</span>
+                                <span className="font-semibold uppercase tracking-wider text-[10px]">{post.readTime} Read Time</span>
                             </div>
                         </div>
                     )}

@@ -6,7 +6,6 @@ import BGDecorations from "./BG-Decorations";
 import SectionHeading from "@/components/ui/section-heading";
 import { useServices } from "@/context/ServiceContext";
 import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 
 
 const AllServices = () => {
@@ -23,9 +22,9 @@ const AllServices = () => {
       <ContainerLayout className="relative">
 
         <SectionHeading
-          eyebrow={uiT(lang, 'servicesPage.allServices.eyebrow')}
-          title={uiT(lang, 'servicesPage.allServices.title')}
-          description={uiT(lang, 'servicesPage.allServices.description')}
+          eyebrow="What We Offer"
+          title="Our Services"
+          description="Comprehensive solutions tailored to elevate your brand and drive results."
           align="center"
           splitText
         />
@@ -33,13 +32,11 @@ const AllServices = () => {
         {/* Services List */}
         <div className="space-y-0">
           {services.map((service, i) => {
-
             return (
               <ServiceCard key={`${service.title}-${i}`} service={service} index={i} />
             )
           })}
         </div>
-
       </ContainerLayout>
 
     </section>

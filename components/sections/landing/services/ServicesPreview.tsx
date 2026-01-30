@@ -8,8 +8,6 @@ import ServiceCard from "./ServiceCard";
 import { ContainerLayout } from "@/components/layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { useServices } from "@/context/ServiceContext";
-import { uiT } from "@/i18n";
-import { useParams } from "next/navigation";
 import { useGlobalContent } from "@/context/GlobalContentContext";
 
 
@@ -21,7 +19,6 @@ const ServicesPreview = () => {
   });
 
   const { services } = useServices()
-  const { lang }: any = useParams()
   const { globalContent } = useGlobalContent()
 
   const servicesPreviewData = globalContent?.servicesPreview;
@@ -66,10 +63,10 @@ const ServicesPreview = () => {
             className="hidden lg:block"
           >
             <Link
-              href={`/${lang}/services`}
+              href={`/services`}
               className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300 shadow-[0_10px_30px_-10px_hsl(var(--accent)/0.5)]"
             >
-              <span>{uiT(lang, "common.viewAllServices")}</span>
+              <span>View All Services</span>
               <ArrowUpRight className="size-4.5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
             </Link>
           </motion.div>
@@ -91,10 +88,10 @@ const ServicesPreview = () => {
           className="mt-12 lg:hidden text-center"
         >
           <Link
-            href={`/${lang}/services`}
+            href={`/services`}
             className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300"
           >
-            {uiT(lang, "common.viewAllServices")}
+            View All Services
             <ArrowUpRight className="size-4.5" />
           </Link>
         </motion.div>

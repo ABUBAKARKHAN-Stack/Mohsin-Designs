@@ -1,7 +1,6 @@
 "use client"
 import { ContainerLayout } from "@/components/layout"
 import { useServices } from "@/context/ServiceContext"
-import { uiT } from "@/i18n"
 import { ArrowUpRight } from "lucide-react"
 import { motion } from "motion/react"
 import Link from "next/link"

@@ -17,7 +17,6 @@ import {
     // ServiceBlogs,
 } from "@/components/sections/services/service-details/";
 import { APP_NAME, BASE_URL } from "@/constants/app.constants";
-import { SUPPORTED_LANGS } from "@/constants/lang";
 import { getServiceByLocale, getServicesCTA, getServiceSeoByLocale, getServicesForSSG } from "@/helpers/service.helpers";
 import { urlFor } from "@/sanity/lib/image";
 import { Metadata, ResolvingMetadata } from "next";
@@ -115,7 +114,7 @@ const ServiceDetailPage = async ({
 
     return (
         <PageWrapper>
-            <JsonLd schemas={service.seo.schemas} />
+            <JsonLd schemas={service.seo?.schemas} />
 
             {/* Service Page Hero Section */}
 

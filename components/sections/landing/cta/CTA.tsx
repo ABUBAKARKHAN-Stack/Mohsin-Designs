@@ -1,6 +1,6 @@
 "use client"
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Send, CheckCircle2 } from "lucide-react";
+import { Send, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,8 +8,7 @@ import { useRef } from "react";
 import MagneticButton from "@/components/MagneticButton";
 import { ContainerLayout } from "@/components/layout";
 import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ContactFormType, contactSchema } from "@/schemas/contact.schema";
+import { ContactFormType } from "@/schemas/contact.schema";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import DecorativeElements from "./DecorativeElements";
@@ -20,11 +19,8 @@ import { submitContactForm } from "@/app/actions/submitContactForm";
 import { getForm, submitDynamicForm } from "@/app/actions/formActions";
 import { successToast, errorToast } from "@/lib/toastNotifications";
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 
 const CTA = () => {
-  useParams();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -180,7 +176,7 @@ const CTA = () => {
                 <span className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
                   <Send className="w-5 h-5 text-accent-foreground" />
                 </span>
-                {uiT('en', "common.sendUsMessage")}
+               Send Us Message
               </h3>
 
               {isLoadingForm ? (

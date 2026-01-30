@@ -4,8 +4,6 @@ import { motion } from "motion/react";
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import { ContainerLayout } from "../layout";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 
 interface BreadcrumbItem {
   label: string;
@@ -21,7 +19,6 @@ interface PageHeroProps {
 }
 
 const PageHero = ({ title, titleAccent = ".", subtitle, description, breadcrumbs }: PageHeroProps) => {
-  const { lang }: { lang: string } = useParams()
   return (
     <section className="pt-15 pb-10 md:pt-20 md:pb-15 relative overflow-hidden">
 
@@ -43,7 +40,7 @@ const PageHero = ({ title, titleAccent = ".", subtitle, description, breadcrumbs
           <ol className="flex items-center gap-2 text-sm">
             <li>
               <Link
-                href={`/${lang}`}
+                href="/"
                 className="text-muted-foreground hover:text-accent transition-colors flex items-center gap-1"
               >
                 <Home className="w-3.5 h-3.5" />
@@ -55,14 +52,14 @@ const PageHero = ({ title, titleAccent = ".", subtitle, description, breadcrumbs
                 <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50" />
                 {item.href ? (
                   <Link
-                    href={`/${lang}${item.href}`}
+                    href={`${item.href}`}
                     className="text-muted-foreground hover:text-accent transition-colors"
                   >
-                    {uiT(lang, `navigation.${item.label.toLowerCase().trim()}`) ?? item.label}
+                    {item.label}
                   </Link>
                 ) : (
                   <span className="text-foreground font-medium">
-                    {uiT(lang, `navigation.${item.label.toLowerCase().trim()}`) ?? item.label}
+                    {item.label}
                   </span>
                 )}
               </li>

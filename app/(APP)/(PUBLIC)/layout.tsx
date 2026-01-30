@@ -4,8 +4,6 @@ import { AnimatePresence } from "framer-motion";
 import { ReactNode } from "react";
 import PublicProvider from "@/provider/PublicProvider";
 import { JsonLd } from "@/components/SEO/JsonLd";
-import { redirect } from "next/navigation";
-import { SUPPORTED_LANGS } from "@/constants/lang";
 import { ServicesProvider } from "@/context/ServiceContext";
 import { getLightWeightServicesByLocale, getServicesByLocale } from "@/helpers/service.helpers";
 import { SanityLive } from "@/sanity/lib/live";

@@ -5,9 +5,6 @@ import SectionHeading from "@/components/ui/section-heading";
 import { ContainerLayout } from "@/components/layout";
 import { useGlobalContent } from "@/context/GlobalContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
-
 
 
 const IndustriesWeServe = () => {
@@ -21,7 +18,6 @@ const IndustriesWeServe = () => {
     const y1 = useTransform(scrollYProgress, [0, 1], [0, -60]);
     const y2 = useTransform(scrollYProgress, [0, 1], [0, 60]);
     const { globalContent } = useGlobalContent();
-    const { lang }: any = useParams();
 
     const industriesWeServeData = globalContent?.industriesWeServe;
     const industriesData = industriesWeServeData?.industries || [];
@@ -31,7 +27,7 @@ const IndustriesWeServe = () => {
         {
             value: industriesData.length.toString(),
             suffix: "+",
-            label: uiT(lang, 'common.industries')
+            label: "Industries"
         },
         statsData.yearsExperience,
         statsData.projectsDelivered,

@@ -28,7 +28,7 @@ export async function updateServicesPageContent(data: ServicesPageContentValues)
             hero: validatedFields.hero,
             intro: validatedFields.intro,
             process: {
-                sectionHeading: validatedFields.process.sectionHeading,
+                sectionHeading: { ...validatedFields.process.sectionHeading, _type: 'sectionHeading' },
                 steps: validatedFields.process.steps,
             },
             whyChooseUs: {
@@ -37,12 +37,12 @@ export async function updateServicesPageContent(data: ServicesPageContentValues)
                 benefits: validatedFields.whyChooseUs.benefits,
             },
             serviceBlogs: {
-                sectionHeading: validatedFields.serviceBlogs.sectionHeading,
+                sectionHeading: { ...validatedFields.serviceBlogs.sectionHeading, _type: 'sectionHeading' },
                 blogs: validatedFields.serviceBlogs.blogs?.map(id => ({ _type: 'reference', _ref: id })) || [],
                 buttonText: validatedFields.serviceBlogs.buttonText,
                 buttonUrl: validatedFields.serviceBlogs.buttonUrl,
             },
-            seo: validatedFields.seo
+            seo: validatedFields.seo ? { ...validatedFields.seo, _type: 'seo' } : undefined
         }
 
         await adminClient.createOrReplace(updateData)
@@ -56,6 +56,7 @@ export async function updateServicesPageContent(data: ServicesPageContentValues)
 }
 
 export async function saveServicesPageDraft(data: Partial<ServicesPageContentValues>) {
+
     try {
         // Transform blogs to references if they exist as strings
         const transformedData = { ...data };

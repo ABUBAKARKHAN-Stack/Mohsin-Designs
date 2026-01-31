@@ -38,7 +38,34 @@ export const SERVICES_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "servicesPage
       "description": description,
       iconName
     }
-  }
+  },
+
+   "serviceBlogs": {
+    "sectionHeading": {
+      "eyebrow": serviceBlogs.sectionHeading.eyebrow,
+      "title": serviceBlogs.sectionHeading.title,
+      "description": serviceBlogs.sectionHeading.description
+    },
+    "blogs": serviceBlogs.blogs[]->{
+    "title": title,
+    "description": description,
+    "slug": slug.current,
+    "mainImage": {
+      "alt": mainImage.alt,
+      "source": mainImage.asset._ref
+    },
+    "categories": categories[]->title,
+    publishedAt,
+    readTime
+  },
+    "buttonText": serviceBlogs.buttonText,
+    "buttonUrl": serviceBlogs.buttonUrl
+  },
+
+  seo
+
+ 
+
 }`);
 
 export async function getServicesPageContent() {

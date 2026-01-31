@@ -53,7 +53,6 @@ export async function generateMetadata(
             robots: { index: false },
         };
     }
-    console.log(service);
 
     //* Base Metadata
     const title = service.seo.metaTitle;

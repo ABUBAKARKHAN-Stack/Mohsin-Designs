@@ -29,6 +29,7 @@ export default async function ServicesPageContentPage() {
             buttonText: pageContent.serviceBlogs?.buttonText || "",
             buttonUrl: pageContent.serviceBlogs?.buttonUrl || ""
         },
+        seo: pageContent.seo || undefined,
     } : undefined;
 
     return (

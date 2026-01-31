@@ -1,19 +1,18 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { ArrowUpRight,  Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
-import { useParams } from "next/navigation";
+import Image from "next/image";
 
 interface MainContentProps {
-  projects: any[] 
+  projects: any[]
 }
 
 const Portfolio = ({ projects }: MainContentProps) => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const { lang } = useParams();
 
   return (
 
@@ -34,19 +33,19 @@ const Portfolio = ({ projects }: MainContentProps) => {
                 onHoverStart={() => setHoveredId(project._id)}
                 onHoverEnd={() => setHoveredId(null)}
               >
-                <Link href={`/${lang}/portfolio/${project.slug}`} className="group block">
+                <Link href={`/portfolio/${project.slug}`} className="group block">
+
                   {/* Image Container */}
-                  <div className="relative aspect-z4/3 overflow-hidden rounded-2xl mb-5 bg-muted">
-                    <img
+                  <div className="relative aspect-4/3 overflow-hidden rounded-2xl mb-5 bg-muted">
+                    <Image
+                      fill
                       src={urlFor(project.image).url()}
-                      alt={project.title}
+                      alt={project?.image?.altText || project.title}
                       className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
                     />
 
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-linear-to-t from-primary/80 via-primary/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-
-                    {/* Stats Badge - Removed as it might not be in Sanity schema or use fallback */}
 
                     {/* Arrow Button */}
                     <motion.div
@@ -103,7 +102,6 @@ const Portfolio = ({ projects }: MainContentProps) => {
           >
             <Sparkles className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-xl font-display font-semibold mb-2">No projects found</h3>
-            <p className="text-muted-foreground">Try selecting a different category.</p>
           </motion.div>
         )}
       </ContainerLayout>

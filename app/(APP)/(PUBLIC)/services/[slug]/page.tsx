@@ -16,8 +16,13 @@ import {
     IntroSection,
     ServiceBlogs,
 } from "@/components/sections/services/service-details/";
-import { APP_NAME, BASE_URL } from "@/constants/app.constants";
-import { getServiceByLocale, getServicesCTA, getServiceSeoByLocale, getServicesForSSG } from "@/helpers/service.helpers";
+import { APP_NAME } from "@/constants/app.constants";
+import {
+    getService,
+    getServicesCTA,
+    getServiceSeo,
+    getServicesForSSG
+} from "@/helpers/service.helpers";
 import { urlFor } from "@/sanity/lib/image";
 import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
@@ -27,17 +32,19 @@ type Props = {
     params: Promise<{ slug: string }>
 }
 
+//* SSG
 export async function generateStaticParams() {
     const services = await getServicesForSSG()
     return services.map((s) => ({ slug: s.slug }))
 }
 
+//* Metadata
 export async function generateMetadata(
     { params }: Props,
     _parent: ResolvingMetadata,
 ): Promise<Metadata> {
     const { slug } = await params;
-    const service = await getServiceSeoByLocale(slug);
+    const service = await getServiceSeo(slug);
 
     if (!service) {
         return {
@@ -46,10 +53,16 @@ export async function generateMetadata(
             robots: { index: false },
         };
     }
+    console.log(service);
 
+    //* Base Metadata
     const title = service.seo.metaTitle;
     const description =
         service.seo.metaDescription;
+    const focusKeyword = service.seo.focusKeyword;
+    const relatedKeywords = service.seo.relatedKeywords;
+
+    //* Open Graph Metadata
     const imageUrl = urlFor(service.heroImage.source)
         .quality(85)
         .width(1200)
@@ -57,12 +70,14 @@ export async function generateMetadata(
         .format("jpg")
         .url();
     const imageAlt = service.heroImage.alt;
-    const servicesBaseUrl = `/services/${slug}`;
+
+    //* URL
+    const serviceUrl = `/services/${slug}`;
 
     return {
         title,
         description,
-        keywords: [service.seo.focusKeyword, ...(service.seo.relatedKeywords || [])].filter(Boolean) as string[],
+        keywords: [focusKeyword, ...(relatedKeywords || [])].filter(Boolean) as string[],
         publisher: APP_NAME,
         openGraph: {
             title,
@@ -77,7 +92,7 @@ export async function generateMetadata(
             ],
             type: "article",
             siteName: APP_NAME,
-            url: servicesBaseUrl,
+            url: serviceUrl,
         },
         twitter: {
             title,
@@ -91,20 +106,21 @@ export async function generateMetadata(
                 },
             ],
             card: "summary_large_image",
-            site: BASE_URL,
+            site: serviceUrl,
             creator: APP_NAME,
         },
         alternates: {
-            canonical: servicesBaseUrl,
+            canonical: serviceUrl,
         },
     };
 }
 
+//* Page Component
 const ServiceDetailPage = async ({
     params
 }: Props) => {
     const { slug } = await params;
-    const service = await getServiceByLocale(slug);
+    const service = await getService(slug);
     const cta = await getServicesCTA()
 
     if (!service) {

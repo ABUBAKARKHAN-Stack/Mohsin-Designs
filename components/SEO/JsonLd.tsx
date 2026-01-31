@@ -1,6 +1,8 @@
 "use client"
 
-import React from 'react'
+import Head from "next/head"
+import Script from "next/script"
+
 
 interface JsonLdProps {
     schemas?: string[]
@@ -25,7 +27,7 @@ export function JsonLd({ schemas }: JsonLdProps) {
                 }
 
                 return (
-                    <script
+                    <Script
                         key={`json-ld-${index}`}
                         type="application/ld+json"
                         dangerouslySetInnerHTML={{ __html: jsonContent }}

@@ -1,3 +1,5 @@
+import { SEOType } from "./seo.types";
+
 export interface ServiceProcess {
   step: string;
   title: string;
@@ -53,7 +55,6 @@ export interface ServiceData {
   subtitle: string;
   description: string;
   heroImage: SanityImage;
-  seo: SEOData;
 
   // Intro Section
   introTagLine: string
@@ -110,6 +111,8 @@ export interface ServiceData {
   otherServices: ServiceLightWeight[];
   otherServicesButtonText?: string;
   otherServicesButtonUrl?: string;
+
+  seo: SEOType;
 }
 
 export interface BlogData {

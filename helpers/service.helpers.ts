@@ -152,6 +152,9 @@ const SERVICE_QUERY = `{
   "otherServicesButtonText": otherServicesButtonText,
   "otherServicesButtonUrl": otherServicesButtonUrl,
 
+  // SEO
+  seo,
+
 }`;
 
 const SERVICE_QUERY_LIGHT_WEIGHT = `{
@@ -164,7 +167,7 @@ const SERVICE_SEO_QUERY = `{
   "slug": slug.current,
 
   heroImage{
-    "alt": alt,
+    "alt": heroImageAlt,
     "source": asset._ref
   },
   "seo": seo{
@@ -228,7 +231,7 @@ const getLightWeightServicesByLocale = async () => {
 
 }
 
-const getServiceByLocale = async (
+const getService = async (
   slug: string
 ) => {
   try {
@@ -248,7 +251,7 @@ const getServiceByLocale = async (
 
 }
 
-const getServiceSeoByLocale = async (
+const getServiceSeo = async (
   slug: string
 ) => {
   try {
@@ -287,7 +290,7 @@ export {
   getServicesForSSG,
   getServicesByLocale,
   getLightWeightServicesByLocale,
-  getServiceByLocale,
-  getServiceSeoByLocale,
+  getService,
+  getServiceSeo,
   getServicesCTA
 }

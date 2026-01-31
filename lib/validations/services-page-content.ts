@@ -52,6 +52,14 @@ export const servicesPageContentSchema = z.object({
         benefits: z.array(benefitSchema).min(1, "At least one benefit is required"),
     }),
 
+    // Service Blogs Section
+    serviceBlogs: z.object({
+        sectionHeading: sectionHeadingSchema,
+        blogs: z.array(z.string()).max(8).optional(),
+        buttonText: requiredLocalizedStringSchema.optional(),
+        buttonUrl: z.string().optional(),
+    }),
+
     // SEO
     seo: seoSchema.optional(),
 });

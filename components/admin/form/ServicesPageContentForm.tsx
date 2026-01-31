@@ -17,6 +17,8 @@ import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
 import { Save, Plus, Trash2, Clock } from "lucide-react"
 import { debounce } from "lodash"
+import { ReferenceSelector } from "@/components/admin/form/ReferenceSelector"
+import { getAllPostsWithService } from "@/app/actions/servicesPageContent"
 
 interface ServicesPageContentFormProps {
     initialData?: ServicesPageContentValues
@@ -31,6 +33,7 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
     const [isInitialMount, setIsInitialMount] = useState(true)
+    const [blogPosts, setBlogPosts] = useState<any[]>([])
 
     const form = useForm<ServicesPageContentValues>({
         resolver: zodResolver(servicesPageContentSchema),
@@ -68,6 +71,14 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
         })
         return () => subscription.unsubscribe()
     }, [form, saveDraft])
+
+    useEffect(() => {
+        async function fetchBlogPosts() {
+            const posts = await getAllPostsWithService()
+            setBlogPosts(posts)
+        }
+        fetchBlogPosts()
+    }, [])
 
     const { fields: stepFields, append: appendStep, remove: removeStep } = useFieldArray({
         control: formControl,
@@ -132,7 +143,7 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                 </div>
 
                 <Tabs defaultValue="hero" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto gap-2 bg-transparent p-0 mb-6">
+                    <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6 h-auto gap-2 bg-transparent p-0 mb-6">
                         <TabsTrigger value="hero" className="border h-10 relative">
                             Hero
                             {!!formErrors.hero && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
@@ -148,6 +159,10 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                         <TabsTrigger value="whyChooseUs" className="border h-10 relative">
                             Why Us
                             {!!formErrors.whyChooseUs && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        </TabsTrigger>
+                        <TabsTrigger value="serviceBlogs" className="border h-10 relative">
+                            Service Blogs
+                            {!!(formErrors as any).serviceBlogs && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
                         <TabsTrigger value="seo" className="border h-10 relative">
                             SEO
@@ -268,6 +283,37 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                         </Card>
                     </TabsContent>
 
+                    <TabsContent value="serviceBlogs" className="space-y-6">
+                        <Card>
+                            <CardHeader><CardTitle>Section Heading</CardTitle></CardHeader>
+                            <CardContent className="space-y-6">
+                                <FormInput control={formControl} name="serviceBlogs.sectionHeading.eyebrow" label="Eyebrow Text" />
+                                <FormInput control={formControl} name="serviceBlogs.sectionHeading.title" label="Title" />
+                                <FormInput control={formControl} name="serviceBlogs.sectionHeading.description" label="Description" isTextarea />
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader><CardTitle>Blog Posts Selection</CardTitle></CardHeader>
+                            <CardContent>
+                                <ReferenceSelector
+                                    form={form}
+                                    fieldName="serviceBlogs.blogs"
+                                    items={blogPosts}
+                                    label="Select Blog Posts"
+                                    max={8}
+                                    placeholder="Search blog posts..."
+                                />
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader><CardTitle>CTA Button</CardTitle></CardHeader>
+                            <CardContent className="space-y-6">
+                                <FormInput control={formControl} name="serviceBlogs.buttonText" label="Button Text" />
+                                <FormInput control={formControl} name="serviceBlogs.buttonUrl" label="Button URL" />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
                     <TabsContent value="seo">
                         <SeoFormTab control={formControl} />
                     </TabsContent>
@@ -283,6 +329,7 @@ function getDefaultValues(): ServicesPageContentValues {
         intro: { badgeText: "", heading: "", headingAccent: "", description: "" },
         process: { sectionHeading: { eyebrow: "", title: "", description: "" }, steps: [] },
         whyChooseUs: { sectionHeading: { eyebrow: "", title: "", description: "" }, guaranteePoints: [], benefits: [] },
+        serviceBlogs: { sectionHeading: { eyebrow: "", title: "", description: "" }, blogs: [], buttonText: "", buttonUrl: "" },
         seo: { metaTitle: "", metaDescription: "", focusKeyword: "", relatedKeywords: [], schemas: [] }
     } as ServicesPageContentValues
 }
@@ -308,6 +355,14 @@ function mergeWithDefaults(data: any): ServicesPageContentValues {
             sectionHeading: { ...defaults.whyChooseUs.sectionHeading, ...data.whyChooseUs?.sectionHeading },
             guaranteePoints: data.whyChooseUs?.guaranteePoints || defaults.whyChooseUs.guaranteePoints,
             benefits: data.whyChooseUs?.benefits || defaults.whyChooseUs.benefits
+        },
+        serviceBlogs: {
+            ...defaults.serviceBlogs,
+            ...data.serviceBlogs,
+            sectionHeading: { ...defaults.serviceBlogs.sectionHeading, ...data.serviceBlogs?.sectionHeading },
+            blogs: data.serviceBlogs?.blogs || defaults.serviceBlogs.blogs,
+            buttonText: data.serviceBlogs?.buttonText || defaults.serviceBlogs.buttonText,
+            buttonUrl: data.serviceBlogs?.buttonUrl || defaults.serviceBlogs.buttonUrl
         },
         seo: {
             ...defaults.seo,

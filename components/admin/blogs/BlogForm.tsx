@@ -109,7 +109,7 @@ export function BlogForm({
             locations: []
         },
     })
-
+    
     const saveDraft = useCallback(
         debounce(async (data: Partial<BlogPostValues>) => {
             if (isInitialMount || !currentBlogId || isSubmittingRef.current) return

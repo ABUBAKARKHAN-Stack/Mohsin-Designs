@@ -14,7 +14,7 @@ import {
     IndustriesSection,
     AreasWeServeSection,
     IntroSection,
-    // ServiceBlogs,
+    ServiceBlogs,
 } from "@/components/sections/services/service-details/";
 import { APP_NAME, BASE_URL } from "@/constants/app.constants";
 import { getServiceByLocale, getServicesCTA, getServiceSeoByLocale, getServicesForSSG } from "@/helpers/service.helpers";
@@ -205,13 +205,19 @@ const ServiceDetailPage = async ({
                 cta={cta}
             />
 
-            {/* <ServiceBlogs
-                slug={slug}
-            /> */}
+            <ServiceBlogs
+                blogs={service.blogs}
+                blogsSectionHeader={service.blogsSection}
+                blogsButtonText={service.blogsButtonText}
+                blogsButtonUrl={service.blogsButtonUrl}
+            />
 
             {/* Other Services Section */}
             <OtherServices
-                slug={slug}
+                otherServices={service.otherServices}
+                otherServicesSectionHeader={service.otherServicesSection}
+                otherServicesButtonText={service.otherServicesButtonText}
+                otherServicesButtonUrl={service.otherServicesButtonUrl}
             />
 
 

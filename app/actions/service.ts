@@ -172,6 +172,14 @@ export async function createService(data: ServiceFormValues) {
             caseStudies: validatedFields.caseStudies,
             faqsSection: { _type: 'sectionHeading', ...validatedFields.faqsSection },
             faqs: validatedFields.faqs,
+            blogsSection: { _type: 'sectionHeading', ...validatedFields.blogsSection },
+            blogs: validatedFields.blogs?.map(id => ({ _type: 'reference', _ref: id, _key: Math.random().toString(36).substring(2, 9) })),
+            blogsButtonText: validatedFields.blogsButtonText,
+            blogsButtonUrl: validatedFields.blogsButtonUrl,
+            otherServicesSection: { _type: 'sectionHeading', ...validatedFields.otherServicesSection },
+            otherServices: validatedFields.otherServices?.map(id => ({ _type: 'reference', _ref: id, _key: Math.random().toString(36).substring(2, 9) })),
+            otherServicesButtonText: validatedFields.otherServicesButtonText,
+            otherServicesButtonUrl: validatedFields.otherServicesButtonUrl,
             seo: validatedFields.seo
         }
 
@@ -241,6 +249,14 @@ export async function updateService(id: string, data: ServiceFormValues) {
                 ...f,
                 _key: f._key || Math.random().toString(36).substring(2, 9)
             })),
+            blogsSection: { _type: 'sectionHeading', ...validatedFields.blogsSection },
+            blogs: validatedFields.blogs?.map(id => ({ _type: 'reference', _ref: id, _key: Math.random().toString(36).substring(2, 9) })),
+            blogsButtonText: validatedFields.blogsButtonText,
+            blogsButtonUrl: validatedFields.blogsButtonUrl,
+            otherServicesSection: { _type: 'sectionHeading', ...validatedFields.otherServicesSection },
+            otherServices: validatedFields.otherServices?.map(id => ({ _type: 'reference', _ref: id, _key: Math.random().toString(36).substring(2, 9) })),
+            otherServicesButtonText: validatedFields.otherServicesButtonText,
+            otherServicesButtonUrl: validatedFields.otherServicesButtonUrl,
             seo: validatedFields.seo
         }
 
@@ -304,6 +320,8 @@ export async function duplicateService(id: string) {
             caseStudies: sourceService.caseStudies,
             faqsSection: sourceService.faqsSection,
             faqs: sourceService.faqs,
+            blogsSection: sourceService.blogsSection,
+            blogs: sourceService.blogs,
             seo: sourceService.seo
         }
 

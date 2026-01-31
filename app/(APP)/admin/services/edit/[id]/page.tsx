@@ -2,6 +2,8 @@ import { ServiceForm } from "@/components/admin/services/ServiceForm"
 import { getServiceDraft } from "@/app/actions/serviceDraftActions"
 import { notFound } from "next/navigation"
 import { sanityFetch } from "@/sanity/lib/live"
+import { getDashboardPosts } from "@/app/actions/blog"
+import { getDashboardServices } from "@/app/actions/service"
 
 interface Service {
     _id: string
@@ -40,8 +42,15 @@ interface Service {
     whyChooseUsPoints: any[]
     caseStudiesSection: any
     caseStudies?: any[]
-    faqsSection: any
     faqs?: any[]
+    blogsSection?: any
+    blogs?: any[]
+    blogsButtonText?: any
+    blogsButtonUrl?: any
+    otherServicesSection?: any
+    otherServices?: any[]
+    otherServicesButtonText?: any
+    otherServicesButtonUrl?: any
     seo: any
 }
 
@@ -81,6 +90,14 @@ async function getService(id: string) {
         caseStudies,
         faqsSection,
         faqs,
+        blogsSection,
+        blogs,
+        blogsButtonText,
+        blogsButtonUrl,
+        otherServicesSection,
+        otherServices,
+        otherServicesButtonText,
+        otherServicesButtonUrl,
         seo
     }`
 
@@ -92,6 +109,8 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
     const { id } = await params
     const draft = (await getServiceDraft(id)) as any
     const published = await getService(id)
+    const blogs = await getDashboardPosts()
+    const services = await getDashboardServices()
 
     const service = draft || published
 
@@ -137,6 +156,14 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
         caseStudies: (service.caseStudies && service.caseStudies.length > 0) ? service.caseStudies : [{ _key: 'initial-case-item-1', title: "", problem: "", solution: "", result: "" }],
         faqsSection: service.faqsSection || { _key: 'initial-faq-1', title: "", description: "", eyebrow: "" },
         faqs: (service.faqs && service.faqs.length > 0) ? service.faqs : [{ _key: 'initial-faq-item-1', question: "", answer: "" }],
+        blogsSection: service.blogsSection || { _key: 'initial-blogs-1', title: "", description: "", eyebrow: "" },
+        blogs: service.blogs?.map((b: any) => b._ref || b._id) || [],
+        blogsButtonText: service.blogsButtonText || "",
+        blogsButtonUrl: service.blogsButtonUrl || "",
+        otherServicesSection: service.otherServicesSection || { _key: 'initial-other-1', title: "", description: "", eyebrow: "" },
+        otherServices: service.otherServices?.map((s: any) => s._ref || s._id) || [],
+        otherServicesButtonText: service.otherServicesButtonText || "",
+        otherServicesButtonUrl: service.otherServicesButtonUrl || "",
         seo: service.seo || { relatedKeywords: [], schemas: [] }
     }
 
@@ -153,6 +180,8 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
                 serviceId={published?._id || service._id}
                 hasDraft={hasDraft}
                 draftUpdatedAt={draftUpdatedAt}
+                availableBlogs={blogs}
+                availableServices={services}
             />
         </div>
     )

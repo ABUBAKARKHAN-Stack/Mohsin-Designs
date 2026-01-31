@@ -19,7 +19,7 @@ export const sectionHeadingType = defineType({
             name: 'description',
             type: 'localizedText',
             validation: Rule => Rule.optional(),
-            
+
         }),
     ]
 })

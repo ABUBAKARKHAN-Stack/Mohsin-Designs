@@ -110,7 +110,31 @@ export async function saveServiceDraft(id: string, data: Partial<ServiceFormValu
         if (sanitizedData.faqsSection) toSet.faqsSection = sanitizedData.faqsSection;
         if (Array.isArray(sanitizedData.faqs)) toSet.faqs = sanitizedData.faqs.map((p: any) => ({ ...p, _key: p._key || Math.random().toString(36).substring(2, 9) }));
 
-        // 14. SEO
+        // 14. Blogs
+        if (sanitizedData.blogsSection) toSet.blogsSection = { _type: 'sectionHeading', ...sanitizedData.blogsSection };
+        if (Array.isArray(sanitizedData.blogs)) {
+            toSet.blogs = sanitizedData.blogs.map((id: string) => ({
+                _type: 'reference',
+                _ref: id,
+                _key: Math.random().toString(36).substring(2, 9)
+            }));
+        }
+        if (sanitizedData.blogsButtonText) toSet.blogsButtonText = sanitizedData.blogsButtonText;
+        if (sanitizedData.blogsButtonUrl) toSet.blogsButtonUrl = sanitizedData.blogsButtonUrl;
+
+        // 14.5 Other Services
+        if (sanitizedData.otherServicesSection) toSet.otherServicesSection = { _type: 'sectionHeading', ...sanitizedData.otherServicesSection };
+        if (Array.isArray(sanitizedData.otherServices)) {
+            toSet.otherServices = sanitizedData.otherServices.map((id: string) => ({
+                _type: 'reference',
+                _ref: id,
+                _key: Math.random().toString(36).substring(2, 9)
+            }));
+        }
+        if (sanitizedData.otherServicesButtonText) toSet.otherServicesButtonText = sanitizedData.otherServicesButtonText;
+        if (sanitizedData.otherServicesButtonUrl) toSet.otherServicesButtonUrl = sanitizedData.otherServicesButtonUrl;
+
+        // 15. SEO
         if (sanitizedData.seo) toSet.seo = sanitizedData.seo;
 
         if (Object.keys(toSet).length === 0 && toUnset.length === 0) {

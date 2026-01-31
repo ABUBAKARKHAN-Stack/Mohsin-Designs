@@ -1,7 +1,11 @@
 import { ServiceForm } from "@/components/admin/services/ServiceForm"
+import { getDashboardPosts } from "@/app/actions/blog"
+import { getDashboardServices } from "@/app/actions/service"
 
-export default function AddServicePage() {
+export default async function AddServicePage() {
     const serviceId = crypto.randomUUID()
+    const blogs = await getDashboardPosts()
+    const services = await getDashboardServices()
 
     return (
         <div className="space-y-6">
@@ -11,7 +15,11 @@ export default function AddServicePage() {
                     Create a new service.
                 </p>
             </div>
-            <ServiceForm serviceId={serviceId} />
+            <ServiceForm
+                serviceId={serviceId}
+                availableBlogs={blogs}
+                availableServices={services}
+            />
         </div>
     )
 }

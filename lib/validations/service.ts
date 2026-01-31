@@ -106,6 +106,18 @@ export const serviceFormSchema = z.object({
     })).min(1, "Add at least one FAQ"),
 
     // SEO
+    // Blogs
+    blogsSection: sectionHeadingSchema,
+    blogs: z.array(z.string()).optional().default([]),
+    blogsButtonText: z.string().optional(),
+    blogsButtonUrl: z.string().optional(),
+
+    // Other Services
+    otherServicesSection: sectionHeadingSchema,
+    otherServices: z.array(z.string()).optional().default([]),
+    otherServicesButtonText: z.string().optional(),
+    otherServicesButtonUrl: z.string().optional(),
+
     seo: seoSchema,
 });
 

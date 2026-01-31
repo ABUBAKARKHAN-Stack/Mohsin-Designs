@@ -98,6 +98,28 @@ export interface ServiceData {
   // FAQs
   faqsSection: SectionHeadingType
   faqs: FAQ[];
+
+  // Blogs
+  blogsSection: SectionHeadingType;
+  blogs: BlogData[];
+  blogsButtonText?: string;
+  blogsButtonUrl?: string;
+
+  // Other Services
+  otherServicesSection: SectionHeadingType;
+  otherServices: ServiceLightWeight[];
+  otherServicesButtonText?: string;
+  otherServicesButtonUrl?: string;
+}
+
+export interface BlogData {
+  title: string;
+  description: string;
+  slug: string;
+  mainImage: SanityImage;
+  categories: string[];
+  publishedAt: string;
+  readTime: number;
 }
 
 export interface ServiceCTA {
@@ -110,6 +132,7 @@ export interface ServiceCTA {
 
 export interface ServiceLightWeight {
   title: string;
-  items: string[];
-  slug: string
+  description: string;
+  slug: string;
+  heroImageUrl?: string;
 }

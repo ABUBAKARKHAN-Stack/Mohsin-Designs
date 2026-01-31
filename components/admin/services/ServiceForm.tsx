@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useState, useEffect } from "react"
+import { useCallback, useState, useEffect, useRef } from "react"
 import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { serviceFormSchema, ServiceFormValues } from "@/lib/validations/service"
@@ -19,8 +19,7 @@ import { FormInput } from "@/components/admin/form/FormInput"
 import { SectionHeadingInput } from "@/components/admin/form/SectionHeadingInput"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus, Trash2, ArrowLeft, Clock } from "lucide-react"
-import { createService } from "@/app/actions/createService"
-import { updateService } from "@/app/actions/updateService"
+import { createService, updateService } from "@/app/actions/service"
 import { saveServiceDraft } from "@/app/actions/serviceDraftActions"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -48,7 +47,9 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
     const [isInitialMount, setIsInitialMount] = useState(true)
+    const [currentServiceId] = useState(serviceId)
     const router = useRouter()
+    const isSubmittingRef = useRef(false)
 
     const form = useForm<ServiceFormValues>({
         resolver: zodResolver(serviceFormSchema) as any,
@@ -70,7 +71,7 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
             processSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
             process: [{ _key: Math.random().toString(36).substring(2, 9), step: "01", title: "", desc: "" }],
             areasSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
-            areas: [{ _key: Math.random().toString(36).substring(2, 9), region: "", locations: [""], featured: false, clients: 0, flag: "" }],
+            areas: [{ _key: Math.random().toString(36).substring(2, 9), region: "", locations: [""], featured: false, clients: "0", flag: "" }],
             industriesSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
             industries: [{ _key: Math.random().toString(36).substring(2, 9), name: "", description: "" }],
             benifitsSection: { _key: Math.random().toString(36).substring(2, 9), title: "", description: "", eyebrow: "" },
@@ -95,12 +96,19 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
 
     const saveDraft = useCallback(
         debounce(async (data: Partial<ServiceFormValues>) => {
-            if (isInitialMount || !serviceId) return
+            if (isInitialMount || !currentServiceId || isSubmittingRef.current) return
+
             setIsSavingDraft(true)
             try {
-                const result = await saveServiceDraft(serviceId, data)
+                const result = await saveServiceDraft(currentServiceId, data)
                 if (result.success) {
                     setLastSaved(new Date())
+
+                    // If we're on the "add" page, redirect to "edit" to keep the same ID
+                    if (typeof window !== 'undefined' && window.location.pathname.endsWith('/admin/services/add')) {
+                        const newUrl = `/admin/services/edit/${currentServiceId}`
+                        router.replace(newUrl, { scroll: false })
+                    }
                 }
             } catch (error) {
                 console.error("Draft save failed:", error)
@@ -108,7 +116,7 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
                 setIsSavingDraft(false)
             }
         }, 2000),
-        [isInitialMount, serviceId]
+        [isInitialMount, currentServiceId, router]
     )
 
     useEffect(() => {
@@ -131,7 +139,7 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
 
     const { fields: helpFields, append: appendHelp, remove: removeHelp } = useFieldArray({
         control: form.control,
-        name: "howWeHelpPoints" as any,
+        name: "howWeHelpPoints",
     })
 
     const { fields: itemFields, append: appendItem, remove: removeItem } = useFieldArray({
@@ -141,17 +149,17 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
 
     const { fields: processFields, append: appendProcess, remove: removeProcess } = useFieldArray({
         control: form.control,
-        name: "process" as any,
+        name: "process",
     })
 
     const { fields: areaFields, append: appendArea, remove: removeArea } = useFieldArray({
         control: form.control,
-        name: "areas" as any,
+        name: "areas",
     })
 
     const { fields: industryFields, append: appendIndustry, remove: removeIndustry } = useFieldArray({
         control: form.control,
-        name: "industries" as any,
+        name: "industries",
     })
 
     const { fields: benefitFields, append: appendBenefit, remove: removeBenefit } = useFieldArray({
@@ -161,23 +169,47 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
 
     const { fields: whyChooseFields, append: appendWhyChoose, remove: removeWhyChoose } = useFieldArray({
         control: form.control,
-        name: "whyChooseUsPoints" as any,
+        name: "whyChooseUsPoints",
     })
 
     const { fields: caseStudyFields, append: appendCaseStudy, remove: removeCaseStudy } = useFieldArray({
         control: form.control,
-        name: "caseStudies" as any,
+        name: "caseStudies",
     })
 
     const { fields: faqFields, append: appendFaq, remove: removeFaq } = useFieldArray({
         control: form.control,
-        name: "faqs" as any,
+        name: "faqs",
     })
 
-    console.log(form.formState.errors);
-    
-    async function onSubmit(data: ServiceFormValues) {     
-        
+    const hasTabErrors = (fields: string[]) => {
+        return fields.some(field => {
+            if (field.includes('.')) {
+                const [parent, ...rest] = field.split('.')
+                const parentErrors = form.formState.errors[parent as keyof ServiceFormValues] as any
+                if (!parentErrors) return false
+
+                // Handle arrays and objects
+                let current = parentErrors
+                for (const key of rest) {
+                    if (!current) return false
+                    current = current[key]
+                }
+                return !!current
+            }
+            return !!form.formState.errors[field as keyof ServiceFormValues]
+        })
+    }
+
+    const ErrorDot = () => (
+        <span className="absolute -top-1 -right-1 flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive"></span>
+        </span>
+    )
+
+    async function onSubmit(data: ServiceFormValues) {
+
         setIsLoading(true)
         try {
             const result = serviceId
@@ -249,19 +281,58 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
                 <Tabs defaultValue="general" className="w-full">
                     <div className="relative mb-6">
                         <TabsList className="flex w-full h-auto flex-wrap gap-1 p-1 bg-muted/50 rounded-lg justify-start">
-                            <TabsTrigger value="general" className="px-4 py-2 text-xs sm:text-sm">General</TabsTrigger>
-                            <TabsTrigger value="intro" className="px-4 py-2 text-xs sm:text-sm">Intro</TabsTrigger>
-                            <TabsTrigger value="role" className="px-4 py-2 text-xs sm:text-sm">Role</TabsTrigger>
-                            <TabsTrigger value="help" className="px-4 py-2 text-xs sm:text-sm">Help</TabsTrigger>
-                            <TabsTrigger value="overview" className="px-4 py-2 text-xs sm:text-sm">Overview</TabsTrigger>
-                            <TabsTrigger value="process" className="px-4 py-2 text-xs sm:text-sm">Process</TabsTrigger>
-                            <TabsTrigger value="areas" className="px-4 py-2 text-xs sm:text-sm">Areas</TabsTrigger>
-                            <TabsTrigger value="industries" className="px-4 py-2 text-xs sm:text-sm">Industries</TabsTrigger>
-                            <TabsTrigger value="benefits" className="px-4 py-2 text-xs sm:text-sm">Benefits</TabsTrigger>
-                            <TabsTrigger value="whyUs" className="px-4 py-2 text-xs sm:text-sm">Why Us</TabsTrigger>
-                            <TabsTrigger value="caseStudies" className="px-4 py-2 text-xs sm:text-sm">Case Studies</TabsTrigger>
-                            <TabsTrigger value="faqs" className="px-4 py-2 text-xs sm:text-sm">FAQs</TabsTrigger>
-                            <TabsTrigger value="seo" className="px-4 py-2 text-xs sm:text-sm">SEO</TabsTrigger>
+                            <TabsTrigger value="general" className="px-4 py-2 text-xs sm:text-sm relative">
+                                General
+                                {hasTabErrors(['title', 'subtitle', 'description', 'slug', 'heroImageAlt']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="intro" className="px-4 py-2 text-xs sm:text-sm relative">
+                                Intro
+                                {hasTabErrors(['introTagLine', 'introTitle', 'introContent']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="role" className="px-4 py-2 text-xs sm:text-sm relative">
+                                Role
+                                {hasTabErrors(['roleTitle', 'roleContent']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="help" className="px-4 py-2 text-xs sm:text-sm relative">
+                                Help
+                                {hasTabErrors(['howWeHelpSection', 'howWeHelpPoints']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="overview" className="px-4 py-2 text-xs sm:text-sm relative">
+                                Overview
+                                {hasTabErrors(['overviewSection', 'items']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="process" className="px-4 py-2 text-xs sm:text-sm relative">
+                                Process
+                                {hasTabErrors(['processSection', 'process']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="areas" className="px-4 py-2 text-xs sm:text-sm relative">
+                                Areas
+                                {hasTabErrors(['areasSection', 'areas']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="industries" className="px-4 py-2 text-xs sm:text-sm relative">
+                                Industries
+                                {hasTabErrors(['industriesSection', 'industries']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="benefits" className="px-4 py-2 text-xs sm:text-sm relative">
+                                Benefits
+                                {hasTabErrors(['benifitsSection', 'benefits']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="whyUs" className="px-4 py-2 text-xs sm:text-sm relative">
+                                Why Us
+                                {hasTabErrors(['whyChooseUsSection', 'whyChooseUsPoints']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="caseStudies" className="px-4 py-2 text-xs sm:text-sm relative">
+                                Case Studies
+                                {hasTabErrors(['caseStudiesSection', 'caseStudies']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="faqs" className="px-4 py-2 text-xs sm:text-sm relative">
+                                FAQs
+                                {hasTabErrors(['faqsSection', 'faqs']) && <ErrorDot />}
+                            </TabsTrigger>
+                            <TabsTrigger value="seo" className="px-4 py-2 text-xs sm:text-sm relative">
+                                SEO
+                                {hasTabErrors(['seo']) && <ErrorDot />}
+                            </TabsTrigger>
                         </TabsList>
                     </div>
 
@@ -309,23 +380,29 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
                                     />
                                 </div>
 
-                                <ImageUpload
-                                    value={form.getValues('heroImage') as any}
-                                    onChange={(asset) => {
-                                        if (!asset) {
-                                            form.setValue('heroImage', undefined)
-                                            return
-                                        }
-                                        form.setValue('heroImage', {
-                                            _type: 'image',
-                                            asset: {
-                                                _type: 'reference',
-                                                _ref: asset._id || asset.id,
-                                            },
-                                            url: asset.url
-                                        })
-                                    }}
-                                    label="Hero Image"
+                                <FormField
+                                    control={formControl}
+                                    name="heroImage"
+                                    render={({ field }) => (
+                                        <ImageUpload
+                                            value={field.value as any}
+                                            onChange={(asset) => {
+                                                if (!asset) {
+                                                    field.onChange(undefined)
+                                                    return
+                                                }
+                                                field.onChange({
+                                                    _type: 'image',
+                                                    asset: {
+                                                        _type: 'reference',
+                                                        _ref: asset._id || asset.id,
+                                                    },
+                                                    url: asset.url
+                                                })
+                                            }}
+                                            label="Hero Image"
+                                        />
+                                    )}
                                 />
 
                                 <FormInput control={formControl} name="heroImageAlt" label="Hero Image Alt Text" />
@@ -372,7 +449,7 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
                                             )}
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendRole({ _key: Math.random().toString(36).substring(2, 9) })}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendRole("")}>
                                         <Plus className="mr-2 h-4 w-4" /> Add Role Content
                                     </Button>
                                 </div>
@@ -435,7 +512,7 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
                                             )}
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendItem({ _key: Math.random().toString(36).substring(2, 9) })}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendItem("")}>
                                         <Plus className="mr-2 h-4 w-4" /> Add Item
                                     </Button>
                                 </div>
@@ -505,22 +582,38 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
                                             <FormInput control={formControl} name={`areas.${index}.region`} label="Region" />
                                             <div className="space-y-2">
                                                 <FormLabel>Locations</FormLabel>
-                                                <FormInput control={formControl} name={`areas.${index}.locations.0`} label="Location" />
+                                                {(form.watch(`areas.${index}.locations`) || [""]).map((_, locIndex) => (
+                                                    <div key={locIndex} className="flex gap-2 mb-2">
+                                                        <FormInput control={formControl} name={`areas.${index}.locations.${locIndex}`} label="" className="flex-1" />
+                                                        <Button
+                                                            type="button"
+                                                            variant="destructive"
+                                                            size="icon"
+                                                            onClick={() => {
+                                                                const currentLocations = form.getValues(`areas.${index}.locations`)
+                                                                if (currentLocations.length > 1) {
+                                                                    form.setValue(`areas.${index}.locations`, currentLocations.filter((_, i) => i !== locIndex))
+                                                                }
+                                                            }}
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                ))}
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        const currentLocations = form.getValues(`areas.${index}.locations`)
+                                                        form.setValue(`areas.${index}.locations`, [...currentLocations, ""])
+                                                    }}
+                                                >
+                                                    <Plus className="mr-2 h-4 w-4" /> Add Location
+                                                </Button>
                                             </div>
                                             <div className="grid grid-cols-2 gap-4">
-                                                <FormField
-                                                    control={formControl}
-                                                    name={`areas.${index}.clients` as any}
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Number of Clients</FormLabel>
-                                                            <FormControl>
-                                                                <Input type="number" {...field} value={field.value ?? 0} placeholder="0" />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
+                                                <FormInput control={formControl} name={`areas.${index}.clients`} label="Number of Clients" />
                                                 <FormField
                                                     control={formControl}
                                                     name={`areas.${index}.flag` as any}
@@ -554,7 +647,7 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
                                             />
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendArea({ _key: Math.random().toString(36).substring(2, 9), region: "", locations: [{ _key: Math.random().toString(36).substring(2, 9) }], featured: false, clients: 0, flag: "" })}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendArea({ _key: Math.random().toString(36).substring(2, 9), region: "", locations: [""], featured: false, clients: "0", flag: "" })}>
                                         <Plus className="mr-2 h-4 w-4" /> Add Area
                                     </Button>
                                 </div>
@@ -615,7 +708,7 @@ export function ServiceForm({ initialData, serviceId, draftUpdatedAt }: ServiceF
                                             )}
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={() => appendBenefit({ _key: Math.random().toString(36).substring(2, 9) })}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => appendBenefit("")}>
                                         <Plus className="mr-2 h-4 w-4" /> Add Benefit
                                     </Button>
                                 </div>

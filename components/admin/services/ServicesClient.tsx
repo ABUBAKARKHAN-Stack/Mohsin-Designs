@@ -20,24 +20,27 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Plus, Trash2, Eye, Edit as EditIcon, Search, Loader2, Check } from "lucide-react"
+import { Trash2, Eye, Edit as EditIcon, Search, Loader2, Calendar, Copy, Clock, Search as SearchIcon } from "lucide-react"
 import Link from "next/link"
 import { useState, useMemo } from "react"
-import { deleteService, deleteMultipleServices } from "@/app/actions/deleteService"
+import { deleteService, deleteMultipleServices, duplicateService } from "@/app/actions/service"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
 
 // Define the type for the service data we're fetching
 interface Service {
     _id: string
-    title: { [key: string]: string }
-    slug: { current: string }
+    title: string
+    slug: string
     heroImageUrl?: string
     _updatedAt: string
+    status: 'Draft' | 'Published'
+    hasPublished?: boolean
 }
 
 interface ServicesClientProps {
@@ -49,12 +52,13 @@ export function ServicesClient({ services }: ServicesClientProps) {
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedIds, setSelectedIds] = useState<string[]>([])
     const [isBulkDeleting, setIsBulkDeleting] = useState(false)
+    const [isDuplicating, setIsDuplicating] = useState<string | null>(null)
     const router = useRouter()
 
     const filteredServices = useMemo(() => {
         return services.filter(service => {
-            const title = service.title?.en?.toLowerCase() || ""
-            const slug = service.slug?.current?.toLowerCase() || ""
+            const title = service.title?.toLowerCase() || ""
+            const slug = service.slug?.toLowerCase() || ""
             const query = searchQuery.toLowerCase()
             return title.includes(query) || slug.includes(query)
         })
@@ -96,6 +100,25 @@ export function ServicesClient({ services }: ServicesClientProps) {
             errorToast("An unexpected error occurred.")
         } finally {
             setIsBulkDeleting(false)
+        }
+    }
+
+    async function handleDuplicate(id: string) {
+        setIsDuplicating(id)
+        try {
+            const result = await duplicateService(id)
+            if (result.success) {
+                successToast("Service duplicated successfully!")
+                router.push(`/admin/services/edit/${result.id}`)
+                router.refresh()
+            } else {
+                errorToast(`Error: ${result.error}`)
+            }
+        } catch (error) {
+            console.error(error)
+            errorToast("An unexpected error occurred during duplication.")
+        } finally {
+            setIsDuplicating(null)
         }
     }
 
@@ -177,10 +200,10 @@ export function ServicesClient({ services }: ServicesClientProps) {
                 </div>
             )}
 
-            <div className="overflow-x-auto rounded-md border">
-                <Table>
+            <div className="overflow-x-auto rounded-xl border bg-card shadow-sm custom-scrollbar">
+                <Table className="min-w-[800px]">
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="hover:bg-transparent border-b">
                             <TableHead className="w-10">
                                 <Checkbox
                                     checked={selectedIds.length === filteredServices.length && filteredServices.length > 0}
@@ -188,7 +211,8 @@ export function ServicesClient({ services }: ServicesClientProps) {
                                 />
                             </TableHead>
                             <TableHead className="w-[80px]">Preview</TableHead>
-                            <TableHead>Title</TableHead>
+                            <TableHead className="min-w-[200px]">Title</TableHead>
+                            <TableHead>Status</TableHead>
                             <TableHead className="hidden md:table-cell">Slug</TableHead>
                             <TableHead className="hidden sm:table-cell">Updated</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
@@ -197,8 +221,11 @@ export function ServicesClient({ services }: ServicesClientProps) {
                     <TableBody>
                         {filteredServices.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground italic">
-                                    No services found matching your search.
+                                <TableCell colSpan={7} className="h-32 text-center text-muted-foreground italic">
+                                    <div className="flex flex-col items-center gap-2">
+                                        <SearchIcon className="h-8 w-8 opacity-20" />
+                                        <span>No services found matching your search.</span>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -207,10 +234,9 @@ export function ServicesClient({ services }: ServicesClientProps) {
                                     key={service._id}
                                     className={cn(
                                         "group transition-colors hover:bg-muted/30 cursor-pointer",
-                                        selectedIds.includes(service._id) ? "bg-primary/3 data-[state=selected]:bg-muted" : ""
+                                        selectedIds.includes(service._id) ? "bg-primary/5" : ""
                                     )}
                                     onClick={() => toggleSelection(service._id)}
-                                    data-state={selectedIds.includes(service._id) ? "selected" : undefined}
                                 >
                                     <TableCell onClick={(e) => e.stopPropagation()}>
                                         <Checkbox
@@ -219,7 +245,7 @@ export function ServicesClient({ services }: ServicesClientProps) {
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <div className="relative h-12 w-20 rounded-md border overflow-hidden bg-muted shrink-0">
+                                        <div className="relative h-12 w-20 rounded-lg border overflow-hidden bg-muted shrink-0">
                                             {service.heroImageUrl ? (
                                                 <Image
                                                     src={service.heroImageUrl}
@@ -229,66 +255,100 @@ export function ServicesClient({ services }: ServicesClientProps) {
                                                     sizes="80px"
                                                 />
                                             ) : (
-                                                <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
-                                                    No Image
+                                                <div className="flex h-full w-full items-center justify-center">
+                                                    <Image src="/assets/logo.webp" alt="logo" width={20} height={20} className="opacity-20 dark:invert-0 invert" />
                                                 </div>
                                             )}
                                         </div>
                                     </TableCell>
-                                    <TableCell className="font-semibold max-w-[150px] sm:max-w-[200px] truncate">
-                                        {service.title?.en || "Untitled Service"}
+                                    <TableCell>
+                                        <div className="flex flex-col gap-0.5">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-semibold text-sm truncate max-w-[200px]">
+                                                    {service.title || "Untitled Service"}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </TableCell>
-                                    <TableCell className="text-muted-foreground font-mono text-xs hidden md:table-cell">
-                                        {service.slug?.current}
+                                    <TableCell>
+                                        <Badge
+                                            variant={service.status === 'Published' ? "default" : "outline"}
+                                            className={cn(
+                                                "text-[10px] py-0 px-2 h-5 font-medium border shadow-none",
+                                                service.status === 'Draft' && "bg-yellow-50 text-yellow-700 border-yellow-200",
+                                                service.status === 'Published' && "bg-green-50 text-green-700 border-green-200 shadow-none border"
+                                            )}
+                                        >
+                                            {service.status}
+                                        </Badge>
                                     </TableCell>
-                                    <TableCell className="text-muted-foreground whitespace-nowrap hidden sm:table-cell">
-                                        {new Date(service._updatedAt).toLocaleDateString()}
+                                    <TableCell className="hidden md:table-cell text-muted-foreground font-mono text-xs">
+                                        {service.slug}
                                     </TableCell>
-                                    <TableCell className="text-right space-x-2" onClick={(e) => e.stopPropagation()}>
-                                        <Button variant="ghost" size="sm" asChild>
-                                            <Link href={`/admin/services/${service._id}`}>
-                                                <Eye className="h-4 w-4 mr-2" />
-                                                View
-                                            </Link>
-                                        </Button>
+                                    <TableCell className="hidden sm:table-cell">
+                                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                            <Calendar className="h-3 w-3" />
+                                            {new Date(service._updatedAt).toLocaleDateString()}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                                        <div className="flex items-center justify-end gap-1">
+                                            <Button variant="ghost" size="icon" className="h-8 w-8" asChild title="Edit">
+                                                <Link href={`/admin/services/edit/${service._id}`}>
+                                                    <EditIcon className="h-4 w-4" />
+                                                </Link>
+                                            </Button>
 
-                                        <Button variant="ghost" size="sm" asChild>
-                                            <Link href={`/admin/services/edit/${service._id}`}>
-                                                <EditIcon className="h-4 w-4 mr-2" />
-                                                Edit
-                                            </Link>
-                                        </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8"
+                                                onClick={() => handleDuplicate(service._id)}
+                                                disabled={isDuplicating === service._id}
+                                                title="Duplicate"
+                                            >
+                                                {isDuplicating === service._id ? (
+                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    <Copy className="h-4 w-4" />
+                                                )}
+                                            </Button>
 
-                                        <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                                                    disabled={isDeleting === service._id}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent>
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                                    <AlertDialogDescription>
-                                                        This will permanently delete the service "{service.title?.en || 'Untitled'}".
-                                                        This action cannot be undone.
-                                                    </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                    <AlertDialogAction
-                                                        onClick={() => handleDelete(service._id, service.title?.en || 'Untitled')}
-                                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                                        disabled={isDeleting === service._id}
                                                     >
-                                                        Delete
-                                                    </AlertDialogAction>
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
+                                                        {isDeleting === service._id ? (
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                        ) : (
+                                                            <Trash2 className="h-4 w-4" />
+                                                        )}
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            This will permanently delete the service "{service.title || 'Untitled'}".
+                                                            This action cannot be undone.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() => handleDelete(service._id, service.title || 'Untitled')}
+                                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                        >
+                                                            Delete
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))

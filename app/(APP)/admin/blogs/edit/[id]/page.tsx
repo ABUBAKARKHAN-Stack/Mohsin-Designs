@@ -20,7 +20,6 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
 
     const hasDraft = post._id.startsWith('drafts.')
     const draftUpdatedAt = post._updatedAt || null
-
     return (
         <div className="container mx-auto pb-10 max-w-5xl text-foreground">
             <BlogForm

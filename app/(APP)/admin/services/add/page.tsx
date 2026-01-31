@@ -1,6 +1,8 @@
 import { ServiceForm } from "@/components/admin/services/ServiceForm"
 
 export default function AddServicePage() {
+    const serviceId = crypto.randomUUID()
+
     return (
         <div className="space-y-6">
             <div className="space-y-1">
@@ -9,7 +11,7 @@ export default function AddServicePage() {
                     Create a new service.
                 </p>
             </div>
-            <ServiceForm />
+            <ServiceForm serviceId={serviceId} />
         </div>
     )
 }

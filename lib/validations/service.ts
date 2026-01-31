@@ -45,7 +45,7 @@ export const serviceFormSchema = z.object({
 
     // Overview
     overviewSection: sectionHeadingSchema,
-    items: z.array(requiredLocalizedStringSchema).min(2, "Add at least two items"),
+    items: z.array(requiredLocalizedStringSchema).min(1, "Add at least one items"),
 
     // Process
     processSection: sectionHeadingSchema,
@@ -63,7 +63,7 @@ export const serviceFormSchema = z.object({
         region: requiredLocalizedStringSchema,
         locations: z.array(requiredLocalizedStringSchema).min(1, "Add at least one location"),
         featured: z.boolean().default(false),
-        clients: z.coerce.number().min(0).default(0),
+        clients: z.string().min(1, "Required"),
         flag: z.string().optional()
     })).min(1, "Add at least one area"),
 

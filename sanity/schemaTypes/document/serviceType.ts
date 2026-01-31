@@ -185,8 +185,8 @@ export const serviceType = defineType({
                     defineField({ name: 'featured', type: 'boolean' }),
                     defineField({
                         name: 'clients',
-                        type: 'number',
-                        validation: Rule => Rule.min(0)
+                        type: 'string',
+                        validation: Rule => Rule.required()
                     }),
                     defineField({ name: 'flag', type: 'string' }),
                 ],

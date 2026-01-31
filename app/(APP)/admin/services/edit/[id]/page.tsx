@@ -17,7 +17,7 @@ interface Service {
             _type: 'reference',
             url?: string
         },
-        alt: string
+        heroImageAlt: string
     }
     introTagLine: string
     introTitle: string
@@ -102,6 +102,7 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
     const hasDraft = !!draft
     const draftUpdatedAt = draft?._updatedAt || null
 
+
     // Transform service data to match form structure
     const initialData = {
         title: service.title || "",
@@ -109,24 +110,27 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
         description: service.description || "",
         slug: service.slug?.current || "",
         heroImage: service.heroImage,
-        heroImageAlt: service.heroImage?.alt || "",
+        heroImageAlt: service.heroImage?.heroImageAlt || "",
         introTagLine: service.introTagLine || "",
         introTitle: service.introTitle || "",
         introContent: service.introContent || "",
         roleTitle: service.roleTitle || "",
-        roleContent: service.roleContent || [{ _key: 'initial-role-1' }],
+        roleContent: service.roleContent || [""],
         howWeHelpSection: service.howWeHelpSection || { _key: 'initial-how-1', title: "", description: "", eyebrow: "" },
         howWeHelpPoints: service.howWeHelpPoints || [{ _key: 'initial-help-1', title: "", description: "" }],
         overviewSection: service.overviewSection || { _key: 'initial-over-1', title: "", description: "", eyebrow: "" },
-        items: (service.items && service.items.length >= 2) ? service.items : (service.items && service.items.length === 1) ? [service.items[0], { _key: 'initial-item-2' }] : [{ _key: 'initial-item-1' }, { _key: 'initial-item-2' }],
+        items: (service.items && service.items.length >= 2) ? service.items : (service.items && service.items.length === 1) ? [service.items[0], ""] : ["", ""],
         processSection: service.processSection || { _key: 'initial-proc-1', title: "", description: "", eyebrow: "" },
         process: service.process || [{ _key: 'initial-proc-step-1', step: "01", title: "", desc: "" }],
         areasSection: service.areasSection || { _key: 'initial-area-1', title: "", description: "", eyebrow: "" },
-        areas: (service.areas && service.areas.length > 0) ? service.areas : [{ _key: 'initial-area-item-1', region: "", locations: [{ _key: 'initial-loc-1' }], featured: false, clients: 0, flag: "" }],
+        areas: (service.areas && service.areas.length > 0) ? service.areas.map((area: any) => ({
+            ...area,
+            clients: String(area.clients ?? "")
+        })) : [{ _key: 'initial-area-item-1', region: "", locations: [""], featured: false, clients: "", flag: "" }],
         industriesSection: service.industriesSection || { _key: 'initial-ind-1', title: "", description: "", eyebrow: "" },
         industries: (service.industries && service.industries.length > 0) ? service.industries : [{ _key: 'initial-ind-item-1', name: "", description: "" }],
         benifitsSection: service.benifitsSection || { _key: 'initial-ben-1', title: "", description: "", eyebrow: "" },
-        benefits: service.benefits || [{ _key: 'initial-ben-item-1' }],
+        benefits: service.benefits || [""],
         whyChooseUsSection: service.whyChooseUsSection || { _key: 'initial-why-1', title: "", description: "", eyebrow: "" },
         whyChooseUsPoints: service.whyChooseUsPoints || [{ _key: 'initial-why-item-1', title: "", description: "" }],
         caseStudiesSection: service.caseStudiesSection || { _key: 'initial-case-1', title: "", description: "", eyebrow: "" },

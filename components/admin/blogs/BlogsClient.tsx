@@ -20,7 +20,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Plus, Trash2, Eye, Edit as EditIcon, Search, Loader2, Calendar, User, MapPin, Clock, Copy } from "lucide-react"
+import { Trash2, Eye, Edit as EditIcon, Search, Loader2, Calendar, User, Clock, Copy } from "lucide-react"
 import Link from "next/link"
 import { useState, useMemo } from "react"
 import { deletePost, deleteMultiplePosts, duplicatePost } from "@/app/actions/blog"

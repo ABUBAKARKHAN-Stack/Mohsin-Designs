@@ -17,7 +17,7 @@ export async function getDashboardPosts() {
             featured,
             publishedAt,
             author,
-            "location": location->title,
+            "locations": coalesce(locations[]->title, []),
             "service": service->{title},
             "mainImage": coalesce(mainImage.asset->url, mainImage.url, null),
             readTime,
@@ -84,7 +84,7 @@ export async function getPostById(id: string) {
             readTime,
             author,
             tags,
-            "location": location._ref,
+            "locations": coalesce(locations[]._ref, []),
             "service": service._ref,
             "categories": coalesce(categories[]._ref, []),
             publishedAt,
@@ -96,7 +96,8 @@ export async function getPostById(id: string) {
                 },
                 null
             ),
-            body
+            body,
+            seo
         }`
         const result = await adminClient.fetch(query, { id }, {
             perspective: "raw",
@@ -180,7 +181,9 @@ export async function createPost(data: BlogPostValues, id?: string) {
             readTime: validated.readTime,
             author: validated.author,
             tags: validated.tags.map((t: string) => t.trim()).filter(Boolean),
-            location: (validated.location && validated.location !== 'none') ? { _type: 'reference', _ref: validated.location } : undefined,
+            locations: (validated.locations && validated.locations.length > 0)
+                ? validated.locations.map(locId => ({ _type: 'reference', _ref: locId, _key: locId }))
+                : [],
             publishedAt: validated.publishedAt,
             service: (validated.service && validated.service !== 'none') ? { _type: 'reference', _ref: validated.service } : undefined,
             categories: (validated.categories && validated.categories.length > 0)
@@ -233,16 +236,17 @@ export async function updatePost(id: string, data: BlogPostValues) {
             categories: (validated.categories && validated.categories.length > 0)
                 ? validated.categories.map(catId => ({ _type: 'reference', _ref: catId, _key: catId }))
                 : [],
+            locations: (validated.locations && validated.locations.length > 0)
+                ? validated.locations.map(locId => ({ _type: 'reference', _ref: locId, _key: locId }))
+                : [],
             body: validated.body,
             seo: validated.seo
         }
 
         const toUnset = []
 
-        if (validated.location && validated.location !== 'none') {
-            toSet.location = { _type: 'reference', _ref: validated.location }
-        } else {
-            toUnset.push('location')
+        if (!(validated.locations && validated.locations.length > 0)) {
+            toUnset.push('locations')
         }
 
         if (validated.service && validated.service !== 'none') {
@@ -303,5 +307,40 @@ export async function deleteMultiplePosts(ids: string[]) {
     } catch (error: any) {
         console.error("Failed to delete multiple posts:", error)
         return { success: false, error: error.message }
+    }
+}
+
+export async function duplicatePost(id: string) {
+    try {
+        const sourcePost = await getPostById(id)
+        if (!sourcePost) return { success: false, error: "Source post not found" }
+
+        const newDoc = {
+            _type: 'post',
+            title: `${sourcePost.title} (Copy)`,
+            description: sourcePost.description,
+            featured: sourcePost.featured,
+            //* Slug is intentionally omitted due to slug generation issue
+            readTime: sourcePost.readTime,
+            author: sourcePost.author,
+            tags: sourcePost.tags,
+            locations: sourcePost.locations?.map((ref: string) => ({ _type: 'reference', _ref: ref, _key: ref })),
+            service: sourcePost.service ? { _type: 'reference', _ref: sourcePost.service } : undefined,
+            categories: sourcePost.categories?.map((ref: string) => ({ _type: 'reference', _ref: ref, _key: ref })),
+            publishedAt: new Date().toISOString(),
+            mainImage: sourcePost.mainImage?.asset ? {
+                _type: 'image',
+                asset: { _type: 'reference', _ref: sourcePost.mainImage._id }
+            } : undefined,
+            body: sourcePost.body,
+            seo: sourcePost.seo
+        }
+
+        const result = await adminClient.create(newDoc)
+        revalidatePath('/admin/blogs')
+        return { success: true, id: result._id }
+    } catch (error: any) {
+        console.error("Failed to duplicate post:", error)
+        return { success: false, error: error.message || "Failed to duplicate post" }
     }
 }

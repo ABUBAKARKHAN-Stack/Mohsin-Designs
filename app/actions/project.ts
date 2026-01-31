@@ -103,7 +103,8 @@ export async function getProjectById(id: string) {
                     value,
                     label
                 }
-            }
+            },
+            seo
         }`
         const result = await adminClient.fetch(query, { id }, {
             perspective: "raw",
@@ -264,3 +265,59 @@ export async function deleteProjects(ids: string[]) {
         return { success: false, error: error.message }
     }
 }
+
+export async function duplicateProject(id: string) {
+    try {
+        const sourceProject = await getProjectById(id)
+        if (!sourceProject) return { success: false, error: "Source project not found" }
+
+        const newDoc: any = {
+            _type: 'project',
+            title: sourceProject.title,
+            category: sourceProject.category,
+            description: sourceProject.description,
+            tags: sourceProject.tags,
+            mainImage: sourceProject.mainImage?._id ? {
+                _type: 'image',
+                asset: { _type: 'reference', _ref: sourceProject.mainImage._id }
+            } : undefined,
+            caseStudy: sourceProject.caseStudy ? {
+                title: sourceProject.caseStudy.title,
+                beforeImage: sourceProject.caseStudy.beforeImage?._id ? {
+                    _type: 'image',
+                    asset: { _type: 'reference', _ref: sourceProject.caseStudy.beforeImage._id }
+                } : undefined,
+                afterImage: sourceProject.caseStudy.afterImage?._id ? {
+                    _type: 'image',
+                    asset: { _type: 'reference', _ref: sourceProject.caseStudy.afterImage._id }
+                } : undefined,
+                testimonial: sourceProject.caseStudy.testimonial,
+                results: sourceProject.caseStudy.results?.map((res: any) => ({
+                    _key: Math.random().toString(36).substring(2, 9),
+                    icon: res.icon,
+                    value: res.value,
+                    label: res.label
+                }))
+            } : undefined,
+            seo: sourceProject.seo
+        }
+
+        if (typeof newDoc.title === 'string') {
+            newDoc.title = `${newDoc.title} (Copy)`
+        } else if (newDoc.title && typeof newDoc.title === 'object') {
+            Object.keys(newDoc.title).forEach(lang => {
+                if (typeof newDoc.title[lang] === 'string') {
+                    newDoc.title[lang] = `${newDoc.title[lang]} (Copy)`
+                }
+            })
+        }
+
+        const result = await adminClient.create(newDoc)
+        revalidatePath('/admin/portfolio')
+        return { success: true, id: result._id }
+    } catch (error: any) {
+        console.error("Failed to duplicate project:", error)
+        return { success: false, error: error.message || "Failed to duplicate project" }
+    }
+}
+

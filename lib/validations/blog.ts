@@ -11,7 +11,7 @@ export const blogPostSchema = z.object({
     readTime: z.number().min(1, "Read time must be at least 1 minute").optional(),
     author: z.string().min(1, "Author name is required"),
     tags: requiredLocalizedArraySchema,
-    location: z.string().nullable().optional(),
+    locations: z.array(z.string()).optional(),
     service: z.string().nullable().optional(), // Reference ID
     publishedAt: z.string().optional(), // ISO date string
     mainImage: z.any().optional(), // Image object

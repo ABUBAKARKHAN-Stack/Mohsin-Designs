@@ -50,10 +50,10 @@ export const postType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'location',
-      type: 'reference',
-      to: { type: 'location' },
-      title: 'Location',
+      name: 'locations',
+      type: 'array',
+      title: 'Locations',
+      of: [defineArrayMember({ type: 'reference', to: { type: 'location' } })],
     }),
     defineField({
       name: 'service',

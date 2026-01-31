@@ -20,10 +20,10 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Plus, Trash2, Eye, Edit as EditIcon, Search, Loader2, Calendar, User, MapPin, Clock } from "lucide-react"
+import { Plus, Trash2, Eye, Edit as EditIcon, Search, Loader2, Calendar, User, MapPin, Clock, Copy } from "lucide-react"
 import Link from "next/link"
 import { useState, useMemo } from "react"
-import { deletePost, deleteMultiplePosts } from "@/app/actions/blog"
+import { deletePost, deleteMultiplePosts, duplicatePost } from "@/app/actions/blog"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
@@ -53,6 +53,7 @@ interface BlogsClientProps {
 
 export function BlogsClient({ posts }: BlogsClientProps) {
     const [isDeleting, setIsDeleting] = useState<string | null>(null)
+    const [isDuplicating, setIsDuplicating] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedIds, setSelectedIds] = useState<string[]>([])
     const [isBulkDeleting, setIsBulkDeleting] = useState(false)
@@ -66,6 +67,25 @@ export function BlogsClient({ posts }: BlogsClientProps) {
             return title.includes(query) || author.includes(query)
         })
     }, [posts, searchQuery])
+
+    async function handleDuplicate(id: string) {
+        setIsDuplicating(id)
+        try {
+            const result = await duplicatePost(id)
+            if (result.success) {
+                successToast("Post duplicated successfully!")
+                router.push(`/admin/blogs/edit/${result.id}`)
+                router.refresh()
+            } else {
+                errorToast(`Error: ${result.error}`)
+            }
+        } catch (error) {
+            console.error(error)
+            errorToast("An unexpected error occurred.")
+        } finally {
+            setIsDuplicating(null)
+        }
+    }
 
     async function handleDelete(id: string, title: string) {
         setIsDeleting(id)
@@ -184,8 +204,8 @@ export function BlogsClient({ posts }: BlogsClientProps) {
                 </div>
             )}
 
-            <div className="overflow-x-auto rounded-xl border bg-card shadow-sm">
-                <Table>
+            <div className="overflow-x-auto rounded-xl border bg-card shadow-sm custom-scrollbar">
+                <Table className="min-w-[800px]">
                     <TableHeader>
                         <TableRow className="hover:bg-transparent border-b">
                             <TableHead className="w-10">
@@ -215,8 +235,6 @@ export function BlogsClient({ posts }: BlogsClientProps) {
                             </TableRow>
                         ) : (
                             filteredPosts.map((post) => {
-                                const safeSlug = typeof post.slug === 'string' ? post.slug : (post.slug as any)?.current || post._id;
-
                                 return (
                                     <TableRow
                                         key={post._id}
@@ -252,7 +270,9 @@ export function BlogsClient({ posts }: BlogsClientProps) {
                                         <TableCell>
                                             <div className="flex flex-col gap-0.5">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="font-semibold text-sm line-clamp-1">{post.title || "Untitled Post"}</span>
+                                                    <span className="font-semibold text-sm 
+                                                    w-full
+                                                    truncate max-w-[150px]">{post.title || "Untitled Post"}</span>
                                                     {post.featured && (
                                                         <Badge variant="outline" className="h-4 px-1 text-[8px] uppercase bg-primary/10 text-primary border-primary/20">
                                                             Featured
@@ -303,6 +323,17 @@ export function BlogsClient({ posts }: BlogsClientProps) {
                                                     <Link href={`/admin/blogs/edit/${post._id}`}>
                                                         <EditIcon className="h-4 w-4" />
                                                     </Link>
+                                                </Button>
+
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8"
+                                                    onClick={() => handleDuplicate(post._id)}
+                                                    disabled={isDuplicating === post._id}
+                                                    title="Duplicate Post"
+                                                >
+                                                    {isDuplicating === post._id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Copy className="h-4 w-4" />}
                                                 </Button>
 
                                                 <AlertDialog>

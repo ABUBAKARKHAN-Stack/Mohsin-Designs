@@ -30,6 +30,7 @@ import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { IconSelect } from "@/components/admin/form/IconSelect"
 import { Separator } from "@/components/ui/separator"
 import { CommaKeywordsInput } from "@/components/admin/form/CommaKeywordsInput"
+import { SeoFormTab } from "@/components/admin/form/SeoFormTab"
 
 interface ProjectFormProps {
     initialData?: any
@@ -180,6 +181,7 @@ export function ProjectForm({
                     <TabsList className="mb-6 flex w-full h-auto flex-wrap gap-1 p-1 bg-muted/50 rounded-lg justify-start">
                         <TabsTrigger value="general" className="relative px-6 py-2">General Details</TabsTrigger>
                         <TabsTrigger value="casestudy" className="relative px-6 py-2">Case Study / Results</TabsTrigger>
+                        <TabsTrigger value="seo" className="relative px-6 py-2">SEO Settings</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="general" className="space-y-6">
@@ -397,6 +399,10 @@ export function ProjectForm({
                                 </Card>
                             </div>
                         </div>
+                    </TabsContent>
+
+                    <TabsContent value="seo" className="space-y-6">
+                        <SeoFormTab control={form.control} />
                     </TabsContent>
                 </Tabs>
             </form>

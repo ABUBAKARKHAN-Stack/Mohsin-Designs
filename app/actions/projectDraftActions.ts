@@ -10,7 +10,7 @@ const sanitizeSanityData = (data: any): any => {
     if (data !== null && typeof data === 'object') {
         const cleaned: any = {};
         for (const key in data) {
-            if (['_rev', '_createdAt', '_updatedAt', '_id', '_type'].includes(key)) continue;
+            if (['_rev', '_createdAt', '_updatedAt'].includes(key)) continue;
             if (key === 'url' && data._type === 'reference') continue;
             cleaned[key] = sanitizeSanityData(data[key]);
         }

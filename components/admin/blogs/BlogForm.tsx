@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input"
 import { useState, useTransition, useCallback, useEffect, useRef } from "react"
 import { createPost, updatePost } from "@/app/actions/blog"
 import { saveBlogDraft } from "@/app/actions/blogDraftActions"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { SeoFormTab } from "@/components/admin/form/SeoFormTab"
 import { useRouter } from "next/navigation"
 import { Loader2, Save } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
@@ -74,9 +76,24 @@ export function BlogForm({
     const [isInitialMount, setIsInitialMount] = useState(true)
     const isSubmittingRef = useRef(false)
 
+
     const form = useForm<BlogPostValues>({
         resolver: zodResolver(blogPostSchema),
-        defaultValues: initialData || {
+        defaultValues: initialData ? {
+            ...initialData,
+            slug: initialData.slug || { current: "" },
+            categories: initialData.categories?.map((cat: any) => typeof cat === 'string' ? cat : (cat._ref || cat._id)) || [],
+            body: initialData.body?.map((block: any) => {
+                if (block.children && !block._type) {
+                    return { ...block, _type: 'block' };
+                }
+                return block;
+            }) || [],
+            tags: Array.isArray((initialData as any).tags) ? (initialData as any).tags : (typeof (initialData as any).tags === 'string' ? ((initialData as any).tags as string).split(',').map((t: string) => t.trim()).filter(Boolean) : []),
+            service: (initialData.service as any)?._ref || (initialData.service as any)?._id || (typeof initialData.service === 'string' ? initialData.service : "none"),
+            locations: initialData.locations?.map((loc: any) => typeof loc === 'string' ? loc : (loc._ref || loc._id)) || [],
+            mainImage: initialData.mainImage?._id ? initialData.mainImage : (initialData.mainImage?.asset?._ref ? { _id: initialData.mainImage.asset._ref, url: initialData.mainImage.url } : initialData.mainImage),
+        } : {
             title: "",
             description: "",
             slug: { current: "" },
@@ -89,7 +106,7 @@ export function BlogForm({
                 .map(cat => cat._id),
             body: [],
             service: "none",
-            location: "none"
+            locations: []
         },
     })
 
@@ -205,327 +222,369 @@ export function BlogForm({
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Content Details</CardTitle>
-                                <CardDescription>Main information about the post.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <FormInput
-                                    control={form.control}
-                                    name="title"
-                                    label="Post Title"
-                                    placeholder="Enter post title"
-                                />
-                                <FormInput
-                                    control={form.control}
-                                    name="description"
-                                    label="Short Description"
-                                    isTextarea
-                                    placeholder="Enter a brief summary"
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="slug.current"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Slug <span className="text-destructive">*</span></FormLabel>
-                                            <FormControl>
-                                                <div className="flex gap-2">
-                                                    <Input {...field} value={field.value || ''} placeholder="auto-generated-slug" />
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            const genSlug = form.getValues("title").toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || ''
-                                                            form.setValue("slug.current", genSlug)
-                                                        }}
-                                                    >
-                                                        Regenerate
-                                                    </Button>
-                                                </div>
-                                            </FormControl>
-                                            <FormDescription>Unique URL identifier.</FormDescription>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        control={form.control}
-                                        name="readTime"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Read Time (min)</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="number"
-                                                        {...field}
-                                                        onChange={e => field.onChange(parseInt(e.target.value) || undefined)}
-                                                        placeholder="e.g. 5"
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="author"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Author Name <span className="text-destructive">*</span></FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="e.g. Mohsin Ali" />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <CommaKeywordsInput
-                                    name="tags"
-                                    label="Tags"
-                                    placeholder="Type keyword and press comma or enter..."
-                                />
-                            </CardContent>
-                        </Card>
+                <Tabs defaultValue="content" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3 mb-8">
+                        <TabsTrigger value="content">Content</TabsTrigger>
+                        <TabsTrigger value="categorization">Categorization & Locations</TabsTrigger>
+                        <TabsTrigger value="seo">SEO</TabsTrigger>
+                    </TabsList>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Featured Image</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <FormField
-                                    control={form.control}
-                                    name="mainImage"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <ImageUpload
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                    label="Blog Header Image"
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className={cn(form.formState.errors.body && "text-destructive")}>Body Content <span className="text-destructive">*</span></CardTitle>
-                            </CardHeader>
-                            <CardContent className={cn("p-0", form.formState.errors.body && "border-2 border-destructive/20 rounded-b-lg")}>
-                                <FormField
-                                    control={form.control}
-                                    name="body"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <CustomPortableTextEditor
-                                                    value={field.value || []}
-                                                    setValue={(newValue) => field.onChange(newValue)}
-                                                />
-                                            </FormControl>
-                                            <div className="p-4 pt-0">
-                                                <FormMessage />
-                                            </div>
-                                        </FormItem>
-                                    )}
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    <div className="space-y-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Categorization</CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-1">
-                                <Accordion type="single" collapsible defaultValue="categorization" className="w-full">
-                                    <AccordionItem value="categorization" className="border-b-0">
-                                        <AccordionTrigger className="px-4 hover:no-underline hover:bg-muted/50 rounded-lg">Categorization</AccordionTrigger>
-                                        <AccordionContent className="px-4 py-2 space-y-4">
-                                            <FormField
-                                                control={form.control}
-                                                name="service"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Related Service</FormLabel>
-                                                        <Select onValueChange={field.onChange} value={field.value || "none"}>
-                                                            <FormControl>
-                                                                <SelectTrigger>
-                                                                    <SelectValue placeholder="Select a service" />
-                                                                </SelectTrigger>
-                                                            </FormControl>
-                                                            <SelectContent>
-                                                                <SelectItem value="none">None</SelectItem>
-                                                                {services.map((service) => (
-                                                                    <SelectItem key={service._id} value={service._id}>
-                                                                        {service.title}
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-
-                                            <FormField
-                                                control={form.control}
-                                                name="categories"
-                                                render={() => (
-                                                    <FormItem>
-                                                        <div className="flex items-center justify-between">
-                                                            <FormLabel className="text-base">Categories</FormLabel>
-                                                            {categories.length === 0 && (
-                                                                <Button variant="link" size="sm" className="px-0 h-auto" asChild>
-                                                                    <Link href="/admin/blogs/categories">
-                                                                        + Add Category
-                                                                    </Link>
-                                                                </Button>
-                                                            )}
+                    <TabsContent value="content" className="space-y-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div className="lg:col-span-2 space-y-6">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Content Details</CardTitle>
+                                        <CardDescription>Main information about the post.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <FormInput
+                                            control={form.control}
+                                            name="title"
+                                            label="Post Title"
+                                            placeholder="Enter post title"
+                                        />
+                                        <FormInput
+                                            control={form.control}
+                                            name="description"
+                                            label="Short Description"
+                                            isTextarea
+                                            placeholder="Enter a brief summary"
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="slug.current"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Slug <span className="text-destructive">*</span></FormLabel>
+                                                    <FormControl>
+                                                        <div className="flex gap-2">
+                                                            <Input {...field} value={field.value || ''} placeholder="auto-generated-slug" />
+                                                            <Button
+                                                                type="button"
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() => {
+                                                                    const genSlug = form.getValues("title").toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || ''
+                                                                    form.setValue("slug.current", genSlug)
+                                                                }}
+                                                            >
+                                                                Regenerate
+                                                            </Button>
                                                         </div>
-                                                        {categories.length === 0 ? (
-                                                            <div className="text-sm text-muted-foreground italic py-2">
-                                                                No categories found. Please add some first.
-                                                            </div>
-                                                        ) : (
-                                                            <div className="grid grid-cols-2 gap-2 mt-2">
-                                                                {categories.map((category) => (
-                                                                    <FormField
-                                                                        key={category._id}
-                                                                        control={form.control}
-                                                                        name="categories"
-                                                                        render={({ field }) => (
-                                                                            <FormItem
-                                                                                key={category._id}
-                                                                                className="flex flex-row items-start space-x-3 space-y-0"
-                                                                            >
-                                                                                <FormControl>
-                                                                                    <input
-                                                                                        type="checkbox"
-                                                                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                                                                                        checked={Array.isArray(field.value) && field.value.includes(category._id)}
-                                                                                        onChange={(e) => {
-                                                                                            const checked = e.target.checked
-                                                                                            const current = Array.isArray(field.value) ? field.value : []
-
-                                                                                            return checked
-                                                                                                ? field.onChange([...current, category._id])
-                                                                                                : field.onChange(
-                                                                                                    current.filter(
-                                                                                                        (value) => value !== category._id
-                                                                                                    )
-                                                                                                )
-                                                                                        }}
-                                                                                    />
-                                                                                </FormControl>
-                                                                                <FormLabel className="font-normal cursor-pointer text-sm">
-                                                                                    {category.title}
-                                                                                </FormLabel>
-                                                                            </FormItem>
-                                                                        )}
-                                                                    />
-                                                                ))}
-                                                            </div>
-                                                        )}
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </AccordionContent>
-                                    </AccordionItem>
-
-                                    <AccordionItem value="location" className="border-b-0">
-                                        <AccordionTrigger className="px-4 hover:no-underline hover:bg-muted/50 rounded-lg">Location</AccordionTrigger>
-                                        <AccordionContent className="px-4 py-2">
+                                                    </FormControl>
+                                                    <FormDescription>Unique URL identifier.</FormDescription>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <FormField
                                                 control={form.control}
-                                                name="location"
+                                                name="readTime"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <Select onValueChange={field.onChange} value={field.value || "none"}>
-                                                            <FormControl>
-                                                                <SelectTrigger>
-                                                                    <SelectValue placeholder="Select Location" />
-                                                                </SelectTrigger>
-                                                            </FormControl>
-                                                            <SelectContent>
-                                                                <SelectItem value="none">None</SelectItem>
-                                                                {locations.map((loc) => (
-                                                                    <SelectItem key={loc._id} value={loc._id}>
-                                                                        {loc.title}
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </AccordionContent>
-                                    </AccordionItem>
-
-                                    <AccordionItem value="publishing" className="border-b-0">
-                                        <AccordionTrigger className="px-4 hover:no-underline hover:bg-muted/50 rounded-lg">Publishing</AccordionTrigger>
-                                        <AccordionContent className="px-4 py-2 space-y-4">
-                                            <FormField
-                                                control={form.control}
-                                                name="featured"
-                                                render={({ field }) => (
-                                                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-none">
-                                                        <div className="space-y-0.5">
-                                                            <FormLabel className="text-sm">Featured Post</FormLabel>
-                                                            <FormDescription className="text-xs">
-                                                                Pin to the top of the blog page.
-                                                            </FormDescription>
-                                                        </div>
-                                                        <FormControl>
-                                                            <Switch
-                                                                checked={field.value}
-                                                                onCheckedChange={field.onChange}
-                                                            />
-                                                        </FormControl>
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name="publishedAt"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Publish Date</FormLabel>
+                                                        <FormLabel>Read Time (min)</FormLabel>
                                                         <FormControl>
                                                             <Input
-                                                                type="datetime-local"
+                                                                type="number"
                                                                 {...field}
-                                                                value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
-                                                                onChange={(e) => {
-                                                                    const date = new Date(e.target.value)
-                                                                    field.onChange(date.toISOString())
-                                                                }}
+                                                                onChange={e => field.onChange(parseInt(e.target.value) || undefined)}
+                                                                placeholder="e.g. 5"
                                                             />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
                                                 )}
                                             />
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                </Accordion>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
+                                            <FormField
+                                                control={form.control}
+                                                name="author"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Author Name <span className="text-destructive">*</span></FormLabel>
+                                                        <FormControl>
+                                                            <Input {...field} placeholder="e.g. Mohsin Ali" />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                        <CommaKeywordsInput
+                                            name="tags"
+                                            label="Tags"
+                                            placeholder="Type keyword and press comma or enter..."
+                                        />
+                                    </CardContent>
+                                </Card>
+
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle className={cn(form.formState.errors.body && "text-destructive")}>Body Content <span className="text-destructive">*</span></CardTitle>
+                                    </CardHeader>
+                                    <CardContent className={cn("p-0", form.formState.errors.body && "border-2 border-destructive/20 rounded-b-lg")}>
+                                        <FormField
+                                            control={form.control}
+                                            name="body"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <CustomPortableTextEditor
+                                                            value={field.value || []}
+                                                            setValue={(newValue) => field.onChange(newValue)}
+                                                        />
+                                                    </FormControl>
+                                                    <div className="p-4 pt-0">
+                                                        <FormMessage />
+                                                    </div>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </CardContent>
+                                </Card>
+                            </div>
+
+                            <div className="space-y-6">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Featured Image</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <FormField
+                                            control={form.control}
+                                            name="mainImage"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <ImageUpload
+                                                            value={field.value}
+                                                            onChange={field.onChange}
+                                                            label="Blog Header Image"
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="categorization" className="space-y-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div className="space-y-6">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Services & Categories</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-6">
+                                        <FormField
+                                            control={form.control}
+                                            name="service"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Related Service</FormLabel>
+                                                    <Select onValueChange={field.onChange} value={field.value || "none"}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Select a service" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <SelectItem value="none">None</SelectItem>
+                                                            {services.map((service) => (
+                                                                <SelectItem key={service._id} value={service._id}>
+                                                                    {service.title}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={form.control}
+                                            name="categories"
+                                            render={() => (
+                                                <FormItem>
+                                                    <div className="flex items-center justify-between">
+                                                        <FormLabel className="text-base">Categories</FormLabel>
+                                                    </div>
+                                                    {categories.length === 0 ? (
+                                                        <div className="text-sm text-muted-foreground italic py-2">
+                                                            No categories found.
+                                                        </div>
+                                                    ) : (
+                                                        <div className="grid grid-cols-2 gap-2 mt-2">
+                                                            {categories.map((category) => (
+                                                                <FormField
+                                                                    key={category._id}
+                                                                    control={form.control}
+                                                                    name="categories"
+                                                                    render={({ field }) => (
+                                                                        <FormItem
+                                                                            key={category._id}
+                                                                            className="flex flex-row items-start space-x-3 space-y-0"
+                                                                        >
+                                                                            <FormControl>
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                                                                    checked={Array.isArray(field.value) && field.value.includes(category._id)}
+                                                                                    onChange={(e) => {
+                                                                                        const checked = e.target.checked
+                                                                                        const current = Array.isArray(field.value) ? field.value : []
+
+                                                                                        return checked
+                                                                                            ? field.onChange([...current, category._id])
+                                                                                            : field.onChange(
+                                                                                                current.filter(
+                                                                                                    (value) => value !== category._id
+                                                                                                )
+                                                                                            )
+                                                                                    }}
+                                                                                />
+                                                                            </FormControl>
+                                                                            <FormLabel className="font-normal cursor-pointer text-sm">
+                                                                                {category.title}
+                                                                            </FormLabel>
+                                                                        </FormItem>
+                                                                    )}
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </CardContent>
+                                </Card>
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Multiple Locations</CardTitle>
+                                        <CardDescription>Select all locations this post applies to.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <FormField
+                                            control={form.control}
+                                            name="locations"
+                                            render={() => (
+                                                <FormItem>
+                                                    {locations.length === 0 ? (
+                                                        <div className="text-sm text-muted-foreground italic py-2">
+                                                            No locations found.
+                                                        </div>
+                                                    ) : (
+                                                        <div className="grid grid-cols-2 gap-2 mt-2">
+                                                            {locations.map((location) => (
+                                                                <FormField
+                                                                    key={location._id}
+                                                                    control={form.control}
+                                                                    name="locations"
+                                                                    render={({ field }) => (
+                                                                        <FormItem
+                                                                            key={location._id}
+                                                                            className="flex flex-row items-start space-x-3 space-y-0"
+                                                                        >
+                                                                            <FormControl>
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                                                                    checked={Array.isArray(field.value) && field.value.includes(location._id)}
+                                                                                    onChange={(e) => {
+                                                                                        const checked = e.target.checked
+                                                                                        const current = Array.isArray(field.value) ? field.value : []
+
+                                                                                        return checked
+                                                                                            ? field.onChange([...current, location._id])
+                                                                                            : field.onChange(
+                                                                                                current.filter(
+                                                                                                    (value) => value !== location._id
+                                                                                                )
+                                                                                            )
+                                                                                    }}
+                                                                                />
+                                                                            </FormControl>
+                                                                            <FormLabel className="font-normal cursor-pointer text-sm">
+                                                                                {location.title}
+                                                                            </FormLabel>
+                                                                        </FormItem>
+                                                                    )}
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </CardContent>
+                                </Card>
+                            </div>
+
+                            <div className="space-y-6">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Publishing Options</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="featured"
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-none">
+                                                    <div className="space-y-0.5">
+                                                        <FormLabel className="text-sm">Featured Post</FormLabel>
+                                                        <FormDescription className="text-xs">
+                                                            Pin to the top of the blog page.
+                                                        </FormDescription>
+                                                    </div>
+                                                    <FormControl>
+                                                        <Switch
+                                                            checked={field.value}
+                                                            onCheckedChange={field.onChange}
+                                                        />
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="publishedAt"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Publish Date</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="datetime-local"
+                                                            {...field}
+                                                            value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
+                                                            onChange={(e) => {
+                                                                const date = new Date(e.target.value)
+                                                                field.onChange(date.toISOString())
+                                                            }}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="seo">
+                        <SeoFormTab control={form.control} />
+                    </TabsContent>
+                </Tabs>
             </form >
         </Form >
     )

@@ -3,10 +3,13 @@
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import Logo from "./ui/logo";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
   const [showLogo, setShowLogo] = useState(false);
+  const { settings } = useSiteSettings()
+
 
   useEffect(() => {
     setTimeout(() => setShowLogo(true), 200);
@@ -98,7 +101,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-4 sm:w-6 md:w-8 h-px bg-accent" />
           <span className="text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-muted-foreground text-center">
-            Creative Design Agency
+            {settings?.tagline || "Creative Design Agency"}
           </span>
           <div className="w-4 sm:w-6 md:w-8 h-px bg-accent" />
         </div>

@@ -18,7 +18,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Save, Plus, Trash2, Clock } from "lucide-react"
 import { debounce } from "lodash"
 import { ReferenceSelector } from "@/components/admin/form/ReferenceSelector"
-import { getAllPostsWithService } from "@/app/actions/servicesPageContent"
+import { getAllPostsWithService, getAllServices } from "@/app/actions/servicesPageContent"
 
 interface ServicesPageContentFormProps {
     initialData?: ServicesPageContentValues
@@ -34,6 +34,7 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
     )
     const [isInitialMount, setIsInitialMount] = useState(true)
     const [blogPosts, setBlogPosts] = useState<any[]>([])
+    const [allServices, setAllServices] = useState<any[]>([])
 
     const form = useForm<ServicesPageContentValues>({
         resolver: zodResolver(servicesPageContentSchema),
@@ -77,7 +78,12 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
             const posts = await getAllPostsWithService()
             setBlogPosts(posts)
         }
+        async function fetchAllServices() {
+            const services = await getAllServices()
+            setAllServices(services)
+        }
         fetchBlogPosts()
+        fetchAllServices()
     }, [])
 
     const { fields: stepFields, append: appendStep, remove: removeStep } = useFieldArray({
@@ -152,6 +158,10 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                             Intro
                             {!!formErrors.intro && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
+                          <TabsTrigger value="servicesList" className="border h-10 relative">
+                            Services List
+                            {!!(formErrors as any).servicesList && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        </TabsTrigger>
                         <TabsTrigger value="process" className="border h-10 relative">
                             Process
                             {!!formErrors.process && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
@@ -164,6 +174,7 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                             Service Blogs
                             {!!(formErrors as any).serviceBlogs && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
+                      
                         <TabsTrigger value="seo" className="border h-10 relative">
                             SEO
                             {!!formErrors.seo && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
@@ -314,6 +325,30 @@ export function ServicesPageContentForm({ initialData, hasDraft, draftUpdatedAt 
                         </Card>
                     </TabsContent>
 
+                    <TabsContent value="servicesList" className="space-y-6">
+                        <Card>
+                            <CardHeader><CardTitle>Section Heading</CardTitle></CardHeader>
+                            <CardContent className="space-y-6">
+                                <FormInput control={formControl} name="servicesList.sectionHeading.eyebrow" label="Eyebrow Text" />
+                                <FormInput control={formControl} name="servicesList.sectionHeading.title" label="Title" />
+                                <FormInput control={formControl} name="servicesList.sectionHeading.description" label="Description" isTextarea />
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader><CardTitle>Services Selection</CardTitle></CardHeader>
+                            <CardContent>
+                                <ReferenceSelector
+                                    form={form}
+                                    fieldName="servicesList.services"
+                                    items={allServices}
+                                    label="Select Services"
+                                    max={12}
+                                    placeholder="Search services..."
+                                />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
                     <TabsContent value="seo">
                         <SeoFormTab control={formControl} />
                     </TabsContent>
@@ -330,6 +365,7 @@ function getDefaultValues(): ServicesPageContentValues {
         process: { sectionHeading: { eyebrow: "", title: "", description: "" }, steps: [] },
         whyChooseUs: { sectionHeading: { eyebrow: "", title: "", description: "" }, guaranteePoints: [], benefits: [] },
         serviceBlogs: { sectionHeading: { eyebrow: "", title: "", description: "" }, blogs: [], buttonText: "", buttonUrl: "" },
+        servicesList: { sectionHeading: { eyebrow: "", title: "", description: "" }, services: [] },
         seo: { metaTitle: "", metaDescription: "", focusKeyword: "", relatedKeywords: [], schemas: [] }
     } as ServicesPageContentValues
 }
@@ -363,6 +399,12 @@ function mergeWithDefaults(data: any): ServicesPageContentValues {
             blogs: data.serviceBlogs?.blogs || defaults.serviceBlogs.blogs,
             buttonText: data.serviceBlogs?.buttonText || defaults.serviceBlogs.buttonText,
             buttonUrl: data.serviceBlogs?.buttonUrl || defaults.serviceBlogs.buttonUrl
+        },
+        servicesList: {
+            ...defaults.servicesList,
+            ...data.servicesList,
+            sectionHeading: { ...defaults.servicesList.sectionHeading, ...data.servicesList?.sectionHeading },
+            services: data.servicesList?.services || defaults.servicesList.services,
         },
         seo: {
             ...defaults.seo,

@@ -7,7 +7,16 @@ import { useScroll, useTransform, motion } from "motion/react";
 import Link from "next/link";
 import { useRef } from "react";
 
-const ServiceCard = ({ service, index }: { service: ServiceData; index: number }) => {
+const ServiceCard = ({ service, index }: { service: {
+    title: string;
+    description: string;
+    slug: string;
+    heroImage: {
+      alt: string;
+      source: string;
+    };
+    items: string[];
+  }; index: number }) => {
     const ref = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: ref,

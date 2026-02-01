@@ -256,6 +256,30 @@ export const servicesPageContentType = defineType({
             ]
         }),
 
+        // SERVICES LIST SECTION
+        defineField({
+            name: 'servicesList',
+            title: 'Services List Section',
+            type: 'object',
+            fields: [
+                defineField({
+                    name: 'sectionHeading',
+                    title: 'Section Heading',
+                    type: 'sectionHeading',
+                    validation: Rule => Rule.required()
+                }),
+                defineField({
+                    name: 'services',
+                    title: 'Select Services',
+                    type: 'array',
+                    description: 'Select services to display in this section',
+                    of: [{ type: 'reference', to: [{ type: 'service' }] }],
+                    validation: Rule => Rule.max(12)
+                }),
+               
+            ]
+        }),
+
         // SEO SECTION
         defineField({
             name: 'seo',

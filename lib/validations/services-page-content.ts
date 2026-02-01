@@ -60,6 +60,12 @@ export const servicesPageContentSchema = z.object({
         buttonUrl: z.string().optional(),
     }),
 
+    // Services List Section
+    servicesList: z.object({
+        sectionHeading: sectionHeadingSchema,
+        services: z.array(z.string()).max(12).optional(),
+    }),
+
     // SEO
     seo: seoSchema.optional(),
 });

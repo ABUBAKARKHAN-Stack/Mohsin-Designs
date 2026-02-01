@@ -62,6 +62,28 @@ export const SERVICES_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "servicesPage
     "buttonUrl": serviceBlogs.buttonUrl
   },
 
+  "servicesList": {
+    "sectionHeading": {
+      "eyebrow": servicesList.sectionHeading.eyebrow,
+      "title": servicesList.sectionHeading.title,
+      "description": servicesList.sectionHeading.description
+    },
+    "services": servicesList.services[]->{
+    "title": title,
+    "description": description,
+    "slug": slug.current,
+    "heroImage": {
+      "alt":heroImage.heroImageAlt,
+      "source": heroImage.asset._ref
+    },
+    "items": items[],
+  },
+    "buttonText": servicesList.buttonText,
+    "buttonUrl": servicesList.buttonUrl
+  },
+
+  
+
   seo
 
  

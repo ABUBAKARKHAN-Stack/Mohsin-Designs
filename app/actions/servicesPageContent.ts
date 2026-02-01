@@ -42,6 +42,10 @@ export async function updateServicesPageContent(data: ServicesPageContentValues)
                 buttonText: validatedFields.serviceBlogs.buttonText,
                 buttonUrl: validatedFields.serviceBlogs.buttonUrl,
             },
+            servicesList: {
+                sectionHeading: { ...validatedFields.servicesList.sectionHeading, _type: 'sectionHeading' },
+                services: validatedFields.servicesList.services?.map(id => ({ _type: 'reference', _ref: id })) || [],
+            },
             seo: validatedFields.seo ? { ...validatedFields.seo, _type: 'seo' } : undefined
         }
 
@@ -64,6 +68,14 @@ export async function saveServicesPageDraft(data: Partial<ServicesPageContentVal
             transformedData.serviceBlogs = {
                 ...transformedData.serviceBlogs,
                 blogs: transformedData.serviceBlogs.blogs.map((id: any) =>
+                    typeof id === 'string' ? { _type: 'reference', _ref: id } : id
+                )
+            };
+        }
+        if (transformedData.servicesList?.services) {
+            transformedData.servicesList = {
+                ...transformedData.servicesList,
+                services: transformedData.servicesList.services.map((id: any) =>
                     typeof id === 'string' ? { _type: 'reference', _ref: id } : id
                 )
             };
@@ -114,6 +126,20 @@ export async function getAllPostsWithService() {
         return data || []
     } catch (error) {
         console.error("Failed to fetch posts with service:", error)
+        return []
+    }
+}
+
+export async function getAllServices() {
+    try {
+        const query = `*[_type == "service"] {
+            _id,
+            title
+        }`
+        const { data } = await sanityFetch({ query })
+        return data || []
+    } catch (error) {
+        console.error("Failed to fetch all services:", error)
         return []
     }
 }

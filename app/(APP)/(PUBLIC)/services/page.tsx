@@ -85,7 +85,10 @@ const ServicesPage = async () => {
             />
 
             {/* All Services Section */}
-            <AllServices />
+            <AllServices
+             sectionHeading={pageContent.servicesList.sectionHeading}
+                services={pageContent.servicesList.services}
+            />
 
             {/* Process Timeline Section */}
             <ProcessTimeline

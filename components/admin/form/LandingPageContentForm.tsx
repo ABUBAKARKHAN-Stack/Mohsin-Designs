@@ -36,6 +36,7 @@ interface LandingPageContentFormProps {
     draftUpdatedAt?: string | null
     services?: any[]
     projects?: any[]
+    caseStudies?: any[]
     posts?: any[]
     forms?: { _id: string, name: string }[]
 }
@@ -46,6 +47,7 @@ export function LandingPageContentForm({
     draftUpdatedAt,
     services = [],
     projects = [],
+    caseStudies = [],
     posts = [],
     forms = []
 }: LandingPageContentFormProps) {
@@ -354,7 +356,7 @@ export function LandingPageContentForm({
                                                 </Button>
                                             </div>
                                             <FormInput control={formControl} name={`hero.ctaButtons.${index}.text`} label="Text" />
-                                            <FormInput control={formControl} name={`hero.ctaButtons.${index}.url`} label="URL"  />
+                                            <FormInput control={formControl} name={`hero.ctaButtons.${index}.url`} label="URL" />
                                             <FormField control={formControl} name={`hero.ctaButtons.${index}.variant`} render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Variant</FormLabel>
@@ -502,7 +504,7 @@ export function LandingPageContentForm({
                                     <h4 className="font-medium text-sm">Call to Action Button</h4>
                                     <div className="grid sm:grid-cols-2 gap-4">
                                         <FormInput control={formControl} name="portfolioPreview.buttonText" label="Button Text" />
-                                        <FormInput control={formControl} name="portfolioPreview.buttonUrl" label="Button URL"  />
+                                        <FormInput control={formControl} name="portfolioPreview.buttonUrl" label="Button URL" />
                                     </div>
                                 </div>
                             </CardContent>
@@ -522,7 +524,7 @@ export function LandingPageContentForm({
                                 <ReferenceSelector
                                     form={form}
                                     fieldName="caseStudiesPreview.featuredCaseStudies"
-                                    items={projects}
+                                    items={caseStudies}
                                     label="Featured Case Studies"
                                     placeholder="Search case studies..."
                                 />
@@ -531,7 +533,7 @@ export function LandingPageContentForm({
                                     <h4 className="font-medium text-sm">Call to Action Button</h4>
                                     <div className="grid sm:grid-cols-2 gap-4">
                                         <FormInput control={formControl} name="caseStudiesPreview.buttonText" label="Button Text" />
-                                        <FormInput control={formControl} name="caseStudiesPreview.buttonUrl" label="Button URL"  />
+                                        <FormInput control={formControl} name="caseStudiesPreview.buttonUrl" label="Button URL" />
                                     </div>
                                 </div>
                             </CardContent>

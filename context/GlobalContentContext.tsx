@@ -38,7 +38,7 @@ export type GlobalContentData = {
         founder?: {
             name: string;
             role: string;
-            image?: { _id: string; url: string };
+            image?: { _id: string; url: string,altText:string };
             socialLinks?: Array<{ label: string,iconName: string; url: string }>;
         };
         agencyStructure?: Array<{ title: string; description: string; featured?: boolean; iconName: string }>;

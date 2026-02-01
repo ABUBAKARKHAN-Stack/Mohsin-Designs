@@ -107,10 +107,10 @@ export async function getGlobalSections() {
       founder {
         name,
         role,
-        image {
-          "url": asset->url,
-          "_id": asset->_id,
-          "altText": asset->altText
+        "image": image.asset-> {
+          url,
+          _id,
+          altText
         },
         socialLinks[] {
           _key,

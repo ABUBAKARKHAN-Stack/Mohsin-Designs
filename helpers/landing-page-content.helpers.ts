@@ -34,9 +34,9 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
         title,
         "slug":slug.current,
         category,
-        "mainImage": {
-          "source":mainImage.asset._ref,
-          "alt":mainImage.altText
+        "mainImage": mainImage.asset->{
+          "source":_id,
+          "alt":altText
         }
       },
       "buttonText": portfolioPreview.buttonText,
@@ -62,17 +62,19 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
         "description": blogPreview.sectionHeading.description
       },
       "featuredBlogs": blogPreview.featuredBlogs[]->{
-      "title": title,
-      "description": description,
-      "slug": slug.current,
-      "mainImage": {
-          "alt": mainImage.alt,
-          "source": mainImage.asset._ref
+        "title": title,
+        "description": description,
+        "slug": slug.current,
+        "mainImage": mainImage.asset->{
+          "alt": altText,
+          "source": _id
+        },
+        "categories": categories[]->title,
+        publishedAt,
+        readTime
       },
-      "categories": categories[]->title,
-      publishedAt,
-    readTime
-    }
+      "buttonText": blogPreview.buttonText,
+      "buttonUrl": blogPreview.buttonUrl
     },
 
     "serviceHighlightsMarquee": {
@@ -101,7 +103,29 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
         "eyebrow": caseStudiesPreview.sectionHeading.eyebrow,
         "title": caseStudiesPreview.sectionHeading.title,
         "description": caseStudiesPreview.sectionHeading.description
-      }
+      },
+        
+      "featuredCaseStudies": caseStudiesPreview.featuredCaseStudies[]->{
+        "title": caseStudy.title,
+        "slug": slug.current,
+        "category": category,
+        "beforeImage": caseStudy.beforeImage.asset->{
+          _id,
+          "altText": altText
+        },
+        "afterImage": caseStudy.afterImage.asset->{
+          _id,
+          "altText": altText
+        },
+        "testimonial": caseStudy.testimonial,
+        "results": caseStudy.results[]{
+          icon,
+          label,
+          value
+        }
+      },
+      "buttonText": caseStudiesPreview.buttonText,
+      "buttonUrl": caseStudiesPreview.buttonUrl
     },
 
     "areasWeServe": {

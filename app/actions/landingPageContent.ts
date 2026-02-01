@@ -268,6 +268,19 @@ export async function getProjectOptions() {
     }
 }
 
+export async function getCaseStudyOptions() {
+    try {
+        // Only fetch projects that have the caseStudy object defined and its required title
+        // We use the caseStudy.title as the display label for the selector
+        const query = `*[_type == "project" && defined(caseStudy.title)] { _id, "title": caseStudy.title }`
+        const projects = await adminClient.fetch(query)
+        return projects || []
+    } catch (error) {
+        console.error("Failed to fetch case study options:", error)
+        return []
+    }
+}
+
 export async function getBlogPostOptions() {
     try {
         const query = `*[_type == "post"] { _id, title }`

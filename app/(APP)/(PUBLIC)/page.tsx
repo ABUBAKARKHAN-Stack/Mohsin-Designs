@@ -7,7 +7,7 @@ import {
   PortfolioPreview,
   Testimonials,
   FAQs,
-  // BlogPreview,
+  BlogPreview,
   CaseStudiesPreview,
   AreasWeServe,
 
@@ -37,7 +37,7 @@ const HomePage = () => {
       <IndustriesWeServe />
       <Testimonials />
       <Leadership />
-      {/* <BlogPreview /> */}
+      <BlogPreview />
       <FAQs />
       <CTA />
     </PageWrapper>

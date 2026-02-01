@@ -51,7 +51,7 @@ const Leadership = () => {
                   <Image
                     fill
                     src={founderData?.image?.url || "/assets/about/founderImage.png"}
-                    alt={`${founderData?.name || "Mohsin"} - ${founderData?.role || "Founder & Creative Director"}`}
+                    alt={`${founderData?.image?.altText || `${founderData?.name || "Mohsin"} - ${founderData?.role || "Founder & Creative Director"}`} `}
                     className="w-full object-cover rounded-2xl grayscale-20 hover:grayscale-0 transition-all duration-700"
                   />
 
@@ -128,7 +128,7 @@ const Leadership = () => {
 
             {/* Agency Structure */}
             <div className="bg-background border border-border/50 p-6 rounded-2xl">
-            
+
               <h4 className="text-sm font-medium  text-muted-foreground uppercase tracking-wider mb-5 flex items-center gap-2">
                 Agency Structure
               </h4>

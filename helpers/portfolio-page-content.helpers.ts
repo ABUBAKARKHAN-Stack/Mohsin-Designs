@@ -46,7 +46,8 @@ export const PORTFOLIO_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "portfolioPa
         }
       }
     }
-  }
+  },
+  seo
 }`);
 
 export async function getPortfolioPageContent() {

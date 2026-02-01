@@ -18,11 +18,30 @@ const BLOG_POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slug]
     "_id": mainImage.asset->_id
   },
   "body": body,
+  "seo": seo{
+    "schemas": schemas
+  }
 }`);
 
 // Query for all blog post slugs (for static generation)
 const BLOG_SLUGS_QUERY = defineQuery(`*[_type == "post"] {
   "slug": slug.current
+}`);
+
+const BLOG_SEO_QUERY = defineQuery(`*[_type == "post" && slug.current == $slug][0] {
+  "slug": slug.current,
+
+  "mainImage": mainImage.asset->{
+    "alt": altText,
+    "source": _id
+  },
+  "seo": seo{
+    "metaTitle": metaTitle,
+    "metaDescription": metaDescription,
+    "focusKeyword": focusKeyword,
+    "relatedKeywords": relatedKeywords[],
+    "schemas": schemas
+  }
 }`);
 
 export async function getBlogPost(slug: string) {
@@ -50,4 +69,24 @@ export async function getBlogSlugs() {
     console.error("Failed to fetch blog slugs:", error);
     return [];
   }
+}
+
+export const getBlogPostSeo = async (
+  slug: string
+) => {
+  try {
+    const { data } = await sanityFetch({
+      query: BLOG_SEO_QUERY,
+      params: {
+        slug
+      },
+      perspective: "published"
+    })
+    const seo = data;
+    return seo ?? null
+  } catch (error) {
+    console.log("Sanity Error :: ", error);
+    throw error;
+  }
+
 }

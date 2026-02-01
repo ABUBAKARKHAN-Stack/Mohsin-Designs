@@ -140,10 +140,12 @@ export type SiteSettingsData = {
   tagline: string;
   logo?: {
     url: string;
+    _id: string;
     altText?: string;
   };
   favicon?: {
     url: string;
+    _id: string;
     altText?: string;
   };
   seo: {

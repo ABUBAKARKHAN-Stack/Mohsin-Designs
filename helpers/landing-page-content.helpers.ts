@@ -161,6 +161,8 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
         }
       }
     },
+
+    seo
   }
 `);
 

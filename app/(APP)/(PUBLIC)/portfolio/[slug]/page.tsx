@@ -1,11 +1,14 @@
-import { Metadata } from "next"
+import { Metadata, ResolvingMetadata } from "next"
 import { notFound } from "next/navigation"
-import { getProject, getProjectSlugs } from "@/helpers/portfolio.helpers"
+import { getProject, getProjectSeo, getProjectSlugs } from "@/helpers/portfolio.helpers"
 import { PortfolioHero } from "@/components/portfolio/PortfolioHero"
 import { CaseStudyResults } from "@/components/portfolio/CaseStudyResults"
 import { BeforeAfter } from "@/components/portfolio/BeforeAfter"
-import { ContainerLayout } from "@/components/layout"
+import { ContainerLayout, PageWrapper } from "@/components/layout"
 import { Quote } from "lucide-react"
+import { urlFor } from "@/sanity/lib/image"
+import { APP_NAME } from "@/constants/app.constants"
+import { JsonLd } from "@/components/SEO/JsonLd"
 
 interface Props {
     params: Promise<{
@@ -13,7 +16,7 @@ interface Props {
     }>
 }
 
-// Generate static params for all projects
+//* SSG
 export async function generateStaticParams() {
     const slugs = await getProjectSlugs()
 
@@ -22,26 +25,80 @@ export async function generateStaticParams() {
     }))
 }
 
-// Generate metadata for SEO
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { slug } = await params
-    const project = await getProject(slug)
+//* Metadata
+export async function generateMetadata(
+    { params }: Props,
+    _parent: ResolvingMetadata,
+): Promise<Metadata> {
+    const { slug } = await params;
+    const project = await getProjectSeo(slug);
 
     if (!project) {
         return {
-            title: 'Project Not Found',
-        }
+            title: "Project Not Found",
+            description: "The requested project does not exist.",
+            robots: { index: false },
+        };
     }
 
+    //* Base Metadata
+    const title = project.seo.metaTitle;
+    const description =
+        project.seo.metaDescription;
+    const focusKeyword = project.seo.focusKeyword;
+    const relatedKeywords = project.seo.relatedKeywords;
+
+    //* Open Graph Metadata
+    const imageUrl = urlFor(project.mainImage.source)
+        .quality(85)
+        .width(1200)
+        .fit("clip")
+        .format("jpg")
+        .url();
+    const imageAlt = project.mainImage.alt;
+
+    //* URL
+    const projectUrl = `/portfolio/${slug}`;
+
     return {
-        title: project.title,
-        description: project.description,
+        title,
+        description,
+        keywords: [focusKeyword, ...(relatedKeywords || [])].filter(Boolean) as string[],
+        publisher: APP_NAME,
         openGraph: {
-            title: project.title,
-            description: project.description,
-            images: project.mainImage?.url ? [project.mainImage.url] : [],
+            title,
+            description,
+            images: [
+                {
+                    url: imageUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: imageAlt || title,
+                },
+            ],
+            type: "article",
+            siteName: APP_NAME,
+            url: projectUrl,
         },
-    }
+        twitter: {
+            title,
+            description,
+            images: [
+                {
+                    url: imageUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: imageAlt || title,
+                },
+            ],
+            card: "summary_large_image",
+            site: projectUrl,
+            creator: APP_NAME,
+        },
+        alternates: {
+            canonical: projectUrl,
+        },
+    };
 }
 
 export default async function PortfolioDetailsPage({ params }: Props) {
@@ -55,7 +112,9 @@ export default async function PortfolioDetailsPage({ params }: Props) {
     const { caseStudy } = project
 
     return (
-        <div className="min-h-screen bg-background pb-32">
+        <PageWrapper>
+            <JsonLd schemas={project.seo.schemas} />
+            
             <PortfolioHero
                 title={project.title}
                 category={project.category}
@@ -139,6 +198,6 @@ export default async function PortfolioDetailsPage({ params }: Props) {
                     )}
                 </div>
             </ContainerLayout>
-        </div>
+        </PageWrapper>
     )
 }

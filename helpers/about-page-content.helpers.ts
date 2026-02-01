@@ -79,7 +79,8 @@ export const ABOUT_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "aboutPageConten
     },
     "quote": culture.quote,
     "quoteHighlight": culture.quoteHighlight
-  }
+  },
+  seo
 }`);
 
 export async function getAboutPageContent() {

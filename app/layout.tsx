@@ -40,29 +40,13 @@ export const metadata: Metadata = {
     template: `%s | ${APP_NAME}`,
   },
   description: "Mohsin Designs is a creative design agency delivering logo design, branding, websites, apps, SEO, and digital solutions that help brands grow with confidence.",
-  keywords: [
-    "creative design agency",
-    "branding agency",
-    "logo design agency",
-    "web design agency",
-    "digital design agency",
-    "branding and web development",
-    "creative agency for startups"
-  ],
-  openGraph: {
-    title: `Creative Design Agency for Branding, Web & Digital Growth | ${APP_NAME}`,
-    description: "Mohsin Designs is a creative design agency delivering logo design, branding, websites, apps, SEO, and digital solutions that help brands grow with confidence.",
-    type: "website",
-    url: "/",
-    siteName: APP_NAME,
-  },
-  alternates: {
-    canonical: "/",
 
-  },
-  robots: {
-    index: true,
-    follow: true,
+  icons: {
+    icon: {
+      url: "/assets/logo.webp",
+      type: "image/webp",
+      sizes: "any",
+    },
   },
 };
 

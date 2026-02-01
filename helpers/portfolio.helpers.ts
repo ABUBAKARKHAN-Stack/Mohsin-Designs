@@ -31,12 +31,31 @@ const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug
       "label": label
     },
     "slug": caseStudy.slug.current
+  },
+  "seo": seo{
+    "schemas": schemas
   }
 }`);
 
 // Query for all project slugs
 const PROJECT_SLUGS_QUERY = defineQuery(`*[_type == "project"] {
   "slug": slug.current
+}`);
+
+const PROJECT_SEO_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug][0] {
+  "slug": slug.current,
+
+  "mainImage": mainImage.asset->{
+    "alt": altText,
+    "source": _id
+  },
+  "seo": seo{
+    "metaTitle": metaTitle,
+    "metaDescription": metaDescription,
+    "focusKeyword": focusKeyword,
+    "relatedKeywords": relatedKeywords[],
+    "schemas": schemas
+  }
 }`);
 
 export async function getProject(slug: string) {
@@ -64,4 +83,24 @@ export async function getProjectSlugs() {
     console.error("Failed to fetch project slugs:", error);
     return [];
   }
+}
+
+export const getProjectSeo = async (
+  slug: string
+) => {
+  try {
+    const { data } = await sanityFetch({
+      query: PROJECT_SEO_QUERY,
+      params: {
+        slug
+      },
+      perspective: "published"
+    })
+    const seo = data;
+    return seo ?? null
+  } catch (error) {
+    console.log("Sanity Error :: ", error);
+    throw error;
+  }
+
 }

@@ -1,4 +1,5 @@
 import { SanityImageWithAlt } from './image.types';
+import { SEOType } from './seo.types';
 
 export interface BlogPageContentData {
     hero: {
@@ -17,6 +18,7 @@ export interface BlogPageContentData {
         };
         form: any;
     };
+    seo: SEOType
 }
 
 export interface BlogPost {

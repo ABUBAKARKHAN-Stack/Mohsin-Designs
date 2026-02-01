@@ -1,6 +1,8 @@
 import { SanityImageWithAlt } from './image.types';
+import { SEOType } from './seo.types';
 
 export interface PortfolioPageContentData {
+    seo:SEOType
     hero: {
         title: string;
         subtitle: string;

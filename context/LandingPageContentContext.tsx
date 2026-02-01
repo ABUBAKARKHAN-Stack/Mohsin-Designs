@@ -171,7 +171,7 @@ export type LandingPageContentData = {
 };
 
 type LandingPageContentContextType = {
-    landingPageContent: LandingPageContentData | null;
+    landingPageContent: LandingPageContentData;
 };
 
 const LandingPageContentContext = createContext<LandingPageContentContextType | null>(null);
@@ -181,7 +181,7 @@ export const LandingPageContentProvider = ({
     landingPageContent
 }: {
     children: ReactNode;
-    landingPageContent: LandingPageContentData | null;
+    landingPageContent: LandingPageContentData ;
 }) => {
     return (
         <LandingPageContentContext.Provider value={{ landingPageContent }}>

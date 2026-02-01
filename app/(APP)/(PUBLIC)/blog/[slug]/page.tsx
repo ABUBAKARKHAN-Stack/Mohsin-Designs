@@ -1,13 +1,16 @@
-import { Metadata } from "next"
+import { Metadata, ResolvingMetadata } from "next"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import { Clock, User, Share2 } from "lucide-react"
-import { getBlogPost, getBlogSlugs } from "@/helpers/blog.helpers"
+import { getBlogPost, getBlogPostSeo, getBlogSlugs } from "@/helpers/blog.helpers"
 import { BlogContent } from "@/components/blog/BlogContent"
 import PageHero from "@/components/ui/page-hero"
-import { ContainerLayout } from "@/components/layout"
+import { ContainerLayout, PageWrapper } from "@/components/layout"
 import { ShareButtons } from "@/components/blog/ShareButtons"
 import { Badge } from "@/components/ui/badge"
+import { urlFor } from "@/sanity/lib/image"
+import { APP_NAME } from "@/constants/app.constants"
+import { JsonLd } from "@/components/SEO/JsonLd"
 
 interface Props {
     params: Promise<{
@@ -15,7 +18,7 @@ interface Props {
     }>;
 }
 
-//* Generate static params for all blog posts
+//* SSG
 export async function generateStaticParams() {
     const slugs = await getBlogSlugs()
 
@@ -24,28 +27,84 @@ export async function generateStaticParams() {
     }))
 }
 
-// Generate metadata for SEO
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+//* Metadata
+export async function generateMetadata(
+    { params }: Props,
+    _parent: ResolvingMetadata,
+): Promise<Metadata> {
+
     const { slug } = await params
-    const post = await getBlogPost(slug)
+    const post = await getBlogPostSeo(slug)
 
     if (!post) {
         return {
-            title: 'Post Not Found',
-        }
+            title: "Blog Post Not Found",
+            description: "The requested blog post does not exist.",
+            robots: { index: false },
+        };
     }
 
+    //* Base Metadata
+    const title = post.seo.metaTitle;
+    const description =
+        post.seo.metaDescription;
+    const focusKeyword = post.seo.focusKeyword;
+    const relatedKeywords = post.seo.relatedKeywords;
+
+    //* Open Graph Metadata
+    const imageUrl = urlFor(post.mainImage.source)
+        .quality(85)
+        .width(1200)
+        .fit("clip")
+        .format("jpg")
+        .url();
+    const imageAlt = post.mainImage.alt;
+
+    //* URL
+    const blogUrl = `/blog/${slug}`;
+
     return {
-        title: post.title,
-        description: post.description,
+        title,
+        description,
+        keywords: [focusKeyword, ...(relatedKeywords || [])].filter(Boolean) as string[],
+        publisher: APP_NAME,
         openGraph: {
-            title: post.title,
-            description: post.description,
-            images: post.mainImage?.url ? [post.mainImage.url] : [],
-            type: 'article',
-            publishedTime: post.publishedAt,
+            title,
+            description,
+            images: [
+                {
+                    url: imageUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: imageAlt || title,
+                },
+            ],
+            type: "article",
+            siteName: APP_NAME,
+            url: blogUrl,
         },
-    }
+        twitter: {
+            title,
+            description,
+            images: [
+                {
+                    url: imageUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: imageAlt || title,
+                },
+            ],
+            card: "summary_large_image",
+            site: blogUrl,
+            creator: APP_NAME,
+        },
+        alternates: {
+            canonical: blogUrl,
+        },
+    };
+
+
+
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -53,9 +112,8 @@ export default async function BlogPostPage({ params }: Props) {
 
     const post = await getBlogPost(slug)
 
-    if (!post) {
-        notFound()
-    }
+    if (!post) notFound()
+    
 
     const formattedDate = post.publishedAt
         ? new Date(post.publishedAt).toLocaleDateString('en-US', {
@@ -66,9 +124,11 @@ export default async function BlogPostPage({ params }: Props) {
         : null
 
     return (
-        <div className="min-h-screen bg-background pb-16">
+        <PageWrapper>
 
-            {/* Hero Section using PageHero */}
+            <JsonLd schemas={post.seo.schemas} />
+
+            {/* Hero Section  */}
             <PageHero
                 title={post.title}
                 description={post.description}
@@ -171,7 +231,8 @@ export default async function BlogPostPage({ params }: Props) {
                         </div>
                     </div>
                 </div>
+                
             </ContainerLayout>
-        </div>
+        </PageWrapper>
     )
 }

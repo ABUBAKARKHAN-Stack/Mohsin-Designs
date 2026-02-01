@@ -51,7 +51,8 @@ export const BLOG_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "blogPageContent"
         }
       }
     }
-  }
+  },
+  seo
 }`);
 
 export async function getBlogPageContent() {

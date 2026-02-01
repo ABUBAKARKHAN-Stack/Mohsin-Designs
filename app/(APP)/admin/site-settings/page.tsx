@@ -12,9 +12,22 @@ export default async function SiteSettingsPage() {
         tagline: siteSettings.tagline || "",
         logo: siteSettings.logo,
         favicon: siteSettings.favicon,
-        seo: siteSettings.seo || { relatedKeywords: [], schemas: [] },
-        social: siteSettings.social || { facebook: "", twitter: "", linkedin: "", instagram: "" },
-        contact: siteSettings.contact || { email: "", phone: "", address: "" },
+        seo: {
+            metaTitle: siteSettings.seo?.metaTitle || "",
+            metaDescription: siteSettings.seo?.metaDescription || "",
+            focusKeyword: siteSettings.seo?.focusKeyword || "",
+            relatedKeywords: siteSettings.seo?.relatedKeywords || [],
+            schemas: siteSettings.seo?.schemas || [""]
+        },
+        socialLinks: siteSettings.socialLinks || [],
+        contactInfo: siteSettings.contactInfo || [],
+        footerCTA: siteSettings.footerCTA || {
+            eyebrow: "",
+            headingPrefix: "",
+            headingHighlight: "",
+            buttonText: "",
+            buttonUrl: "/contact"
+        },
         footerText: siteSettings.footerText || "",
         copyright: siteSettings.copyright || "",
         headerMenu: siteSettings.headerMenu || { _type: 'reference', _ref: "" },

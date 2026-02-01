@@ -79,6 +79,7 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
     const [menus] = useState<any[]>(initialMenus || [])
 
 
+
     const formControl = form.control as any
 
     async function onSubmit(values: SiteSettingsValues) {
@@ -105,8 +106,8 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
         seo: !!formErrors.seo,
         contact: !!formErrors.contactInfo,
         social: !!formErrors.socialLinks,
-        footer: !!(formErrors.footerText || formErrors.copyright),
-        menu: !!(formErrors.headerMenu || formErrors.footerMenu || formErrors.footerCTA),
+        footer: !!(formErrors.footerText || formErrors.copyright || formErrors.footerCTA),
+        menu: !!(formErrors.headerMenu || formErrors.footerMenu),
     }
 
     return (

@@ -19,7 +19,11 @@ export async function getSiteSettings() {
             headerMenu,
             footerMenu,
             contactInfo,
-            socialLinks
+            socialLinks,
+            seo,
+            footerText,
+            copyright,
+            footerCTA
         }`
 
         const { data } = await sanityFetch({ query })
@@ -44,8 +48,14 @@ export async function updateSiteSettings(data: SiteSettingsValues) {
             footerText: validatedFields.footerText,
             headerMenu: validatedFields.headerMenu,
             footerMenu: validatedFields.footerMenu,
-            contactInfo: validatedFields.contactInfo,
-            socialLinks: validatedFields.socialLinks,
+            contactInfo: validatedFields.contactInfo?.map((item, index) => ({
+                ...item,
+                _key: item._key || `contact-${index}-${Date.now()}`
+            })),
+            socialLinks: validatedFields.socialLinks?.map((item, index) => ({
+                ...item,
+                _key: item._key || `social-${index}-${Date.now()}`
+            })),
             footerCTA: validatedFields.footerCTA,
         }
 

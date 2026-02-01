@@ -3,6 +3,7 @@ import { defineQuery } from "next-sanity";
 
 export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
   *[_type == "landingPageContent"][0] {
+
     "hero": {
       "badge": hero.badge,
       "headingLines": hero.headingLines[]{
@@ -16,22 +17,32 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
         "text": text,
         "url": url,
         variant
+      },
+      "featuredServices": hero.featuredServices[]->{
+        "title": title,
+        "slug":slug.current
       }
     },
-    "servicesPreview": *[_type == "globalSections" && _id == "globalSections"][0].servicesPreview {
-      sectionHeading {
-        eyebrow,
-        title,
-        description
-      }
-    },
+   
     "portfolioPreview": {
       "sectionHeading": {
         "eyebrow": portfolioPreview.sectionHeading.eyebrow,
         "title": portfolioPreview.sectionHeading.title,
         "description": portfolioPreview.sectionHeading.description
-      }
+      },
+      "featuredProjects": portfolioPreview.featuredProjects[]->{
+        title,
+        "slug":slug.current,
+        category,
+        "mainImage": {
+          "source":mainImage.asset._ref,
+          "alt":mainImage.altText
+        }
+      },
+      "buttonText": portfolioPreview.buttonText,
+      "buttonUrl": portfolioPreview.buttonUrl
     },
+
     "aboutPreview": {
       "sectionHeading": {
         "eyebrow": aboutPreview.sectionHeading.eyebrow,
@@ -43,60 +54,33 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
       "ctaText": aboutPreview.ctaText,
       "ctaUrl": aboutPreview.ctaUrl
     },
-    "stats": *[_type == "globalSections" && _id == "globalSections"][0].stats {
-      "projectsDelivered": {
-        "value": projectsDelivered.value,
-        "label": projectsDelivered.label,
-        "suffix": projectsDelivered.suffix
-      },
-      "yearsExperience": {
-        "value": yearsExperience.value,
-        "label": yearsExperience.label,
-        "suffix": yearsExperience.suffix
-      },
-      "clientSatisfaction": {
-        "value": clientSatisfaction.value,
-        "label": clientSatisfaction.label,
-        "suffix": clientSatisfaction.suffix
-      }
-    },
-    "whyChooseUs": *[_type == "globalSections" && _id == "globalSections"][0].whyChooseUs {
-      "sectionHeading": {
-        "eyebrow": sectionHeading.eyebrow,
-        "title": sectionHeading.title,
-        "description": sectionHeading.description
-      },
-      "benefits": benefits[]{
-        "title": title,
-        "description": description,
-        iconName
-      }
-    },
+
     "blogPreview": {
       "sectionHeading": {
         "eyebrow": blogPreview.sectionHeading.eyebrow,
         "title": blogPreview.sectionHeading.title,
         "description": blogPreview.sectionHeading.description
-      }
-    },
-    "faqs": *[_type == "globalSections" && _id == "globalSections"][0].faqs {
-      "sectionHeading": {
-        "eyebrow": sectionHeading.eyebrow,
-        "title": sectionHeading.title,
-        "description": sectionHeading.description
       },
-      "faqItems": faqItems[]{
-        "question": question,
-        "answer": answer
+      "featuredBlogs": blogPreview.featuredBlogs[]->{
+      "title": title,
+      "description": description,
+      "slug": slug.current,
+      "mainImage": {
+          "alt": mainImage.alt,
+          "source": mainImage.asset._ref
       },
-      "buttonText": buttonText,
-      "buttonUrl": buttonUrl
+      "categories": categories[]->title,
+      publishedAt,
+    readTime
+    }
     },
+
     "serviceHighlightsMarquee": {
       "highlights": serviceHighlightsMarquee.highlights[]{
         "text": text
       }
     },
+
     "trustedByBrands": {
       "sectionHeading": {
         "eyebrow": trustedByBrands.sectionHeading.eyebrow,
@@ -111,19 +95,7 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
         },
       }
     },
-    "ourApproach": *[_type == "globalSections" && _id == "globalSections"][0].ourApproach {
-      "sectionHeading": {
-        "eyebrow": sectionHeading.eyebrow,
-        "title": sectionHeading.title,
-        "description": sectionHeading.description
-      },
-      "steps": steps[]{
-        "title": title,
-        "description": description,
-        featured,
-        iconName
-      }
-    },
+
     "caseStudiesPreview": {
       "sectionHeading": {
         "eyebrow": caseStudiesPreview.sectionHeading.eyebrow,
@@ -131,6 +103,7 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
         "description": caseStudiesPreview.sectionHeading.description
       }
     },
+
     "areasWeServe": {
       "sectionHeading": {
         "eyebrow": areasWeServe.sectionHeading.eyebrow,
@@ -145,18 +118,7 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
         flag
       }
     },
-    "industriesWeServe": *[_type == "globalSections" && _id == "globalSections"][0].industriesWeServe {
-      "sectionHeading": {
-        "eyebrow": sectionHeading.eyebrow,
-        "title": sectionHeading.title,
-        "description": sectionHeading.description
-      },
-      "industries": industries[]{
-        "name": name,
-        "description": description,
-        iconName
-      }
-    },
+    
     "testimonials": {
       "sectionHeading": {
         "eyebrow": testimonials.sectionHeading.eyebrow,
@@ -175,39 +137,6 @@ export const LANDING_PAGE_CONTENT_QUERY = defineQuery(`
         }
       }
     },
-    "leadership": *[_type == "globalSections" && _id == "globalSections"][0].leadership {
-      "sectionHeading": {
-        "eyebrow": sectionHeading.eyebrow,
-        "title": sectionHeading.title,
-        "description": sectionHeading.description
-      },
-      "founder": {
-        "name": founder.name,
-        "role": founder.role,
-        "image": founder.image.asset->{
-          _id,
-          url,
-          "altText": altText
-        },
-        "socialLinks": founder.socialLinks[]{
-          platform,
-          url
-        }
-      },
-      "agencyStructure": agencyStructure[]{
-        "title": title,
-        "description": description,
-        featured,
-        iconName
-      }
-    },
-    "cta": *[_type == "globalSections" && _id == "globalSections"][0].cta {
-      "badge": badge,
-      "heading": heading,
-      "description": description,
-      "benefits": benefits[]{"text": text},
-      "formId": formId._ref
-    }
   }
 `);
 
@@ -218,7 +147,6 @@ export async function getLandingPageContent() {
       query: LANDING_PAGE_CONTENT_QUERY,
       perspective: "published"
     });
-    console.log(data);
 
     return data as any;
   } catch (error) {

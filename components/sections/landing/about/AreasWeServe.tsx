@@ -9,7 +9,6 @@ import { useLandingPageContent } from "@/context/LandingPageContentContext";
 import Link from "next/link";
 
 
-
 const AreasWeServe = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);

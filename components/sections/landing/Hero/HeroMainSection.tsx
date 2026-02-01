@@ -4,7 +4,6 @@ import Link from "next/link";
 import Logo from "@/components/ui/logo";
 import MagneticButton from "@/components/MagneticButton";
 import AnimatedBadge from "@/components/ui/animated-badge";
-import { useServices } from "@/context/ServiceContext";
 import { useLandingPageContent } from "@/context/LandingPageContentContext";
 import { useGlobalContent } from "@/context/GlobalContentContext";
 
@@ -15,11 +14,12 @@ type Props = {
 const HeroMainSection = ({
     y
 }: Props) => {
-    const { lightWeightServices } = useServices()
     const { globalContent } = useGlobalContent()
     const { landingPageContent } = useLandingPageContent()
 
     const heroData = landingPageContent?.hero
+    const featuredServices = heroData?.featuredServices;
+    
     return (
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start mb-12 lg:mb-16">
 
@@ -138,7 +138,7 @@ const HeroMainSection = ({
 
                         {/* Services list */}
                         <div className="space-y-2.5">
-                            {lightWeightServices.map((service, i) => (
+                            {featuredServices?.map((service, i) => (
                                 <motion.div
                                     key={service.title}
                                     initial={{ opacity: 0, x: 20 }}

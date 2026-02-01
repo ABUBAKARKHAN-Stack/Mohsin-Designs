@@ -9,11 +9,10 @@ import {
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { useIsTouchDevice } from "@/hooks/useIsTouchDevice";
-import { ServiceData } from "@/types/services.types";
 import { urlFor } from "@/sanity/lib/image";
 
 interface ServiceCardProps {
-    service: ServiceData;
+    service: { _id: string; title: string; slug: string; description: string; heroImage: { alt: string; source: string; }; items: string[]; };
     index: number;
 }
 
@@ -53,7 +52,7 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
     return (
         <motion.a
             ref={cardRef}
-            href={`/${service.slug}`}
+            href={`/services/${service.slug}`}
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}

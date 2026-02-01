@@ -10,7 +10,10 @@ export type GlobalContentData = {
         clientSatisfaction?: { value: string; label: string; suffix: string };
     };
     servicesPreview?: {
-        sectionHeading?: { eyebrow?: string; title?: string; description?: string };
+        sectionHeading: { eyebrow: string; title: string; description: string };
+        buttonText: string;
+        buttonUrl: string;
+        featuredServices: Array<{ _id: string; title: string; slug: string; description: string; heroImage: { alt: string; source: string }; items: string[] }>;
     };
     whyChooseUs?: {
         sectionHeading?: { eyebrow?: string; title?: string; description?: string };
@@ -36,7 +39,7 @@ export type GlobalContentData = {
             name: string;
             role: string;
             image?: { _id: string; url: string };
-            socialLinks?: Array<{ platform: string; url: string }>;
+            socialLinks?: Array<{ label: string,iconName: string; url: string }>;
         };
         agencyStructure?: Array<{ title: string; description: string; featured?: boolean; iconName: string }>;
     };

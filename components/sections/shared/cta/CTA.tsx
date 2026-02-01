@@ -141,9 +141,11 @@ const CTA = () => {
             </h2>
 
             <div className="text-foreground/70 text-lg leading-relaxed mb-8 max-w-lg space-y-4">
-              <p>
-                {ctaData.description}
-              </p>
+              {
+                ctaData.description?.split("\n").map((line, index) => (
+                  <p key={index}>{line}</p>
+                ))
+              }
             </div>
 
             {/* Quick benefits */}

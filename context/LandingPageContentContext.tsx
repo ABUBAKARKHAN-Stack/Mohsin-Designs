@@ -18,20 +18,28 @@ export type LandingPageContentData = {
             url: string;
             variant: 'primary' | 'secondary';
         }>;
-    };
-    servicesPreview?: {
-        sectionHeading?: {
-            eyebrow?: string;
-            title?: string;
-            description?: string;
-        };
-    };
+        featuredServices?: Array<{
+            title: string;
+            slug: string;
+        }>;
+    }
     portfolioPreview?: {
-        sectionHeading?: {
+        sectionHeading: {
             eyebrow?: string;
             title?: string;
             description?: string;
         };
+         featuredProjects: Array<{
+            title: string,
+            slug: string,
+            category: string,
+            mainImage: {
+                source: string,
+                alt: string
+            }
+        }>;
+        buttonText?: string;
+        buttonUrl?: string;
     };
     aboutPreview?: {
         sectionHeading: {

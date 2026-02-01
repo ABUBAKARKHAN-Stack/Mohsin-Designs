@@ -5,7 +5,6 @@ import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
 import Link from "next/link";
 import { ContainerLayout } from "@/components/layout";
-import { projects } from "@/constants/portfolio.constants";
 import PortfolioCard from "./PortfolioCard";
 import SectionHeading from "@/components/ui/section-heading";
 import { Marquee } from "@/components/ui/marquee";
@@ -21,10 +20,16 @@ const PortfolioPreview = () => {
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
   const { landingPageContent } = useLandingPageContent();
 
-  const portfolioPreviewData = landingPageContent?.portfolioPreview;
+  if (!landingPageContent?.portfolioPreview) return null;
 
-  const firstRow = projects.slice(0, projects.length / 2)
-  const secondRow = projects.slice(projects.length / 2)
+
+  const portfolioPreviewData = landingPageContent.portfolioPreview;
+  const featuredProjects = portfolioPreviewData.featuredProjects;
+
+
+
+  const firstRow = featuredProjects.slice(0, featuredProjects.length / 2)
+  const secondRow = featuredProjects.slice(featuredProjects.length / 2)
 
 
   return (
@@ -54,10 +59,10 @@ const PortfolioPreview = () => {
             className="hidden lg:block"
           >
             <Link
-              href={`/portfolio`}
+              href={portfolioPreviewData?.buttonUrl || "/portfolio"}
               className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300 shadow-[0_10px_30px_-10px_hsl(var(--accent)/0.5)]"
             >
-              <span>View All Projects</span>
+              <span>{portfolioPreviewData?.buttonText || "View All Projects"}</span>
               <ArrowUpRight className="size-4.5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
             </Link>
           </motion.div>
@@ -70,7 +75,7 @@ const PortfolioPreview = () => {
 
           {firstRow.map((project, index) => (
             <PortfolioCard
-              key={index}
+              key={`${project.title}-${index}`}
               project={project}
             />
           ))}

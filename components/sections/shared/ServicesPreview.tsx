@@ -4,11 +4,10 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
 import Link from "next/link";
-import ServiceCard from "./ServiceCard";
 import { ContainerLayout } from "@/components/layout";
 import SectionHeading from "@/components/ui/section-heading";
-import { useServices } from "@/context/ServiceContext";
 import { useGlobalContent } from "@/context/GlobalContentContext";
+import ServiceCard from "@/components/cards/ServiceCard";
 
 
 const ServicesPreview = () => {
@@ -18,10 +17,12 @@ const ServicesPreview = () => {
     offset: ["start end", "end start"],
   });
 
-  const { services } = useServices()
   const { globalContent } = useGlobalContent()
 
+  if (!globalContent?.servicesPreview) return null;
+
   const servicesPreviewData = globalContent?.servicesPreview;
+  const featuredServices = servicesPreviewData?.featuredServices || [];
 
   const y1 = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const y2 = useTransform(scrollYProgress, [0, 1], [-40, 80]);
@@ -63,10 +64,10 @@ const ServicesPreview = () => {
             className="hidden lg:block"
           >
             <Link
-              href={`/services`}
+              href={servicesPreviewData?.buttonUrl || "/services"}
               className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300 shadow-[0_10px_30px_-10px_hsl(var(--accent)/0.5)]"
             >
-              <span>View All Services</span>
+              <span>{servicesPreviewData?.buttonText || "View All Services"}</span>
               <ArrowUpRight className="size-4.5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
             </Link>
           </motion.div>
@@ -74,8 +75,8 @@ const ServicesPreview = () => {
 
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-          {services.map((service, index) => (
-            <ServiceCard key={service.slug} service={service} index={index} />
+          {featuredServices.map((service, index) => (
+            <ServiceCard key={`${service._id}-${index}`} service={service} index={index} />
           ))}
         </div>
 
@@ -88,10 +89,10 @@ const ServicesPreview = () => {
           className="mt-12 lg:hidden text-center"
         >
           <Link
-            href={`/services`}
+            href={servicesPreviewData?.buttonUrl || "/services"}
             className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300"
           >
-            View All Services
+            <span>{servicesPreviewData?.buttonText || "View All Services"}</span>
             <ArrowUpRight className="size-4.5" />
           </Link>
         </motion.div>

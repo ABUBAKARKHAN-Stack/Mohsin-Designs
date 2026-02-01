@@ -9,7 +9,6 @@ import { getIconByName } from "@/lib/icon-mapper";
 
 const Leadership = () => {
   const { globalContent } = useGlobalContent();
-
   const leadershipData = globalContent?.leadership;
   const founderData = leadershipData?.founder;
   const agencyStructure = leadershipData?.agencyStructure || [];
@@ -78,13 +77,14 @@ const Leadership = () => {
                     </p>
 
                     {/* Social links */}
-                    {/* {founderData?.socialLinks && founderData.socialLinks.length > 0 && (
+                    {founderData?.socialLinks && founderData.socialLinks.length > 0 && (
                       <div className="flex gap-3 mt-3">
                         {founderData.socialLinks.map((social, i) => {
-                          // const Icon = getIconByName(social.iconName);
+                          const Icon = getIconByName(social.iconName);
                           return (
                             <motion.a
                               key={i}
+                              title={social.label}
                               href={social.url}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -97,7 +97,7 @@ const Leadership = () => {
                           );
                         })}
                       </div>
-                    )} */}
+                    )}
                   </div>
                 </motion.div>
               </div>

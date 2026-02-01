@@ -4,19 +4,22 @@ import {
   ServiceHighlightsMarquee,
   TrustedByBrands,
   AboutPreview,
-  ServicesPreview,
-  WhyChooseUs,
   PortfolioPreview,
   Testimonials,
   FAQs,
-  CTA,
   // BlogPreview,
-  OurApproach,
-  Leadership,
   CaseStudiesPreview,
   AreasWeServe,
-  IndustriesWeServe
+
 } from "@/components/sections/landing/";
+import {
+  ServicesPreview,
+  IndustriesWeServe,
+  Leadership,
+  OurApproach,
+  WhyChooseUs,
+  CTA,
+} from "@/components/sections/shared/";
 
 const HomePage = () => {
   return (

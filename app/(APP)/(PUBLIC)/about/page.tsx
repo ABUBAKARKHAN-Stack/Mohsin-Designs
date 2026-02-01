@@ -1,11 +1,4 @@
-import {
-    WhyChooseUs,
-    Leadership,
-    IndustriesWeServe,
-    OurApproach,
-    CTA,
-    ServicesPreview,
-} from "@/components/sections/landing";
+
 import {
     AboutPageHero,
     IntroSection,
@@ -15,7 +8,15 @@ import {
     CultureSection,
 } from '@/components/sections/about'
 import { PageWrapper } from "@/components/layout";
+import {
+    ServicesPreview,
+    IndustriesWeServe,
+    Leadership,
+     CTA,
+       WhyChooseUs,
+    OurApproach,
 
+} from "@/components/sections/shared/";
 
 
 

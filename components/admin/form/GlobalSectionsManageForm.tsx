@@ -2,18 +2,14 @@
 
 import { useState, useCallback, useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { Form } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { GlobalSectionsFormTabs } from "./GlobalSectionsFormTabs"
 import { updateGlobalSections, saveGlobalSectionsDraft, discardGlobalSectionsDraft } from "@/app/actions/globalSections"
 import { successToast, errorToast } from "@/lib/toastNotifications"
 import { debounce } from "lodash"
-import { Save, Send, Trash2, CheckCircle2, Clock, ArrowLeft, AlertCircle } from "lucide-react"
+import { Clock, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
 
 interface GlobalSectionsData {

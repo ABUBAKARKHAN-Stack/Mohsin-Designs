@@ -5,11 +5,18 @@ import { ServiceData } from "@/types/services.types";
 import { ArrowUpRight } from "lucide-react";
 import { useScroll, useTransform, motion } from "motion/react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { useRef } from "react";
 
-const ServiceCard = ({ service, index }: { service: ServiceData; index: number }) => {
-    const {lang}: LanguageType = useParams()
+const ServiceCard = ({ service, index }: { service: {
+    title: string;
+    description: string;
+    slug: string;
+    heroImage: {
+      alt: string;
+      source: string;
+    };
+    items: string[];
+  }; index: number }) => {
     const ref = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: ref,
@@ -24,7 +31,7 @@ const ServiceCard = ({ service, index }: { service: ServiceData; index: number }
     
 
     return (
-        <Link href={`/${lang}/services/${service.slug}`}>
+        <Link href={`/services/${service.slug}`}>
             <motion.div
                 ref={ref}
                 style={{ opacity, y }}

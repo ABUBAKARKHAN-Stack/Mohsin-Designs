@@ -4,8 +4,6 @@ import { motion } from "motion/react";
 import { ArrowUpRight, AlertCircle, Lightbulb, TrendingUp } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
 import { CaseStudy, SectionHeadingType } from "@/types/services.types";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 
 
 interface CaseStudiesSectionProps {
@@ -14,7 +12,6 @@ interface CaseStudiesSectionProps {
 }
 
 const CaseStudiesSection = ({ caseStudies, caseStudiesSectionHeader }: CaseStudiesSectionProps) => {
-  const { lang }: LanguageType = useParams()
   return (
     <section className="lg:py-12.5 py-6.25 bg-muted/30 relative overflow-hidden">
 
@@ -74,7 +71,7 @@ const CaseStudiesSection = ({ caseStudies, caseStudiesSectionHeader }: CaseStudi
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-red-400">
                       <AlertCircle className="w-5 h-5" />
-                      <span className="text-sm font-medium uppercase tracking-wider">{uiT(lang, "common.problem")}</span>
+                      <span className="text-sm font-medium uppercase tracking-wider">Problem</span>
                     </div>
                     <p className="text-muted-foreground leading-relaxed text-sm">
                       {caseStudy.problem}
@@ -85,7 +82,7 @@ const CaseStudiesSection = ({ caseStudies, caseStudiesSectionHeader }: CaseStudi
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-amber-400">
                       <Lightbulb className="w-5 h-5" />
-                      <span className="text-sm font-medium uppercase tracking-wider">{uiT(lang, "common.solution")}</span>
+                      <span className="text-sm font-medium uppercase tracking-wider">Solution</span>
                     </div>
                     <p className="text-muted-foreground leading-relaxed text-sm">
                       {caseStudy.solution}
@@ -96,7 +93,7 @@ const CaseStudiesSection = ({ caseStudies, caseStudiesSectionHeader }: CaseStudi
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-emerald-400">
                       <TrendingUp className="w-5 h-5" />
-                      <span className="text-sm font-medium uppercase tracking-wider">{uiT(lang, "common.result")}</span>
+                      <span className="text-sm font-medium uppercase tracking-wider">Result</span>
                     </div>
                     <p className="text-muted-foreground leading-relaxed text-sm">
                       {caseStudy.result}

@@ -21,6 +21,21 @@ export default async function ServicesPageContentPage() {
             guaranteePoints: pageContent.whyChooseUs?.guaranteePoints || [],
             benefits: pageContent.whyChooseUs?.benefits || [],
         },
+        serviceBlogs: {
+            sectionHeading: pageContent.serviceBlogs?.sectionHeading || {},
+            blogs: pageContent.serviceBlogs?.blogs?.map((blog: any) =>
+                typeof blog === 'string' ? blog : blog?._ref
+            ).filter(Boolean) || [],
+            buttonText: pageContent.serviceBlogs?.buttonText || "",
+            buttonUrl: pageContent.serviceBlogs?.buttonUrl || ""
+        },
+        servicesList: {
+            sectionHeading: pageContent.servicesList?.sectionHeading || {},
+            services: pageContent.servicesList?.services?.map((service: any) =>
+                typeof service === 'string' ? service : service?._ref
+            ).filter(Boolean) || [],
+        },
+        seo: pageContent.seo || undefined,
     } : undefined;
 
     return (

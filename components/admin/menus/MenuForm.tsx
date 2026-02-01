@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Save, Plus, ArrowLeft, Languages } from "lucide-react"
+import { Save, Plus, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { createMenu, updateMenu } from "@/app/actions/menus"
@@ -27,7 +27,6 @@ interface MenuFormProps {
 
 export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
     const [isLoading, setIsLoading] = useState(false)
-    const [selectedLang, setSelectedLang] = useState("en")
     const router = useRouter()
     const isEditing = !!initialData?._id
 
@@ -61,10 +60,7 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
         prevLengthRef.current = fields.length
     }, [fields.length])
 
-    console.log(form.formState.errors);
-
     async function onSubmit(values: MenuValues) {
-
         setIsLoading(true)
         try {
             const result = (isEditing
@@ -100,23 +96,6 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
                         </div>
                     </div>
                     <div className="flex items-center gap-3 w-full sm:w-auto">
-                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-lg border">
-                            <div className="flex items-center gap-1.5 px-2 text-xs font-medium text-muted-foreground border-r pr-2">
-                                <Languages className="h-3.5 w-3.5" />
-                                <span>UI Preview</span>
-                            </div>
-                            <Select value={selectedLang} onValueChange={setSelectedLang}>
-                                <SelectTrigger className="h-8 border-none bg-transparent shadow-none focus:ring-0 min-w-[110px]">
-                                    <SelectValue placeholder="Language" />
-                                </SelectTrigger>
-                                <SelectContent align="end">
-                                    <SelectItem value="en">English (EN)</SelectItem>
-                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
-                                    <SelectItem value="es">Spanish (ES)</SelectItem>
-                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
                         <Button type="submit" disabled={isLoading} className="flex-1 sm:flex-none min-w-[140px]">
                             {isLoading ? <Spinner className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
                             {isEditing ? "Update Menu" : "Create Menu"}
@@ -200,8 +179,8 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
                                 type="button"
                                 size="sm"
                                 onClick={() => append({
-                                    label: { en: "", ur: "", es: "", ar: "" },
-                                    description: { en: "", ur: "", es: "", ar: "" },
+                                    label: "",
+                                    description: "",
                                     type: "reference",
                                     children: []
                                 })}
@@ -221,7 +200,6 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
                                     remove={remove}
                                     move={move}
                                     total={fields.length}
-                                    activeLang={selectedLang}
                                     linkableContent={linkableContent}
                                     setValue={form.setValue}
                                     errors={form.formState.errors.items}

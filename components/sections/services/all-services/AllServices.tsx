@@ -4,16 +4,26 @@ import { ContainerLayout } from "../../../layout";
 import ServiceCard from "./ServiceCard";
 import BGDecorations from "./BG-Decorations";
 import SectionHeading from "@/components/ui/section-heading";
-import { useServices } from "@/context/ServiceContext";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
+import { SectionHeadingType } from "@/types/services.types";
+
+type Props = {
+  sectionHeading: SectionHeadingType;
+  services: {
+    title: string;
+    description: string;
+    slug: string;
+    heroImage: {
+      alt: string;
+      source: string;
+    };
+    items: string[];
+  }[];
+}
 
 
-const AllServices = () => {
-  const { services } = useServices()
-  const params = useParams()
-  const lang = params.lang as string
+const AllServices = ({ sectionHeading, services}: Props) => {
 
+  if (!services || !sectionHeading) return null
   return (
 
     <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
@@ -23,9 +33,9 @@ const AllServices = () => {
       <ContainerLayout className="relative">
 
         <SectionHeading
-          eyebrow={uiT(lang, 'servicesPage.allServices.eyebrow')}
-          title={uiT(lang, 'servicesPage.allServices.title')}
-          description={uiT(lang, 'servicesPage.allServices.description')}
+          eyebrow={sectionHeading.eyebrow}
+          title={sectionHeading.title}
+          description={sectionHeading.description}
           align="center"
           splitText
         />
@@ -33,13 +43,11 @@ const AllServices = () => {
         {/* Services List */}
         <div className="space-y-0">
           {services.map((service, i) => {
-
             return (
               <ServiceCard key={`${service.title}-${i}`} service={service} index={i} />
             )
           })}
         </div>
-
       </ContainerLayout>
 
     </section>

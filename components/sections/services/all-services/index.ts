@@ -4,6 +4,7 @@ import AllServices from "./AllServices";
 import ProcessTimeline from "./ProcessTimeline";
 import WhyWorkWithUs from "./WhyWorkWithUs";
 import CTA from "./CTA";
+import ServicesBlogs from "./ServicesBlogs";
 
 
 export {
@@ -12,5 +13,6 @@ export {
     AllServices,
     ProcessTimeline,
     WhyWorkWithUs,
-    CTA
+    CTA,
+    ServicesBlogs
 }

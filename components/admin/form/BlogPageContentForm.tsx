@@ -8,15 +8,15 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { updateBlogPageContent, saveBlogPageDraft, discardBlogPageDraft } from "@/app/actions/blogPageContent"
+import { SeoFormTab } from "./SeoFormTab"
+import { updateBlogPageContent, saveBlogPageDraft } from "@/app/actions/blogPageContent"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
 import { Save, AlertCircle, Clock, Trash2, Search, CheckCircle2 } from "lucide-react"
 import { debounce } from "lodash"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
 interface BlogPageContentFormProps {
@@ -33,30 +33,12 @@ export function BlogPageContentForm({ initialData, hasDraft, draftUpdatedAt, pos
     const [lastSaved, setLastSaved] = useState<Date | null>(
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
-    const [selectedLang, setSelectedLang] = useState("en")
     const [isInitialMount, setIsInitialMount] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
 
     const form = useForm<BlogPageContentValues>({
         resolver: zodResolver(blogPageContentSchema),
-        defaultValues: initialData || {
-            hero: {
-                title: { en: "", ur: "", es: "", ar: "" },
-                subtitle: { en: "", ur: "", es: "", ar: "" },
-                description: { en: "", ur: "", es: "", ar: "" },
-            },
-            blogList: {
-                posts: [],
-            },
-            cta: {
-                sectionHeading: {
-                    eyebrow: { en: "", ur: "", es: "", ar: "" },
-                    title: { en: "", ur: "", es: "", ar: "" },
-                    description: { en: "", ur: "", es: "", ar: "" },
-                },
-                formReference: "",
-            },
-        },
+        defaultValues: mergeWithDefaults(initialData),
     })
 
     const formControl = form.control as any
@@ -113,7 +95,7 @@ export function BlogPageContentForm({ initialData, hasDraft, draftUpdatedAt, pos
         p.title?.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
-    const selectedPostIds = form.watch("blogList.posts")
+    const selectedPostIds = form.watch("blogList.posts") || []
 
     const togglePost = (postId: string) => {
         const current = [...selectedPostIds]
@@ -158,17 +140,6 @@ export function BlogPageContentForm({ initialData, hasDraft, draftUpdatedAt, pos
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Select value={selectedLang} onValueChange={setSelectedLang}>
-                            <SelectTrigger className="w-[140px]">
-                                <SelectValue placeholder="Language" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="en">English (EN)</SelectItem>
-                                <SelectItem value="ur">Urdu (UR)</SelectItem>
-                                <SelectItem value="es">Spanish (ES)</SelectItem>
-                                <SelectItem value="ar">Arabic (AR)</SelectItem>
-                            </SelectContent>
-                        </Select>
                         <Button type="submit" disabled={isLoading}>
                             {isLoading ? <Spinner className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
                             Save Content
@@ -196,15 +167,21 @@ export function BlogPageContentForm({ initialData, hasDraft, draftUpdatedAt, pos
                                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
                             )}
                         </TabsTrigger>
+                        <TabsTrigger value="seo" className="relative">
+                            SEO
+                            {!!formErrors.seo && (
+                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                            )}
+                        </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="hero" className="space-y-6">
                         <Card>
                             <CardHeader><CardTitle>Hero Configuration</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="hero.title" label="Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="hero.subtitle" label="Subtitle" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="hero.description" label="Description" isTextarea activeLang={selectedLang} />
+                                <FormInput control={formControl} name="hero.title" label="Title" />
+                                <FormInput control={formControl} name="hero.subtitle" label="Subtitle" />
+                                <FormInput control={formControl} name="hero.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -314,9 +291,9 @@ export function BlogPageContentForm({ initialData, hasDraft, draftUpdatedAt, pos
                         <Card>
                             <CardHeader><CardTitle>Call to Action Configuration</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.eyebrow" label="Eyebrow" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.title" label="Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.description" label="Description" isTextarea activeLang={selectedLang} />
+                                <FormInput control={formControl} name="cta.sectionHeading.eyebrow" label="Eyebrow" />
+                                <FormInput control={formControl} name="cta.sectionHeading.title" label="Title" />
+                                <FormInput control={formControl} name="cta.sectionHeading.description" label="Description" isTextarea />
 
                                 <FormField
                                     control={form.control}
@@ -343,6 +320,10 @@ export function BlogPageContentForm({ initialData, hasDraft, draftUpdatedAt, pos
                             </CardContent>
                         </Card>
                     </TabsContent>
+
+                    <TabsContent value="seo">
+                        <SeoFormTab control={formControl} />
+                    </TabsContent>
                 </Tabs>
             </form>
         </Form>
@@ -367,4 +348,66 @@ function ArrowDownButton({ onClick, disabled }: { onClick: () => void, disabled?
             </svg>
         </Button>
     )
+}
+
+function getDefaultValues(): BlogPageContentValues {
+    return {
+        hero: {
+            title: "",
+            subtitle: "",
+            description: "",
+        },
+        blogList: {
+            posts: [],
+        },
+        cta: {
+            sectionHeading: {
+                eyebrow: "",
+                title: "",
+                description: "",
+            },
+            formReference: "",
+        },
+        seo: {
+            metaTitle: "",
+            metaDescription: "",
+            focusKeyword: "",
+            relatedKeywords: [],
+            schemas: []
+        }
+    } as BlogPageContentValues
+}
+
+function mergeWithDefaults(data: any): BlogPageContentValues {
+    const defaults = getDefaultValues()
+    if (!data) return defaults
+
+    return {
+        ...defaults,
+        ...data,
+        hero: {
+            ...defaults.hero,
+            ...data.hero
+        },
+        blogList: {
+            ...defaults.blogList,
+            ...data.blogList,
+            posts: data.blogList?.posts || defaults.blogList.posts
+        },
+        cta: {
+            ...defaults.cta,
+            ...data.cta,
+            sectionHeading: {
+                ...defaults.cta?.sectionHeading,
+                ...data.cta?.sectionHeading
+            },
+            formReference: data.cta?.formReference || defaults.cta?.formReference
+        },
+        seo: {
+            ...defaults.seo,
+            ...data.seo,
+            relatedKeywords: data.seo?.relatedKeywords || defaults.seo?.relatedKeywords || [],
+            schemas: data.seo?.schemas || defaults.seo?.schemas || []
+        }
+    } as BlogPageContentValues
 }

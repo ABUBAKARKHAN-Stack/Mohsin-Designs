@@ -9,13 +9,15 @@ import { NumberTicker } from "@/components/ui/number-ticker";
 import { cn } from "@/lib/utils";
 import SectionHeading from "@/components/ui/section-heading";
 import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { useGlobalContent } from "@/context/GlobalContentContext";
 
 const AboutPreview = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { landingPageContent } = useLandingPageContent();
+  const {globalContent}  = useGlobalContent()
 
   const aboutData = landingPageContent?.aboutPreview;
-  const experienceStat = landingPageContent?.stats?.yearsExperience;
+  const experienceStat = globalContent?.stats?.yearsExperience;
 
   if (!aboutData) return null;
 

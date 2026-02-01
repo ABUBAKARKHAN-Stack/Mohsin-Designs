@@ -1,9 +1,11 @@
+"use client"
+
 import { useEffect, useState } from "react"
-import { useFieldArray, Control, UseFormSetValue, FieldErrors, useWatch } from "react-hook-form"
+import { useFieldArray, Control, UseFormSetValue, useWatch } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
-import { Trash2, Plus, ArrowUp, ArrowDown, ExternalLink, Hash, Link as LinkIcon, Layers, ChevronRight, ChevronDown } from "lucide-react"
+import { FormInput } from "@/components/admin/form/FormInput"
+import { Trash2, Plus, ArrowUp, ArrowDown, Link as LinkIcon, Layers, ChevronRight, ChevronDown, Hash } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
@@ -16,7 +18,6 @@ interface MenuItemEditorProps {
     remove: (index: number) => void
     move?: (from: number, to: number) => void
     total?: number
-    activeLang: string
     depth?: number
     linkableContent: {
         services: any[]
@@ -33,7 +34,6 @@ export function MenuItemEditor({
     remove,
     move,
     total,
-    activeLang,
     depth = 0,
     linkableContent,
     setValue,
@@ -127,8 +127,8 @@ export function MenuItemEditor({
                             {location === 'footer' && depth === 0 ? 'Column Header' : `Level ${depth + 1}`}
                         </span>
                         <h4 className="font-bold text-sm tracking-tight text-foreground/80">
-                            {itemLabel?.[activeLang] || (location === 'footer' && depth === 0 ? "New Column" : "New Link")}
-                            {!isOpen && itemLabel?.[activeLang] && <span className="ml-2 text-xs font-normal text-muted-foreground/50 italic">(Click to edit)</span>}
+                            {itemLabel || (location === 'footer' && depth === 0 ? "New Column" : "New Link")}
+                            {!isOpen && itemLabel && <span className="ml-2 text-xs font-normal text-muted-foreground/50 italic">(Click to edit)</span>}
                         </h4>
                     </div>
                 </div>
@@ -143,8 +143,8 @@ export function MenuItemEditor({
                                 onClick={(e) => {
                                     e.stopPropagation()
                                     append({
-                                        label: { en: "", ur: "", es: "", ar: "" },
-                                        description: { en: "", ur: "", es: "", ar: "" },
+                                        label: "",
+                                        description: "",
                                         type: "reference",
                                         children: []
                                     })
@@ -176,19 +176,17 @@ export function MenuItemEditor({
                 <CardContent className="p-4 space-y-6 animate-in slide-in-from-top-2 duration-200">
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-1 border-r pr-6 space-y-4">
-                            <LocalizedInput
+                            <FormInput
                                 control={control}
                                 name={`${fieldPath}.label`}
                                 label={location === 'footer' && depth === 0 ? "Column Heading" : "Link Title"}
-                                activeLang={activeLang}
                                 compact
                             />
 
-                            <LocalizedInput
+                            <FormInput
                                 control={control}
                                 name={`${fieldPath}.description`}
                                 label="Description (Optional)"
-                                activeLang={activeLang}
                                 compact
                             />
 
@@ -206,7 +204,7 @@ export function MenuItemEditor({
                                                         field.onChange(val)
                                                         // Reset other field data to prevent validation conflicts
                                                         if (val === 'reference') {
-                                                            setValue(`${fieldPath}.url`, { en: "", ur: "", es: "", ar: "" })
+                                                            setValue(`${fieldPath}.url`, "")
                                                         } else {
                                                             setValue(`${fieldPath}.reference`, null)
                                                         }
@@ -268,12 +266,10 @@ export function MenuItemEditor({
                                         )}
                                     />
                                 ) : (
-                                    <LocalizedInput
+                                    <FormInput
                                         control={control}
                                         name={`${fieldPath}.url`}
                                         label="External or Relative URL"
-                                        activeLang={activeLang}
-                                        isUrl
                                         compact
                                     />
                                 )
@@ -302,7 +298,6 @@ export function MenuItemEditor({
                                         remove={removeChild}
                                         move={moveChild}
                                         total={fields.length}
-                                        activeLang={activeLang}
                                         depth={depth + 1}
                                         linkableContent={linkableContent}
                                         setValue={setValue}

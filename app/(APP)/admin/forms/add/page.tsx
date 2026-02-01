@@ -12,7 +12,7 @@ import Link from "next/link";
 import { FormEditor } from "@/components/admin/form/FormEditor";
 import { successToast, errorToast } from "@/lib/toastNotifications";
 import { createForm } from "@/app/actions/formActions";
-import {  FormField } from "@/types/form.types";
+import { FormField } from "@/types/form.types";
 
 export default function AddFormPage() {
     const router = useRouter();
@@ -21,8 +21,9 @@ export default function AddFormPage() {
         name: "",
         description: "",
         fields: [] as FormField[],
-        submitButtonText: { en: "Submit", ur: "", es: "", ar: "" },
-        successMessage: { en: "Thank you! We'll get back to you soon.", ur: "", es: "", ar: "" }
+        submitButtonText: "Submit",
+        successMessage: "Thank you! We'll get back to you soon.",
+        redirectUrl: ""
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -106,6 +107,8 @@ export default function AddFormPage() {
                         onSubmitButtonTextChange={(submitButtonText) => setFormData({ ...formData, submitButtonText })}
                         successMessage={formData.successMessage}
                         onSuccessMessageChange={(successMessage) => setFormData({ ...formData, successMessage })}
+                        redirectUrl={formData.redirectUrl}
+                        onRedirectUrlChange={(redirectUrl) => setFormData({ ...formData, redirectUrl })}
                     />
 
                     <div className="flex justify-end gap-4">

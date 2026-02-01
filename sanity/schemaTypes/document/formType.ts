@@ -58,13 +58,13 @@ export const formType = defineType({
                     defineField({
                         name: 'label',
                         title: 'Label',
-                        type: 'localizedString',
+                        type: 'string',
                         validation: Rule => Rule.required()
                     }),
                     defineField({
                         name: 'placeholder',
                         title: 'Placeholder',
-                        type: 'localizedString'
+                        type: 'string'
                     }),
                     defineField({
                         name: 'required',
@@ -96,7 +96,7 @@ export const formType = defineType({
                             defineField({
                                 name: 'errorMessage',
                                 title: 'Error Message',
-                                type: 'localizedString',
+                                type: 'string',
                                 description: 'Custom error message when validation fails'
                             })
                         ]
@@ -112,7 +112,7 @@ export const formType = defineType({
                                 defineField({
                                     name: 'label',
                                     title: 'Option Label',
-                                    type: 'localizedString',
+                                    type: 'string',
                                     validation: Rule => Rule.required()
                                 }),
                                 defineField({
@@ -124,7 +124,7 @@ export const formType = defineType({
                             ],
                             preview: {
                                 select: {
-                                    label: 'label.en',
+                                    label: 'label',
                                     value: 'value'
                                 },
                                 prepare({ label, value }) {
@@ -139,7 +139,7 @@ export const formType = defineType({
                 ],
                 preview: {
                     select: {
-                        label: 'label.en',
+                        label: 'label',
                         fieldType: 'fieldType',
                         required: 'required'
                     },
@@ -155,15 +155,21 @@ export const formType = defineType({
         defineField({
             name: 'submitButtonText',
             title: 'Submit Button Text',
-            type: 'localizedString',
+            type: 'string',
             validation: Rule => Rule.required()
         }),
         defineField({
             name: 'successMessage',
             title: 'Success Message',
-            type: 'localizedText',
+            type: 'text',
             description: 'Message shown after successful submission',
             validation: Rule => Rule.required()
+        }),
+        defineField({
+            name: 'redirectUrl',
+            title: 'Redirect URL (Optional)',
+            type: 'string',
+            description: 'Enter a relative path (e.g., /thanks) or a full URL (e.g., https://example.com) to redirect after submission'
         })
     ],
     preview: {

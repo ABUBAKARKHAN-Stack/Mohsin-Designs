@@ -9,21 +9,17 @@ interface EditBlogPageProps {
 
 export default async function EditBlogPage({ params }: EditBlogPageProps) {
     const { id } = await params
-    const [publishedPost, draftPost, { services, categories, locations }] = await Promise.all([
+    const [post, { services, categories, locations }] = await Promise.all([
         getPostById(id),
-        getBlogDraft(id),
         getBlogFormOptions()
     ])
-
-    const post = draftPost || publishedPost
 
     if (!post) {
         notFound()
     }
 
-    const hasDraft = !!draftPost
-    const draftUpdatedAt = draftPost?._updatedAt || null
-
+    const hasDraft = post._id.startsWith('drafts.')
+    const draftUpdatedAt = post._updatedAt || null
     return (
         <div className="container mx-auto pb-10 max-w-5xl text-foreground">
             <BlogForm

@@ -2,38 +2,33 @@
 
 
 import { Control } from "react-hook-form"
-import { LocalizedInput } from "./LocalizedInput"
+import { FormInput } from "./FormInput"
 
 interface SectionHeadingInputProps {
     control: Control<any>
     name: string
     label: string
-    activeLang?: string
 }
 
-export function SectionHeadingInput({ control, name, label, activeLang }: SectionHeadingInputProps) {
+export function SectionHeadingInput({ control, name, label }: SectionHeadingInputProps) {
     return (
         <div className="space-y-4 border-l-4 border-primary pl-4">
             <h3 className="font-semibold text-lg">{label}</h3>
-            <LocalizedInput
+            <FormInput
                 control={control}
                 name={`${name}.eyebrow`}
                 label="Eyebrow (Optional)"
-                activeLang={activeLang}
             />
-            <LocalizedInput
+            <FormInput
                 control={control}
                 name={`${name}.title`}
                 label="Section Title"
-                activeLang={activeLang}
             />
-            <LocalizedInput
+            <FormInput
                 control={control}
                 name={`${name}.description`}
                 label="Section Description (Optional)"
                 isTextarea
-                optional={true}
-                activeLang={activeLang}
             />
         </div>
     )

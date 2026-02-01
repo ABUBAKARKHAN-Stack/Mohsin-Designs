@@ -19,6 +19,7 @@ export default async function PortfolioPageContentPage() {
             projects: pageContent.portfolioList?.projects || [],
         },
         cta: pageContent.cta || {},
+        seo: pageContent.seo || {}
     } : undefined;
 
     return (

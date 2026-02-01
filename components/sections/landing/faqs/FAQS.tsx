@@ -8,21 +8,20 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import SectionHeading from "@/components/ui/section-heading";
-import { faqs as defaultFaqs } from "@/constants/contact-and-help.constants";
 import { ArrowRight } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
 import { useGlobalContent } from "@/context/GlobalContentContext";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 import Link from "next/link";
 
 
 const FAQs = () => {
   const { globalContent } = useGlobalContent();
-  const { lang }: any = useParams();
 
   const faqsData = globalContent?.faqs;
-  const faqItems = faqsData?.faqItems || defaultFaqs;
+  const faqItems = faqsData?.faqItems;
+
+  if (!faqsData || !faqItems || faqItems.length === 0) return null;
+  
 
   return (
     <section className="lg:py-12.5 py-6.25  bg-secondary/1">
@@ -49,7 +48,7 @@ const FAQs = () => {
               className="inline-block mt-8"
             >
               <Link
-                href={faqsData?.buttonUrl || `/${lang}/contact`}
+                href={faqsData?.buttonUrl || `/contact`}
                 className="inline-flex items-center gap-2 text-accent font-medium hover:underline"
               >
                 {faqsData?.buttonText || "Contact us for more"}

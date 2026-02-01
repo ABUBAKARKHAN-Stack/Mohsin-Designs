@@ -19,55 +19,55 @@ async function ensureDocumentExists() {
                 _type: 'aboutPageContent',
                 _id: ABOUT_PAGE_CONTENT_ID,
                 hero: {
-                    title: { en: '', ur: '', es: '', ar: '' },
-                    subtitle: { en: '', ur: '', es: '', ar: '' },
-                    description: { en: '', ur: '', es: '', ar: '' },
+                    title: '',
+                    subtitle: '',
+                    description: '',
                 },
                 intro: {
-                    badge: { en: '', ur: '', es: '', ar: '' },
-                    heading: { en: '', ur: '', es: '', ar: '' },
-                    description1: { en: '', ur: '', es: '', ar: '' },
-                    description2: { en: '', ur: '', es: '', ar: '' },
+                    badge: '',
+                    heading: '',
+                    description1: '',
+                    description2: '',
                     sinceYear: new Date().getFullYear()
                 },
                 missionVision: {
                     sectionHeading: {
-                        eyebrow: { en: 'What Drives Us', ur: '', es: '', ar: '' },
-                        title: { en: 'Our Purpose & Direction', ur: '', es: '', ar: '' }
+                        eyebrow: 'What Drives Us',
+                        title: 'Our Purpose & Direction'
                     },
                     mission: {
-                        eyebrow: { en: 'Purpose', ur: '', es: '', ar: '' },
-                        title: { en: 'Our Mission', ur: '', es: '', ar: '' },
-                        description1: { en: '', ur: '', es: '', ar: '' },
+                        eyebrow: 'Purpose',
+                        title: 'Our Mission',
+                        description1: '',
                         keyPoints: []
                     },
                     vision: {
-                        eyebrow: { en: 'Direction', ur: '', es: '', ar: '' },
-                        title: { en: 'Our Vision', ur: '', es: '', ar: '' },
-                        description1: { en: '', ur: '', es: '', ar: '' },
+                        eyebrow: 'Direction',
+                        title: 'Our Vision',
+                        description1: '',
                         keyPoints: []
                     }
                 },
                 philosophy: {
                     sectionHeading: {
-                        eyebrow: { en: 'Our Philosophy', ur: '', es: '', ar: '' },
-                        title: { en: 'Strategy Before Design', ur: '', es: '', ar: '' }
+                        eyebrow: 'Our Philosophy',
+                        title: 'Strategy Before Design'
                     },
-                    quoteBlock: { en: '', ur: '', es: '', ar: '' },
-                    description1: { en: '', ur: '', es: '', ar: '' },
-                    description2: { en: '', ur: '', es: '', ar: '' },
+                    quoteBlock: '',
+                    description1: '',
+                    description2: '',
                     steps: []
                 },
                 globalReach: {
-                    badge: { en: '', ur: '', es: '', ar: '' },
-                    heading: { en: '', ur: '', es: '', ar: '' },
-                    description1: { en: '', ur: '', es: '', ar: '' },
-                    description2: { en: '', ur: '', es: '', ar: '' },
+                    badge: '',
+                    heading: '',
+                    description1: '',
+                    description2: '',
                     regions: [],
                     stats: []
                 },
                 culture: {
-                    sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } },
+                    sectionHeading: { title: '' },
                     values: []
                 }
             }
@@ -101,7 +101,8 @@ export async function updateAboutPageContent(data: AboutPageContentValues) {
             missionVision: validatedFields.missionVision,
             philosophy: validatedFields.philosophy,
             globalReach: validatedFields.globalReach,
-            culture: validatedFields.culture
+            culture: validatedFields.culture,
+            seo: validatedFields.seo
         }
 
         await adminClient.createOrReplace(updateData)

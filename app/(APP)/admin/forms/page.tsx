@@ -1,86 +1,58 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import { adminClient } from "@/sanity/lib/admin-client";
-
-type Form = {
-    _id: string;
-    name: string;
-    description?: string;
-    fields: any[];
-};
-
-async function getForms(): Promise<Form[]> {
-    const forms = await adminClient.fetch(`
-        *[_type == "form"] | order(name asc) {
-            _id,
-            name,
-            description,
-            "fields": fields[]
-        }
-    `);
-    return forms;
-}
+import { Plus, FileText, Database } from "lucide-react"
+import Link from "next/link"
+import { getForms } from "@/app/actions/formActions"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { FormsClient } from "@/components/admin/form/FormsClient"
 
 export default async function FormsPage() {
-    const forms = await getForms();
+    const result = await getForms()
+    const forms = result.success ? result.data : []
+
+    const totalFields = forms.reduce((acc: number, form: any) => acc + (form.fields?.length || 0), 0)
 
     return (
-        <div className="container mx-auto py-8 px-4">
-            <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold mb-2">Forms</h1>
-                    <p className="text-muted-foreground">
-                        Create and manage dynamic forms for your website
-                    </p>
+        <div className="space-y-6 container mx-auto pb-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="space-y-1">
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Forms Management</h1>
+                    <p className="text-muted-foreground text-sm">Create, edit and manage dynamic forms for your website.</p>
                 </div>
-                <Link href="/admin/forms/add">
-                    <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Create Form
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <Button asChild className="flex-1 sm:flex-none h-11 px-6 shadow-sm">
+                        <Link href="/admin/forms/add">
+                            <Plus className="mr-2 h-5 w-5" /> Create New Form
+                        </Link>
                     </Button>
-                </Link>
+                </div>
             </div>
 
-            {forms.length === 0 ? (
-                <Card>
-                    <CardContent className="py-12 text-center">
-                        <p className="text-lg text-muted-foreground mb-4">No forms created yet</p>
-                        <Link href="/admin/forms/add">
-                            <Button>
-                                <Plus className="w-4 h-4 mr-2" />
-                                Create Your First Form
-                            </Button>
-                        </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card className="bg-card shadow-sm border overflow-hidden">
+                    <CardContent className="p-4 flex flex-col gap-1">
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Total Forms</span>
+                        <div className="flex items-end justify-between">
+                            <span className="text-3xl font-black text-foreground leading-none">{forms.length}</span>
+                            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                <FileText className="h-4 w-4 text-primary" />
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
-            ) : (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {forms.map((form) => (
-                        <Card key={form._id} className="hover:shadow-lg transition-shadow">
-                            <CardHeader>
-                                <CardTitle>{form.name}</CardTitle>
-                                {form.description && (
-                                    <CardDescription>{form.description}</CardDescription>
-                                )}
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-muted-foreground">
-                                        {form.fields?.length || 0} field{form.fields?.length !== 1 ? 's' : ''}
-                                    </span>
-                                    <Link href={`/admin/forms/edit/${form._id}`}>
-                                        <Button variant="outline" size="sm">
-                                            Edit
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            )}
+                <Card className="bg-card shadow-sm border overflow-hidden">
+                    <CardContent className="p-4 flex flex-col gap-1">
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Total Fields</span>
+                        <div className="flex items-end justify-between">
+                            <span className="text-3xl font-black text-foreground leading-none">{totalFields}</span>
+                            <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                <Database className="h-4 w-4 text-blue-600" />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <FormsClient forms={forms} />
         </div>
-    );
+    )
 }

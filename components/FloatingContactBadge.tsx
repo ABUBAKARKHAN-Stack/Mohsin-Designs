@@ -3,11 +3,8 @@
 import { motion } from "motion/react";
 import { Phone } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
 
 const FloatingContactBadge = () => {
-  const { lang }: LanguageType = useParams()
   return (
     <motion.div
       initial={{ x: 100, opacity: 0 }}
@@ -29,7 +26,7 @@ const FloatingContactBadge = () => {
           className="text-xs font-bold uppercase tracking-widest"
           style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
         >
-          {uiT(lang,"common.getInTouch")}
+          Get in Touch
         </span>
       </Link>
     </motion.div>

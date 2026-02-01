@@ -4,12 +4,16 @@ import { createContext, useContext, ReactNode } from "react";
 
 export type GlobalContentData = {
     stats?: {
+        since?: {value:string,label:string}
         projectsDelivered?: { value: string; label: string; suffix: string };
         yearsExperience?: { value: string; label: string; suffix: string };
         clientSatisfaction?: { value: string; label: string; suffix: string };
     };
     servicesPreview?: {
-        sectionHeading?: { eyebrow?: string; title?: string; description?: string };
+        sectionHeading: { eyebrow: string; title: string; description: string };
+        buttonText: string;
+        buttonUrl: string;
+        featuredServices: Array<{ _id: string; title: string; slug: string; description: string; heroImage: { alt: string; source: string }; items: string[] }>;
     };
     whyChooseUs?: {
         sectionHeading?: { eyebrow?: string; title?: string; description?: string };
@@ -34,8 +38,8 @@ export type GlobalContentData = {
         founder?: {
             name: string;
             role: string;
-            image?: { _id: string; url: string };
-            socialLinks?: Array<{ platform: string; url: string }>;
+            image?: { _id: string; url: string,altText:string };
+            socialLinks?: Array<{ label: string,iconName: string; url: string }>;
         };
         agencyStructure?: Array<{ title: string; description: string; featured?: boolean; iconName: string }>;
     };

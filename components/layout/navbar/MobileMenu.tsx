@@ -2,17 +2,11 @@
 
 import MagneticButton from '@/components/MagneticButton';
 import { APP_NAME } from '@/constants/app.constants';
-import { contactInfo } from '@/constants/contact-and-help.constants';
-import { navLinks } from '@/constants/navlinks.constants';
 import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { Dispatch, FC, SetStateAction } from 'react';
 import ThemeToggle from '@/components/ui/theme-toggle';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { useParams } from 'next/navigation';
-import { uiT } from '@/i18n';
-import { useServices } from '@/context/ServiceContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 
 type Props = {
@@ -21,30 +15,22 @@ type Props = {
 };
 
 export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
-    const { lang }: LanguageType = useParams();
-    const { lightWeightServices } = useServices()
     const { settings } = useSiteSettings()
 
+    
     //* Helper to resolve dynamic URLs
     const resolveUrl = (item: any) => {
         if (item.type === 'custom') return item.url || '#';
         if (item.type === 'reference' && item.reference) {
-            if (item.reference._type === 'service') return `/${lang}/services/${item.reference.slug}`;
-            return `/${lang}/${item.reference.slug}`;
+            if (item.reference._type === 'service') return `/services/${item.reference.slug}`;
+            return `/${item.reference.slug}`;
         }
         return '#';
     };
 
-    const menuItems = settings?.headerMenu?.items || navLinks.map(link => ({
-        label: uiT(lang, `navigation.${link.name.toLowerCase().trim()}`),
-        url: `/${lang}${link.path}`,
-        type: 'custom',
-        children: link.hasDropdown ? lightWeightServices.map(s => ({
-            label: s.title,
-            url: `/${lang}/services/${s.slug}`,
-            type: 'custom'
-        })) : []
-    })) as any[]
+    const menuItems = settings?.headerMenu?.items as any[]
+
+    const email = settings?.contact.filter(item => item.label.toLowerCase().includes('email'))[0]?.value 
 
     return (
         <AnimatePresence>
@@ -64,7 +50,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                         className="flex justify-between items-center w-full text-background/50 text-xs sm:text-sm tracking-[0.2em]"
                     >
                         <MagneticButton strength={0.2}>
-                            <Link href={`/${lang}`} className="relative z-50">
+                            <Link href="/" className="relative z-50">
                                 <motion.img
                                     src={"/assets/logo.webp"}
                                     alt={APP_NAME}
@@ -87,10 +73,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                             </MagneticButton>
                         </div>
                     </motion.div>
-                    <LanguageSwitcher
-                        currentLang={lang}
-                        className="hover:dark:bg-[#000ba3] hover:bg-[#ffd11a] dark:hover:border-[#000ba3] hover:border-[#ffd11a] hover:text-foreground"
-                    />
+
 
                     {/* Navigation */}
                     <nav className="flex flex-col items-center gap-6">
@@ -176,10 +159,10 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 + navLinks.length * 0.08 }}
+                            transition={{ delay: 0.1 + menuItems.length * 0.08 }}
                         >
                             <Link
-                                href={`/${lang}/contact`}
+                                href={`/contact`}
                                 onClick={() => setIsOpen(false)}
                                 className="
                                     font-display
@@ -196,14 +179,14 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                                     hover:text-[#ffd11a]
                                 "
                             >
-                                {uiT(lang, 'common.startProject')}
+                                Start a Project
                             </Link>
                         </motion.div>
                     </nav>
 
                     {/* Footer */}
                     <motion.a
-                        href={`mailto:${contactInfo.mail}`}
+                        href={`mailto:${email}`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
@@ -218,7 +201,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                             hover:text-[#ffd11a]
                         "
                     >
-                        {settings?.contact.email || contactInfo.mail}
+                        {email}
                     </motion.a>
                 </motion.div>
             )}

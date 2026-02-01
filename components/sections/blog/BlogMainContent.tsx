@@ -6,8 +6,6 @@ import { ArrowUpRight, Clock, User } from "lucide-react"
 import { ContainerLayout } from "@/components/layout"
 import { urlFor } from "@/sanity/lib/image"
 import Link from "next/link"
-import { useParams } from "next/navigation"
-import { uiT } from "@/i18n"
 import { AnimatePresence } from "motion/react"
 import React, { useEffect, useCallback } from "react"
 
@@ -32,7 +30,6 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
     const [activeCategory, setActiveCategory] = useState("All")
     const [currentSlide, setCurrentSlide] = useState(0)
     const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-    const { lang }: LanguageType = useParams()
 
     const categories = ["All", ...new Set(posts.flatMap(post => post.categories || []).filter(Boolean))]
 
@@ -61,7 +58,8 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
 
 
     return (
-        <section className="pb-16">
+        <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
+            
             <ContainerLayout>
                 {/* Categories */}
                 <motion.div
@@ -98,7 +96,7 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                     className="w-full"
                                 >
                                     <Link
-                                        href={`/${lang}/blog/${displayFeatured[currentSlide]?.slug}`}
+                                        href={`/blog/${displayFeatured[currentSlide]?.slug}`}
                                         className="grid lg:grid-cols-2 gap-8 items-center group cursor-pointer"
                                     >
                                         <div className="aspect-16/10 overflow-hidden relative">
@@ -120,7 +118,7 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                                     </React.Fragment>
                                                 ))}
                                                 {displayFeatured[currentSlide].categories?.length > 0 && <span>·</span>}
-                                                <span>{new Date(displayFeatured[currentSlide].date).toLocaleDateString(lang, { month: 'short', year: 'numeric' })}</span>
+                                                <span>{new Date(displayFeatured[currentSlide].date).toLocaleDateString("en", { month: 'short', year: 'numeric' })}</span>
                                             </div>
                                             <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-tight group-hover:text-accent transition-colors mb-6">
                                                 {displayFeatured[currentSlide].title}
@@ -135,12 +133,12 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <Clock className="h-4 w-4" />
-                                                    {displayFeatured[currentSlide].readTime} {uiT(lang, "common.readTime")}
+                                                    {displayFeatured[currentSlide].readTime} Read Time
                                                 </div>
                                             </div>
                                             <div className="mt-8">
                                                 <span className="inline-flex items-center gap-2 text-sm uppercase tracking-widest group-hover:text-accent transition-colors">
-                                                    {uiT(lang, "common.readArticle")} <ArrowUpRight className="h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                                    Read Article <ArrowUpRight className="h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                                 </span>
                                             </div>
                                         </div>
@@ -207,7 +205,7 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                             transition={{ duration: 0.6, delay: i * 0.1 }}
                             className="group cursor-pointer"
                         >
-                            <Link href={`/${lang}/blog/${post.slug}`}>
+                            <Link href={`/blog/${post.slug}`}>
                                 <div className="aspect-16/12 overflow-hidden mb-6">
                                     <img
                                         src={post.image?.url || (post.image ? urlFor(post.image).url() : '')}
@@ -224,7 +222,7 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                     ))}
                                     {post.categories?.length > 0 && <span>·</span>}
                                     <span>{new Date(post.date).toLocaleDateString(
-                                        lang,
+                                        "en",
                                         { month: 'short', year: 'numeric' }
                                     )}</span>
                                 </div>
@@ -237,11 +235,10 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                 <div className="flex items-center justify-between text-sm">
                                     <div className="flex items-center gap-2 text-muted-foreground">
                                         <Clock className="h-3 w-3" />
-                                        {post.readTime} {" "}
-                                        {uiT(lang, "common.readTime")}
+                                        {post.readTime} Read Time
                                     </div>
                                     <span className="inline-flex items-center gap-1 text-xs uppercase tracking-widest group-hover:text-accent transition-colors">
-                                        {uiT(lang, "common.readArticle")} <ArrowUpRight className="h-3 w-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                        Read Article <ArrowUpRight className="h-3 w-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                     </span>
                                 </div>
                             </Link>

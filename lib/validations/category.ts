@@ -1,9 +1,8 @@
 import { z } from "zod";
-import { requiredLocalizedStringSchema, localizedTextSchema } from "./common";
 
 export const categorySchema = z.object({
-    title: requiredLocalizedStringSchema,
-    description: localizedTextSchema.optional(),
+    title: z.string().min(1, "Title is required"),
+    description: z.string().optional(),
 });
 
 export type CategoryValues = z.infer<typeof categorySchema>;

@@ -28,7 +28,7 @@ export async function updateServicesPageContent(data: ServicesPageContentValues)
             hero: validatedFields.hero,
             intro: validatedFields.intro,
             process: {
-                sectionHeading: validatedFields.process.sectionHeading,
+                sectionHeading: { ...validatedFields.process.sectionHeading, _type: 'sectionHeading' },
                 steps: validatedFields.process.steps,
             },
             whyChooseUs: {
@@ -36,6 +36,17 @@ export async function updateServicesPageContent(data: ServicesPageContentValues)
                 guaranteePoints: validatedFields.whyChooseUs.guaranteePoints,
                 benefits: validatedFields.whyChooseUs.benefits,
             },
+            serviceBlogs: {
+                sectionHeading: { ...validatedFields.serviceBlogs.sectionHeading, _type: 'sectionHeading' },
+                blogs: validatedFields.serviceBlogs.blogs?.map(id => ({ _type: 'reference', _ref: id })) || [],
+                buttonText: validatedFields.serviceBlogs.buttonText,
+                buttonUrl: validatedFields.serviceBlogs.buttonUrl,
+            },
+            servicesList: {
+                sectionHeading: { ...validatedFields.servicesList.sectionHeading, _type: 'sectionHeading' },
+                services: validatedFields.servicesList.services?.map(id => ({ _type: 'reference', _ref: id })) || [],
+            },
+            seo: validatedFields.seo ? { ...validatedFields.seo, _type: 'seo' } : undefined
         }
 
         await adminClient.createOrReplace(updateData)
@@ -49,9 +60,29 @@ export async function updateServicesPageContent(data: ServicesPageContentValues)
 }
 
 export async function saveServicesPageDraft(data: Partial<ServicesPageContentValues>) {
+
     try {
+        // Transform blogs to references if they exist as strings
+        const transformedData = { ...data };
+        if (transformedData.serviceBlogs?.blogs) {
+            transformedData.serviceBlogs = {
+                ...transformedData.serviceBlogs,
+                blogs: transformedData.serviceBlogs.blogs.map((id: any) =>
+                    typeof id === 'string' ? { _type: 'reference', _ref: id } : id
+                )
+            };
+        }
+        if (transformedData.servicesList?.services) {
+            transformedData.servicesList = {
+                ...transformedData.servicesList,
+                services: transformedData.servicesList.services.map((id: any) =>
+                    typeof id === 'string' ? { _type: 'reference', _ref: id } : id
+                )
+            };
+        }
+
         const updateData: any = {
-            ...data,
+            ...transformedData,
             _type: 'servicesPageContent',
             _id: `drafts.${SERVICES_PAGE_CONTENT_ID}`,
         }
@@ -82,5 +113,33 @@ export async function discardServicesPageDraft() {
     } catch (error: any) {
         console.error("Failed to discard draft:", error)
         return { success: false, error: error.message || "Failed to discard draft" }
+    }
+}
+
+export async function getAllPostsWithService() {
+    try {
+        const query = `*[_type == "post" && defined(service)] {
+            _id,
+            title
+        }`
+        const { data } = await sanityFetch({ query })
+        return data || []
+    } catch (error) {
+        console.error("Failed to fetch posts with service:", error)
+        return []
+    }
+}
+
+export async function getAllServices() {
+    try {
+        const query = `*[_type == "service"] {
+            _id,
+            title
+        }`
+        const { data } = await sanityFetch({ query })
+        return data || []
+    } catch (error) {
+        console.error("Failed to fetch all services:", error)
+        return []
     }
 }

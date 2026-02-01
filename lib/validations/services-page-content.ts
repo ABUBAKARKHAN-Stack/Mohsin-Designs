@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { requiredLocalizedStringSchema, requiredLocalizedTextSchema } from "./common";
+import { requiredLocalizedStringSchema, requiredLocalizedTextSchema, sectionHeadingSchema, seoSchema } from "./common";
 
 // Process Step Schema
 const processStepSchema = z.object({
@@ -16,13 +16,6 @@ const benefitSchema = z.object({
     title: requiredLocalizedStringSchema,
     description: requiredLocalizedTextSchema,
     iconName: z.string().min(1, "Icon name is required"),
-});
-
-// Section Heading Schema
-const sectionHeadingSchema = z.object({
-    eyebrow: requiredLocalizedStringSchema.optional(),
-    title: requiredLocalizedStringSchema,
-    description: requiredLocalizedTextSchema.optional(),
 });
 
 // Main Services Page Content Schema
@@ -58,6 +51,23 @@ export const servicesPageContentSchema = z.object({
         guaranteePoints: z.array(requiredLocalizedStringSchema).min(1, "At least one guarantee point is required"),
         benefits: z.array(benefitSchema).min(1, "At least one benefit is required"),
     }),
+
+    // Service Blogs Section
+    serviceBlogs: z.object({
+        sectionHeading: sectionHeadingSchema,
+        blogs: z.array(z.string()).max(8).optional(),
+        buttonText: requiredLocalizedStringSchema.optional(),
+        buttonUrl: z.string().optional(),
+    }),
+
+    // Services List Section
+    servicesList: z.object({
+        sectionHeading: sectionHeadingSchema,
+        services: z.array(z.string()).max(12).optional(),
+    }),
+
+    // SEO
+    seo: seoSchema.optional(),
 });
 
 export type ServicesPageContentValues = z.infer<typeof servicesPageContentSchema>;

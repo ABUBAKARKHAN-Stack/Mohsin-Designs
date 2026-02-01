@@ -6,7 +6,6 @@ import {
     Layers,
     LayoutDashboard,
     Search,
-    Settings,
     User,
     Users,
     Briefcase,
@@ -55,7 +54,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                         { title: "Services Page Content", url: "/admin/services/page-content" },
                         { title: "Portfolio Page Content", url: "/admin/portfolio/page-content" },
                         { title: "Blog Page Content", url: "/admin/blogs/page-content" },
-                        { title: "Contact", url: "/admin/pages/contact" },
+                        { title: "Contact Page Content", url: "/admin/contact/page-content" },
                     ]
                 }
             ]
@@ -84,7 +83,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                         { title: "Services Page Content", url: "/admin/services/page-content" },
                         { title: "Portfolio Page Content", url: "/admin/portfolio/page-content" },
                         { title: "Blog Page Content", url: "/admin/blogs/page-content" },
-                        { title: "Contact", url: "/admin/pages/contact" },
+                        { title: "Contact Page Content", url: "/admin/contact/page-content" },
                     ]
                 },
                 { title: "Services", url: "/admin/services", icon: Briefcase },
@@ -107,10 +106,9 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
             ]
         },
         {
-            label: "Media & SEO",
+            label: "Media Management",
             items: [
                 { title: "Media", url: "/admin/media", icon: FolderOpen },
-                { title: "SEO", url: "/admin/seo", icon: Search },
             ]
         },
         {
@@ -146,7 +144,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                         { title: "Services Page Content", url: "/admin/services/page-content" },
                         { title: "Portfolio Page Content", url: "/admin/portfolio/page-content" },
                         { title: "Blog Page Content", url: "/admin/blogs/page-content" },
-                        { title: "Contact", url: "/admin/pages/contact" },
+                        { title: "Contact Page Content", url: "/admin/contact/page-content" },
                     ]
                 },
                 { title: "Services", url: "/admin/services", icon: Briefcase },
@@ -198,7 +196,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                         { title: "Services Page Content", url: "/admin/services/page-content" },
                         { title: "Portfolio Page Content", url: "/admin/portfolio/page-content" },
                         { title: "Blog Page Content", url: "/admin/blogs/page-content" },
-                        { title: "Contact", url: "/admin/pages/contact" },
+                        { title: "Contact Page Content", url: "/admin/contact/page-content" },
                     ]
                 }
             ]
@@ -239,7 +237,7 @@ export const useRoleBasedNavigation = (role: Roles): NavigationGroup[] => {
                         { title: "Services Page Content", url: "/admin/services/page-content" },
                         { title: "Portfolio Page Content", url: "/admin/portfolio/page-content" },
                         { title: "Blog Page Content", url: "/admin/blogs/page-content" },
-                        { title: "Contact", url: "/admin/pages/contact" },
+                        { title: "Contact Page Content", url: "/admin/contact/page-content" },
                     ]
                 },
                 { title: "Services", url: "/admin/services", icon: Briefcase },

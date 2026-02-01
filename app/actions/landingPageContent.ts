@@ -16,65 +16,29 @@ async function ensureDocumentExists() {
         // Document doesn't exist, create it
         if (error.statusCode === 404) {
             console.log('Creating initial landingPageContent document...')
-            const initialDoc = {
+            const initialDoc: any = {
                 _type: 'landingPageContent',
                 _id: LANDING_PAGE_CONTENT_ID,
-                // Minimal required fields - form will handle the rest
                 hero: {
-                    badge: { en: '', ur: '', es: '', ar: '' },
+                    badge: '',
                     headingLines: [],
                     descriptionParagraphs: [],
                     ctaButtons: []
                 },
-                servicesPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
-                portfolioPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
+                portfolioPreview: { sectionHeading: { title: '' } },
                 aboutPreview: {
-                    sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } },
-                    leftDescriptions: [
-                        { text: { en: '', ur: '', es: '', ar: '' } },
-                        { text: { en: '', ur: '', es: '', ar: '' } }
-                    ],
-                    rightDescriptions: [
-                        { text: { en: '', ur: '', es: '', ar: '' } },
-                        { text: { en: '', ur: '', es: '', ar: '' } }
-                    ],
-                    ctaText: { en: '', ur: '', es: '', ar: '' },
-                    ctaUrl: { en: '', ur: '', es: '', ar: '' }
+                    sectionHeading: { title: '' },
+                    leftDescriptions: [{ text: '' }, { text: '' }],
+                    rightDescriptions: [{ text: '' }, { text: '' }],
+                    ctaText: '',
+                    ctaUrl: ''
                 },
-                stats: {
-                    projectsDelivered: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
-                    yearsExperience: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
-                    clientSatisfaction: { value: { en: '', ur: '', es: '', ar: '' }, label: { en: '', ur: '', es: '', ar: '' }, suffix: '' },
-                },
-                whyChooseUs: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, benefits: [] },
-                blogPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
-                faqs: {
-                    sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } },
-                    faqItems: []
-                },
+                blogPreview: { sectionHeading: { title: '' } },
                 serviceHighlightsMarquee: { highlights: [] },
-                trustedByBrands: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, brandLogos: [] },
-                ourApproach: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, steps: [] },
-                caseStudiesPreview: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } } },
-                areasWeServe: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, areas: [] },
-                industriesWeServe: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, industries: [] },
-                testimonials: { sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } }, testimonials: [] },
-                leadership: {
-                    sectionHeading: { title: { en: '', ur: '', es: '', ar: '' } },
-                    founder: {
-                        name: { en: '', ur: '', es: '', ar: '' },
-                        role: { en: '', ur: '', es: '', ar: '' },
-                        image: null,
-                        socialLinks: []
-                    },
-                    agencyStructure: []
-                },
-                cta: {
-                    badge: { en: '', ur: '', es: '', ar: '' },
-                    heading: { en: '', ur: '', es: '', ar: '' },
-                    description: { en: '', ur: '', es: '', ar: '' },
-                    benefits: []
-                }
+                trustedByBrands: { sectionHeading: { title: '' }, brandLogos: [] },
+                caseStudiesPreview: { sectionHeading: { title: '' } },
+                areasWeServe: { sectionHeading: { title: '' }, areas: [] },
+                testimonials: { sectionHeading: { title: '' }, testimonials: [] },
             }
             return await adminClient.create(initialDoc)
         }
@@ -87,7 +51,25 @@ export async function getLandingPageContentForAdmin() {
         // Ensure document exists first
         await ensureDocumentExists()
 
-        const query = `*[_type == "landingPageContent"][0]`
+        const query = `*[_type == "landingPageContent"][0] {
+            ...,
+            hero {
+                ...,
+                "featuredServices": featuredServices[]._ref
+            },
+            portfolioPreview {
+                ...,
+                "featuredProjects": featuredProjects[]._ref
+            },
+            blogPreview {
+                ...,
+                "featuredBlogs": featuredBlogs[]._ref
+            },
+            caseStudiesPreview {
+                ...,
+                "featuredCaseStudies": featuredCaseStudies[]._ref
+            }
+        }`
         const { data } = await sanityFetch({ query })
         return data
     } catch (error) {
@@ -104,29 +86,44 @@ export async function updateLandingPageContent(data: LandingPageContentValues) {
         const updateData: any = {
             _type: 'landingPageContent',
             _id: LANDING_PAGE_CONTENT_ID,
-            hero: validatedFields.hero,
-            servicesPreview: validatedFields.servicesPreview,
-            portfolioPreview: validatedFields.portfolioPreview,
+            hero: {
+                ...validatedFields.hero,
+                featuredServices: validatedFields.hero.featuredServices?.map(id => ({
+                    _type: 'reference',
+                    _ref: id,
+                    _key: id
+                }))
+            },
+            portfolioPreview: {
+                ...validatedFields.portfolioPreview,
+                featuredProjects: validatedFields.portfolioPreview.featuredProjects?.map(id => ({
+                    _type: 'reference',
+                    _ref: id,
+                    _key: id
+                }))
+            },
             aboutPreview: validatedFields.aboutPreview,
-            stats: validatedFields.stats,
-            whyChooseUs: validatedFields.whyChooseUs,
-            blogPreview: validatedFields.blogPreview,
-            faqs: validatedFields.faqs,
+            blogPreview: {
+                ...validatedFields.blogPreview,
+                featuredBlogs: validatedFields.blogPreview.featuredBlogs?.map(id => ({
+                    _type: 'reference',
+                    _ref: id,
+                    _key: id
+                }))
+            },
             serviceHighlightsMarquee: validatedFields.serviceHighlightsMarquee,
             trustedByBrands: validatedFields.trustedByBrands,
-            ourApproach: validatedFields.ourApproach,
-            caseStudiesPreview: validatedFields.caseStudiesPreview,
-            areasWeServe: validatedFields.areasWeServe,
-            industriesWeServe: validatedFields.industriesWeServe,
-            testimonials: validatedFields.testimonials,
-            leadership: validatedFields.leadership,
-            cta: {
-                ...validatedFields.cta,
-                formId: validatedFields.cta.formId ? {
+            caseStudiesPreview: {
+                ...validatedFields.caseStudiesPreview,
+                featuredCaseStudies: validatedFields.caseStudiesPreview.featuredCaseStudies?.map(id => ({
                     _type: 'reference',
-                    _ref: validatedFields.cta.formId
-                } : undefined
-            }
+                    _ref: id,
+                    _key: id
+                }))
+            },
+            areasWeServe: validatedFields.areasWeServe,
+            testimonials: validatedFields.testimonials,
+            seo: validatedFields.seo
         }
 
         await adminClient.createOrReplace(updateData)
@@ -155,13 +152,38 @@ export async function saveLandingPageDraft(data: Partial<LandingPageContentValue
             _id: `drafts.${LANDING_PAGE_CONTENT_ID}`,
         }
 
-        // Normalize CTA formId to reference if it's a string
-        if (updateData.cta && typeof updateData.cta.formId === 'string') {
-            updateData.cta.formId = {
+        if (updateData.hero?.featuredServices) {
+            updateData.hero.featuredServices = updateData.hero.featuredServices.map((id: string) => ({
                 _type: 'reference',
-                _ref: updateData.cta.formId
-            }
+                _ref: id,
+                _key: id
+            }))
         }
+
+        if (updateData.portfolioPreview?.featuredProjects) {
+            updateData.portfolioPreview.featuredProjects = updateData.portfolioPreview.featuredProjects.map((id: string) => ({
+                _type: 'reference',
+                _ref: id,
+                _key: id
+            }))
+        }
+
+        if (updateData.blogPreview?.featuredBlogs) {
+            updateData.blogPreview.featuredBlogs = updateData.blogPreview.featuredBlogs.map((id: string) => ({
+                _type: 'reference',
+                _ref: id,
+                _key: id
+            }))
+        }
+
+        if (updateData.caseStudiesPreview?.featuredCaseStudies) {
+            updateData.caseStudiesPreview.featuredCaseStudies = updateData.caseStudiesPreview.featuredCaseStudies.map((id: string) => ({
+                _type: 'reference',
+                _ref: id,
+                _key: id
+            }))
+        }
+
 
         await adminClient.createOrReplace(updateData)
 
@@ -178,17 +200,27 @@ export async function saveLandingPageDraft(data: Partial<LandingPageContentValue
     }
 }
 
-// Get draft version - USE getDocument instead of GROQ query!
+// Get draft version
 export async function getLandingPageDraft() {
     try {
-        // Use getDocument instead of fetch - GROQ queries don't work for drafts!
         const draft = await adminClient.getDocument(`drafts.${LANDING_PAGE_CONTENT_ID}`)
-
+        if (draft) {
+            if (draft.hero && Array.isArray(draft.hero.featuredServices)) {
+                draft.hero.featuredServices = draft.hero.featuredServices.map((p: any) => p._ref || p)
+            }
+            if (draft.portfolioPreview && Array.isArray(draft.portfolioPreview.featuredProjects)) {
+                draft.portfolioPreview.featuredProjects = draft.portfolioPreview.featuredProjects.map((p: any) => p._ref || p)
+            }
+            if (draft.blogPreview && Array.isArray(draft.blogPreview.featuredBlogs)) {
+                draft.blogPreview.featuredBlogs = draft.blogPreview.featuredBlogs.map((p: any) => p._ref || p)
+            }
+            if (draft.caseStudiesPreview && Array.isArray(draft.caseStudiesPreview.featuredCaseStudies)) {
+                draft.caseStudiesPreview.featuredCaseStudies = draft.caseStudiesPreview.featuredCaseStudies.map((p: any) => p._ref || p)
+            }
+        }
         console.log('Draft fetched via getDocument:', draft ? 'Found' : 'Not found')
-
         return draft
     } catch (error: any) {
-        // getDocument throws error if document doesn't exist, which is normal
         if (error.statusCode === 404) {
             console.log('No draft found (404 - this is normal)')
             return null
@@ -202,10 +234,8 @@ export async function getLandingPageDraft() {
 export async function discardLandingPageDraft() {
     try {
         await adminClient.delete(`drafts.${LANDING_PAGE_CONTENT_ID}`)
-
         // Clear Next.js cache
         revalidatePath('/admin/landing/page-content')
-
         return { success: true }
     } catch (error: any) {
         console.error("Failed to discard draft:", error)
@@ -213,5 +243,51 @@ export async function discardLandingPageDraft() {
             success: false,
             error: error.message || "Failed to discard draft"
         }
+    }
+}
+
+export async function getServiceOptions() {
+    try {
+        const query = `*[_type == "service"] { _id, title }`
+        const services = await adminClient.fetch(query)
+        return services || []
+    } catch (error) {
+        console.error("Failed to fetch service options:", error)
+        return []
+    }
+}
+
+export async function getProjectOptions() {
+    try {
+        const query = `*[_type == "project"] { _id, title }`
+        const projects = await adminClient.fetch(query)
+        return projects || []
+    } catch (error) {
+        console.error("Failed to fetch project options:", error)
+        return []
+    }
+}
+
+export async function getCaseStudyOptions() {
+    try {
+        // Only fetch projects that have the caseStudy object defined and its required title
+        // We use the caseStudy.title as the display label for the selector
+        const query = `*[_type == "project" && defined(caseStudy.title)] { _id, "title": caseStudy.title }`
+        const projects = await adminClient.fetch(query)
+        return projects || []
+    } catch (error) {
+        console.error("Failed to fetch case study options:", error)
+        return []
+    }
+}
+
+export async function getBlogPostOptions() {
+    try {
+        const query = `*[_type == "post"] { _id, title }`
+        const posts = await adminClient.fetch(query)
+        return posts || []
+    } catch (error) {
+        console.error("Failed to fetch post options:", error)
+        return []
     }
 }

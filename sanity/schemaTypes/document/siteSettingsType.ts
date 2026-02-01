@@ -48,34 +48,6 @@ export const siteSettings = defineType({
       validation: Rule => Rule.required(),
     }),
 
-    //* Open Graph / Social
-    defineField({
-      name: "social",
-      title: "Social Profiles",
-      type: "object",
-      validation: Rule => Rule.required(),
-      fields: [
-        defineField({ name: "facebook", type: "url", validation: Rule => Rule.required() }),
-        defineField({ name: "twitter", type: "url", validation: Rule => Rule.required() }),
-        defineField({ name: "linkedin", type: "url", validation: Rule => Rule.required() }),
-        defineField({ name: "instagram", type: "url", validation: Rule => Rule.required() }),
-
-      ],
-    }),
-
-    //* Contact Info
-    defineField({
-      name: "contact",
-      title: "Contact Information",
-      type: "object",
-      validation: Rule => Rule.required(),
-      fields: [
-        defineField({ name: "email", type: "string", validation: Rule => Rule.required() }),
-        defineField({ name: "phone", type: "string", validation: Rule => Rule.required() }),
-        defineField({ name: "address", type: "localizedText", validation: Rule => Rule.required() }),
-      ],
-    }),
-
     //* Legal / Footer
     defineField({
       name: "footerText",
@@ -106,6 +78,78 @@ export const siteSettings = defineType({
       type: "reference",
       to: [{ type: "menu" }],
       description: "Select the menu to display in the website footer",
+    }),
+
+    //* Contact Info Array
+    defineField({
+      name: "contactInfo",
+      title: "Contact Info List",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({ name: "label", title: "Heading / Label", type: "localizedString", validation: Rule => Rule.required() }),
+            defineField({ name: "value", title: "Value (e.g. email or phone)", type: "localizedString", validation: Rule => Rule.required() }),
+            defineField({ name: "icon", type: "string", description: "Icon name (e.g., Mail, Phone, MapPin)", validation: Rule => Rule.required() }),
+          ],
+        },
+      ],
+    }),
+
+    //* Social Links Array
+    defineField({
+      name: "socialLinks",
+      title: "Social Links List",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({ name: "label", type: "localizedString", validation: Rule => Rule.required() }),
+            defineField({ name: "icon", type: "string", description: "Icon name (e.g., Facebook, Twitter, Instagram)", validation: Rule => Rule.required() }),
+            defineField({ name: "url", type: "url", validation: Rule => Rule.required() }),
+          ],
+        },
+      ],
+    }),
+
+    //* Footer CTA
+    defineField({
+      name: "footerCTA",
+      title: "Footer CTA Section",
+      type: "object",
+      fields: [
+        defineField({
+          name: "eyebrow",
+          title: "Eyebrow Text",
+          type: "localizedString",
+          description: "e.g. Have a project in mind?",
+        }),
+        defineField({
+          name: "headingPrefix",
+          title: "Heading Prefix",
+          type: "localizedString",
+          description: "e.g. Let's work",
+        }),
+        defineField({
+          name: "headingHighlight",
+          title: "Heading Highlight (Stroked)",
+          type: "localizedString",
+          description: "e.g. together",
+        }),
+        defineField({
+          name: "buttonText",
+          title: "Button Text",
+          type: "localizedString",
+        }),
+        defineField({
+          name: "buttonUrl",
+          title: "Button URL",
+          type: "string",
+          description: "Defaults to /contact",
+        }),
+      ],
     }),
   ],
 

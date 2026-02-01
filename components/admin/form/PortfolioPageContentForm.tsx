@@ -8,15 +8,15 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { updatePortfolioPageContent, savePortfolioPageDraft, discardPortfolioPageDraft } from "@/app/actions/portfolioPageContent"
+import { SeoFormTab } from "./SeoFormTab"
+import { updatePortfolioPageContent, savePortfolioPageDraft } from "@/app/actions/portfolioPageContent"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
 import { Save, AlertCircle, Clock, Trash2, Search, CheckCircle2 } from "lucide-react"
 import { debounce } from "lodash"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
 interface PortfolioPageContentFormProps {
@@ -33,30 +33,12 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
     const [lastSaved, setLastSaved] = useState<Date | null>(
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
-    const [selectedLang, setSelectedLang] = useState("en")
     const [isInitialMount, setIsInitialMount] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
 
     const form = useForm<PortfolioPageContentValues>({
         resolver: zodResolver(portfolioPageContentSchema),
-        defaultValues: initialData || {
-            hero: {
-                title: { en: "", ur: "", es: "", ar: "" },
-                subtitle: { en: "", ur: "", es: "", ar: "" },
-                description: { en: "", ur: "", es: "", ar: "" },
-            },
-            portfolioList: {
-                projects: [],
-            },
-            cta: {
-                sectionHeading: {
-                    eyebrow: { en: "", ur: "", es: "", ar: "" },
-                    title: { en: "", ur: "", es: "", ar: "" },
-                    description: { en: "", ur: "", es: "", ar: "" },
-                },
-                formReference: "",
-            },
-        },
+        defaultValues: mergeWithDefaults(initialData),
     })
 
     const formControl = form.control as any
@@ -113,7 +95,7 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
         p.title?.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
-    const selectedProjectIds = form.watch("portfolioList.projects")
+    const selectedProjectIds = form.watch("portfolioList.projects") || []
 
     const toggleProject = (projectId: string) => {
         const current = [...selectedProjectIds]
@@ -158,17 +140,6 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Select value={selectedLang} onValueChange={setSelectedLang}>
-                            <SelectTrigger className="w-[140px]">
-                                <SelectValue placeholder="Language" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="en">English (EN)</SelectItem>
-                                <SelectItem value="ur">Urdu (UR)</SelectItem>
-                                <SelectItem value="es">Spanish (ES)</SelectItem>
-                                <SelectItem value="ar">Arabic (AR)</SelectItem>
-                            </SelectContent>
-                        </Select>
                         <Button type="submit" disabled={isLoading}>
                             {isLoading ? <Spinner className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
                             Save Content
@@ -196,15 +167,21 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
                                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
                             )}
                         </TabsTrigger>
+                        <TabsTrigger value="seo" className="relative">
+                            SEO
+                            {!!formErrors.seo && (
+                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />
+                            )}
+                        </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="hero" className="space-y-6">
                         <Card>
                             <CardHeader><CardTitle>Hero Configuration</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="hero.title" label="Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="hero.subtitle" label="Subtitle" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="hero.description" label="Description" isTextarea activeLang={selectedLang} />
+                                <FormInput control={formControl} name="hero.title" label="Title" />
+                                <FormInput control={formControl} name="hero.subtitle" label="Subtitle" />
+                                <FormInput control={formControl} name="hero.description" label="Description" isTextarea />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -288,24 +265,8 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
                                                         <span className="text-xs font-bold text-muted-foreground w-6">#{index + 1}</span>
                                                         <span className="flex-1 text-sm font-medium truncate">{project?.title || "Unknown Project"}</span>
                                                         <div className="flex gap-1">
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                className="h-7 w-7"
-                                                                disabled={index === 0}
-                                                                onClick={() => moveProject(index, 'up')}
-                                                            >
-                                                                <ArrowUpIcon className="h-4 w-4" />
-                                                            </Button>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                className="h-7 w-7"
-                                                                disabled={index === selectedProjectIds.length - 1}
-                                                                onClick={() => moveProject(index, 'down')}
-                                                            >
-                                                                <ArrowDownIcon className="h-4 w-4" />
-                                                            </Button>
+                                                            <ArrowUpButton onClick={() => moveProject(index, 'up')} disabled={index === 0} />
+                                                            <ArrowDownButton onClick={() => moveProject(index, 'down')} disabled={index === selectedProjectIds.length - 1} />
                                                             <Button
                                                                 variant="ghost"
                                                                 size="icon"
@@ -330,9 +291,9 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
                         <Card>
                             <CardHeader><CardTitle>Call to Action Configuration</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.eyebrow" label="Eyebrow" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.title" label="Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="cta.sectionHeading.description" label="Description" isTextarea activeLang={selectedLang} />
+                                <FormInput control={formControl} name="cta.sectionHeading.eyebrow" label="Eyebrow" />
+                                <FormInput control={formControl} name="cta.sectionHeading.title" label="Title" />
+                                <FormInput control={formControl} name="cta.sectionHeading.description" label="Description" isTextarea />
 
                                 <FormField
                                     control={form.control}
@@ -359,24 +320,94 @@ export function PortfolioPageContentForm({ initialData, hasDraft, draftUpdatedAt
                             </CardContent>
                         </Card>
                     </TabsContent>
+
+                    <TabsContent value="seo">
+                        <SeoFormTab control={formControl} />
+                    </TabsContent>
                 </Tabs>
             </form>
-        </Form>
+        </Form >
     )
 }
 
-function ArrowUpIcon(props: any) {
+function ArrowUpButton({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {
     return (
-        <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m18 15-6-6-6 6" />
-        </svg>
+        <Button variant="ghost" size="icon" className="h-7 w-7" disabled={disabled} onClick={onClick}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                <path d="m18 15-6-6-6 6" />
+            </svg>
+        </Button>
     )
 }
 
-function ArrowDownIcon(props: any) {
+function ArrowDownButton({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {
     return (
-        <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m6 9 6 6 6-6" />
-        </svg>
+        <Button variant="ghost" size="icon" className="h-7 w-7" disabled={disabled} onClick={onClick}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+        </Button>
     )
+}
+
+function getDefaultValues(): PortfolioPageContentValues {
+    return {
+        hero: {
+            title: "",
+            subtitle: "",
+            description: "",
+        },
+        portfolioList: {
+            projects: [],
+        },
+        cta: {
+            sectionHeading: {
+                eyebrow: "",
+                title: "",
+                description: "",
+            },
+            formReference: "",
+        },
+        seo: {
+            metaTitle: "",
+            metaDescription: "",
+            focusKeyword: "",
+            relatedKeywords: [],
+            schemas: []
+        }
+    } as PortfolioPageContentValues
+}
+
+function mergeWithDefaults(data: any): PortfolioPageContentValues {
+    const defaults = getDefaultValues()
+    if (!data) return defaults
+
+    return {
+        ...defaults,
+        ...data,
+        hero: {
+            ...defaults.hero,
+            ...data.hero
+        },
+        portfolioList: {
+            ...defaults.portfolioList,
+            ...data.portfolioList,
+            projects: data.portfolioList?.projects || defaults.portfolioList.projects
+        },
+        cta: {
+            ...defaults.cta,
+            ...data.cta,
+            sectionHeading: {
+                ...defaults.cta?.sectionHeading,
+                ...data.cta?.sectionHeading
+            },
+            formReference: data.cta?.formReference || defaults.cta?.formReference
+        },
+        seo: {
+            ...defaults.seo,
+            ...data.seo,
+            relatedKeywords: data.seo?.relatedKeywords || defaults.seo?.relatedKeywords || [],
+            schemas: data.seo?.schemas || defaults.seo?.schemas || []
+        }
+    } as PortfolioPageContentValues
 }

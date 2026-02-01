@@ -8,26 +8,18 @@ import { sanityFetch } from "@/sanity/lib/live"
 // Define the type for the service data we're fetching
 interface Service {
     _id: string
-    title: { [key: string]: string }
-    slug: { current: string }
+    title: string
+    slug: string
+    heroImageUrl?: string
     _updatedAt: string
+    status: 'Draft' | 'Published'
+    hasPublished?: boolean
 }
 
-async function getServices() {
-    // Fetch distinct drafts and published documents, prioritizing drafts
-    const query = `*[_type == "service"] | order(_updatedAt desc) {
-        _id,
-        title,
-        slug,
-        "heroImageUrl": heroImage.asset->url,
-        _updatedAt
-    }`
-    const services = await sanityFetch({ query })
-    return services.data as Service[]
-}
+import { getDashboardServices } from "@/app/actions/service"
 
 export default async function ServicesPage() {
-    const services = await getServices()
+    const services = await getDashboardServices()
 
     return (
         <div className="space-y-6">

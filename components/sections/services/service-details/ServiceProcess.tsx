@@ -1,10 +1,8 @@
 "use client"
 
 import { ContainerLayout } from "@/components/layout";
-import { uiT } from "@/i18n";
 import { SectionHeadingType, ServiceProcess as ServiceProcessType } from "@/types/services.types";
 import { motion, MotionValue, useScroll, useTransform } from "motion/react"
-import { useParams } from "next/navigation";
 import { useRef } from "react";
 
 type Props = {
@@ -38,7 +36,6 @@ const TimelineStep = ({
     const nodeScale = useTransform(isActive, [0, 1], [0.8, 1]);
     const nodeBg = useTransform(isActive, [0, 1], ["hsl(var(--muted))", "hsl(var(--accent))"]);
     const textColor = useTransform(isActive, [0, 1], ["hsl(var(--muted-foreground))", "hsl(var(--accent))"]);
-    const { lang }: LanguageType = useParams()
 
     return (
         <motion.div
@@ -130,7 +127,7 @@ const TimelineStep = ({
                                 </motion.h3>
                                 <div className={`flex items-center gap-2 ${isEven ? 'lg:justify-end' : ''}`}>
                                     <div className="h-0.5 w-8 bg-linear-to-r from-accent to-transparent rounded-full" />
-                                    <span className="text-xs text-muted-foreground font-medium">{uiT(lang, 'common.step')} {index + 1}</span>
+                                    <span className="text-xs text-muted-foreground font-medium">Step {index + 1}</span>
                                 </div>
                             </div>
                         </div>

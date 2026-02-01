@@ -35,12 +35,6 @@ export const aboutPageContentType = defineType({
                     type: 'image',
                     options: { hotspot: true }
                 }),
-                defineField({
-                    name: 'sinceYear',
-                    title: 'Since Year',
-                    type: 'number',
-                    initialValue: new Date().getFullYear()
-                }),
             ]
         }),
         // MISSION & VISION SECTION
@@ -191,6 +185,13 @@ export const aboutPageContentType = defineType({
                 defineField({ name: 'quote', title: 'Culture Quote', type: 'localizedString' }),
                 defineField({ name: 'quoteHighlight', title: 'Quote Highlight', type: 'localizedString' }),
             ]
+        }),
+        // SEO SECTION
+        defineField({
+            name: 'seo',
+            title: 'SEO Settings',
+            type: 'seo',
+            description: 'Custom SEO settings for this page'
         }),
     ]
 })

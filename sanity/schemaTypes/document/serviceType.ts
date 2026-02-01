@@ -27,7 +27,7 @@ export const serviceType = defineType({
         defineField({
             name: 'slug',
             type: 'slug',
-            options: { source: 'title.en' },
+            options: { source: 'title' },
             validation: Rule => Rule.required()
         }),
 
@@ -40,7 +40,7 @@ export const serviceType = defineType({
             options: { hotspot: true },
             fields: [
                 defineField({
-                    name: 'alt',
+                    name: 'heroImageAlt',
                     type: 'localizedString',
                     title: 'Alternative text',
                     validation: Rule => Rule.required(),
@@ -185,8 +185,8 @@ export const serviceType = defineType({
                     defineField({ name: 'featured', type: 'boolean' }),
                     defineField({
                         name: 'clients',
-                        type: 'number',
-                        validation: Rule => Rule.min(0)
+                        type: 'string',
+                        validation: Rule => Rule.required()
                     }),
                     defineField({ name: 'flag', type: 'string' }),
                 ],
@@ -307,6 +307,56 @@ export const serviceType = defineType({
             }],
         }),
 
+        //* Blogs
+        defineField({
+            name: 'blogsSection',
+            type: 'sectionHeading',
+            validation: Rule => Rule.required()
+        }),
+
+        defineField({
+            name: 'blogs',
+            type: 'array',
+            of: [{ type: 'reference', to: [{ type: 'post' }] }],
+            title: 'Curated Blogs'
+        }),
+        defineField({
+            name: 'blogsButtonText',
+            type: 'localizedString',
+            title: 'Blogs Section Button Text'
+        }),
+        defineField({
+            name: 'blogsButtonUrl',
+            type: 'string',
+            title: 'Blogs Section Button URL'
+        }),
+
+        //* Other Services
+        defineField({
+            name: 'otherServicesSection',
+            type: 'sectionHeading',
+            title: 'Other Services Section Heading'
+        }),
+
+        defineField({
+            name: 'otherServices',
+            type: 'array',
+            of: [{ type: 'reference', to: [{ type: 'service' }] }],
+            title: 'Curated Other Services'
+        }),
+
+        defineField({
+            name: 'otherServicesButtonText',
+            type: 'localizedString',
+            title: 'Other Services Section Button Text'
+        }),
+
+        defineField({
+            name: 'otherServicesButtonUrl',
+            type: 'string',
+            title: 'Other Services Section Button URL'
+        }),
+
         defineField({
             name: 'seo',
             type: 'seo',
@@ -316,8 +366,8 @@ export const serviceType = defineType({
 
     preview: {
         select: {
-            title: 'title.en',
-            subtitle: 'subtitle.en',
+            title: 'title',
+            subtitle: 'subtitle',
             media: 'heroImage',
         },
         prepare({ title, subtitle, media, }) {

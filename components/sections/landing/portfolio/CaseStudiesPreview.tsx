@@ -5,14 +5,13 @@ import { useRef, useState } from "react";
 import SectionHeading from "@/components/ui/section-heading";
 import Link from "next/link";
 import { ContainerLayout } from "@/components/layout";
-import { projects } from "@/constants/portfolio.constants";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useLandingPageContent } from "@/context/LandingPageContentContext";
-import { useParams } from "next/navigation";
-import { uiT } from "@/i18n";
+import { urlFor } from "@/sanity/lib/image";
+import { getIconByName } from "@/lib/icon-mapper";
 
-const BeforeAfterSlider = ({ beforeImage, afterImage }: { beforeImage: string; afterImage: string }) => {
+const BeforeAfterSlider = ({ beforeImage, afterImage }: { beforeImage: { _id: string; altText: string }; afterImage: { _id: string; altText: string } }) => {
     const [sliderPosition, setSliderPosition] = useState(50);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -36,8 +35,8 @@ const BeforeAfterSlider = ({ beforeImage, afterImage }: { beforeImage: string; a
             {/* After Image (Background) */}
             <Image
                 fill
-                src={afterImage}
-                alt="After"
+                src={urlFor(afterImage._id).url()}
+                alt={afterImage.altText}
                 className="absolute inset-0 w-full h-full object-cover"
             />
 
@@ -48,8 +47,8 @@ const BeforeAfterSlider = ({ beforeImage, afterImage }: { beforeImage: string; a
             >
                 <Image
                     fill
-                    src={beforeImage}
-                    alt="Before"
+                    src={urlFor(beforeImage._id).url()}
+                    alt={beforeImage.altText}
                     className="absolute inset-0 w-full h-full object-cover grayscale"
                 />
                 {/* Before overlay */}
@@ -91,10 +90,11 @@ const CaseStudiesPreview = () => {
     const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
     const { landingPageContent } = useLandingPageContent();
 
-    const { lang }: LanguageType = useParams()
     const caseStudiesPreviewData = landingPageContent?.caseStudiesPreview;
 
-    const caseStudies = projects.filter((p) => p.caseStudy !== null).map(p => p.caseStudy)
+    const caseStudies = caseStudiesPreviewData?.featuredCaseStudies
+
+    if (!caseStudiesPreviewData || !caseStudies || caseStudies.length === 0) return null;
 
     return (
         <section ref={containerRef} className="lg:py-12.5 py-6.25 bg-muted/30 relative overflow-hidden">
@@ -126,10 +126,10 @@ const CaseStudiesPreview = () => {
                         className="hidden lg:block"
                     >
                         <Link
-                            href={`/${lang}/portfolio`}
+                            href={caseStudiesPreviewData.buttonUrl}
                             className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300 shadow-[0_10px_30px_-10px_hsl(var(--accent)/0.5)]"
                         >
-                            <span>{uiT(lang, "common.viewAllProjects")}</span>
+                            <span>{caseStudiesPreviewData.buttonText}</span>
                             <ArrowUpRight className="size-4.5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
                         </Link>
                     </motion.div>
@@ -139,7 +139,7 @@ const CaseStudiesPreview = () => {
                 <div className="space-y-8">
                     {caseStudies.map((caseStudy, index) => (
                         <motion.div
-                            key={caseStudy.id}
+                            key={`case-study-${index}-${caseStudy.title}`}
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-50px" }}
@@ -176,21 +176,24 @@ const CaseStudiesPreview = () => {
 
                                     {/* Results */}
                                     <div className="flex gap-6">
-                                        {caseStudy.results.map((result, i) => (
-                                            <div key={i} className="flex items-center gap-3">
-                                                <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                                                    <result.icon className="w-5 h-5 text-accent" />
-                                                </div>
-                                                <div>
-                                                    <div className="text-2xl font-display font-bold text-accent">
-                                                        {result.value}
+                                        {caseStudy.results.map((result, i) => {
+                                            const Icon = getIconByName(result.icon)
+                                            return (
+                                                <div key={`result-${i}`} className="flex items-center gap-3">
+                                                    <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                                                        <Icon className="w-5 h-5 text-accent" />
                                                     </div>
-                                                    <div className="text-sm text-muted-foreground">
-                                                        {result.label}
+                                                    <div>
+                                                        <div className="text-2xl font-display font-bold text-accent">
+                                                            {result.value}
+                                                        </div>
+                                                        <div className="text-sm text-muted-foreground">
+                                                            {result.label}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            )
+                                        })}
                                     </div>
 
                                     {/* Testimonial */}
@@ -226,10 +229,10 @@ const CaseStudiesPreview = () => {
                     className="mt-12 lg:hidden text-center"
                 >
                     <Link
-                        href={`/${lang}/portfolio`}
+                        href={caseStudiesPreviewData.buttonUrl}
                         className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-primary-foreground font-medium hover:bg-accent/90 transition-all duration-300"
                     >
-                        {uiT(lang, "common.viewAllProjects")}
+                        {caseStudiesPreviewData.buttonText}
                         <ArrowUpRight className="size-4.5" />
                     </Link>
                 </motion.div>

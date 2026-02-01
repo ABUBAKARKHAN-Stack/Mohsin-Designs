@@ -1,64 +1,69 @@
 import { sanityFetch } from "@/sanity/lib/live";
 
-const SITE_SETTINGS_QUERY_BY_LOCALE = `{
-  "siteName": siteName[$lang],
-  "tagline": tagline[$lang],
+const SITE_SETTINGS_QUERY = `{
+  "siteName": siteName,
+  "tagline": tagline,
   "logo": logo.asset->{
     _id,
     url,
-    "altText": altText[$lang]
+    "altText": altText
   },
   "favicon": favicon.asset->{
     _id,
     url,
-    "altText": altText[$lang]
+    "altText": altText
   },
   "seo": {
-    "metaTitle": seo.metaTitle[$lang],
-    "metaDescription": seo.metaDescription[$lang],
-    "keywords": seo.keywords[][$lang],
-    "schema": seo.schema
+    "metaTitle": seo.metaTitle,
+    "metaDescription": seo.metaDescription,
+    "focusKeyword": seo.focusKeyword,
+    "relatedKeywords": seo.relatedKeywords[],
+    "schemas": seo.schemas
   },
-  "social": social,
-  "contact": {
-    "email": contact.email,
-    "phone": contact.phone,
-    "address": contact.address[$lang]
+  "social": socialLinks[] {
+    label,
+    icon,
+    url
   },
-  "footerText": footerText[$lang],
-  "copyright": copyright[$lang],
+  "contact": contactInfo[] {
+    label,
+    value,
+    icon
+  },
+  "footerText": footerText,
+  "copyright": copyright,
   "headerMenu": headerMenu-> {
     "title": title,
     "slug": slug.current,
     "items": items[] {
-      "label": label[$lang],
-      "description": description[$lang],
+      "label": label,
+      "description": description,
       type,
-      "url": url[$lang],
+      "url": url,
       "reference": reference-> {
         _type,
-        "title": title[$lang],
-        "items": items[][$lang],
+        "title": title,
+        "items": items[],
         "slug": slug.current
       },
       "children": children[] {
-        "label": label[$lang],
-        "description": description[$lang],
+        "label": label,
+        "description": description,
         type,
-        "url": url[$lang],
+        "url": url,
         "reference": reference-> {
           _type,
-          "title": title[$lang],
+          "title": title,
           "slug": slug.current
         },
         "children": children[] {
-          "label": label[$lang],
-          "description": description[$lang],
+          "label": label,
+          "description": description,
           type,
-          "url": url[$lang],
+          "url": url,
           "reference": reference-> {
             _type,
-            "title": title[$lang],
+            "title": title,
             "slug": slug.current
           }
         }
@@ -69,107 +74,120 @@ const SITE_SETTINGS_QUERY_BY_LOCALE = `{
     "title": title,
     "slug": slug.current,
     "items": items[] {
-      "label": label[$lang],
-      "description": description[$lang],
+      "label": label,
+      "description": description,
       type,
-      "url": url[$lang],
+      "url": url,
       "reference": reference-> {
         _type,
-        "title": title[$lang],
+        "title": title,
         "slug": slug.current
       },
       "children": children[] {
-        "label": label[$lang],
-        "description": description[$lang],
+        "label": label,
+        "description": description,
         type,
-        "url": url[$lang],
+        "url": url,
         "reference": reference-> {
           _type,
-          "title": title[$lang],
+          "title": title,
           "slug": slug.current
         },
         "children": children[] {
-          "label": label[$lang],
-          "description": description[$lang],
+          "label": label,
+          "description": description,
           type,
-          "url": url[$lang],
+          "url": url,
           "reference": reference-> {
             _type,
-            "title": title[$lang],
+            "title": title,
             "slug": slug.current
           }
         }
       }
     }
+  },
+  "footerCTA": {
+    "eyebrow": footerCTA.eyebrow,
+    "headingPrefix": footerCTA.headingPrefix,
+    "headingHighlight": footerCTA.headingHighlight,
+    "buttonText": footerCTA.buttonText,
+    "buttonUrl": footerCTA.buttonUrl
   }
 }`;
 
 export type MenuItemData = {
-    label: string;
-    description?: string;
-    type: 'reference' | 'custom';
-    url?: string;
-    reference?: {
-        _type: string;
-        title: string;
-        slug: string;
-    };
-    children?: MenuItemData[];
+  label: string;
+  description?: string;
+  type: 'reference' | 'custom';
+  url?: string;
+  reference?: {
+    _type: string;
+    title: string;
+    slug: string;
+  };
+  children?: MenuItemData[];
 };
 
 export type MenuData = {
-    title: string;
-    slug: string;
-    items: MenuItemData[];
+  title: string;
+  slug: string;
+  items: MenuItemData[];
 };
 
 export type SiteSettingsData = {
-    siteName: string;
-    tagline: string;
-    logo?: {
-        url: string;
-        altText?: string;
-    };
-    favicon?: {
-        url: string;
-        altText?: string;
-    };
-    seo: {
-        metaTitle: string;
-        metaDescription: string;
-        keywords: string[];
-        schema?: string;
-    };
-    social: {
-        facebook: string;
-        twitter: string;
-        linkedin: string;
-        instagram: string;
-    };
-    contact: {
-        email: string;
-        phone: string;
-        address: string;
-    };
-    footerText: string;
-    copyright: string;
-    headerMenu?: MenuData;
-    footerMenu?: MenuData;
+  siteName: string;
+  tagline: string;
+  logo?: {
+    url: string;
+    _id: string;
+    altText?: string;
+  };
+  favicon?: {
+    url: string;
+    _id: string;
+    altText?: string;
+  };
+  seo: {
+    metaTitle: string;
+    metaDescription: string;
+    focusKeyword?: string;
+    relatedKeywords?: string[];
+    schemas?: string[];
+  };
+  social: {
+    label: string;
+    icon: string;
+    url: string;
+  }[];
+  contact: {
+    label: string;
+    value: string;
+    icon: string;
+  }[];
+  footerText: string;
+  copyright: string;
+  headerMenu?: MenuData;
+  footerMenu?: MenuData;
+  footerCTA?: {
+    eyebrow?: string;
+    headingPrefix?: string;
+    headingHighlight?: string;
+    buttonText?: string;
+    buttonUrl?: string;
+  };
 };
 
-export const getSiteSettingsByLocale = async (lang: string) => {
-    try {
-        const { data } = await sanityFetch({
-            query: `*[_type == "siteSettings"][0] ${SITE_SETTINGS_QUERY_BY_LOCALE}`,
-            params: {
-                lang
-            },
-            perspective: "published"
-        })
-        const settings = data as SiteSettingsData;
-        return settings ?? null
-    } catch (error) {
-        console.log("Sanity Error :: ", error);
-        return null;
-    }
-}
+export const getSiteSettings = async () => {
+  try {
+    const { data } = await sanityFetch({
+      query: `*[_type == "siteSettings"][0] ${SITE_SETTINGS_QUERY}`,
+      perspective: "published"
+    })
+    const settings = data as SiteSettingsData;
+    return settings ?? null
+  } catch (error) {
+    console.log("Sanity Error :: ", error);
+    return null;
+  }
+};

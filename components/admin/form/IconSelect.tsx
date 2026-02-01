@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { getIconByName, getAllIconNames } from "@/lib/icon-mapper"
 import { ControllerRenderProps } from "react-hook-form"
@@ -22,6 +22,7 @@ const allIcons: IconOption[] = getAllIconNames().map(name => {
     if (['MessageSquare', 'Lightbulb', 'Palette', 'Code', 'Rocket', 'HeartHandshake'].includes(name)) category = "Process"
     else if (['Target', 'Users', 'TrendingUp', 'Zap', 'Shield', 'Award'].includes(name)) category = "Goals"
     else if (['Mail', 'Phone', 'Send', 'Share2', 'MessageCircle', 'Bell'].includes(name)) category = "Communication"
+    else if (['Youtube', 'Github', 'Linkedin', 'Twitter', 'Facebook', 'Instagram', 'Dribbble', 'Globe', 'Link', 'ExternalLink'].includes(name)) category = "Social"
     else if (['Briefcase', 'DollarSign', 'TrendingDown', 'PieChart', 'BarChart3', 'LineChart'].includes(name)) category = "Business"
     else if (['Pen', 'Brush', 'Layers', 'Layout', 'Figma', 'Image'].includes(name)) category = "Design"
     else if (['Terminal', 'Database', 'Server', 'Cloud', 'Cpu', 'HardDrive'].includes(name)) category = "Tech"
@@ -41,10 +42,11 @@ const benefitRecommended = ['Target', 'Users', 'TrendingUp', 'Zap', 'Shield', 'A
 const stepRecommended = ['Lightbulb', 'Rocket', 'CheckCircle2', 'Settings', 'Users', 'TrendingUp']
 const industryRecommended = ['Briefcase', 'ShoppingCart', 'Stethoscope', 'GraduationCap', 'Home', 'Cpu']
 const teamRecommended = ['Palette', 'Code', 'Megaphone', 'Users', 'BarChart', 'Rocket']
+const socialRecommended = ['Youtube', 'Github', 'Linkedin', 'Twitter', 'Facebook', 'Instagram', 'Mail', 'Globe', 'ExternalLink']
 
 type IconSelectProps = {
     field: ControllerRenderProps<any, any>
-    type: "process" | "benefit" | "step" | "industry" | "team"
+    type: "process" | "benefit" | "step" | "industry" | "team" | "social"
     label?: string
 }
 
@@ -57,7 +59,8 @@ export function IconSelect({ field, type, label = "Icon" }: IconSelectProps) {
             type === "benefit" ? benefitRecommended :
                 type === "step" ? stepRecommended :
                     type === "industry" ? industryRecommended :
-                        teamRecommended
+                        type === "social" ? socialRecommended :
+                            teamRecommended
 
     // Filter icons based on search
     const filteredIcons = allIcons.filter(icon =>

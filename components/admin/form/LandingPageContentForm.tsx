@@ -4,12 +4,16 @@ import { useState, useEffect, useCallback } from "react"
 import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { landingPageContentSchema, LandingPageContentValues } from "@/lib/validations/landing-page-content"
+import { globalSectionsSchema, GlobalSectionsValues } from "@/lib/validations/global-sections"
+
+type CombinedValues = LandingPageContentValues & GlobalSectionsValues;
+const combinedSchema = landingPageContentSchema.merge(globalSectionsSchema);
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
+import { FormInput } from "@/components/admin/form/FormInput"
 import { BulkImageUpload } from "@/components/admin/form/BulkImageUpload"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -19,38 +23,53 @@ import { GlobalSectionsFormTabs } from "@/components/admin/form/GlobalSectionsFo
 import { SectionHeadingCard } from "@/components/admin/form/SharedFormComponents"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { Spinner } from "@/components/ui/spinner"
-import { Save, AlertCircle, Plus, Trash2, Clock, X, Link, Database } from "lucide-react"
+import { Plus, Trash2, Save, Send, Clock, AlertCircle, ArrowUp, ArrowDown, Search, CheckCircle2 } from "lucide-react"
+import { ReferenceSelector } from "./ReferenceSelector"
 import { debounce } from "lodash"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
+import { SeoFormTab } from "./SeoFormTab"
 
 interface LandingPageContentFormProps {
-    initialData?: any
+    initialData?: CombinedValues & { _updatedAt?: string }
     hasDraft?: boolean
     draftUpdatedAt?: string | null
+    services?: any[]
+    projects?: any[]
+    caseStudies?: any[]
+    posts?: any[]
+    forms?: { _id: string, name: string }[]
 }
 
-export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }: LandingPageContentFormProps) {
+export function LandingPageContentForm({
+    initialData,
+    hasDraft,
+    draftUpdatedAt,
+    services = [],
+    projects = [],
+    caseStudies = [],
+    posts = [],
+    forms = []
+}: LandingPageContentFormProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [isSavingDraft, setIsSavingDraft] = useState(false)
     const [lastSaved, setLastSaved] = useState<Date | null>(
         draftUpdatedAt ? new Date(draftUpdatedAt) : null
     )
-    const [selectedLang, setSelectedLang] = useState("en")
     const [isInitialMount, setIsInitialMount] = useState(true)
+    const [serviceSearchTerm, setServiceSearchTerm] = useState("")
 
-    const form = useForm<LandingPageContentValues>({
-        resolver: zodResolver(landingPageContentSchema),
+    const form = useForm<CombinedValues>({
+        resolver: zodResolver(combinedSchema),
         mode: "onChange",
         defaultValues: initialData ? mergeWithDefaults(initialData) : getDefaultValues(),
     })
 
-
     const formControl = form.control as any
-
 
     // Auto-save draft functionality
     const saveDraft = useCallback(
-        debounce(async (data: Partial<LandingPageContentValues>) => {
-            // Don't save on initial mount
+        debounce(async (data: Partial<CombinedValues>) => {
             if (isInitialMount) return
 
             setIsSavingDraft(true)
@@ -62,8 +81,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                 globalFields.forEach(field => {
                     if (localData[field as keyof typeof localData]) {
                         globalData[field] = localData[field as keyof typeof localData]
-                        // We keep it in localData too for now to avoid schema issues, 
-                        // but normally we'd remove it.
                     }
                 })
 
@@ -84,7 +101,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         [isInitialMount]
     )
 
-    // Mark as not initial mount after first render
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsInitialMount(false)
@@ -92,10 +108,9 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         return () => clearTimeout(timer)
     }, [])
 
-    // Watch form changes and auto-save
     useEffect(() => {
         const subscription = form.watch((value) => {
-            saveDraft(value as Partial<LandingPageContentValues>)
+            saveDraft(value as Partial<CombinedValues>)
         })
         return () => subscription.unsubscribe()
     }, [form, saveDraft])
@@ -116,8 +131,6 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         name: "hero.ctaButtons",
     })
 
-
-
     const { fields: highlightFields, append: appendHighlight, remove: removeHighlight } = useFieldArray({
         control: formControl,
         name: "serviceHighlightsMarquee.highlights",
@@ -133,23 +146,17 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
         name: "aboutPreview.rightDescriptions",
     })
 
-
-
     const { fields: areaFields, append: appendArea, remove: removeArea } = useFieldArray({
         control: formControl,
         name: "areasWeServe.areas",
     })
-
 
     const { fields: testimonialFields, append: appendTestimonial, remove: removeTestimonial } = useFieldArray({
         control: formControl,
         name: "testimonials.testimonials",
     })
 
-
-
-
-    async function onSubmit(values: LandingPageContentValues) {
+    async function onSubmit(values: CombinedValues) {
         setIsLoading(true)
         try {
             // Split data
@@ -175,36 +182,14 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
             } else {
                 errorToast(result1.success ? result2.error : result1.error || "Failed to update content")
             }
-        } catch (error) {
-            errorToast("An unexpected error occurred")
         } finally {
             setIsLoading(false)
         }
     }
 
 
-
-
-
     const formErrors = form.formState.errors
     const hasErrors = Object.keys(formErrors).length > 0
-
-    // Helper to check if a specific language has errors anywhere in the form
-    const hasLangError = (langCode: string) => {
-        const checkErrors = (obj: any): boolean => {
-            if (!obj) return false
-            if (obj.message && typeof obj.message === 'string') return false // It's a field error
-
-            // If it's the language we're looking for and has a message, it's an error
-            if (obj[langCode] && obj[langCode].message) return true
-
-            // Otherwise recurse
-            return Object.values(obj).some(val => typeof val === 'object' && checkErrors(val))
-        }
-        return checkErrors(formErrors)
-    }
-
-    const currentLangHasError = hasLangError(selectedLang)
 
     return (
         <Form {...form}>
@@ -230,26 +215,11 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Language:</span>
-                            <Select value={selectedLang} onValueChange={setSelectedLang}>
-                                <SelectTrigger className="w-[140px] h-9 bg-primary/5 border-primary/20 font-medium">
-                                    <SelectValue placeholder="Language" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="en">English (EN)</SelectItem>
-                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
-                                    <SelectItem value="es">Spanish (ES)</SelectItem>
-                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
                         <div className="flex items-center gap-2 border-l pl-4">
-                            {currentLangHasError && (
+                            {hasErrors && (
                                 <div className="flex items-center gap-2 text-destructive text-xs px-3 py-1 bg-destructive/10 rounded">
                                     <AlertCircle className="h-3 w-3" />
-                                    <span>Fix {selectedLang.toUpperCase()} errors</span>
+                                    <span>Fix form errors</span>
                                 </div>
                             )}
                             <Button type="submit" disabled={isLoading || hasErrors}>
@@ -297,6 +267,10 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                             Blog
                             {formErrors.blogPreview && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
                         </TabsTrigger>
+                        <TabsTrigger value="seo" className="relative">
+                            SEO
+                            {formErrors.seo && <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full" />}
+                        </TabsTrigger>
                         <TabsTrigger value="shared" className="relative bg-primary/10">
                             Shared Content
                             {(formErrors.stats || formErrors.servicesPreview || formErrors.whyChooseUs || formErrors.ourApproach || formErrors.industriesWeServe || formErrors.faqs || formErrors.leadership || formErrors.cta) && (
@@ -310,12 +284,12 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         <Card>
                             <CardHeader><CardTitle>Hero Section</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="hero.badge" label="Badge Text" activeLang={selectedLang} />
+                                <FormInput control={formControl} name="hero.badge" label="Badge Text" />
 
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
                                         <h3 className="font-semibold">Heading Lines (Max 3)</h3>
-                                        <Button type="button" size="sm" variant="outline" onClick={() => appendHeadingLine({ text: { en: "", ur: "", es: "", ar: "" }, style: "normal" })} disabled={headingLineFields.length >= 3}>
+                                        <Button type="button" size="sm" variant="outline" onClick={() => appendHeadingLine({ text: "", style: "normal" })} disabled={headingLineFields.length >= 3}>
                                             <Plus className="h-4 w-4 mr-2" /> Add
                                         </Button>
                                     </div>
@@ -327,7 +301,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.headingLines.${index}.text`} label="Text" activeLang={selectedLang} />
+                                            <FormInput control={formControl} name={`hero.headingLines.${index}.text`} label="Text" />
                                             <FormField control={formControl} name={`hero.headingLines.${index}.style`} render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Style</FormLabel>
@@ -349,7 +323,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
                                         <h3 className="font-semibold">Description Paragraphs (Max 5)</h3>
-                                        <Button type="button" size="sm" variant="outline" onClick={() => appendParagraph({ text: { en: "", ur: "", es: "", ar: "" } })} disabled={paragraphFields.length >= 5}>
+                                        <Button type="button" size="sm" variant="outline" onClick={() => appendParagraph({ text: "" })} disabled={paragraphFields.length >= 5}>
                                             <Plus className="h-4 w-4 mr-2" /> Add
                                         </Button>
                                     </div>
@@ -361,7 +335,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.descriptionParagraphs.${index}.text`} label="Text" isTextarea activeLang={selectedLang} />
+                                            <FormInput control={formControl} name={`hero.descriptionParagraphs.${index}.text`} label="Text" isTextarea />
                                         </div>
                                     ))}
                                 </div>
@@ -369,7 +343,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
                                         <h3 className="font-semibold">CTA Buttons (Exactly 2)</h3>
-                                        <Button type="button" size="sm" variant="outline" onClick={() => appendCtaButton({ text: { en: "", ur: "", es: "", ar: "" }, url: { en: "", ur: "", es: "", ar: "" }, variant: "primary" })} disabled={ctaButtonFields.length >= 2}>
+                                        <Button type="button" size="sm" variant="outline" onClick={() => appendCtaButton({ text: "", url: "", variant: "primary" })} disabled={ctaButtonFields.length >= 2}>
                                             <Plus className="h-4 w-4 mr-2" /> Add
                                         </Button>
                                     </div>
@@ -381,8 +355,8 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                            <LocalizedInput control={formControl} name={`hero.ctaButtons.${index}.text`} label="Text" activeLang={selectedLang} />
-                                            <LocalizedInput control={formControl} name={`hero.ctaButtons.${index}.url`} label="URL" isUrl activeLang={selectedLang} />
+                                            <FormInput control={formControl} name={`hero.ctaButtons.${index}.text`} label="Text" />
+                                            <FormInput control={formControl} name={`hero.ctaButtons.${index}.url`} label="URL" />
                                             <FormField control={formControl} name={`hero.ctaButtons.${index}.variant`} render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Variant</FormLabel>
@@ -399,12 +373,20 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                         </div>
                                     ))}
                                 </div>
+
+                                <ReferenceSelector
+                                    form={form}
+                                    fieldName="hero.featuredServices"
+                                    items={services}
+                                    label="Featured Services"
+                                    placeholder="Search services..."
+                                />
                             </CardContent>
                         </Card>
                     </TabsContent>
 
                     <TabsContent value="shared">
-                        <GlobalSectionsFormTabs control={formControl} errors={formErrors} activeLang={selectedLang} />
+                        <GlobalSectionsFormTabs form={form} control={formControl} errors={formErrors} services={services} />
                     </TabsContent>
 
                     {/* MARQUEE */}
@@ -412,7 +394,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         <Card>
                             <CardHeader className="flex flex-row justify-between items-center">
                                 <CardTitle>Service Highlights Marquee</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendHighlight({ text: { en: "", ur: "", es: "", ar: "" } })}>
+                                <Button type="button" size="sm" variant="outline" onClick={() => appendHighlight({ text: "" })}>
                                     <Plus className="h-4 w-4 mr-2" /> Add
                                 </Button>
                             </CardHeader>
@@ -425,7 +407,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`serviceHighlightsMarquee.highlights.${index}.text`} label="Text" activeLang={selectedLang} />
+                                        <FormInput control={formControl} name={`serviceHighlightsMarquee.highlights.${index}.text`} label="Text" />
                                     </div>
                                 ))}
                             </CardContent>
@@ -434,7 +416,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
                     {/* BRANDS */}
                     <TabsContent value="brands" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="trustedByBrands.sectionHeading" title="Section Heading" activeLang={selectedLang} />
+                        <SectionHeadingCard control={formControl} baseName="trustedByBrands.sectionHeading" title="Section Heading" />
                         <Card>
                             <CardHeader>
                                 <CardTitle>Brand Logos</CardTitle>
@@ -453,7 +435,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
 
                     {/* ABOUT */}
                     <TabsContent value="about" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="aboutPreview.sectionHeading" title="About Preview" activeLang={selectedLang} />
+                        <SectionHeadingCard control={formControl} baseName="aboutPreview.sectionHeading" title="About Preview" />
 
                         {/* Left Descriptions */}
                         <Card>
@@ -466,7 +448,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                         <div className="flex justify-between">
                                             <span className="font-medium">Paragraph {index + 1}</span>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`aboutPreview.leftDescriptions.${index}.text`} label="Text" isTextarea activeLang={selectedLang} />
+                                        <FormInput control={formControl} name={`aboutPreview.leftDescriptions.${index}.text`} label="Text" isTextarea />
                                     </div>
                                 ))}
                             </CardContent>
@@ -483,7 +465,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                         <div className="flex justify-between">
                                             <span className="font-medium">Paragraph {index + 1}</span>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`aboutPreview.rightDescriptions.${index}.text`} label="Text" isTextarea activeLang={selectedLang} />
+                                        <FormInput control={formControl} name={`aboutPreview.rightDescriptions.${index}.text`} label="Text" isTextarea />
                                     </div>
                                 ))}
                             </CardContent>
@@ -493,44 +475,80 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         <Card>
                             <CardHeader><CardTitle>Call to Action</CardTitle></CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="aboutPreview.ctaText" label="Button Text" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="aboutPreview.ctaUrl" label="Button URL" isUrl activeLang={selectedLang} />
+                                <FormInput control={formControl} name="aboutPreview.ctaText" label="Button Text" />
+                                <FormInput control={formControl} name="aboutPreview.ctaUrl" label="Button URL" />
                             </CardContent>
                         </Card>
                     </TabsContent>
 
-
                     {/* PORTFOLIO */}
                     <TabsContent value="portfolio" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="portfolioPreview.sectionHeading" title="Portfolio Preview" activeLang={selectedLang} />
+                        <SectionHeadingCard control={formControl} baseName="portfolioPreview.sectionHeading" title="Portfolio Preview" />
                         <Card>
                             <CardHeader><CardTitle>Portfolio Projects</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Portfolio projects are managed separately and are automatically added dynamically as you create them.</p>
+                            <CardContent className="space-y-6">
+                                <p className="text-muted-foreground text-sm leading-relaxed">
+                                    Individual projects are managed separately in the <strong>Portfolio</strong> section.
+                                    You can manually select and order which projects appear in this section below.
+                                </p>
+
+                                <ReferenceSelector
+                                    form={form}
+                                    fieldName="portfolioPreview.featuredProjects"
+                                    items={projects}
+                                    label="Featured Projects"
+                                    placeholder="Search projects..."
+                                />
+
+                                <div className="grid gap-4 pt-4 border-t">
+                                    <h4 className="font-medium text-sm">Call to Action Button</h4>
+                                    <div className="grid sm:grid-cols-2 gap-4">
+                                        <FormInput control={formControl} name="portfolioPreview.buttonText" label="Button Text" />
+                                        <FormInput control={formControl} name="portfolioPreview.buttonUrl" label="Button URL" />
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     </TabsContent>
 
                     {/* CASES */}
                     <TabsContent value="cases" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="caseStudiesPreview.sectionHeading" title="Case Studies Preview" activeLang={selectedLang} />
+                        <SectionHeadingCard control={formControl} baseName="caseStudiesPreview.sectionHeading" title="Case Studies Preview" />
                         <Card>
                             <CardHeader><CardTitle>Case Studies</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Detailed case studies are managed separately and are automatically added dynamically to this section.</p>
+                            <CardContent className="space-y-6">
+                                <p className="text-muted-foreground text-sm leading-relaxed">
+                                    Detailed case studies are managed separately. You can manually select which case studies (projects with case study details) to feature here.
+                                </p>
+
+                                <ReferenceSelector
+                                    form={form}
+                                    fieldName="caseStudiesPreview.featuredCaseStudies"
+                                    items={caseStudies}
+                                    label="Featured Case Studies"
+                                    placeholder="Search case studies..."
+                                />
+
+                                <div className="grid gap-4 pt-4 border-t">
+                                    <h4 className="font-medium text-sm">Call to Action Button</h4>
+                                    <div className="grid sm:grid-cols-2 gap-4">
+                                        <FormInput control={formControl} name="caseStudiesPreview.buttonText" label="Button Text" />
+                                        <FormInput control={formControl} name="caseStudiesPreview.buttonUrl" label="Button URL" />
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     </TabsContent>
 
                     {/* AREAS */}
                     <TabsContent value="areas" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="areasWeServe.sectionHeading" title="Areas We Serve" activeLang={selectedLang} />
+                        <SectionHeadingCard control={formControl} baseName="areasWeServe.sectionHeading" title="Areas We Serve" />
                         <Card>
                             <CardHeader className="flex flex-row justify-between items-center">
                                 <CardTitle>Regions</CardTitle>
                                 <Button type="button" size="sm" variant="outline" onClick={() => appendArea({
-                                    region: { en: "", ur: "", es: "", ar: "" },
-                                    locations: [{ en: "", ur: "", es: "", ar: "" }],
+                                    region: "",
+                                    locations: [""],
                                     featured: false,
                                     clients: 0,
                                     flag: ""
@@ -548,7 +566,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                             </Button>
                                         </div>
 
-                                        <LocalizedInput control={formControl} name={`areasWeServe.areas.${index}.region`} label="Region Name" activeLang={selectedLang} />
+                                        <FormInput control={formControl} name={`areasWeServe.areas.${index}.region`} label="Region Name" />
 
                                         <FormField control={formControl} name={`areasWeServe.areas.${index}.flag`} render={({ field }) => (
                                             <FormItem>
@@ -560,7 +578,7 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                             </FormItem>
                                         )} />
 
-                                        <NestedLocationsField control={formControl} areaIndex={index} activeLang={selectedLang} />
+                                        <NestedLocationsField control={formControl} areaIndex={index} />
 
                                         <div className="grid grid-cols-2 gap-4">
                                             <FormField control={formControl} name={`areasWeServe.areas.${index}.clients`} render={({ field }) => (
@@ -591,14 +609,13 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </Card>
                     </TabsContent>
 
-
                     {/* TESTIMONIALS */}
                     <TabsContent value="testimonials" className="space-y-6">
-                        <SectionHeadingCard control={formControl} baseName="testimonials.sectionHeading" title="Testimonials" activeLang={selectedLang} />
+                        <SectionHeadingCard control={formControl} baseName="testimonials.sectionHeading" title="Testimonials" />
                         <Card>
                             <CardHeader className="flex flex-row justify-between items-center">
                                 <CardTitle>Testimonials</CardTitle>
-                                <Button type="button" size="sm" variant="outline" onClick={() => appendTestimonial({ quote: { en: "", ur: "", es: "", ar: "" }, author: { en: "", ur: "", es: "", ar: "" }, role: { en: "", ur: "", es: "", ar: "" }, company: { en: "", ur: "", es: "", ar: "" }, avatar: null })}>
+                                <Button type="button" size="sm" variant="outline" onClick={() => appendTestimonial({ quote: "", author: "", role: "", company: "", avatar: null })}>
                                     <Plus className="h-4 w-4 mr-2" /> Add
                                 </Button>
                             </CardHeader>
@@ -611,10 +628,10 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.quote`} label="Quote" isTextarea activeLang={selectedLang} />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.author`} label="Author" activeLang={selectedLang} />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.role`} label="Role" activeLang={selectedLang} />
-                                        <LocalizedInput control={formControl} name={`testimonials.testimonials.${index}.company`} label="Company" activeLang={selectedLang} />
+                                        <FormInput control={formControl} name={`testimonials.testimonials.${index}.quote`} label="Quote" isTextarea />
+                                        <FormInput control={formControl} name={`testimonials.testimonials.${index}.author`} label="Author" />
+                                        <FormInput control={formControl} name={`testimonials.testimonials.${index}.role`} label="Role" />
+                                        <FormInput control={formControl} name={`testimonials.testimonials.${index}.company`} label="Company" />
 
                                         <div className="space-y-2">
                                             <FormLabel>Avatar Image</FormLabel>
@@ -650,15 +667,48 @@ export function LandingPageContentForm({ initialData, hasDraft, draftUpdatedAt }
                         </Card>
                     </TabsContent>
 
+                    {/* BLOG */}
+                    <TabsContent value="blog" className="space-y-6">
+                        <SectionHeadingCard control={formControl} baseName="blogPreview.sectionHeading" title="Blog Preview" />
+                        <Card>
+                            <CardHeader><CardTitle>Blog Posts</CardTitle></CardHeader>
+                            <CardContent className="space-y-6">
+                                <p className="text-muted-foreground text-sm leading-relaxed">
+                                    Recent blog posts are managed in the <strong>Blog</strong> section.
+                                    You can manually select and order which posts appear in this section below.
+                                </p>
+
+                                <ReferenceSelector
+                                    form={form}
+                                    fieldName="blogPreview.featuredBlogs"
+                                    items={posts}
+                                    label="Featured Blog Posts"
+                                    placeholder="Search blog posts..."
+                                />
+
+                                <div className="grid gap-4 pt-4 border-t">
+                                    <h4 className="font-medium text-sm">Call to Action Button</h4>
+                                    <div className="grid sm:grid-cols-2 gap-4">
+                                        <FormInput control={formControl} name="blogPreview.buttonText" placeholder="Button Text" label="Button Text" />
+                                        <FormInput control={formControl} name="blogPreview.buttonUrl" label="Button URL" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* SEO */}
+                    <TabsContent value="seo">
+                        <SeoFormTab control={formControl} />
+                    </TabsContent>
+
                 </Tabs>
             </form>
         </Form>
     )
 }
 
-// End of LandingPageContentForm
-
-function NestedLocationsField({ control, areaIndex, activeLang }: { control: any; areaIndex: number; activeLang?: string }) {
+function NestedLocationsField({ control, areaIndex }: { control: any; areaIndex: number }) {
     const { fields, append, remove } = useFieldArray({
         control,
         name: `areasWeServe.areas.${areaIndex}.locations`,
@@ -672,7 +722,7 @@ function NestedLocationsField({ control, areaIndex, activeLang }: { control: any
                     type="button"
                     size="sm"
                     variant="outline"
-                    onClick={() => append({ en: "", ur: "", es: "", ar: "" })}
+                    onClick={() => append("")}
                 >
                     <Plus className="h-3 w-3 mr-1" /> Add Location
                 </Button>
@@ -680,11 +730,10 @@ function NestedLocationsField({ control, areaIndex, activeLang }: { control: any
             {fields.map((field, index) => (
                 <div key={field.id} className="flex gap-2 items-start">
                     <div className="flex-1">
-                        <LocalizedInput
+                        <FormInput
                             control={control}
                             name={`areasWeServe.areas.${areaIndex}.locations.${index}`}
                             label={`Location ${index + 1}`}
-                            activeLang={activeLang}
                         />
                     </div>
                     <Button
@@ -702,70 +751,93 @@ function NestedLocationsField({ control, areaIndex, activeLang }: { control: any
     )
 }
 
-// End of LandingPageContentForm
-
-function getDefaultValues(): LandingPageContentValues {
+function getDefaultValues(): CombinedValues {
     return {
-        hero: { badge: { en: "", ur: "", es: "", ar: "" }, headingLines: [], descriptionParagraphs: [], ctaButtons: [] },
-        servicesPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
-        portfolioPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
+        hero: { badge: "", headingLines: [], descriptionParagraphs: [], ctaButtons: [], featuredServices: [] },
+        servicesPreview: { sectionHeading: { eyebrow: "", title: "", description: "" }, buttonText: "", buttonUrl: "" },
+        portfolioPreview: { sectionHeading: { eyebrow: "", title: "", description: "" }, buttonText: "", buttonUrl: "" },
         aboutPreview: {
-            sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } },
+            sectionHeading: { eyebrow: "", title: "", description: "" },
             leftDescriptions: [
-                { text: { en: "", ur: "", es: "", ar: "" } },
-                { text: { en: "", ur: "", es: "", ar: "" } }
+                { text: "" },
+                { text: "" }
             ],
             rightDescriptions: [
-                { text: { en: "", ur: "", es: "", ar: "" } },
-                { text: { en: "", ur: "", es: "", ar: "" } }
+                { text: "" },
+                { text: "" }
             ],
-            ctaText: { en: "", ur: "", es: "", ar: "" },
-            ctaUrl: { en: "", ur: "", es: "", ar: "" }
+            ctaText: "",
+            ctaUrl: ""
         },
         stats: {
-            projectsDelivered: { value: "", label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
-            yearsExperience: { value: "", label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
-            clientSatisfaction: { value: "", label: { en: "", ur: "", es: "", ar: "" }, suffix: "" },
+            since: { value: "", label: "" },
+            projectsDelivered: { value: "", label: "", suffix: "" },
+            yearsExperience: { value: "", label: "", suffix: "" },
+            clientSatisfaction: { value: "", label: "", suffix: "" },
         },
-        whyChooseUs: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, benefits: [] },
-        blogPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
-        faqs: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, faqItems: [] },
+        whyChooseUs: { sectionHeading: { eyebrow: "", title: "", description: "" }, benefits: [] },
+        blogPreview: { sectionHeading: { eyebrow: "", title: "", description: "" }, featuredBlogs: [], buttonText: "", buttonUrl: "" },
+        faqs: { sectionHeading: { eyebrow: "", title: "", description: "" }, faqItems: [] },
         serviceHighlightsMarquee: { highlights: [] },
-        trustedByBrands: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, brandLogos: [] },
-        ourApproach: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, steps: [] },
-        caseStudiesPreview: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } } },
-        areasWeServe: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, areas: [] },
-        industriesWeServe: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, industries: [] },
-        testimonials: { sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } }, testimonials: [] },
+        trustedByBrands: { sectionHeading: { eyebrow: "", title: "", description: "" }, brandLogos: [] },
+        ourApproach: { sectionHeading: { eyebrow: "", title: "", description: "" }, steps: [] },
+        caseStudiesPreview: { sectionHeading: { eyebrow: "", title: "", description: "" }, featuredCaseStudies: [], buttonText: "", buttonUrl: "" },
+        areasWeServe: { sectionHeading: { eyebrow: "", title: "", description: "" }, areas: [] },
+        industriesWeServe: { sectionHeading: { eyebrow: "", title: "", description: "" }, industries: [] },
+        testimonials: { sectionHeading: { eyebrow: "", title: "", description: "" }, testimonials: [] },
         leadership: {
-            sectionHeading: { eyebrow: { en: "", ur: "", es: "", ar: "" }, title: { en: "", ur: "", es: "", ar: "" }, description: { en: "", ur: "", es: "", ar: "" } },
-            founder: { name: { en: "", ur: "", es: "", ar: "" }, role: { en: "", ur: "", es: "", ar: "" }, image: null, socialLinks: [{ platform: "linkedin", url: "" }] },
+            sectionHeading: { eyebrow: "", title: "", description: "" },
+            founder: { name: "", role: "", image: null, socialLinks: [] },
             agencyStructure: []
         },
         cta: {
-            badge: { en: "", ur: "", es: "", ar: "" },
-            heading: { en: "", ur: "", es: "", ar: "" },
-            description: { en: "", ur: "", es: "", ar: "" },
+            badge: "",
+            heading: "",
+            description: "",
             benefits: [],
+        },
+        seo: {
+            metaTitle: "",
+            metaDescription: "",
+            focusKeyword: "",
+            relatedKeywords: [],
+            schemas: []
         }
-    } as LandingPageContentValues
+    } as CombinedValues
 }
 
-// Merge initial data with defaults to ensure all required fields exist
-function mergeWithDefaults(data: any): LandingPageContentValues {
+const ls = (val: any) => typeof val === 'object' ? (val?.en || "") : (val || "");
+
+function mergeWithDefaults(data: any): CombinedValues {
     const defaults = getDefaultValues()
     return {
-        hero: { ...defaults.hero, ...data.hero },
-        servicesPreview: { ...defaults.servicesPreview, ...data.servicesPreview },
-        portfolioPreview: { ...defaults.portfolioPreview, ...data.portfolioPreview },
+        ...data,
+        hero: {
+            ...defaults.hero,
+            ...data.hero,
+            featuredServices: data.hero?.featuredServices || []
+        },
+        servicesPreview: {
+            ...defaults.servicesPreview,
+            ...data.servicesPreview,
+            buttonText: data.servicesPreview?.buttonText || defaults.servicesPreview.buttonText,
+            buttonUrl: data.servicesPreview?.buttonUrl || defaults.servicesPreview.buttonUrl
+        },
+        portfolioPreview: {
+            ...defaults.portfolioPreview,
+            ...data.portfolioPreview,
+            buttonText: data.portfolioPreview?.buttonText || defaults.portfolioPreview.buttonText,
+            buttonUrl: data.portfolioPreview?.buttonUrl || defaults.portfolioPreview.buttonUrl
+        },
         aboutPreview: {
             sectionHeading: { ...defaults.aboutPreview.sectionHeading, ...data.aboutPreview?.sectionHeading },
             leftDescriptions: data.aboutPreview?.leftDescriptions?.length > 0 ? data.aboutPreview.leftDescriptions : defaults.aboutPreview.leftDescriptions,
             rightDescriptions: data.aboutPreview?.rightDescriptions?.length > 0 ? data.aboutPreview.rightDescriptions : defaults.aboutPreview.rightDescriptions,
-            ctaText: { ...defaults.aboutPreview.ctaText, ...data.aboutPreview?.ctaText },
-            ctaUrl: { ...defaults.aboutPreview.ctaUrl, ...data.aboutPreview?.ctaUrl }
+            ctaText: data.aboutPreview?.ctaText || defaults.aboutPreview.ctaText,
+            ctaUrl: data.aboutPreview?.ctaUrl || defaults.aboutPreview.ctaUrl
         },
         stats: {
+            since: { ...defaults.stats.since, ...data.stats?.since },
             projectsDelivered: { ...defaults.stats.projectsDelivered, ...data.stats?.projectsDelivered },
             yearsExperience: { ...defaults.stats.yearsExperience, ...data.stats?.yearsExperience },
             clientSatisfaction: { ...defaults.stats.clientSatisfaction, ...data.stats?.clientSatisfaction },
@@ -774,7 +846,12 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
             sectionHeading: { ...defaults.whyChooseUs.sectionHeading, ...data.whyChooseUs?.sectionHeading },
             benefits: data.whyChooseUs?.benefits || defaults.whyChooseUs.benefits
         },
-        blogPreview: { ...defaults.blogPreview, ...data.blogPreview },
+        blogPreview: {
+            sectionHeading: { ...defaults.blogPreview.sectionHeading, ...data.blogPreview?.sectionHeading },
+            featuredBlogs: data.blogPreview?.featuredBlogs || [],
+            buttonText: data.blogPreview?.buttonText || defaults.blogPreview.buttonText,
+            buttonUrl: data.blogPreview?.buttonUrl || defaults.blogPreview.buttonUrl
+        },
         faqs: {
             sectionHeading: { ...defaults.faqs.sectionHeading, ...data.faqs?.sectionHeading },
             faqItems: data.faqs?.faqItems || defaults.faqs.faqItems,
@@ -790,7 +867,12 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
             sectionHeading: { ...defaults.ourApproach.sectionHeading, ...data.ourApproach?.sectionHeading },
             steps: data.ourApproach?.steps || defaults.ourApproach.steps
         },
-        caseStudiesPreview: { ...defaults.caseStudiesPreview, ...data.caseStudiesPreview },
+        caseStudiesPreview: {
+            sectionHeading: { ...defaults.caseStudiesPreview.sectionHeading, ...data.caseStudiesPreview?.sectionHeading },
+            featuredCaseStudies: data.caseStudiesPreview?.featuredCaseStudies || [],
+            buttonText: data.caseStudiesPreview?.buttonText || defaults.caseStudiesPreview.buttonText,
+            buttonUrl: data.caseStudiesPreview?.buttonUrl || defaults.caseStudiesPreview.buttonUrl
+        },
         areasWeServe: {
             sectionHeading: { ...defaults.areasWeServe.sectionHeading, ...data.areasWeServe?.sectionHeading },
             areas: data.areasWeServe?.areas || defaults.areasWeServe.areas
@@ -805,62 +887,32 @@ function mergeWithDefaults(data: any): LandingPageContentValues {
         },
         leadership: {
             sectionHeading: { ...defaults.leadership.sectionHeading, ...data.leadership?.sectionHeading },
-            founder: { ...defaults.leadership.founder, ...data.leadership?.founder },
+            founder: {
+                ...defaults.leadership.founder,
+                ...data.leadership?.founder,
+                name: ls(data.leadership?.founder?.name),
+                role: ls(data.leadership?.founder?.role),
+                socialLinks: (data.leadership?.founder?.socialLinks || []).map((link: any) => ({
+                    ...link,
+                    iconName: link.iconName || "linkedin",
+                    label: ls(link.label),
+                    url: link.url || ""
+                }))
+            },
             agencyStructure: data.leadership?.agencyStructure || defaults.leadership.agencyStructure
         },
         cta: {
-            badge: { ...defaults.cta.badge, ...data.cta?.badge },
-            heading: { ...defaults.cta.heading, ...data.cta?.heading },
-            description: { ...defaults.cta.description, ...data.cta?.description },
+            badge: data.cta?.badge || defaults.cta.badge,
+            heading: data.cta?.heading || defaults.cta.heading,
+            description: data.cta?.description || defaults.cta.description,
             benefits: data.cta?.benefits || defaults.cta.benefits,
             formId: typeof data.cta?.formId === 'object' ? data.cta.formId?._ref : data.cta?.formId || undefined
+        },
+        seo: {
+            ...defaults.seo,
+            ...data.seo,
+            relatedKeywords: data.seo?.relatedKeywords || defaults.seo?.relatedKeywords || [],
+            schemas: data.seo?.schemas || defaults.seo?.schemas || []
         }
-    } as LandingPageContentValues
-}
-
-// Form Selector Dropdown Component
-function FormSelectorDropdown({ field }: { field: any }) {
-    const [forms, setForms] = useState<any[]>([])
-    const [isLoading, setIsLoading] = useState(true)
-
-    useEffect(() => {
-        async function loadForms() {
-            setIsLoading(true)
-            try {
-                const { getForms } = await import("@/app/actions/formActions")
-                const result = await getForms()
-                if (result.success && result.data) {
-                    setForms(result.data)
-                }
-            } catch (error) {
-                console.error("Failed to load forms:", error)
-            } finally {
-                setIsLoading(false)
-            }
-        }
-        loadForms()
-    }, [])
-
-    const handleValueChange = (value: string) => {
-        // Convert "__none__" back to undefined for the form
-        field.onChange(value === "__none__" ? undefined : value)
-    }
-
-    return (
-        <Select onValueChange={handleValueChange} value={field.value || "__none__"}>
-            <FormControl>
-                <SelectTrigger>
-                    <SelectValue placeholder={isLoading ? "Loading forms..." : "Select a form (optional)"} />
-                </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-                <SelectItem value="__none__">None (use default form)</SelectItem>
-                {forms.map((form) => (
-                    <SelectItem key={form._id} value={form._id}>
-                        {form.name}
-                    </SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
-    )
+    } as CombinedValues
 }

@@ -5,6 +5,7 @@ import {
     Target, Users, TrendingUp, Zap, Shield, Award,
     // Communication & Social
     Mail, Phone, Send, Share2, MessageCircle, Bell,
+    Youtube, Github, Linkedin, Twitter, Facebook, Instagram, Dribbble, Globe, Link, ExternalLink,
     // Business & Finance
     Briefcase, DollarSign, TrendingDown, PieChart, BarChart3, LineChart,
     // Design & Creative
@@ -25,7 +26,10 @@ import {
     ShoppingCart, ShoppingBag, CreditCard, Tag, Package, Gift,
     // Media & Entertainment
     Video, Music, Headphones, Camera, Film, Mic,
-    type LucideIcon
+    type LucideIcon,
+    Pin,
+    LocationEdit,
+    MapPin
 } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -35,6 +39,7 @@ const iconMap: Record<string, LucideIcon> = {
     Target, Users, TrendingUp, Zap, Shield, Award,
     // Communication & Social
     Mail, Phone, Send, Share2, MessageCircle, Bell,
+    Youtube, Github, Linkedin, Twitter, Facebook, Instagram, Dribbble, Globe, Link, ExternalLink,
     // Business & Finance
     Briefcase, DollarSign, TrendingDown, PieChart, BarChart3, LineChart,
     // Design & Creative
@@ -55,6 +60,8 @@ const iconMap: Record<string, LucideIcon> = {
     ShoppingCart, ShoppingBag, CreditCard, Tag, Package, Gift,
     // Media & Entertainment
     Video, Music, Headphones, Camera, Film, Mic,
+
+    MapPin
 };
 
 /**

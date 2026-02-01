@@ -9,6 +9,8 @@ export default async function BlogPageContentPage() {
         getFormOptions()
     ]);
 
+
+
     const pageContent = draft || published;
     const hasDraft = !!draft;
     const draftUpdatedAt = draft?._updatedAt || null;
@@ -19,6 +21,7 @@ export default async function BlogPageContentPage() {
             posts: pageContent.blogList?.posts || [],
         },
         cta: pageContent.cta || {},
+        seo: pageContent.seo || {}
     } : undefined;
 
     return (

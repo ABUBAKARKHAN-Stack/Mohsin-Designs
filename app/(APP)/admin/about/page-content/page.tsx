@@ -1,4 +1,5 @@
 import { getAboutPageContentForAdmin, getAboutPageDraft } from "@/app/actions/aboutPageContent";
+import { getServiceOptions } from "@/app/actions/landingPageContent";
 import { getGlobalSectionsForAdmin, getGlobalSectionsDraft } from "@/app/actions/globalSections";
 import { AboutPageContentForm } from "@/components/admin/form/AboutPageContentForm";
 
@@ -13,6 +14,7 @@ export default async function AboutPageContentPage() {
 
     const globalDraft = await getGlobalSectionsDraft();
     const globalPublished = await getGlobalSectionsForAdmin();
+    const services = await getServiceOptions();
 
     const pageContent = draft || published;
     const globalContent = globalDraft || globalPublished;
@@ -34,6 +36,7 @@ export default async function AboutPageContentPage() {
                 initialData={initialData as any}
                 hasDraft={hasDraft}
                 draftUpdatedAt={draftUpdatedAt}
+                services={services}
             />
         </div>
     );

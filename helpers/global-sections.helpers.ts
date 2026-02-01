@@ -1,120 +1,139 @@
 import { sanityFetch } from "@/sanity/lib/live";
 
-export async function getGlobalSections(lang: string) {
+export async function getGlobalSections() {
   const query = `*[_type == "globalSections" && _id == "globalSections"][0]{
     stats {
+      since {
+        value,
+        label
+      },
       projectsDelivered {
         value,
-        "label": label.${lang},
+        label,
         suffix
       },
       yearsExperience {
         value,
-        "label": label.${lang},
+        label,
         suffix
       },
       clientSatisfaction {
         value,
-        "label": label.${lang},
+        label,
         suffix
       }
     },
     servicesPreview {
       sectionHeading {
-        "eyebrow": eyebrow.${lang},
-        "title": title.${lang},
-        "description": description.${lang}
-      }
+        eyebrow,
+        title,
+        description
+      },
+      featuredServices[]-> {
+        _id,
+        title,
+        "slug": slug.current,
+        description,
+         "heroImage": {
+      "alt":heroImage.heroImageAlt,
+      "source": heroImage.asset._ref
+    },
+    "items": items[],
+  
+      },
+      buttonText,
+      buttonUrl
     },
     whyChooseUs {
       sectionHeading {
-        "eyebrow": eyebrow.${lang},
-        "title": title.${lang},
-        "description": description.${lang}
+        eyebrow,
+        title,
+        description
       },
       benefits[] {
         _key,
-        "title": title.${lang},
-        "description": description.${lang},
+        title,
+        description,
         iconName
       }
     },
     ourApproach {
       sectionHeading {
-        "eyebrow": eyebrow.${lang},
-        "title": title.${lang},
-        "description": description.${lang}
+        eyebrow,
+        title,
+        description
       },
       steps[] {
         _key,
-        "title": title.${lang},
-        "description": description.${lang},
+        title,
+        description,
         featured,
         iconName
       }
     },
     industriesWeServe {
       sectionHeading {
-        "eyebrow": eyebrow.${lang},
-        "title": title.${lang},
-        "description": description.${lang}
+        eyebrow,
+        title,
+        description
       },
       industries[] {
         _key,
-        "name": name.${lang},
-        "description": description.${lang},
+        name,
+        description,
         iconName
       }
     },
     faqs {
       sectionHeading {
-        "eyebrow": eyebrow.${lang},
-        "title": title.${lang},
-        "description": description.${lang}
+        eyebrow,
+        title,
+        description
       },
       faqItems[] {
         _key,
-        "question": question.${lang},
-        "answer": answer.${lang}
+        question,
+        answer
       },
-      "buttonText": buttonText.${lang},
-      "buttonUrl": buttonUrl.${lang}
+      buttonText,
+      buttonUrl
     },
     leadership {
       sectionHeading {
-        "eyebrow": eyebrow.${lang},
-        "title": title.${lang},
-        "description": description.${lang}
+        eyebrow,
+        title,
+        description
       },
       founder {
-        "name": name.${lang},
-        "role": role.${lang},
-        image {
-          "url": asset->url,
-          "_id": asset->_id,
-          "altText": asset->altText.${lang}
+        name,
+        role,
+        "image": image.asset-> {
+          url,
+          _id,
+          altText
         },
         socialLinks[] {
           _key,
-          platform,
+          label,
+          iconName,
           url
         }
       },
       agencyStructure[] {
         _key,
-        "title": title.${lang},
-        "description": description.${lang},
+        title,
+        description,
         featured,
         iconName
       }
     },
     cta {
-      "badge": badge.${lang},
-      "heading": heading.${lang},
-      "description": description.${lang},
+      badge,
+      heading,
+      description,
       benefits[] {
         _key,
-        "text": text.${lang}
+        text
       },
       "formId": formId->_id
     }

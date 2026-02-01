@@ -14,6 +14,15 @@ export const globalSectionsType = defineType({
             type: 'object',
             fields: [
                 defineField({
+                    name: 'since',
+                    title: 'Since',
+                    type: 'object',
+                    fields: [
+                        defineField({ name: 'value', type: 'string' }),
+                        defineField({ name: 'label', type: 'localizedString' }),
+                    ]
+                }),
+                defineField({
                     name: 'projectsDelivered',
                     title: 'Projects Delivered',
                     type: 'object',
@@ -69,6 +78,25 @@ export const globalSectionsType = defineType({
                     title: 'Section Heading',
                     type: 'sectionHeading',
                     validation: Rule => Rule.required()
+                }),
+                defineField({
+                    name: 'featuredServices',
+                    title: 'Featured Services',
+                    type: 'array',
+                    description: 'Select services to display in the preview section (Max 8)',
+                    of: [{ type: 'reference', to: [{ type: 'service' }] }],
+                    validation: Rule => Rule.max(8)
+                }),
+                defineField({
+                    name: 'buttonText',
+                    title: 'CTA Button Text (Optional)',
+                    type: 'localizedString'
+                }),
+                defineField({
+                    name: 'buttonUrl',
+                    title: 'CTA Button URL (Optional)',
+                    type: 'localizedString',
+                    description: 'Enter a relative path (e.g., /services) or a full URL (e.g., https://example.com)'
                 })
             ]
         }),
@@ -298,7 +326,7 @@ export const globalSectionsType = defineType({
                     name: 'buttonUrl',
                     title: 'CTA Button URL (Optional)',
                     type: 'localizedString',
-                    description: 'Leave empty to use default /contact URL'
+                    description: 'Enter a relative path (e.g., /contact) or a full URL (e.g., https://example.com). Leave empty to use default /contact URL'
                 })
             ]
         }),
@@ -347,22 +375,22 @@ export const globalSectionsType = defineType({
                                 type: 'object',
                                 fields: [
                                     defineField({
-                                        name: 'platform',
-                                        title: 'Platform',
+                                        name: 'label',
+                                        title: 'Platform Label',
                                         type: 'string',
-                                        options: {
-                                            list: [
-                                                { title: 'LinkedIn', value: 'linkedin' },
-                                                { title: 'Twitter', value: 'twitter' },
-                                                { title: 'Email', value: 'email' }
-                                            ]
-                                        },
+                                        validation: Rule => Rule.required()
+                                    }),
+                                    defineField({
+                                        name: 'iconName',
+                                        title: 'Icon Name',
+                                        type: 'string',
                                         validation: Rule => Rule.required()
                                     }),
                                     defineField({
                                         name: 'url',
                                         title: 'URL',
-                                        type: 'url',
+                                        type: 'string',
+                                        description: 'Enter a relative path (e.g., /contact) or a full URL (e.g., https://example.com)',
                                         validation: Rule => Rule.required()
                                     })
                                 ],

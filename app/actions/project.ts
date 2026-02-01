@@ -8,8 +8,8 @@ export async function getDashboardProjects() {
     try {
         const query = `*[_type == "project"] | order(_updatedAt desc) {
             _id,
-            "title": title.en,
-            "description": description.en,
+            title,
+            description,
             "slug": slug.current,
             "mainImage": coalesce(mainImage.asset->url, mainImage.url, null),
             _updatedAt
@@ -103,21 +103,14 @@ export async function getProjectById(id: string) {
                     value,
                     label
                 }
-            }
+            },
+            seo
         }`
         const result = await adminClient.fetch(query, { id }, {
             perspective: "raw",
             useCdn: false
         })
 
-        if (result && result.tags) {
-            result.tags = {
-                en: Array.isArray(result.tags.en) ? result.tags.en.join(", ") : (result.tags.en || ""),
-                ur: Array.isArray(result.tags.ur) ? result.tags.ur.join(", ") : (result.tags.ur || ""),
-                es: Array.isArray(result.tags.es) ? result.tags.es.join(", ") : (result.tags.es || ""),
-                ar: Array.isArray(result.tags.ar) ? result.tags.ar.join(", ") : (result.tags.ar || "")
-            }
-        }
 
         return result
     } catch (error) {
@@ -139,12 +132,7 @@ export async function createProject(data: ProjectValues, id?: string) {
             },
             description: validated.description,
             category: validated.category,
-            tags: validated.tags ? {
-                en: validated.tags.en?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                ur: validated.tags.ur?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                es: validated.tags.es?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                ar: validated.tags.ar?.split(',').map(t => t.trim()).filter(Boolean) || []
-            } : undefined,
+            tags: validated.tags?.map(t => t.trim()).filter(Boolean),
             mainImage: validated.mainImage?._id ? {
                 _type: 'image',
                 asset: { _type: 'reference', _ref: validated.mainImage._id }
@@ -166,7 +154,8 @@ export async function createProject(data: ProjectValues, id?: string) {
                     value: res.value,
                     label: res.label
                 }))
-            } : undefined
+            } : undefined,
+            seo: validated.seo
         }
 
         if (id) {
@@ -198,12 +187,7 @@ export async function updateProject(id: string, data: ProjectValues) {
             },
             description: validated.description,
             category: validated.category,
-            tags: {
-                en: validated.tags.en?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                ur: validated.tags.ur?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                es: validated.tags.es?.split(',').map(t => t.trim()).filter(Boolean) || [],
-                ar: validated.tags.ar?.split(',').map(t => t.trim()).filter(Boolean) || []
-            },
+            tags: validated.tags?.map((t: string) => t.trim()).filter(Boolean),
             caseStudy: {
                 title: validated.caseStudy.title,
                 testimonial: validated.caseStudy.testimonial,
@@ -213,10 +197,10 @@ export async function updateProject(id: string, data: ProjectValues) {
                     value: res.value,
                     label: res.label
                 }))
-            }
+            },
+            seo: validated.seo
         }
 
-        // Handle images within the caseStudy object
         if (validated.caseStudy.beforeImage?._id) {
             toSet.caseStudy.beforeImage = {
                 _type: 'image',
@@ -281,3 +265,59 @@ export async function deleteProjects(ids: string[]) {
         return { success: false, error: error.message }
     }
 }
+
+export async function duplicateProject(id: string) {
+    try {
+        const sourceProject = await getProjectById(id)
+        if (!sourceProject) return { success: false, error: "Source project not found" }
+
+        const newDoc: any = {
+            _type: 'project',
+            title: sourceProject.title,
+            category: sourceProject.category,
+            description: sourceProject.description,
+            tags: sourceProject.tags,
+            mainImage: sourceProject.mainImage?._id ? {
+                _type: 'image',
+                asset: { _type: 'reference', _ref: sourceProject.mainImage._id }
+            } : undefined,
+            caseStudy: sourceProject.caseStudy ? {
+                title: sourceProject.caseStudy.title,
+                beforeImage: sourceProject.caseStudy.beforeImage?._id ? {
+                    _type: 'image',
+                    asset: { _type: 'reference', _ref: sourceProject.caseStudy.beforeImage._id }
+                } : undefined,
+                afterImage: sourceProject.caseStudy.afterImage?._id ? {
+                    _type: 'image',
+                    asset: { _type: 'reference', _ref: sourceProject.caseStudy.afterImage._id }
+                } : undefined,
+                testimonial: sourceProject.caseStudy.testimonial,
+                results: sourceProject.caseStudy.results?.map((res: any) => ({
+                    _key: Math.random().toString(36).substring(2, 9),
+                    icon: res.icon,
+                    value: res.value,
+                    label: res.label
+                }))
+            } : undefined,
+            seo: sourceProject.seo
+        }
+
+        if (typeof newDoc.title === 'string') {
+            newDoc.title = `${newDoc.title} (Copy)`
+        } else if (newDoc.title && typeof newDoc.title === 'object') {
+            Object.keys(newDoc.title).forEach(lang => {
+                if (typeof newDoc.title[lang] === 'string') {
+                    newDoc.title[lang] = `${newDoc.title[lang]} (Copy)`
+                }
+            })
+        }
+
+        const result = await adminClient.create(newDoc)
+        revalidatePath('/admin/portfolio')
+        return { success: true, id: result._id }
+    } catch (error: any) {
+        console.error("Failed to duplicate project:", error)
+        return { success: false, error: error.message || "Failed to duplicate project" }
+    }
+}
+

@@ -30,21 +30,8 @@ export async function updateServiceCta(data: ServiceCtaValues) {
             ctaButtonText: validatedFields.ctaButtonText,
         }
 
-        // Only add URL if it has content
         if (validatedFields.ctaButtonUrl) {
-            // Cleanup empty strings
-            const cleanUrl: any = {};
-            let hasUrl = false;
-            (['en', 'ur', 'es', 'ar'] as const).forEach(lang => {
-                if (validatedFields.ctaButtonUrl?.[lang]) {
-                    cleanUrl[lang] = validatedFields.ctaButtonUrl[lang];
-                    hasUrl = true;
-                }
-            });
-
-            if (hasUrl) {
-                updateData.ctaButtonUrl = cleanUrl;
-            }
+            updateData.ctaButtonUrl = validatedFields.ctaButtonUrl;
         }
 
         await adminClient.createOrReplace(updateData)

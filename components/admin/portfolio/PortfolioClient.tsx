@@ -20,10 +20,10 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Plus, Trash2, Eye, Edit as EditIcon, Search, Loader2, Calendar, LayoutGrid } from "lucide-react"
+import { Plus, Trash2, Eye, Edit as EditIcon, Search, Loader2, Calendar, LayoutGrid, Copy } from "lucide-react"
 import Link from "next/link"
 import { useState, useMemo } from "react"
-import { deleteProject, deleteProjects } from "@/app/actions/project"
+import { deleteProject, deleteProjects, duplicateProject } from "@/app/actions/project"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
@@ -52,6 +52,7 @@ export function PortfolioClient({ projects }: PortfolioClientProps) {
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedIds, setSelectedIds] = useState<string[]>([])
     const [isBulkDeleting, setIsBulkDeleting] = useState(false)
+    const [isDuplicating, setIsDuplicating] = useState<string | null>(null)
     const router = useRouter()
 
     const filteredProjects = useMemo(() => {
@@ -98,6 +99,25 @@ export function PortfolioClient({ projects }: PortfolioClientProps) {
             errorToast("An unexpected error occurred during bulk deletion.")
         } finally {
             setIsBulkDeleting(false)
+        }
+    }
+
+    async function handleDuplicate(id: string) {
+        setIsDuplicating(id)
+        try {
+            const result = await duplicateProject(id)
+            if (result.success) {
+                successToast("Project duplicated successfully!")
+                router.push(`/admin/portfolio/edit/${result.id}`)
+                router.refresh()
+            } else {
+                errorToast(`Error: ${result.error}`)
+            }
+        } catch (error) {
+            console.error(error)
+            errorToast("An unexpected error occurred during duplication.")
+        } finally {
+            setIsDuplicating(null)
         }
     }
 
@@ -265,6 +285,21 @@ export function PortfolioClient({ projects }: PortfolioClientProps) {
                                                 <Link href={`/admin/portfolio/edit/${project._id}`}>
                                                     <EditIcon className="h-4 w-4" />
                                                 </Link>
+                                            </Button>
+
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 "
+                                                onClick={() => handleDuplicate(project._id)}
+                                                disabled={isDuplicating === project._id}
+                                                title="Duplicate Project"
+                                            >
+                                                {isDuplicating === project._id ? (
+                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    <Copy className="h-4 w-4" />
+                                                )}
                                             </Button>
 
                                             <AlertDialog>

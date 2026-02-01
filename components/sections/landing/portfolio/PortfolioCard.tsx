@@ -1,15 +1,18 @@
 import { cn } from "@/lib/utils";
+import { urlFor } from "@/sanity/lib/image";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
 type Props = {
     project: {
-        id: number;
         title: string;
+        slug: string;
         category: string;
-        image: string;
-        slug: string
+        mainImage: {
+            source: string;
+            alt: string;
+        };
     };
 };
 
@@ -21,14 +24,14 @@ const PortfolioCard = ({ project }: Props) => {
             className="relative h-84 min-w-[90vw] w-full min-[30rem]:min-w-120  cursor-pointer"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            href={project.slug}
+            href={`/portfolio/${project.slug}`}
         >
             <div className="relative h-full overflow-hidden rounded-sm ">
 
                 {/* Image */}
                 <Image
-                    src={project.image}
-                    alt={project.title}
+                    src={urlFor(project.mainImage.source).url()}
+                    alt={project.mainImage.alt || project.title}
                     fill
                     className="object-cover transition-transform duration-500"
                     loading="eager"

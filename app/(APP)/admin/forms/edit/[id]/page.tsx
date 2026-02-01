@@ -36,8 +36,9 @@ export default function EditFormPage() {
         name: "",
         description: "",
         fields: [] as FormField[],
-        submitButtonText: { en: "Submit", ur: "", es: "", ar: "" },
-        successMessage: { en: "Thank you! We'll get back to you soon.", ur: "", es: "", ar: "" }
+        submitButtonText: "Submit",
+        successMessage: "Thank you! We'll get back to you soon.",
+        redirectUrl: ""
     });
 
     useEffect(() => {
@@ -49,8 +50,9 @@ export default function EditFormPage() {
                         name: result.data.name || "",
                         description: result.data.description || "",
                         fields: result.data.fields || [],
-                        submitButtonText: result.data.submitButtonText || { en: "Submit", ur: "", es: "", ar: "" },
-                        successMessage: result.data.successMessage || { en: "Thank you! We'll get back to you soon.", ur: "", es: "", ar: "" }
+                        submitButtonText: result.data.submitButtonText || "Submit",
+                        successMessage: result.data.successMessage || "Thank you! We'll get back to you soon.",
+                        redirectUrl: result.data.redirectUrl || ""
                     });
                 } else {
                     errorToast(result.error || "Failed to fetch form");
@@ -200,6 +202,8 @@ export default function EditFormPage() {
                         onSubmitButtonTextChange={(submitButtonText) => setFormData({ ...formData, submitButtonText })}
                         successMessage={formData.successMessage}
                         onSuccessMessageChange={(successMessage) => setFormData({ ...formData, successMessage })}
+                        redirectUrl={formData.redirectUrl}
+                        onRedirectUrlChange={(redirectUrl) => setFormData({ ...formData, redirectUrl })}
                     />
 
                     <div className="flex justify-end gap-4">

@@ -29,7 +29,7 @@ export const postType = defineType({
       name: 'slug',
       type: 'slug',
       options: {
-        source: 'title.en',
+        source: 'title',
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -50,10 +50,10 @@ export const postType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'location',
-      type: 'reference',
-      to: { type: 'location' },
-      title: 'Location',
+      name: 'locations',
+      type: 'array',
+      title: 'Locations',
+      of: [defineArrayMember({ type: 'reference', to: { type: 'location' } })],
     }),
     defineField({
       name: 'service',
@@ -86,20 +86,20 @@ export const postType = defineType({
     }),
     defineField({
       name: 'body',
-      type: 'object',
+      type: 'blockContent',
       title: 'Body Content',
       validation: (Rule) => Rule.required(),
-      fields: [
-        defineField({ name: 'en', type: 'blockContent', title: 'English' }),
-        defineField({ name: 'ur', type: 'blockContent', title: 'Urdu' }),
-        defineField({ name: 'es', type: 'blockContent', title: 'Spanish' }),
-        defineField({ name: 'ar', type: 'blockContent', title: 'Arabic' }),
-      ]
+    }),
+    defineField({
+      name: 'seo',
+      title: 'SEO Settings',
+      type: 'seo',
+      description: 'Custom SEO settings for this post'
     }),
   ],
   preview: {
     select: {
-      title: 'title.en',
+      title: 'title',
       author: 'author',
       media: 'mainImage',
     },

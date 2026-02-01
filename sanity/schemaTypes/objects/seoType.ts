@@ -16,18 +16,20 @@ export const seoType = defineType({
       title: 'Meta Description',
     }),
     defineField({
-      name: 'schema',
-      type: 'text',
-      title: 'Schema Markup',
+      name: 'focusKeyword',
+      type: 'localizedString',
+      title: 'Focus Keyword',
     }),
     defineField({
-      name: 'keywords',
+      name: 'relatedKeywords',
+      type: 'localizedArray',
+      title: 'Related Keywords',
+    }),
+    defineField({
+      name: 'schemas',
       type: 'array',
-      title: 'Keywords',
-      of: [{ type: 'localizedString' }],
-      options: {
-        layout: 'tags',
-      },
+      title: 'Schema Markups (JSON-LD)',
+      of: [{ type: 'text', options: { rows: 5 } }],
     }),
   ],
 })

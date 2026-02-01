@@ -18,20 +18,28 @@ export type LandingPageContentData = {
             url: string;
             variant: 'primary' | 'secondary';
         }>;
-    };
-    servicesPreview?: {
-        sectionHeading?: {
-            eyebrow?: string;
-            title?: string;
-            description?: string;
-        };
-    };
+        featuredServices?: Array<{
+            title: string;
+            slug: string;
+        }>;
+    }
     portfolioPreview?: {
-        sectionHeading?: {
+        sectionHeading: {
             eyebrow?: string;
             title?: string;
             description?: string;
         };
+         featuredProjects: Array<{
+            title: string,
+            slug: string,
+            category: string,
+            mainImage: {
+                source: string,
+                alt: string
+            }
+        }>;
+        buttonText?: string;
+        buttonUrl?: string;
     };
     aboutPreview?: {
         sectionHeading: {
@@ -44,35 +52,7 @@ export type LandingPageContentData = {
         ctaText?: string;
         ctaUrl?: string;
     };
-    stats?: {
-        projectsDelivered?: {
-            value: string;
-            label: string;
-            suffix: string;
-        };
-        yearsExperience?: {
-            value: string;
-            label: string;
-            suffix: string;
-        };
-        clientSatisfaction?: {
-            value: string;
-            label: string;
-            suffix: string;
-        };
-    };
-    whyChooseUs?: {
-        sectionHeading?: {
-            eyebrow?: string;
-            title?: string;
-            description?: string;
-        };
-        benefits?: Array<{
-            title: string;
-            description: string;
-            iconName: string;
-        }>;
-    };
+    
     faqs?: {
         sectionHeading?: {
             eyebrow?: string;
@@ -105,25 +85,34 @@ export type LandingPageContentData = {
             };
         }>;
     };
-    ourApproach?: {
-        sectionHeading?: {
-            eyebrow?: string;
-            title?: string;
-            description?: string;
-        };
-        steps?: Array<{
-            title: string;
-            description: string;
-            featured?: boolean;
-            iconName: string;
-        }>;
-    };
+    
     caseStudiesPreview?: {
         sectionHeading?: {
             eyebrow?: string;
             title?: string;
             description?: string;
         };
+        featuredCaseStudies?: Array<{
+            title: string;
+            slug: string;
+            category: string;
+            beforeImage: {
+                _id: string;
+                altText: string;
+            };
+            afterImage: {
+                _id: string;
+                altText: string;
+            };
+            testimonial: string;
+            results: Array<{
+                icon: string;
+                label: string;
+                value: string;
+            }>;
+        }>;
+        buttonText: string;
+        buttonUrl: string;
     };
     areasWeServe?: {
         sectionHeading?: {
@@ -139,43 +128,7 @@ export type LandingPageContentData = {
             flag: string;
         }>;
     };
-    industriesWeServe?: {
-        sectionHeading?: {
-            eyebrow?: string;
-            title?: string;
-            description?: string;
-        };
-        industries?: Array<{
-            name: string;
-            description: string;
-            iconName: string;
-        }>;
-    };
-    leadership?: {
-        sectionHeading?: {
-            eyebrow?: string;
-            title?: string;
-            description?: string;
-        };
-        founder?: {
-            name: string;
-            role: string;
-            image?: {
-                _id: string;
-                url: string;
-            };
-            socialLinks?: Array<{
-                platform: string;
-                url: string;
-            }>;
-        };
-        agencyStructure?: Array<{
-            title: string;
-            description: string;
-            featured?: boolean;
-            iconName: string;
-        }>;
-    };
+    
     testimonials?: {
         sectionHeading?: {
             eyebrow?: string;
@@ -193,19 +146,32 @@ export type LandingPageContentData = {
             };
         }>;
     };
-    cta?: {
-        badge?: string;
-        heading?: string;
-        description?: string;
-        benefits?: Array<{
-            text: string;
+    
+    blogPreview?: {
+        sectionHeading?: {
+            eyebrow?: string;
+            title?: string;
+            description?: string;
+        };
+        featuredBlogs?: Array<{
+            title: string;
+            description: string;
+            slug: string;
+            mainImage: {
+                source: string;
+                alt: string;
+            };
+            categories: string[];
+            publishedAt: string;
+            readTime: number;
         }>;
-        formId?: string;
+        buttonText?: string;
+        buttonUrl?: string;
     };
 };
 
 type LandingPageContentContextType = {
-    landingPageContent: LandingPageContentData | null;
+    landingPageContent: LandingPageContentData;
 };
 
 const LandingPageContentContext = createContext<LandingPageContentContextType | null>(null);
@@ -215,7 +181,7 @@ export const LandingPageContentProvider = ({
     landingPageContent
 }: {
     children: ReactNode;
-    landingPageContent: LandingPageContentData | null;
+    landingPageContent: LandingPageContentData ;
 }) => {
     return (
         <LandingPageContentContext.Provider value={{ landingPageContent }}>

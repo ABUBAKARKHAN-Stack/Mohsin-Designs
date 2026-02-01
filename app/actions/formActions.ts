@@ -2,7 +2,7 @@
 
 import { adminClient } from "@/sanity/lib/admin-client"
 
-export async function createForm(formData:any) {
+export async function createForm(formData: any) {
     try {
         if (!formData.name) {
             return { success: false, error: "Form name is required" };
@@ -57,7 +57,8 @@ export async function getForms() {
             description,
             fields,
             submitButtonText,
-            successMessage
+            successMessage,
+            redirectUrl
         }`);
         return { success: true, data: forms };
     } catch (error: any) {
@@ -75,7 +76,8 @@ export async function getForm(id: string) {
             description,
             fields,
             submitButtonText,
-            successMessage
+            successMessage,
+            redirectUrl
         }`, { id });
 
         if (!form) {
@@ -89,7 +91,7 @@ export async function getForm(id: string) {
     }
 }
 
-export async function submitDynamicForm(formId: string, formData: Record<string, any>, lang: string = 'en') {
+export async function submitDynamicForm(formId: string, formData: Record<string, any>) {
     try {
         // Fetch the form configuration to validate against
         const formResult = await getForm(formId);
@@ -102,7 +104,7 @@ export async function submitDynamicForm(formId: string, formData: Record<string,
         // Basic validation: check required fields
         for (const field of form.fields) {
             if (field.required && !formData[field.fieldName]) {
-                const label = field.label[lang as keyof typeof field.label] || field.label.en || field.fieldName;
+                const label = field.label || field.fieldName;
                 return {
                     success: false,
                     error: `${label} is required`
@@ -121,7 +123,8 @@ export async function submitDynamicForm(formId: string, formData: Record<string,
 
         return {
             success: true,
-            message: form.successMessage?.[lang as keyof typeof form.successMessage] || form.successMessage?.en || "Thank you! We'll get back to you soon."
+            message: form.successMessage || "Thank you! We'll get back to you soon.",
+            redirectUrl: form.redirectUrl
         };
     } catch (error: any) {
         console.error("Error submitting form:", error);

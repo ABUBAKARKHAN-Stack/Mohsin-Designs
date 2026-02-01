@@ -1,38 +1,23 @@
 import { z } from "zod";
-import { localizedStringSchema, requiredLocalizedStringSchema, strictMultiLanguageSchema } from "./common";
 
 // Define the base schema first for recursion
 const baseMenuItemSchema = z.object({
     _key: z.string().optional(),
-    label: requiredLocalizedStringSchema,
-    description: strictMultiLanguageSchema.optional().nullable(),
+    label: z.string().min(1, "Label is required"),
+    description: z.string().optional().nullable(),
     type: z.enum(['reference', 'custom', 'header']),
     reference: z.object({
         _type: z.string().optional().default('reference'),
         _ref: z.string().optional().nullable(),
     }).optional().nullable(),
-    url: localizedStringSchema.optional().nullable(),
+    url: z.string().optional().nullable(),
 }).superRefine((data, ctx) => {
-    if (data.type === 'custom') {
-        if (!data.url || Object.values(data.url).filter(v => typeof v === 'string').every(v => !v || v.trim() === "")) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: "URL is required for custom links",
-                path: ['url'],
-            });
-        } else {
-            // Also validate all individual languages for custom URL
-            ['en', 'ur', 'es', 'ar'].forEach((lang) => {
-                const val = (data.url as any)?.[lang];
-                if (!val || val.trim() === "") {
-                    ctx.addIssue({
-                        code: z.ZodIssueCode.custom,
-                        message: `${lang.toUpperCase()} is required for custom URLs`,
-                        path: ['url', lang],
-                    });
-                }
-            });
-        }
+    if (data.type === 'custom' && (!data.url || data.url.trim() === "")) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "URL is required for custom links",
+            path: ['url'],
+        });
     }
     if (data.type === 'reference' && !data.reference?._ref) {
         ctx.addIssue({

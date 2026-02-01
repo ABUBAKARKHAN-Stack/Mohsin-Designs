@@ -4,66 +4,66 @@ import { BlogPageContentData } from "@/types/blog.types";
 
 export const BLOG_PAGE_CONTENT_QUERY = defineQuery(`*[_type == "blogPageContent"][0] {
   "hero": {
-    "title": hero.title[$lang],
-    "subtitle": hero.subtitle[$lang],
-    "description": hero.description[$lang]
+    "title": hero.title,
+    "subtitle": hero.subtitle,
+    "description": hero.description
   },
   "blogList": {
     "posts": blogList.posts[]->{
       _id,
-      "title": title[$lang],
+      "title": title,
       "slug": slug.current,
-      "description": description[$lang],
-      "categories": categories[]->title[$lang],
+      "description": description,
+      "categories": categories[]->title,
       author,
       "date": _createdAt,
       "image": mainImage.asset->{
         _id,
         url,
-        "altText": altText[$lang]
+        "altText": altText
       },
       "readTime": readTime,
-      "tags": tags[$lang],
+      "tags": tags,
       "featured": featured,
     }
   },
   "cta": {
     "sectionHeading": {
-      "eyebrow": cta.sectionHeading.eyebrow[$lang],
-      "title": cta.sectionHeading.title[$lang],
-      "description": cta.sectionHeading.description[$lang]
+      "eyebrow": cta.sectionHeading.eyebrow,
+      "title": cta.sectionHeading.title,
+      "description": cta.sectionHeading.description
     },
     "form": cta.formReference->{
       _id,
       name,
-      "submitButtonText": submitButtonText[$lang],
-      "successMessage": successMessage[$lang],
+      "submitButtonText": submitButtonText,
+      "successMessage": successMessage,
       fields[]{
         fieldType,
         fieldName,
-        "label": label[$lang],
-        "placeholder": placeholder[$lang],
+        "label": label,
+        "placeholder": placeholder,
         required,
         validation,
         options[]{
-          "label": label[$lang],
+          "label": label,
           value
         }
       }
     }
-  }
+  },
+  seo
 }`);
 
-export async function getBlogPageContent(lang: string) {
-    try {
-        const { data } = await sanityFetch({
-            query: BLOG_PAGE_CONTENT_QUERY,
-            params: { lang },
-            perspective: "published"
-        });
-        return data as BlogPageContentData;
-    } catch (error) {
-        console.error("Failed to fetch blog page content:", error);
-        return null;
-    }
+export async function getBlogPageContent() {
+  try {
+    const { data } = await sanityFetch({
+      query: BLOG_PAGE_CONTENT_QUERY,
+      perspective: "published"
+    });
+    return data as BlogPageContentData;
+  } catch (error) {
+    console.error("Failed to fetch blog page content:", error);
+    return null;
+  }
 }

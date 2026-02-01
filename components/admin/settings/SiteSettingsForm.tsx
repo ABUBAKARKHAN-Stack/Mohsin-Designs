@@ -16,82 +16,73 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LocalizedInput } from "@/components/admin/form/LocalizedInput"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { FormInput } from "@/components/admin/form/FormInput"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ImageUpload } from "@/components/admin/form/ImageUpload"
 import { Spinner } from "@/components/ui/spinner"
-import { SEOKeywordsInput } from "@/components/admin/form/SEOKeywordsInput"
+import { CommaKeywordsInput } from "@/components/admin/form/CommaKeywordsInput"
+import { SchemaListInput } from "@/components/admin/form/SchemaListInput"
 import { updateSiteSettings } from "@/app/actions/siteSettings"
 import { errorToast, successToast } from "@/lib/toastNotifications"
-import { Save, Globe, Info, Mail, Share2, Scale, AlertCircle, Languages, Menu as MenuIcon, ExternalLink } from "lucide-react"
-import { useEffect } from "react"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+import { Save, Globe, Info, Mail, Share2, Scale, AlertCircle, Menu as MenuIcon, ExternalLink, Plus, Trash2 } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
+import { IconSelect } from "@/components/admin/form/IconSelect"
 
 interface SiteSettingsFormProps {
     initialData?: SiteSettingsValues
     menus: any[]
 }
 
-const hasLangError = (error: any, lang: string): boolean => {
-    if (!error) return false;
-
-    // If it's a localized error object (has language sub-keys)
-    // We check if the specific language has an error
-    const isLocalized = error.en || error.ur || error.es || error.ar;
-    if (isLocalized) {
-        return !!error[lang];
-    }
-
-    // If it's a direct field error (has message/type, e.g. email, phone, logo)
-    if (error.message || error.type) return true;
-
-    // Recurse for nested objects (like seo, contact)
-    if (typeof error === 'object') {
-        return Object.values(error).some(child => hasLangError(child, lang));
-    }
-    return false;
-}
-
 export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSettingsFormProps) {
     const [isLoading, setIsLoading] = useState(false)
-    const [selectedLang, setSelectedLang] = useState("en")
 
     const form = useForm<SiteSettingsValues>({
         resolver: zodResolver(siteSettingsSchema) as any,
         defaultValues: initialData || {
-            siteName: { en: "", ur: "", es: "", ar: "" },
-            tagline: { en: "", ur: "", es: "", ar: "" },
+            siteName: "",
+            tagline: "",
             logo: undefined as any,
             favicon: undefined as any,
             seo: {
-                metaTitle: { en: "", ur: "", es: "", ar: "" },
-                metaDescription: { en: "", ur: "", es: "", ar: "" },
-                keywords: [],
-                schema: ""
+                metaTitle: "",
+                metaDescription: "",
+                focusKeyword: "",
+                relatedKeywords: [],
+                schemas: [""]
             },
-            social: { facebook: "", twitter: "", linkedin: "", instagram: "" },
-            contact: { email: "", phone: "", address: { en: "", ur: "", es: "", ar: "" } },
-            footerText: { en: "", ur: "", es: "", ar: "" },
-            copyright: { en: "", ur: "", es: "", ar: "" },
-            headerMenu: { _type: 'reference', _ref: "" },
             footerMenu: { _type: 'reference', _ref: "" },
-        } as SiteSettingsValues,
+            footerText: "",
+            copyright: "",
+            contactInfo: [],
+            socialLinks: [],
+            footerCTA: {
+                eyebrow: "",
+                headingPrefix: "",
+                headingHighlight: "",
+                buttonText: "",
+                buttonUrl: "/contact"
+            }
+        } as unknown as SiteSettingsValues,
+    })
+
+    const { fields: contactFields, append: appendContact, remove: removeContact } = useFieldArray({
+        control: form.control,
+        name: "contactInfo"
+    })
+
+    const { fields: socialFields, append: appendSocial, remove: removeSocial } = useFieldArray({
+        control: form.control,
+        name: "socialLinks"
     })
 
     const [menus] = useState<any[]>(initialMenus || [])
 
 
+
     const formControl = form.control as any
 
-    async function onSubmit(values: SiteSettingsValues) {        
-
+    async function onSubmit(values: SiteSettingsValues) {
         setIsLoading(true)
         try {
             const result = await updateSiteSettings(values)
@@ -108,17 +99,14 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
     }
 
     const formErrors = form.formState.errors;
-
-    // Check for form errors to show a global message if needed
     const hasErrors = Object.keys(formErrors).length > 0
 
-    // Tab-specific error detection
     const tabErrors = {
         branding: !!(formErrors.siteName || formErrors.tagline || formErrors.logo || formErrors.favicon),
         seo: !!formErrors.seo,
-        contact: !!formErrors.contact,
-        social: !!formErrors.social,
-        footer: !!(formErrors.footerText || formErrors.copyright),
+        contact: !!formErrors.contactInfo,
+        social: !!formErrors.socialLinks,
+        footer: !!(formErrors.footerText || formErrors.copyright || formErrors.footerCTA),
         menu: !!(formErrors.headerMenu || formErrors.footerMenu),
     }
 
@@ -131,42 +119,11 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                         <p className="text-muted-foreground text-xs sm:text-sm">Manage global configurations for your website.</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-lg border">
-                            <div className="flex items-center gap-1.5 px-2 text-xs font-medium text-muted-foreground border-r pr-2 shadow-sm">
-                                <Languages className="h-3.5 w-3.5" />
-                                <span>Language</span>
-                            </div>
-                            <Select value={selectedLang} onValueChange={setSelectedLang}>
-                                <SelectTrigger className="h-8 border-none bg-transparent shadow-none focus:ring-0 min-w-[110px]">
-                                    <SelectValue placeholder="Language" />
-                                </SelectTrigger>
-                                <SelectContent align="end">
-                                    <SelectItem value="en">English (EN)</SelectItem>
-                                    <SelectItem value="ur">Urdu (UR)</SelectItem>
-                                    <SelectItem value="es">Spanish (ES)</SelectItem>
-                                    <SelectItem value="ar">Arabic (AR)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
                         {hasErrors && (
-                            <div className="flex flex-col items-end gap-1">
-                                <div className="flex items-center gap-2 text-destructive text-xs font-semibold px-3 py-1 bg-destructive/10 rounded-full border border-destructive/20 animate-in fade-in slide-in-from-right-2">
-                                    <AlertCircle className="h-3 w-3" />
-                                    <span className="hidden sm:inline">Missing required info</span>
-                                    <span className="sm:hidden">Missing info</span>
-                                </div>
-                                <div className="text-[10px] text-destructive italic max-w-[200px] text-right hidden sm:block">
-                                    Check {selectedLang.toUpperCase()}: {
-                                        Object.entries(formErrors)
-                                            .filter(([_, error]) => hasLangError(error, selectedLang))
-                                            .map(([key, _]) => {
-                                                if (key === 'siteName') return 'Site Name';
-                                                if (key === 'footerText') return 'Footer Text';
-                                                return key.charAt(0).toUpperCase() + key.slice(1);
-                                            })
-                                            .join(", ")
-                                    }
-                                </div>
+                            <div className="flex items-center gap-2 text-destructive text-xs font-semibold px-3 py-1 bg-destructive/10 rounded-full border border-destructive/20 animate-in fade-in slide-in-from-right-2">
+                                <AlertCircle className="h-3 w-3" />
+                                <span className="hidden sm:inline">Missing required info</span>
+                                <span className="sm:hidden">Missing info</span>
                             </div>
                         )}
                         <Button type="submit" disabled={isLoading} className="w-full sm:w-auto min-w-[120px] h-9 sm:h-10 text-sm sm:text-base">
@@ -224,7 +181,7 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                             value="footer"
                             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border h-10 px-4 relative"
                         >
-                            <Scale className="h-4 w-4 mr-2 hidden sm:inline" /> Footer
+                            <Scale className="h-4 w-4 mr-2 hidden sm:inline" /> Footer Settings
                             {tabErrors.footer && <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full animate-pulse" />}
                         </TabsTrigger>
                     </TabsList>
@@ -235,16 +192,14 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Site Identity</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="siteName" label="Site Name" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="tagline" label="Tagline" activeLang={selectedLang} />
+                                <FormInput control={formControl} name="siteName" label="Site Name" />
+                                <FormInput control={formControl} name="tagline" label="Tagline" />
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <ImageUpload
                                         value={form.watch('logo') as any}
                                         label="Site Logo"
                                         onChange={(asset) => {
-                                            console.log(asset);
-                                            
                                             if (!asset) {
                                                 form.setValue('logo', null as any)
                                                 return
@@ -289,22 +244,11 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Default SEO Settings</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <LocalizedInput control={formControl} name="seo.metaTitle" label="Default Meta Title" activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="seo.metaDescription" label="Default Meta Description" isTextarea activeLang={selectedLang} />
-                                <SEOKeywordsInput control={formControl} name="seo.keywords" label="Global Keywords" externalActiveLang={selectedLang} />
-                                <FormField
-                                    control={formControl}
-                                    name="seo.schema"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Global Schema Markup (JSON-LD)</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} value={field.value || ""} placeholder='{"@type": "Organization", ...}' />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <FormInput control={formControl} name="seo.metaTitle" label="Default Meta Title" />
+                                <FormInput control={formControl} name="seo.metaDescription" label="Default Meta Description" isTextarea />
+                                <FormInput control={formControl} name="seo.focusKeyword" label="Focus Keyword" />
+                                <CommaKeywordsInput name="seo.relatedKeywords" label="Related Keywords" />
+                                <SchemaListInput name="seo.schemas" label="Default Schema Markups (JSON-LD)" />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -315,35 +259,52 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Contact Information</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        control={formControl}
-                                        name="contact.email"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Support Email</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="hello@mohsinaijaz.com" />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={formControl}
-                                        name="contact.phone"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Phone Number</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="+1 (234) 567-890" />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+                                <div className="flex items-center justify-between mb-4">
+                                    <p className="text-sm text-muted-foreground">Manage your contact details like email, phone, and office hours.</p>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => appendContact({ label: "", value: "", icon: "" })}
+                                    >
+                                        <Plus className="h-4 w-4 mr-2" /> Add Contact Item
+                                    </Button>
                                 </div>
-                                <LocalizedInput control={formControl} name="contact.address" label="Office Address" isTextarea activeLang={selectedLang} />
+
+                                <div className="space-y-4">
+                                    {contactFields.map((field, index) => (
+                                        <div key={field.id} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg relative items-end">
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="absolute -top-2 -right-2 h-6 w-6 bg-background border rounded-full text-destructive shadow-sm"
+                                                onClick={() => removeContact(index)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                            <FormInput
+                                                control={formControl}
+                                                name={`contactInfo.${index}.label`}
+                                                label="Heading"
+                                                placeholder="e.g. Support Email"
+                                            />
+                                            <FormInput
+                                                control={formControl}
+                                                name={`contactInfo.${index}.value`}
+                                                label="Value"
+                                                placeholder="e.g. info@example.com"
+                                            />
+                                            <FormField
+                                                control={formControl}
+                                                name={`contactInfo.${index}.icon`}
+                                                render={({ field }) => (
+                                                    <IconSelect field={field} type="social" label="Icon" />
+                                                )}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -354,60 +315,52 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Social Media Profiles</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        control={formControl}
-                                        name="social.facebook"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Facebook URL</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="https://facebook.com/..." />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={formControl}
-                                        name="social.twitter"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Twitter (X) URL</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="https://twitter.com/..." />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={formControl}
-                                        name="social.linkedin"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>LinkedIn URL</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="https://linkedin.com/in/..." />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={formControl}
-                                        name="social.instagram"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Instagram URL</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="https://instagram.com/..." />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+                                <div className="flex items-center justify-between mb-4">
+                                    <p className="text-sm text-muted-foreground">Manage your presence on social media platforms.</p>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => appendSocial({ label: "", icon: "", url: "" })}
+                                    >
+                                        <Plus className="h-4 w-4 mr-2" /> Add Social Link
+                                    </Button>
+                                </div>
 
+                                <div className="space-y-4">
+                                    {socialFields.map((field, index) => (
+                                        <div key={field.id} className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 border rounded-lg relative items-end">
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="absolute -top-2 -right-2 h-6 w-6 bg-background border rounded-full text-destructive shadow-sm"
+                                                onClick={() => removeSocial(index)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                            <FormInput
+                                                control={formControl}
+                                                name={`socialLinks.${index}.label`}
+                                                label="Platform Name"
+                                                placeholder="e.g. YouTube"
+                                            />
+                                            <FormInput
+                                                control={formControl}
+                                                name={`socialLinks.${index}.url`}
+                                                label="Profile URL"
+                                                placeholder="https://..."
+                                            />
+                                            <FormField
+                                                control={formControl}
+                                                name={`socialLinks.${index}.icon`}
+                                                render={({ field }) => (
+                                                    <IconSelect field={field} type="social" label="Icon" />
+                                                )}
+                                            />
+
+                                        </div>
+                                    ))}
                                 </div>
                             </CardContent>
                         </Card>
@@ -419,8 +372,51 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                 <CardTitle>Footer & Legal</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <LocalizedInput control={formControl} name="footerText" label="Footer About Text" isTextarea activeLang={selectedLang} />
-                                <LocalizedInput control={formControl} name="copyright" label="Copyright Notice" activeLang={selectedLang} />
+                                <FormInput control={formControl} name="footerText" label="Footer About Text" isTextarea />
+                                <FormInput control={formControl} name="copyright" label="Copyright Notice" />
+                            </CardContent>
+                        </Card>
+                        
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Footer Call to Action</CardTitle>
+                                <CardDescription>Customize the big CTA section shown above the footer.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <FormInput
+                                    control={formControl}
+                                    name="footerCTA.eyebrow"
+                                    label="Eyebrow Text"
+                                    placeholder="e.g. Have a project in mind?"
+                                />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <FormInput
+                                        control={formControl}
+                                        name="footerCTA.headingPrefix"
+                                        label="Heading Prefix"
+                                        placeholder="e.g. Let's work"
+                                    />
+                                    <FormInput
+                                        control={formControl}
+                                        name="footerCTA.headingHighlight"
+                                        label="Heading Highlight (Stroked)"
+                                        placeholder="e.g. together"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+                                    <FormInput
+                                        control={formControl}
+                                        name="footerCTA.buttonText"
+                                        label="Button Text"
+                                        placeholder="e.g. Start a Project"
+                                    />
+                                    <FormInput
+                                        control={formControl}
+                                        name="footerCTA.buttonUrl"
+                                        label="Button URL"
+                                        placeholder="/contact"
+                                    />
+                                </div>
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -505,9 +501,9 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                                         )}
                                     />
                                 </div>
-
                             </CardContent>
                         </Card>
+
                     </TabsContent>
                 </Tabs>
             </form>

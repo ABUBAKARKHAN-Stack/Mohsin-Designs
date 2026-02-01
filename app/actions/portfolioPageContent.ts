@@ -14,6 +14,10 @@ export async function getPortfolioPageContentForAdmin() {
             portfolioList {
                 ...,
                 "projects": projects[]._ref
+            },
+            cta {
+                ...,
+                "formReference": formReference._ref
             }
         }`
         const { data } = await sanityFetch({ query })
@@ -38,8 +42,13 @@ export async function getFormOptions() {
 export async function getPortfolioPageDraft() {
     try {
         const draft = await adminClient.getDocument(`drafts.${PORTFOLIO_PAGE_CONTENT_ID}`)
-        if (draft && draft.portfolioList && Array.isArray(draft.portfolioList.projects)) {
-            draft.portfolioList.projects = draft.portfolioList.projects.map((p: any) => p._ref || p)
+        if (draft) {
+            if (draft.portfolioList && Array.isArray(draft.portfolioList.projects)) {
+                draft.portfolioList.projects = draft.portfolioList.projects.map((p: any) => p._ref || p)
+            }
+            if (draft.cta && draft.cta.formReference) {
+                draft.cta.formReference = draft.cta.formReference._ref || draft.cta.formReference
+            }
         }
         return draft
     } catch (error: any) {
@@ -71,6 +80,7 @@ export async function updatePortfolioPageContent(data: PortfolioPageContentValue
                     _ref: validatedFields.cta.formReference
                 } : undefined
             } : undefined,
+            seo: validatedFields.seo
         }
 
         await adminClient.createOrReplace(updateData)
@@ -99,6 +109,13 @@ export async function savePortfolioPageDraft(data: Partial<PortfolioPageContentV
             }))
         }
 
+        if (data.cta?.formReference) {
+            updateData.cta.formReference = {
+                _type: 'reference',
+                _ref: data.cta.formReference
+            }
+        }
+
         await adminClient.createOrReplace(updateData)
         return { success: true }
     } catch (error: any) {
@@ -120,7 +137,7 @@ export async function discardPortfolioPageDraft() {
 
 export async function getPortfolioFormOptions() {
     try {
-        const query = `*[_type == "project"] { _id, "title": title.en }`
+        const query = `*[_type == "project"] { _id, title }`
         const projects = await adminClient.fetch(query)
         return projects || []
     } catch (error) {

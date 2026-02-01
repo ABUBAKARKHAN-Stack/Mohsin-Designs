@@ -21,6 +21,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
     const { lightWeightServices } = useServices()
     const { settings } = useSiteSettings()
 
+    
     //* Helper to resolve dynamic URLs
     const resolveUrl = (item: any) => {
         if (item.type === 'custom') return item.url || '#';
@@ -41,6 +42,8 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
             type: 'custom'
         })) : []
     })) as any[]
+
+    const email = settings?.contact.filter(item => item.label.toLowerCase().includes('email'))[0]?.value || contactInfo.mail
 
     return (
         <AnimatePresence>
@@ -83,7 +86,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                             </MagneticButton>
                         </div>
                     </motion.div>
-                  
+
 
                     {/* Navigation */}
                     <nav className="flex flex-col items-center gap-6">
@@ -189,14 +192,14 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                                     hover:text-[#ffd11a]
                                 "
                             >
-                              Start a Project
+                                Start a Project
                             </Link>
                         </motion.div>
                     </nav>
 
                     {/* Footer */}
                     <motion.a
-                        href={`mailto:${contactInfo.mail}`}
+                        href={`mailto:${email}`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
@@ -211,7 +214,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                             hover:text-[#ffd11a]
                         "
                     >
-                        {settings?.contact.email || contactInfo.mail}
+                        {email}
                     </motion.a>
                 </motion.div>
             )}

@@ -98,7 +98,7 @@ export const contactPageContentType = defineType({
                             ],
                             preview: {
                                 select: {
-                                    question: "question.en",
+                                    question: "question",
                                 },
                                 prepare({ question }) {
                                     return {

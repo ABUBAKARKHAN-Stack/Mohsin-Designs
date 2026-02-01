@@ -1,7 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowUpRight, Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react"
+import { ArrowUpRight, Send, CheckCircle } from "lucide-react"
+import { getIconByName } from "@/lib/icon-mapper"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -12,13 +13,13 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import SectionHeading from "@/components/ui/section-heading"
 import { submitDynamicForm } from "@/app/actions/formActions"
 import { errorToast, successToast } from "@/lib/toastNotifications"
+import { useSiteSettings } from "@/context/SiteSettingsContext"
 
 interface ContactClientProps {
     pageData: any
-    siteSettings: any
 }
 
-export default function ContactClient({ pageData, siteSettings }: ContactClientProps) {
+export default function ContactClient({ pageData }: ContactClientProps) {
     const [loading, setLoading] = useState(false)
     const [submitted, setSubmitted] = useState(false)
     const [errors, setErrors] = useState<Record<string, string>>({})
@@ -30,32 +31,10 @@ export default function ContactClient({ pageData, siteSettings }: ContactClientP
     const faqs = pageData?.faqs || {}
     const faqItems = faqs?.faqItems || []
 
-    const contact = siteSettings?.contact || {}
-    const social = siteSettings?.social || {}
+    const { settings } = useSiteSettings()
+    const contact = settings?.contact || []
+    const social = settings?.social || []
 
-    const contactInfo = [
-        {
-            icon: Mail,
-            label: "Email",
-            value: contact.email || "hello@studio.agency",
-            href: contact.email ? `mailto:${contact.email}` : "mailto:hello@studio.agency",
-            color: "group-hover:bg-accent/20",
-        },
-        {
-            icon: Phone,
-            label: "Phone",
-            value: contact.phone || "+1 (555) 123-4567",
-            href: contact.phone ? `tel:${contact.phone.replace(/\s+/g, '')}` : "tel:+15551234567",
-            color: "group-hover:bg-accent/20",
-        },
-        {
-            icon: MapPin,
-            label: "Location",
-            value: contact.address || "New York, NY",
-            href: null,
-            color: "group-hover:bg-accent/20",
-        },
-    ]
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
@@ -103,14 +82,13 @@ export default function ContactClient({ pageData, siteSettings }: ContactClientP
         }
     }
 
-    const t = (val: any) => val || ""
 
     return (
         <PageWrapper>
             <PageHero
-                title={t(hero.title) || "Let's talk"}
-                subtitle={t(hero.subtitle) || "Get in Touch"}
-                description={t(hero.description) || "Have a project in mind? We'd love to hear about it."}
+                title={hero.title || "Let's talk"}
+                subtitle={hero.subtitle || "Get in Touch"}
+                description={hero.description || "Have a project in mind? We'd love to hear about it."}
                 breadcrumbs={[{ label: "Contact" }]}
             />
 
@@ -124,47 +102,54 @@ export default function ContactClient({ pageData, siteSettings }: ContactClientP
                             transition={{ delay: 0.2 }}
                         >
                             <div className="space-y-6">
-                                {contactInfo.map((item, index) => (
-                                    <motion.div
-                                        key={item.label}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.3 + index * 0.1 }}
-                                        className="group"
-                                    >
-                                        {item.href ? (
-                                            <a
-                                                href={item.href}
-                                                className="flex items-center gap-5 p-6 border border-border hover:border-accent/50 transition-all duration-300 bg-card"
-                                            >
-                                                <div className={`w-14 h-14 rounded-full border border-border flex items-center justify-center ${item.color} transition-all duration-300`}>
-                                                    <item.icon className="w-6 h-6 text-muted-foreground group-hover:text-accent transition-colors" />
+                                {contact.map((item, index) => {
+                                    const Icon = getIconByName(item.icon);
+                                    const isEmail = item.label.toLowerCase().includes('email') || item.value.toLowerCase().includes('@');
+                                    const isPhone = item.label.toLowerCase().includes('phone') || /^\+?[\d\s-]{10,}$/.test(item.value);
+                                    const href = isEmail ? `mailto:${item.value}` : isPhone ? `tel:${item.value}` : null;
+
+                                    return (
+                                        <motion.div
+                                            key={index}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.3 + index * 0.1 }}
+                                            className="group"
+                                        >
+                                            {href ? (
+                                                <a
+                                                    href={href}
+                                                    className="flex items-center gap-5 p-6 border border-border hover:border-accent/50 transition-all duration-300 bg-card"
+                                                >
+                                                    <div className="w-14 h-14 rounded-full border border-border flex items-center justify-center bg-accent/5 group-hover:bg-accent/10 transition-all duration-300">
+                                                        <Icon className="w-6 h-6 text-muted-foreground group-hover:text-accent transition-colors" />
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-xs uppercase tracking-widest text-muted-foreground block mb-1">
+                                                            {item.label}
+                                                        </span>
+                                                        <p className="text-xl font-medium group-hover:text-accent transition-colors">
+                                                            {item.value}
+                                                        </p>
+                                                    </div>
+                                                    <ArrowUpRight className="ml-auto h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity text-accent" />
+                                                </a>
+                                            ) : (
+                                                <div className="flex items-center gap-5 p-6 border border-border bg-card">
+                                                    <div className="w-14 h-14 rounded-full border border-border flex items-center justify-center bg-accent/5 transition-all duration-300">
+                                                        <Icon className="w-6 h-6 text-muted-foreground group-hover:text-accent transition-colors" />
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-xs uppercase tracking-widest text-muted-foreground block mb-1">
+                                                            {item.label}
+                                                        </span>
+                                                        <p className="text-xl font-medium">{item.value}</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <span className="text-xs uppercase tracking-widest text-muted-foreground block mb-1">
-                                                        {item.label}
-                                                    </span>
-                                                    <p className="text-xl font-medium group-hover:text-accent transition-colors">
-                                                        {item.value}
-                                                    </p>
-                                                </div>
-                                                <ArrowUpRight className="ml-auto h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity text-accent" />
-                                            </a>
-                                        ) : (
-                                            <div className="flex items-center gap-5 p-6 border border-border bg-card">
-                                                <div className={`w-14 h-14 rounded-full border border-border flex items-center justify-center ${item.color} transition-all duration-300`}>
-                                                    <item.icon className="w-6 h-6 text-muted-foreground group-hover:text-accent transition-colors" />
-                                                </div>
-                                                <div>
-                                                    <span className="text-xs uppercase tracking-widest text-muted-foreground block mb-1">
-                                                        {item.label}
-                                                    </span>
-                                                    <p className="text-xl font-medium">{item.value}</p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </motion.div>
-                                ))}
+                                            )}
+                                        </motion.div>
+                                    );
+                                })}
                             </div>
                         </motion.div>
 
@@ -186,7 +171,7 @@ export default function ContactClient({ pageData, siteSettings }: ContactClientP
                                     <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mb-6">
                                         <CheckCircle className="w-10 h-10 text-accent" />
                                     </div>
-                                    <h3 className="text-3xl font-display font-bold mb-4">{t(formConfig?.successMessage) || "Thank you!"}</h3>
+                                    <h3 className="text-3xl font-display font-bold mb-4">{formConfig?.successMessage || "Thank you!"}</h3>
                                     <p className="text-muted-foreground mb-8 max-w-sm">
                                         Your message has been received. We'll get back to you soon.
                                     </p>
@@ -203,14 +188,14 @@ export default function ContactClient({ pageData, siteSettings }: ContactClientP
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
                                     <div className="mb-8">
-                                        <h3 className="text-2xl font-display font-bold mb-2">{t(contactForm.formHeading) || "Send us a message"}</h3>
-                                        <p className="text-muted-foreground">{t(contactForm.formDescription) || "Fill out the form below."}</p>
+                                        <h3 className="text-2xl font-display font-bold mb-2">{contactForm.formHeading || "Send us a message"}</h3>
+                                        <p className="text-muted-foreground">{contactForm.formDescription || "Fill out the form below."}</p>
                                     </div>
 
                                     {formConfig?.fields?.map((field: any) => (
                                         <div key={field.fieldName}>
                                             <label className="text-sm uppercase tracking-widest text-muted-foreground block mb-3">
-                                                {t(field.label)} {field.required && "*"}
+                                                {field.label} {field.required && "*"}
                                             </label>
                                             {field.fieldType === 'textarea' ? (
                                                 <Textarea
@@ -253,7 +238,7 @@ export default function ContactClient({ pageData, siteSettings }: ContactClientP
                                             </>
                                         ) : (
                                             <>
-                                                {t(formConfig?.submitButtonText) || "Send Message"}
+                                                {formConfig?.submitButtonText || "Send Message"}
                                                 <Send className="ml-2 h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                             </>
                                         )}
@@ -277,12 +262,12 @@ export default function ContactClient({ pageData, siteSettings }: ContactClientP
                                     className="lg:sticky lg:top-32"
                                 >
                                     <SectionHeading
-                                        eyebrow={t(faqs.sectionHeading?.eyebrow) || "FAQs"}
-                                        title={t(faqs.sectionHeading?.title) || "Frequently Asked Questions"}
+                                        eyebrow={faqs.sectionHeading?.eyebrow || "FAQs"}
+                                        title={faqs.sectionHeading?.title || "Frequently Asked Questions"}
                                         align="left"
                                     />
                                     <p className="text-muted-foreground mt-6 max-w-md">
-                                        {t(faqs.sectionHeading?.description) || "Everything you need to know about working with us."}
+                                        {faqs.sectionHeading?.description || "Everything you need to know about working with us."}
                                     </p>
                                 </motion.div>
 
@@ -306,10 +291,10 @@ export default function ContactClient({ pageData, siteSettings }: ContactClientP
                                                     className="border border-border bg-background px-6 data-[state=open]:bg-card"
                                                 >
                                                     <AccordionTrigger className="text-left font-display font-medium text-lg hover:text-accent hover:no-underline py-6">
-                                                        {t(faq.question)}
+                                                        {faq.question}
                                                     </AccordionTrigger>
                                                     <AccordionContent className="text-muted-foreground leading-relaxed pb-6">
-                                                        {t(faq.answer)}
+                                                        {faq.answer}
                                                     </AccordionContent>
                                                 </AccordionItem>
                                             </motion.div>

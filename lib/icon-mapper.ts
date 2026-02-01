@@ -26,7 +26,10 @@ import {
     ShoppingCart, ShoppingBag, CreditCard, Tag, Package, Gift,
     // Media & Entertainment
     Video, Music, Headphones, Camera, Film, Mic,
-    type LucideIcon
+    type LucideIcon,
+    Pin,
+    LocationEdit,
+    MapPin
 } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -57,6 +60,8 @@ const iconMap: Record<string, LucideIcon> = {
     ShoppingCart, ShoppingBag, CreditCard, Tag, Package, Gift,
     // Media & Entertainment
     Video, Music, Headphones, Camera, Film, Mic,
+
+    MapPin
 };
 
 /**

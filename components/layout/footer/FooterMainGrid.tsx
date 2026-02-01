@@ -1,6 +1,7 @@
 "use client"
 
-import { ArrowUpRight, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { getIconByName } from "@/lib/icon-mapper";
 import MagneticButton from "@/components/MagneticButton";
 import { navLinks } from "@/constants/navlinks.constants";
 import { cn } from "@/lib/utils";
@@ -23,21 +24,11 @@ const FooterMainGrid = () => {
         return '#';
     };
 
-    const footerNavItems = settings?.footerMenu?.items || [
-        ...navLinks,
-        { name: "FAQs", path: "/faq" },
-    ].map(item => ({
+    const footerNavItems = settings?.footerMenu?.items || navLinks.map(item => ({
         label: (item as any).name ? (item as any).name : (item as any).label,
         url: (item as any).path ? `/${(item as any).path}` : resolveUrl(item),
         type: 'custom'
     }))
-
-    const socialPlatforms = [
-        { label: "Facebook", key: "facebook" as const, icon: Facebook },
-        { label: "Twitter", key: "twitter" as const, icon: Twitter },
-        { label: "LinkedIn", key: "linkedin" as const, icon: Linkedin },
-        { label: "Instagram", key: "instagram" as const, icon: Instagram },
-    ];
 
     return (
         <div className="grid lg:grid-cols-4 grid-cols-1 gap-12 mb-16">
@@ -122,38 +113,47 @@ const FooterMainGrid = () => {
             <div>
                 <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Get in Touch</h4>
                 <ul className="space-y-4">
-                    <li>
-                        <a href={`mailto:${settings?.contact.email || "hello@mohsindesigns.com"}`} className="flex items-center gap-3 text-sm text-foreground/70 hover:text-accent transition-colors">
-                            <Mail className="w-4 h-4" />
-                            {settings?.contact.email || "hello@mohsindesigns.com"}
-                        </a>
-                    </li>
-                    <li>
-                        <a href={`tel:${settings?.contact.phone || "+15551234567"}`} className="flex items-center gap-3 text-sm text-foreground/70 hover:text-accent transition-colors">
-                            <Phone className="w-4 h-4" />
-                            {settings?.contact.phone || "+1 (555) 123-4567"}
-                        </a>
-                    </li>
-                    <li>
-                        <span className="flex items-center gap-3 text-sm text-foreground/70">
-                            <MapPin className="w-4 h-4" />
-                            {settings?.contact.address || "United States"}
-                        </span>
-                    </li>
+                    {settings?.contact && settings.contact.length > 0 ? (
+                        settings.contact.map((item, index) => {
+                            const Icon = getIconByName(item.icon);
+                            const isEmail = item.label.toLowerCase().includes('email') || item.value.toLowerCase().includes('@');
+                            const isPhone = item.label.toLowerCase().includes('phone') || /^\+?[\d\s-]{10,}$/.test(item.value);
+                            const href = isEmail ? `mailto:${item.value}` : isPhone ? `tel:${item.value}` : null;
+
+                            if (href) {
+                                return (
+                                    <li key={index}>
+                                        <a href={href} className="flex items-center gap-3 text-sm text-foreground/70 hover:text-accent transition-colors">
+                                            <Icon className="w-4 h-4" />
+                                            {item.value}
+                                        </a>
+                                    </li>
+                                )
+                            }
+
+                            return (
+                                <li key={index}>
+                                    <span className="flex items-center gap-3 text-sm text-foreground/70">
+                                        <Icon className="w-4 h-4" />
+                                        {item.value}
+                                    </span>
+                                </li>
+                            )
+                        })
+                    ) : (
+                        <p className="text-sm text-muted-foreground">No contact info available.</p>
+                    )}
                 </ul>
 
                 {/* Social */}
                 <div className="flex gap-4 mt-8 ">
-                    {socialPlatforms.map((platform) => {
-                        const Icon = platform.icon;
-                        const href = settings?.social?.[platform.key];
-
-                        if (!href) return null;
+                    {settings?.social?.map((platform, index) => {
+                        const Icon = getIconByName(platform.icon);
 
                         return (
-                            <MagneticButton key={platform.key} strength={0.2}>
+                            <MagneticButton key={index} strength={0.2}>
                                 <a
-                                    href={href}
+                                    href={platform.url}
                                     aria-label={platform.label}
                                     target="_blank"
                                     rel="noopener noreferrer"

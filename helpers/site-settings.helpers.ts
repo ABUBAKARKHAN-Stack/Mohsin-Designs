@@ -20,11 +20,15 @@ const SITE_SETTINGS_QUERY = `{
     "relatedKeywords": seo.relatedKeywords[],
     "schemas": seo.schemas
   },
-  "social": social,
-  "contact": {
-    "email": contact.email,
-    "phone": contact.phone,
-    "address": contact.address
+  "social": socialLinks[] {
+    label,
+    icon,
+    url
+  },
+  "contact": contactInfo[] {
+    label,
+    value,
+    icon
   },
   "footerText": footerText,
   "copyright": copyright,
@@ -102,6 +106,13 @@ const SITE_SETTINGS_QUERY = `{
         }
       }
     }
+  },
+  "footerCTA": {
+    "eyebrow": footerCTA.eyebrow,
+    "headingPrefix": footerCTA.headingPrefix,
+    "headingHighlight": footerCTA.headingHighlight,
+    "buttonText": footerCTA.buttonText,
+    "buttonUrl": footerCTA.buttonUrl
   }
 }`;
 
@@ -143,20 +154,26 @@ export type SiteSettingsData = {
     schemas?: string[];
   };
   social: {
-    facebook: string;
-    twitter: string;
-    linkedin: string;
-    instagram: string;
-  };
+    label: string;
+    icon: string;
+    url: string;
+  }[];
   contact: {
-    email: string;
-    phone: string;
-    address: string;
-  };
+    label: string;
+    value: string;
+    icon: string;
+  }[];
   footerText: string;
   copyright: string;
   headerMenu?: MenuData;
   footerMenu?: MenuData;
+  footerCTA?: {
+    eyebrow?: string;
+    headingPrefix?: string;
+    headingHighlight?: string;
+    buttonText?: string;
+    buttonUrl?: string;
+  };
 };
 
 export const getSiteSettings = async () => {
@@ -171,4 +188,4 @@ export const getSiteSettings = async () => {
     console.log("Sanity Error :: ", error);
     return null;
   }
-}
+};

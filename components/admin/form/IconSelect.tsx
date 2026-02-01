@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { getIconByName, getAllIconNames } from "@/lib/icon-mapper"
 import { ControllerRenderProps } from "react-hook-form"

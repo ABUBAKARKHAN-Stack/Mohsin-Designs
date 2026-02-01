@@ -1,7 +1,7 @@
-import { getContactPageContent } from "@/app/actions/contactPageContent";
 import { getSiteSettings } from "@/app/actions/siteSettings";
 import ContactClient from "./ContactClient";
 import { Metadata } from "next";
+import { getContactPageContent } from "@/helpers/contact-page-content";
 
 export async function generateMetadata(): Promise<Metadata> {
     const pageData = await getContactPageContent();
@@ -23,16 +23,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-    // Fetch data in parallel
-    const [pageData, siteSettings] = await Promise.all([
-        getContactPageContent(),
-        getSiteSettings()
-    ]);
+    const pageData = await getContactPageContent();
 
     return (
         <ContactClient
             pageData={pageData}
-            siteSettings={siteSettings}
         />
     );
 }

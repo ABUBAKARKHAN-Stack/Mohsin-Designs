@@ -17,7 +17,9 @@ export async function getSiteSettings() {
                 "url": asset->url
             },
             headerMenu,
-            footerMenu
+            footerMenu,
+            contactInfo,
+            socialLinks
         }`
 
         const { data } = await sanityFetch({ query })
@@ -38,12 +40,13 @@ export async function updateSiteSettings(data: SiteSettingsValues) {
             siteName: validatedFields.siteName,
             tagline: validatedFields.tagline,
             seo: validatedFields.seo,
-            social: validatedFields.social,
-            contact: validatedFields.contact,
-            footerText: validatedFields.footerText,
             copyright: validatedFields.copyright,
+            footerText: validatedFields.footerText,
             headerMenu: validatedFields.headerMenu,
             footerMenu: validatedFields.footerMenu,
+            contactInfo: validatedFields.contactInfo,
+            socialLinks: validatedFields.socialLinks,
+            footerCTA: validatedFields.footerCTA,
         }
 
         // Only update logo if we have a valid reference

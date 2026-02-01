@@ -58,7 +58,8 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
 
 
     return (
-        <section className="pb-16">
+        <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
+            
             <ContainerLayout>
                 {/* Categories */}
                 <motion.div

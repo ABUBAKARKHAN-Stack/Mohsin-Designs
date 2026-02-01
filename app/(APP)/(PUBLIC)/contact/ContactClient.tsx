@@ -92,7 +92,8 @@ export default function ContactClient({ pageData }: ContactClientProps) {
                 breadcrumbs={[{ label: "Contact" }]}
             />
 
-            <section className="pb-32">
+            <section className="lg:py-12.5 py-6.25 relative overflow-hidden"
+            >
                 <ContainerLayout>
                     <div className="grid lg:grid-cols-2 gap-20">
                         {/* Contact Info */}

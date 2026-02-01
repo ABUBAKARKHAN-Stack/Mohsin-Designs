@@ -1,14 +1,17 @@
 import { Metadata, ResolvingMetadata } from "next"
 import { notFound } from "next/navigation"
 import { getProject, getProjectSeo, getProjectSlugs } from "@/helpers/portfolio.helpers"
-import { PortfolioHero } from "@/components/portfolio/PortfolioHero"
-import { CaseStudyResults } from "@/components/portfolio/CaseStudyResults"
-import { BeforeAfter } from "@/components/portfolio/BeforeAfter"
 import { ContainerLayout, PageWrapper } from "@/components/layout"
 import { Quote } from "lucide-react"
 import { urlFor } from "@/sanity/lib/image"
 import { APP_NAME } from "@/constants/app.constants"
 import { JsonLd } from "@/components/SEO/JsonLd"
+import {
+    PortfolioPageHero,
+    CaseStudyResults,
+    BeforeAfter,
+    ProjectHeroImage
+} from "@/components/sections/portfolio/project-details"
 
 interface Props {
     params: Promise<{
@@ -110,15 +113,20 @@ export default async function PortfolioDetailsPage({ params }: Props) {
     }
 
     const { caseStudy } = project
+    
 
     return (
         <PageWrapper>
             <JsonLd schemas={project.seo.schemas} />
-            
-            <PortfolioHero
-                title={project.title}
-                category={project.category}
-                mainImage={project.mainImage}
+
+            <PortfolioPageHero
+                projectTitle={project.title}
+                projectDescription={project.description}
+
+            />
+
+            <ProjectHeroImage
+                heroImage={project.mainImage}
             />
 
             <ContainerLayout>

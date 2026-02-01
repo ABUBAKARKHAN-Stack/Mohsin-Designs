@@ -41,12 +41,12 @@ export default async function ContactPage() {
     const pageData = await getContactPageContent();    
 
     return (
-        <PageWrapper>
+        <>
             <JsonLd schemas={pageData.seo.schemas} />
             <ContactClient
                 pageData={pageData}
             />
-        </PageWrapper>
+        </>
     );
 }
 

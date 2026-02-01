@@ -9,9 +9,9 @@ const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug
   "category": category,
   "description": description,
   "tags": tags,
-  "mainImage": {
-    "url": mainImage.asset->url,
-    "alt": mainImage.alt
+  "mainImage": mainImage.asset->{
+    "source": _id,
+    "alt": altText
   },
   "caseStudy": {
     "title": caseStudy.title,

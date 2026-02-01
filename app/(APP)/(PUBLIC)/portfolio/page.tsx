@@ -1,5 +1,5 @@
 import { PageWrapper } from "@/components/layout";
-import { PortfolioPageHero, MainContent } from "@/components/sections/portfolio";
+import { PortfolioPageHero, MainContent } from "@/components/sections/portfolio/all-projects/";
 import { Metadata } from "next";
 import { getPortfolioPageContent } from "@/helpers/portfolio-page-content.helpers";
 import PageCTA from "@/components/sections/shared/PageCTA";

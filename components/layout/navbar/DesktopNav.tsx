@@ -61,7 +61,7 @@ const DesktopNav: FC<Props> = ({
             label: s.title,
             url: `/services/${s.slug}`,
             type: 'custom',
-            description: s.items.slice(0, 2).join(" ")
+            description: s.description
         })) : []
     })) as any[]
 

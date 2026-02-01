@@ -5,7 +5,6 @@ import { ArrowUpRight } from "lucide-react";
 import SectionHeading from "@/components/ui/section-heading";
 import Link from "next/link";
 import { ContainerLayout } from "@/components/layout";
-import { blogPosts } from "@/constants/blog.constants";
 import BlogCard from "@/components/cards/BlogCard";
 import { BlogData, SectionHeadingType } from "@/types/services.types";
 

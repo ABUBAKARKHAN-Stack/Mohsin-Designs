@@ -3,18 +3,16 @@
 import { ArrowUpRight } from "lucide-react";
 import { getIconByName } from "@/lib/icon-mapper";
 import MagneticButton from "@/components/MagneticButton";
-import { navLinks } from "@/constants/navlinks.constants";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Logo from "@/components/ui/logo";
-import { useServices } from "@/context/ServiceContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 const FooterMainGrid = () => {
-    const { lightWeightServices } = useServices()
+
     const { settings } = useSiteSettings()
 
-    // Helper to resolve dynamic URLs
+    //* Helper to resolve dynamic URLs
     const resolveUrl = (item: any) => {
         if (item.type === 'custom') return item.url || '#';
         if (item.type === 'reference' && item.reference) {
@@ -24,11 +22,6 @@ const FooterMainGrid = () => {
         return '#';
     };
 
-    const footerNavItems = settings?.footerMenu?.items || navLinks.map(item => ({
-        label: (item as any).name ? (item as any).name : (item as any).label,
-        url: (item as any).path ? `/${(item as any).path}` : resolveUrl(item),
-        type: 'custom'
-    }))
 
     return (
         <div className="grid lg:grid-cols-4 grid-cols-1 gap-12 mb-16">
@@ -44,9 +37,8 @@ const FooterMainGrid = () => {
                 </p>
             </div>
 
-            {/* Navigation */}
             {/* Dynamic Footer Menu Columns */}
-            {(settings?.footerMenu?.items && settings.footerMenu.items.length > 0) ? (
+            {(settings?.footerMenu?.items && settings.footerMenu.items.length > 0) && (
                 settings.footerMenu.items.map((column: any, colIndex: number) => (
                     <div key={column._key || colIndex}>
                         <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
@@ -71,42 +63,6 @@ const FooterMainGrid = () => {
                         </ul>
                     </div>
                 ))
-            ) : (
-                /* Fallback for when no Footer Menu is defined */
-                <>
-                    <div>
-                        <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Navigation</h4>
-                        <ul className="space-y-4">
-                            {footerNavItems.map((item, index) => (
-                                <li key={index}>
-                                    <Link
-                                        href={(item as any).url}
-                                        className="text-sm text-foreground/70 hover:text-accent transition-colors inline-flex items-center gap-2 group"
-                                    >
-                                        {item.label}
-                                        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Services</h4>
-                        <ul className="space-y-4">
-                            {lightWeightServices.map((item) => (
-                                <li key={item.slug}>
-                                    <Link
-                                        href={`/services/${item.slug}`}
-                                        className="text-sm text-foreground/70 hover:text-accent transition-colors inline-flex items-center gap-2 group"
-                                    >
-                                        {item.title}
-                                        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </>
             )}
 
             {/* Contact */}

@@ -4,13 +4,11 @@ import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
 import ThemeToggle from "@/components/ui/theme-toggle";
-import { navLinks } from "@/constants/navlinks.constants";
 import Link from "next/link";
 import ContainerLayout from "../ContainerLayout";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import {  usePathname } from "next/navigation";
 import Logo from "@/components/ui/logo";
-import { useServices } from "@/context/ServiceContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 type Props = {
@@ -39,7 +37,6 @@ const DesktopNav: FC<Props> = ({
         setOpenDropdown(null);
     }, [pathname]);
 
-    const { lightWeightServices } = useServices()
     const { settings } = useSiteSettings()
 
     // Helper to resolve dynamic URLs
@@ -52,18 +49,7 @@ const DesktopNav: FC<Props> = ({
         return '#';
     };
 
-    const menuItems = settings?.headerMenu?.items || navLinks.map(link => ({
-        label: link.name.toLowerCase().trim(),
-        url: `/${link.path}`,
-        type: 'custom',
-        hasDropdown: link.hasDropdown,
-        children: link.hasDropdown ? lightWeightServices.map(s => ({
-            label: s.title,
-            url: `/services/${s.slug}`,
-            type: 'custom',
-            description: s.description
-        })) : []
-    })) as any[]
+    const menuItems = settings?.headerMenu?.items as any[]
 
 
     return (

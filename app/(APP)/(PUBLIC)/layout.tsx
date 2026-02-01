@@ -4,13 +4,9 @@ import { AnimatePresence } from "framer-motion";
 import { ReactNode } from "react";
 import PublicProvider from "@/provider/PublicProvider";
 import { JsonLd } from "@/components/SEO/JsonLd";
-import { ServicesProvider } from "@/context/ServiceContext";
-import { getLightWeightServicesByLocale, getServicesByLocale } from "@/helpers/service.helpers";
 import { SanityLive } from "@/sanity/lib/live";
 import { getSiteSettings } from "@/helpers/site-settings.helpers";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
-import { AboutPageContentProvider } from "@/context/AboutPageContentContext";
-import { getAboutPageContent } from "@/helpers/about-page-content.helpers";
 import { GlobalContentProvider } from "@/context/GlobalContentContext";
 import { getGlobalSections } from "@/helpers/global-sections.helpers";
 import { Metadata } from "next";
@@ -129,19 +125,13 @@ export default async function PublicLayout({ children }: Props) {
 
 
     const [
-        servicesResult,
-        lightWeightServicesResult,
         siteSettingsResult,
         globalContentResult
     ] = await Promise.allSettled([
-        getServicesByLocale(),
-        getLightWeightServicesByLocale(),
         getSiteSettings(),
         getGlobalSections(),
     ])
 
-    const services = servicesResult.status === "fulfilled" ? servicesResult.value : [];
-    const lightWeightServices = lightWeightServicesResult.status === "fulfilled" ? lightWeightServicesResult.value : [];
     const siteSettings = siteSettingsResult.status === "fulfilled" ? siteSettingsResult.value : null;
     const globalContent = globalContentResult.status === "fulfilled" ? globalContentResult.value : null;
 
@@ -149,12 +139,12 @@ export default async function PublicLayout({ children }: Props) {
     return (
 
         <SiteSettingsProvider settings={siteSettings}>
-           
                 <GlobalContentProvider globalContent={globalContent}>
+
                     <JsonLd schemas={siteSettings?.seo?.schemas} />
                     <PublicProvider>
+                        
                         <div className="min-h-screen flex flex-col">
-                            <ServicesProvider services={services} lightWeightServices={lightWeightServices}>
                                 <SanityLive />
                                 <Navbar />
 
@@ -166,7 +156,6 @@ export default async function PublicLayout({ children }: Props) {
 
                                 <FloatingContactBadge />
                                 <Footer />
-                            </ServicesProvider>
                         </div>
                     </PublicProvider>
                 </GlobalContentProvider>

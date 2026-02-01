@@ -1,5 +1,5 @@
+import { getIconByName } from "@/lib/icon-mapper"
 import React from "react"
-import * as LucideIcons from "lucide-react"
 
 interface Result {
     icon: string
@@ -17,7 +17,7 @@ export const CaseStudyResults: React.FC<CaseStudyResultsProps> = ({ results }) =
     return (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 py-16 border-y border-border my-16">
             {results.map((result, index) => {
-                const IconComponent = (LucideIcons as any)[result.icon] || LucideIcons.TrendingUp
+                const IconComponent = getIconByName(result.icon)
                 return (
                     <div key={index} className="flex flex-col items-center text-center">
                         <div className="p-3 bg-accent/10 rounded-xl mb-4">

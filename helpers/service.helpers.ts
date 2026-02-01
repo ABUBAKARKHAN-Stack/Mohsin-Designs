@@ -201,35 +201,6 @@ const getServicesForSSG = async () => {
   }
 }
 
-const getServicesByLocale = async () => {
-  try {
-    const { data } = await sanityFetch({
-      query: `*[_type == "service"] ${SERVICE_QUERY}`,
-      perspective: "published"
-    })
-    const services = data as ServiceData[];
-    return services ?? []
-  } catch (error) {
-    console.log("Sanity Error :: ", error);
-    throw error;
-  }
-
-}
-
-const getLightWeightServicesByLocale = async () => {
-  try {
-    const { data } = await sanityFetch({
-      query: `*[_type == "service"] ${SERVICE_QUERY_LIGHT_WEIGHT}`,
-      perspective: "published"
-    })
-    const services = data as ServiceLightWeight[];
-    return services ?? []
-  } catch (error) {
-    console.log("Sanity Error :: ", error);
-    throw error;
-  }
-
-}
 
 const getService = async (
   slug: string
@@ -288,8 +259,6 @@ const getServicesCTA = async () => {
 
 export {
   getServicesForSSG,
-  getServicesByLocale,
-  getLightWeightServicesByLocale,
   getService,
   getServiceSeo,
   getServicesCTA

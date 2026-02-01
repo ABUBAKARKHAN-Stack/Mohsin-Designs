@@ -2,14 +2,11 @@
 
 import MagneticButton from '@/components/MagneticButton';
 import { APP_NAME } from '@/constants/app.constants';
-import { contactInfo } from '@/constants/contact-and-help.constants';
-import { navLinks } from '@/constants/navlinks.constants';
 import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { Dispatch, FC, SetStateAction } from 'react';
 import ThemeToggle from '@/components/ui/theme-toggle';
-import { useServices } from '@/context/ServiceContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 
 type Props = {
@@ -18,7 +15,6 @@ type Props = {
 };
 
 export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
-    const { lightWeightServices } = useServices()
     const { settings } = useSiteSettings()
 
     
@@ -32,18 +28,9 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
         return '#';
     };
 
-    const menuItems = settings?.headerMenu?.items || navLinks.map(link => ({
-        label: link.name.toLowerCase().trim(),
-        url: `/${link.path}`,
-        type: 'custom',
-        children: link.hasDropdown ? lightWeightServices.map(s => ({
-            label: s.title,
-            url: `/services/${s.slug}`,
-            type: 'custom'
-        })) : []
-    })) as any[]
+    const menuItems = settings?.headerMenu?.items as any[]
 
-    const email = settings?.contact.filter(item => item.label.toLowerCase().includes('email'))[0]?.value || contactInfo.mail
+    const email = settings?.contact.filter(item => item.label.toLowerCase().includes('email'))[0]?.value 
 
     return (
         <AnimatePresence>
@@ -172,7 +159,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 + navLinks.length * 0.08 }}
+                            transition={{ delay: 0.1 + menuItems.length * 0.08 }}
                         >
                             <Link
                                 href={`/contact`}

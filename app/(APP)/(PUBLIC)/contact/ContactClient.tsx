@@ -33,7 +33,6 @@ export default function ContactClient({ pageData }: ContactClientProps) {
 
     const { settings } = useSiteSettings()
     const contact = settings?.contact || []
-    const social = settings?.social || []
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -95,7 +94,7 @@ export default function ContactClient({ pageData }: ContactClientProps) {
             <section className="lg:py-12.5 py-6.25 relative overflow-hidden"
             >
                 <ContainerLayout>
-                    <div className="grid lg:grid-cols-2 gap-20">
+                    <div className="grid lg:grid-cols-2 gap-10 lg:gap-20">
                         {/* Contact Info */}
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
@@ -115,36 +114,36 @@ export default function ContactClient({ pageData }: ContactClientProps) {
                                             initial={{ opacity: 0, x: -20 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: 0.3 + index * 0.1 }}
-                                            className="group"
+                                            className="group w-full"
                                         >
                                             {href ? (
                                                 <a
                                                     href={href}
-                                                    className="flex items-center gap-5 p-6 border border-border hover:border-accent/50 transition-all duration-300 bg-card"
+                                                    className="flex flex-col w-full xsm:flex-row items-center gap-5 p-5 xsm:p-6 border border-border hover:border-accent/50 transition-all duration-300 bg-card text-center xsm:text-left"
                                                 >
-                                                    <div className="w-14 h-14 rounded-full border border-border flex items-center justify-center bg-accent/5 group-hover:bg-accent/10 transition-all duration-300">
+                                                    <div className="w-14 h-14 shrink-0 rounded-full border border-border flex items-center justify-center bg-accent/5 group-hover:bg-accent/10 transition-all duration-300">
                                                         <Icon className="w-6 h-6 text-muted-foreground group-hover:text-accent transition-colors" />
                                                     </div>
-                                                    <div>
-                                                        <span className="text-xs uppercase tracking-widest text-muted-foreground block mb-1">
+                                                    <div className="w-full">
+                                                        <span className="text-[10px] xsm:text-xs uppercase tracking-normal xsm:tracking-widest text-wrap text-muted-foreground block mb-1">
                                                             {item.label}
                                                         </span>
-                                                        <p className="text-xl font-medium group-hover:text-accent transition-colors">
+                                                        <p className="text-base xsm:text-xl font-medium group-hover:text-accent break-all xsm:wrap-break-word transition-colors">
                                                             {item.value}
                                                         </p>
                                                     </div>
-                                                    <ArrowUpRight className="ml-auto h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity text-accent" />
+                                                    <ArrowUpRight className="ml-auto h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity text-accent hidden xsm:block" />
                                                 </a>
                                             ) : (
-                                                <div className="flex items-center gap-5 p-6 border border-border bg-card">
+                                                <div className="flex flex-col w-full xsm:flex-row items-center gap-5 p-5 xsm:p-6 border border-border bg-card text-center xsm:text-left">
                                                     <div className="w-14 h-14 rounded-full border border-border flex items-center justify-center bg-accent/5 transition-all duration-300">
                                                         <Icon className="w-6 h-6 text-muted-foreground group-hover:text-accent transition-colors" />
                                                     </div>
-                                                    <div>
-                                                        <span className="text-xs uppercase tracking-widest text-muted-foreground block mb-1">
+                                                    <div className="w-full">
+                                                        <span className="text-[10px] xsm:text-xs uppercase tracking-normal xsm:tracking-widest text-muted-foreground block mb-1">
                                                             {item.label}
                                                         </span>
-                                                        <p className="text-xl font-medium">{item.value}</p>
+                                                        <p className="text-base xsm:text-xl font-medium break-all xsm:wrap-break-word">{item.value}</p>
                                                     </div>
                                                 </div>
                                             )}
@@ -159,7 +158,7 @@ export default function ContactClient({ pageData }: ContactClientProps) {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="bg-card p-8 md:p-12 border border-border relative overflow-hidden"
+                            className="bg-card p-4 sm:p-8 md:p-12 border border-border relative overflow-hidden"
                         >
                             <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-3xl" />
 
@@ -189,7 +188,7 @@ export default function ContactClient({ pageData }: ContactClientProps) {
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
                                     <div className="mb-8">
-                                        <h3 className="text-2xl font-display font-bold mb-2">{contactForm.formHeading || "Send us a message"}</h3>
+                                        <h3 className="text-xl sm:text-2xl font-display font-bold mb-2">{contactForm.formHeading || "Send us a message"}</h3>
                                         <p className="text-muted-foreground">{contactForm.formDescription || "Fill out the form below."}</p>
                                     </div>
 
@@ -254,7 +253,7 @@ export default function ContactClient({ pageData }: ContactClientProps) {
                 {faqItems.length > 0 && (
                     <section className="lg:py-12.5 py-6.25 bg-secondary/1 mt-32">
                         <ContainerLayout>
-                            <div className="grid lg:grid-cols-2 gap-16 items-start">
+                            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
                                 <motion.div
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}

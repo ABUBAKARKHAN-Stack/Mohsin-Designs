@@ -51,7 +51,7 @@ const FooterCTA = () => {
             </h2>
           </div>
 
-          <div className="flex flex-col items-center gap-4">
+          <div>
             {cta?.buttonText && (
               <span className="text-xs sr-only uppercase tracking-widest text-muted-foreground font-medium">
                 {cta.buttonText}

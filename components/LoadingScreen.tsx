@@ -100,7 +100,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
       >
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-4 sm:w-6 md:w-8 h-px bg-accent" />
-          <span className="text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-muted-foreground text-center">
+          <span className="text-[10px]  max-w-md sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-muted-foreground text-center">
             {settings?.tagline || "Creative Design Agency"}
           </span>
           <div className="w-4 sm:w-6 md:w-8 h-px bg-accent" />

@@ -177,7 +177,7 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
                             </h2>
                             <div className="flex flex-wrap items-center gap-2">
                                 <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-1">Quick Add:</span>
-                                {linkableContent.pages.filter(p => ["Home", "About", "Portfolio", "Blog", "Contact"].includes(p.title)).map(p => (
+                                {linkableContent.pages.filter(p => ["Home", "About", "Services", "Portfolio", "Blog", "Contact"].includes(p.title)).map(p => (
                                     <Button
                                         key={p._id}
                                         type="button"

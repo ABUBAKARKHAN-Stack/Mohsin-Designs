@@ -7,9 +7,11 @@ import ThemeToggle from "@/components/ui/theme-toggle";
 import Link from "next/link";
 import ContainerLayout from "../ContainerLayout";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import {  usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Logo from "@/components/ui/logo";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
+
+import { resolveUrl } from "@/lib/menu-utils";
 
 type Props = {
     isOpen: boolean
@@ -38,16 +40,6 @@ const DesktopNav: FC<Props> = ({
     }, [pathname]);
 
     const { settings } = useSiteSettings()
-
-    // Helper to resolve dynamic URLs
-    const resolveUrl = (item: any) => {
-        if (item.type === 'custom') return item.url || '#';
-        if (item.type === 'reference' && item.reference) {
-            if (item.reference._type === 'service') return `/services/${item.reference.slug}`;
-            return `/${item.reference.slug}`;
-        }
-        return '#';
-    };
 
     const menuItems = settings?.headerMenu?.items as any[]
 

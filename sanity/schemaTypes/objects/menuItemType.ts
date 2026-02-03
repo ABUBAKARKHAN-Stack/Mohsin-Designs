@@ -36,7 +36,16 @@ export const menuItemType = defineType({
             name: 'reference',
             title: 'Reference',
             type: 'reference',
-            to: [{ type: 'service' }, { type: 'page' }],
+            to: [
+                { type: 'service' },
+                { type: 'page' },
+                { type: 'landingPageContent' },
+                { type: 'aboutPageContent' },
+                { type: 'servicesPageContent' },
+                { type: 'portfolioPageContent' },
+                { type: 'blogPageContent' },
+                { type: 'contactPageContent' }
+            ],
             hidden: ({ parent }) => parent?.type !== 'reference'
         }),
         defineField({
@@ -55,18 +64,38 @@ export const menuItemType = defineType({
     ],
     preview: {
         select: {
-            title: 'label',
+            label: 'label',
             type: 'type',
+            refType: 'reference._type',
             serviceTitle: 'reference.title',
-            pageTitle: 'reference.title'
+            pageTitle: 'reference.title',
+            landingTitle: 'reference.title', // Fallback for various types
         },
-        prepare({ title, type, serviceTitle, pageTitle }) {
-            const subtitle = type === 'reference'
-                ? `Link to: ${serviceTitle || pageTitle || 'Unknown Reference'}`
-                : 'Custom URL';
+        prepare({ label, type, refType, serviceTitle, pageTitle }) {
+            let refInfo = 'Custom URL';
+
+            if (type === 'reference') {
+                const titles: Record<string, string> = {
+                    'landingPageContent': 'Home',
+                    'aboutPageContent': 'About',
+                    'servicesPageContent': 'Services',
+                    'portfolioPageContent': 'Portfolio',
+                    'blogPageContent': 'Blog',
+                    'contactPageContent': 'Contact'
+                };
+
+                const typeLabel = titles[refType] || refType || 'Unknown';
+                refInfo = `Link to: ${serviceTitle || pageTitle || typeLabel}`;
+            }
+
+            // Extract string from label if it's a localized object
+            const displayLabel = typeof label === 'object'
+                ? label.en || label.ar || label.ur || label.es || 'Untitled'
+                : label;
+
             return {
-                title: title || "Untitled Menu Item",
-                subtitle,
+                title: displayLabel || "Untitled Menu Item",
+                subtitle: refInfo,
                 icon: LinkIcon
             };
         }

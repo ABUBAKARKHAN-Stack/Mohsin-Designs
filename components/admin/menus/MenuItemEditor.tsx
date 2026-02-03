@@ -127,8 +127,8 @@ export function MenuItemEditor({
                             {location === 'footer' && depth === 0 ? 'Column Header' : `Level ${depth + 1}`}
                         </span>
                         <h4 className="font-bold text-sm tracking-tight text-foreground/80">
-                            {itemLabel || (location === 'footer' && depth === 0 ? "New Column" : "New Link")}
-                            {!isOpen && itemLabel && <span className="ml-2 text-xs font-normal text-muted-foreground/50 italic">(Click to edit)</span>}
+                            {(typeof itemLabel === 'object' ? itemLabel?.en || itemLabel?.ar || itemLabel?.ur || itemLabel?.es || "Untitled Link" : itemLabel) || (location === 'footer' && depth === 0 ? "New Column" : "New Link")}
+                            {!isOpen && itemLabel && typeof itemLabel === 'string' && <span className="ml-2 text-xs font-normal text-muted-foreground/50 italic">(Click to edit)</span>}
                         </h4>
                     </div>
                 </div>
@@ -256,6 +256,14 @@ export function MenuItemEditor({
                                                                 <div className="px-2 py-1.5 text-[10px] font-bold text-primary/60 uppercase tracking-widest bg-primary/5 rounded mb-1">Services</div>
                                                                 {linkableContent.services.map(s => (
                                                                     <SelectItem key={s._id} value={s._id} className="pl-6 text-xs">{s.title}</SelectItem>
+                                                                ))}
+                                                            </>
+                                                        )}
+                                                        {linkableContent.pages.length > 0 && (
+                                                            <>
+                                                                <div className="px-2 py-1.5 text-[10px] font-bold text-primary/60 uppercase tracking-widest bg-primary/5 rounded my-1">Pages</div>
+                                                                {linkableContent.pages.map(p => (
+                                                                    <SelectItem key={p._id} value={p._id} className="pl-6 text-xs">{p.title}</SelectItem>
                                                                 ))}
                                                             </>
                                                         )}

@@ -170,24 +170,48 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
                     </div>
 
                     <div className=" space-y-6">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <h2 className="text-xl font-bold flex items-center gap-2">
                                 Menu Items
                                 <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">{fields.length}</span>
                             </h2>
-                            <Button
-                                type="button"
-                                size="sm"
-                                onClick={() => append({
-                                    label: "",
-                                    description: "",
-                                    type: "reference",
-                                    children: []
-                                })}
-                                className="bg-primary hover:bg-primary/90"
-                            >
-                                <Plus className="h-4 w-4 mr-2" /> Add Top-level Item
-                            </Button>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-1">Quick Add:</span>
+                                {linkableContent.pages.filter(p => ["Home", "About", "Portfolio", "Blog", "Contact"].includes(p.title)).map(p => (
+                                    <Button
+                                        key={p._id}
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-7 text-[10px] px-2 rounded-full border-primary/20 hover:border-primary hover:bg-primary/5"
+                                        onClick={() => append({
+                                            label: p.title,
+                                            type: "reference",
+                                            reference: {
+                                                _type: "reference",
+                                                _ref: p._id
+                                            },
+                                            children: []
+                                        })}
+                                    >
+                                        <Plus className="h-3 w-3 mr-1" /> {p.title}
+                                    </Button>
+                                ))}
+                                <div className="h-6 w-px bg-border mx-2 hidden sm:block" />
+                                <Button
+                                    type="button"
+                                    size="sm"
+                                    onClick={() => append({
+                                        label: "",
+                                        description: "",
+                                        type: "reference",
+                                        children: []
+                                    })}
+                                    className="bg-primary hover:bg-primary/90"
+                                >
+                                    <Plus className="h-4 w-4 mr-2" /> Add Top-level Item
+                                </Button>
+                            </div>
                         </div>
 
                         <div className="space-y-4">

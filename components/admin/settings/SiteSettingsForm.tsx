@@ -14,7 +14,6 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FormInput } from "@/components/admin/form/FormInput"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

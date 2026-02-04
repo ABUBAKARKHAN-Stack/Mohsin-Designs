@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useFieldArray, Control, UseFormSetValue, useWatch } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
@@ -63,6 +63,29 @@ export function MenuItemEditor({
         control,
         name: `${fieldPath}.label`
     })
+
+    // Watch ALL items to check for existing references across the whole menu
+    const allItems = useWatch({
+        control,
+        name: "items"
+    })
+
+    const usedReferenceIds = useMemo(() => {
+        const ids = new Set<string>()
+        const extractIds = (items: any[]) => {
+            if (!items) return
+            items.forEach(item => {
+                if (item.type === 'reference' && item.reference?._ref) {
+                    ids.add(item.reference._ref)
+                }
+                if (item.children && item.children.length > 0) {
+                    extractIds(item.children)
+                }
+            })
+        }
+        extractIds(allItems)
+        return ids
+    }, [allItems])
 
     const hasError = !!errors?.[index]
     const [isOpen, setIsOpen] = useState(false)
@@ -291,11 +314,39 @@ export function MenuItemEditor({
                         </div>
                     </div>
 
-                    {fields.length > 0 && (
-                        <div className="space-y-4 pt-4 border-t">
+                    <div className="space-y-4 pt-4 border-t">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <h5 className="text-[10px] font-bold uppercase tracking-widest text-primary/60 flex items-center gap-2">
                                 <Hash className="h-3 w-3" /> Sub-menu Structure
                             </h5>
+
+                            <div className="flex flex-wrap items-center gap-1.5">
+                                <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mr-1">Quick Add:</span>
+                                {linkableContent.pages.filter(p => ["Home", "About", "Services", "Portfolio", "Blog", "Contact"].includes(p.title)).map(p => (
+                                    <Button
+                                        key={p._id}
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={usedReferenceIds.has(p._id)}
+                                        className="h-6 text-[9px] px-2 rounded-full border-primary/10 hover:border-primary/30 hover:bg-accent/5 hover:text-accent disabled:opacity-30 disabled:grayscale transition-all"
+                                        onClick={() => append({
+                                            label: p.title,
+                                            type: "reference",
+                                            reference: {
+                                                _type: "reference",
+                                                _ref: p._id
+                                            },
+                                            children: []
+                                        })}
+                                    >
+                                        <Plus className="h-2.5 w-2.5 mr-1" /> {p.title}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {fields.length > 0 ? (
                             <div className="space-y-3">
                                 {fields.map((child, childIndex) => (
                                     <MenuItemEditor
@@ -314,8 +365,12 @@ export function MenuItemEditor({
                                     />
                                 ))}
                             </div>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="py-8 border border-dashed rounded-lg bg-muted/20 text-center">
+                                <p className="text-[11px] text-muted-foreground italic">No sub-links yet. Use Quick Add or the Sub-link button to add items.</p>
+                            </div>
+                        )}
+                    </div>
                 </CardContent>
             )}
         </Card>

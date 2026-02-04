@@ -172,16 +172,15 @@ const DesktopNav: FC<Props> = ({
                         <div className="hidden lg:flex items-center gap-4">
                             <MagneticButton strength={0.25}>
                                 <Link
-                                    href={`/contact`}
+                                    href={settings?.footerCTA?.buttonUrl || "/contact"}
                                     data-cursor-text="Go"
                                     className="group inline-flex h-10 items-center gap-2 text-sm font-medium bg-foreground text-background px-6 py-3 hover:bg-accent hover:text-accent-foreground transition-all duration-300"
                                 >
-                                    Start a Project
+                                    {settings?.footerCTA?.buttonText || "Start a Project"}
                                     <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                 </Link>
                             </MagneticButton>
                             <ThemeToggle />
-
                         </div>
 
                         <div className="lg:hidden flex items-center gap-4">

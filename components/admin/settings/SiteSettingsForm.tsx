@@ -141,7 +141,7 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                 </div>
 
                 <Tabs defaultValue="branding" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 h-auto gap-2 bg-transparent p-0 mb-6">
+                    <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 2xl:grid-cols-6 h-auto gap-2 bg-transparent p-0 mb-6">
                         <TabsTrigger
                             value="branding"
                             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border h-10 px-4 relative"
@@ -181,7 +181,7 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                             value="footer"
                             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border h-10 px-4 relative"
                         >
-                            <Scale className="h-4 w-4 mr-2 hidden sm:inline" /> Footer Settings
+                            <Scale className="h-4 w-4 mr-2 hidden sm:inline" /> Header/Footer Settings
                             {tabErrors.footer && <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full animate-pulse" />}
                         </TabsTrigger>
                     </TabsList>
@@ -379,8 +379,8 @@ export function SiteSettingsForm({ initialData, menus: initialMenus }: SiteSetti
                         
                         <Card>
                             <CardHeader>
-                                <CardTitle>Footer Call to Action</CardTitle>
-                                <CardDescription>Customize the big CTA section shown above the footer.</CardDescription>
+                                <CardTitle>Call to Action</CardTitle>
+                                <CardDescription>Customize the big CTA section shown above the header and footer.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <FormInput

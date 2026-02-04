@@ -152,7 +152,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                             transition={{ delay: 0.1 + menuItems.length * 0.08 }}
                         >
                             <Link
-                                href={`/contact`}
+                                href={settings?.footerCTA?.buttonUrl || "/contact"}
                                 onClick={() => setIsOpen(false)}
                                 className="
                                     font-display
@@ -169,7 +169,7 @@ export const MobileMenu: FC<Props> = ({ isOpen, setIsOpen }) => {
                                     hover:text-[#ffd11a]
                                 "
                             >
-                                Start a Project
+                                {settings?.footerCTA?.buttonText || "Start a Project"}
                             </Link>
                         </motion.div>
                     </nav>

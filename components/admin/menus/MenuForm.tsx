@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { useForm, useFieldArray } from "react-hook-form"
+import { useState, useRef, useEffect, useMemo } from "react"
+import { useForm, useFieldArray, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { menuSchema, MenuValues } from "@/lib/validations/menu"
 import { Button } from "@/components/ui/button"
@@ -49,6 +49,28 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
         control: form.control,
         name: "items"
     })
+
+    const watchedItems = useWatch({
+        control: form.control,
+        name: "items"
+    })
+
+    const usedReferenceIds = useMemo(() => {
+        const ids = new Set<string>()
+        const extractIds = (items: any[]) => {
+            if (!items) return
+            items.forEach(item => {
+                if (item.type === 'reference' && item.reference?._ref) {
+                    ids.add(item.reference._ref)
+                }
+                if (item.children && item.children.length > 0) {
+                    extractIds(item.children)
+                }
+            })
+        }
+        extractIds(watchedItems)
+        return ids
+    }, [watchedItems])
 
     const bottomRef = useRef<HTMLDivElement>(null)
     const prevLengthRef = useRef(fields.length)
@@ -183,7 +205,8 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        className="h-7 text-[10px] px-2 rounded-full border-primary/20 hover:border-primary hover:bg-primary/5"
+                                        disabled={usedReferenceIds.has(p._id)}
+                                        className="h-7 text-[10px] px-2 rounded-full border-primary/20 hover:border-primary/20 hover:bg-accent/5 hover:text-accent disabled:opacity-30 disabled:grayscale transition-all"
                                         onClick={() => append({
                                             label: p.title,
                                             type: "reference",

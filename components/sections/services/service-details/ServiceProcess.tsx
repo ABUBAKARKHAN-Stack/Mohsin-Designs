@@ -1,6 +1,7 @@
 "use client"
 
 import { ContainerLayout } from "@/components/layout";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { SectionHeadingType, ServiceProcess as ServiceProcessType } from "@/types/services.types";
 import { motion, MotionValue, useScroll, useTransform } from "motion/react"
 import { useRef } from "react";
@@ -133,7 +134,7 @@ const TimelineStep = ({
                         </div>
 
                         <p className={`text-muted-foreground leading-relaxed text-base relative z-10 ${isEven ? 'lg:text-right' : ''}`}>
-                            {step.desc}
+                            <LinkProcessor text={step.desc} />
                         </p>
 
                         {/* Bottom accent line */}
@@ -199,7 +200,7 @@ const ServiceProcess = ({ process, processSectionHeader }: Props) => {
                         {processSectionHeader.title}<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-                        {processSectionHeader.description}
+                        <LinkProcessor text={processSectionHeader.description} />
                     </p>
                 </motion.div>
 

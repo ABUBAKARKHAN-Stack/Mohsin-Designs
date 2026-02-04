@@ -10,11 +10,12 @@ import { cn } from "@/lib/utils";
 import SectionHeading from "@/components/ui/section-heading";
 import { useLandingPageContent } from "@/context/LandingPageContentContext";
 import { useGlobalContent } from "@/context/GlobalContentContext";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 const AboutPreview = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { landingPageContent } = useLandingPageContent();
-  const {globalContent}  = useGlobalContent()
+  const { globalContent } = useGlobalContent()
 
   const aboutData = landingPageContent?.aboutPreview;
   const experienceStat = globalContent?.stats?.yearsExperience;
@@ -43,10 +44,12 @@ const AboutPreview = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="space-y-6 lg:text-start text-center text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg"
+            className="space-y-6 lg:text-start z-999 text-center text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg"
           >
             {aboutData.leftDescriptions?.map((desc, index) => (
-              <p key={index}>{desc.text}</p>
+              <p key={index}>
+                <LinkProcessor text={desc.text} />
+              </p>
             ))}
           </motion.div>
 
@@ -96,10 +99,12 @@ const AboutPreview = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-            className="space-y-6 lg:text-start text-center text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg"
+            className="space-y-6 z-999 lg:text-start text-center text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg"
           >
             {aboutData.rightDescriptions?.map((desc, index) => (
-              <p key={index}>{desc.text}</p>
+              <p key={index}>
+                <LinkProcessor text={desc.text} />
+              </p>
             ))}
           </motion.div>
         </div>

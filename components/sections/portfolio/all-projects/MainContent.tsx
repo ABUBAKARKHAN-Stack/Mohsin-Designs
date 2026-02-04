@@ -6,6 +6,7 @@ import { ContainerLayout } from "@/components/layout";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 interface MainContentProps {
   projects: any[]
@@ -84,7 +85,7 @@ const Portfolio = ({ projects }: MainContentProps) => {
                       </div>
                     </div>
                     <p className="text-muted-foreground line-clamp-2">
-                      {project.description}
+                      <LinkProcessor text={project.description} />
                     </p>
                   </div>
                 </Link>

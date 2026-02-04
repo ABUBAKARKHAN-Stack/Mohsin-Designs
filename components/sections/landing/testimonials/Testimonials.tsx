@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { ContainerLayout } from "@/components/layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import Image from "next/image";
 
 
@@ -185,7 +186,7 @@ const Testimonials = () => {
                     </div>
 
                     <blockquote className="text-base md:text-lg leading-relaxed text-foreground/90 font-light mb-6 line-clamp-4">
-                      "{testimonial.quote}"
+                      "<LinkProcessor text={testimonial.quote} />"
                     </blockquote>
 
                     <div className="flex items-center gap-3">

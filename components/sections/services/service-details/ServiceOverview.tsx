@@ -1,6 +1,7 @@
 "use client"
-import { ContainerLayout } from "@/components/layout";
-import { SectionHeadingType } from "@/types/services.types";
+import { ContainerLayout } from "@/components/layout"
+import { SectionHeadingType } from "@/types/services.types"
+import { LinkProcessor } from "@/components/ui/LinkProcessor"
 import { motion } from "motion/react"
 
 type Props = {
@@ -42,7 +43,7 @@ const ServiceOverview = ({
                         className="lg:col-span-7"
                     >
                         <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed mb-12 font-light">
-                            {serviceOverviewSectionHeader.description}
+                            <LinkProcessor text={serviceOverviewSectionHeader.description} />
                         </p>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                             {features.map((item, i) => (

@@ -2,9 +2,10 @@
 
 import SectionHeading from "@/components/ui/section-heading";
 import { useAboutPageContent } from "@/context/AboutPageContentContext";
-import {motion} from 'motion/react'
+import { motion } from 'motion/react'
 import { getIconByName } from "@/lib/icon-mapper";
 import { ContainerLayout } from "@/components/layout";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 export const CultureSection = () => {
     const { aboutPageContent } = useAboutPageContent();
@@ -14,7 +15,7 @@ export const CultureSection = () => {
         <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
 
             <ContainerLayout>
-                
+
                 <SectionHeading
                     eyebrow={cultureData?.sectionHeading?.eyebrow || "Our Values"}
                     title={cultureData?.sectionHeading?.title || "Culture & Values"}
@@ -42,7 +43,11 @@ export const CultureSection = () => {
                                     <Icon className="w-10 h-10 text-accent group-hover:text-accent-foreground transition-colors" />
                                 </div>
                                 <h3 className="text-xl font-display font-semibold mb-3">{value.title}</h3>
-                                <p className="text-muted-foreground leading-relaxed">{value.description}</p>
+                                <p className="text-muted-foreground leading-relaxed">
+                                    <LinkProcessor
+                                        text={value.description}
+                                    />
+                                </p>
                             </motion.div>
                         );
                     })}
@@ -57,11 +62,13 @@ export const CultureSection = () => {
                     className="mt-16 text-center"
                 >
                     <blockquote className="text-2xl md:text-3xl font-display italic text-muted-foreground max-w-3xl mx-auto">
-                        {<>"{cultureData?.quote}</> || (
+                        {<>"<LinkProcessor text={cultureData?.quote} /></> || (
                             <>"Most importantly, we respect our clients' businesses <span className="text-accent not-italic font-bold">as if they were our own.</span>"</>
                         )}
                         {cultureData?.quoteHighlight && (
-                            <span className="text-accent not-italic font-bold"> {cultureData.quoteHighlight}"</span>
+                            <span className="text-accent not-italic font-bold">
+                                <LinkProcessor text={cultureData?.quoteHighlight} />
+                                "</span>
                         )}
                     </blockquote>
                 </motion.div>

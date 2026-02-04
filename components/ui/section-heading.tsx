@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import SplitText from "./split-text";
+import { LinkProcessor } from "./LinkProcessor";
 
 interface SectionHeadingProps {
   eyebrow?: string;
@@ -52,7 +53,7 @@ const SectionHeading = ({
           "text-lg text-muted-foreground mt-6 max-w-2xl leading-relaxed",
           align === "center" && "mx-auto"
         )}>
-          {description}
+          <LinkProcessor text={description} />
         </p>
       )}
     </motion.div>

@@ -1,16 +1,17 @@
 "use client"
 
 import { ContainerLayout } from "@/components/layout";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { useAboutPageContent } from "@/context/AboutPageContentContext";
 import { useGlobalContent } from "@/context/GlobalContentContext";
-import { useScroll, useTransform,motion } from "motion/react";
+import { useScroll, useTransform, motion } from "motion/react";
 import { useRef } from "react";
 
 
 export const IntroSection = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { aboutPageContent } = useAboutPageContent();
-    const {globalContent} = useGlobalContent()
+    const { globalContent } = useGlobalContent()
     const introData = aboutPageContent?.intro;
 
     const { scrollYProgress } = useScroll({
@@ -43,15 +44,15 @@ export const IntroSection = () => {
                         </h2>
                         <div className="text-muted-foreground text-lg mt-8 leading-relaxed space-y-4">
                             <p>
-                                {introData?.description1 || "Mohsin Designs is a full-service creative digital agency dedicated to helping businesses build strong brands, establish authority, and grow with confidence in competitive markets."}
+                                <LinkProcessor text={introData?.description1 || "Mohsin Designs is a full-service creative digital agency dedicated to helping businesses build strong brands, establish authority, and grow with confidence in competitive markets."} />
                             </p>
                             <p>
-                                {introData?.description2 || "We work with entrepreneurs, startups, and established businesses to transform ideas into clear, consistent, and results-driven digital experiences. From branding to web design, SEO, and paid advertising — strategy, creativity, and execution under one roof."}
+                                <LinkProcessor text={introData?.description2 || "We work with entrepreneurs, startups, and established businesses to transform ideas into clear, consistent, and results-driven digital experiences. From branding to web design, SEO, and paid advertising — strategy, creativity, and execution under one roof."} />
                             </p>
                         </div>
                         {introData?.quote && (
                             <p className="text-foreground/80 py-2 italic bg-accent/10 font-medium text-lg mt-6 border-l-2 border-accent pl-4">
-                                {introData.quote}
+                                <LinkProcessor text={introData.quote} />
                             </p>
                         )}
                         {!introData?.quote && (

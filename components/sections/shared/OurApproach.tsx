@@ -4,6 +4,7 @@ import SectionHeading from "@/components/ui/section-heading";
 import { ContainerLayout } from "@/components/layout";
 import { useGlobalContent } from "@/context/GlobalContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 const OurApproach = () => {
   const { globalContent } = useGlobalContent();
@@ -51,7 +52,7 @@ const OurApproach = () => {
                   </h3>
 
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    {step.description}
+                    <LinkProcessor text={step.description} />
                   </p>
                 </div>
               </motion.div>

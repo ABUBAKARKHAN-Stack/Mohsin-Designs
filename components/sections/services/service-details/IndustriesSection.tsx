@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { Building2, ShoppingBag, Briefcase, Stethoscope, Plane, Code } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
 import { SectionHeadingType } from "@/types/services.types";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 interface Industry {
   name: string;
@@ -40,7 +41,7 @@ const IndustriesSection = ({ industries,industriesSectionHeader }: IndustriesSec
             {industriesSectionHeader.title}<span className="text-accent">.</span>
           </h2>
           <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-           {industriesSectionHeader.description}
+          <LinkProcessor text={ industriesSectionHeader.description} />
           </p>
         </motion.div>
 
@@ -67,7 +68,7 @@ const IndustriesSection = ({ industries,industriesSectionHeader }: IndustriesSec
                       {industry.name}
                     </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      {industry.description}
+                      <LinkProcessor text={industry.description} />
                     </p>
                   </div>
                 </div>

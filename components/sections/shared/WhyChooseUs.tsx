@@ -6,6 +6,7 @@ import { ContainerLayout } from "@/components/layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { useGlobalContent } from "@/context/GlobalContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 const WhyChooseUs = () => {
   const { globalContent } = useGlobalContent();
@@ -56,7 +57,7 @@ const WhyChooseUs = () => {
                     {benefit.title}
                   </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    {benefit.description}
+                    <LinkProcessor text={benefit.description} />
                   </p>
                 </div>
               </motion.div>

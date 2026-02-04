@@ -1,6 +1,7 @@
 "use client"
 
 import { ContainerLayout } from "@/components/layout";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { useAboutPageContent } from "@/context/AboutPageContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
 import { ArrowRight, Compass } from "lucide-react";
@@ -85,7 +86,9 @@ export const PhilosophySection = () => {
                     >
                         <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-accent/50 text-8xl font-serif animate-pulse">"</div>
                         <p className="text-xl md:text-2xl text-foreground/80 font-medium leading-relaxed py-2 italic px-8">
-                            {phData?.quoteBlock || "A website is not just a collection of pages. A logo is not just a symbol. A brand is not just visuals."}
+                            <LinkProcessor
+                                text={phData?.quoteBlock || "A website is not just a collection of pages. A logo is not just a symbol. A brand is not just visuals."}
+                            />
                         </p>
                         <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-accent/50 text-8xl font-serif rotate-180 animate-pulse">"</div>
                     </motion.div>
@@ -99,10 +102,14 @@ export const PhilosophySection = () => {
                         className="space-y-5 text-lg text-muted-foreground leading-relaxed mt-16"
                     >
                         <p>
-                            {phData?.description1 || "At Mohsin Designs, design is never created in isolation. Every color choice, layout decision, animation, and line of content exists to serve a purpose."}
+                            <LinkProcessor
+                                text={phData?.description1 || "At Mohsin Designs, design is never created in isolation. Every color choice, layout decision, animation, and line of content exists to serve a purpose."}
+                            />
                         </p>
                         <p>
-                            {phData?.description2 || "Before we design anything, we seek to understand the business, the audience, the market, and the goal. Only then do we translate that understanding into visual and digital solutions that work together as a system."}
+                            <LinkProcessor
+                                text={phData?.description2 || "Before we design anything, we seek to understand the business, the audience, the market, and the goal. Only then do we translate that understanding into visual and digital solutions that work together as a system."}
+                            />
                         </p>
                     </motion.div>
 

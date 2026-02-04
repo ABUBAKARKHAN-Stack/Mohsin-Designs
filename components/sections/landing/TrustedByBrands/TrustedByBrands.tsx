@@ -5,6 +5,7 @@ import { ContainerLayout } from "@/components/layout";
 import { Marquee } from "@/components/ui/marquee";
 import TrustedByBrandsCard from "./TrustedByBrandsCard";
 import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 
 const TrustedByBrands = () => {
@@ -36,8 +37,8 @@ const TrustedByBrands = () => {
           </h2>
           {trustedByBrandsData?.sectionHeading?.description && (
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
-              {trustedByBrandsData.sectionHeading.description}
-            </p>
+              <LinkProcessor text={trustedByBrandsData.sectionHeading.description} />
+            </p>  
           )}
         </motion.div>
       </ContainerLayout>

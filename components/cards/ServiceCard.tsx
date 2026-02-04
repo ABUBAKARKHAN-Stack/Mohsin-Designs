@@ -10,6 +10,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { useIsTouchDevice } from "@/hooks/useIsTouchDevice";
 import { urlFor } from "@/sanity/lib/image";
+import { LinkProcessor } from "../ui/LinkProcessor";
 
 interface ServiceCardProps {
     service: { _id: string; title: string; slug: string; description: string; heroImage: { alt: string; source: string; }; items: string[]; };
@@ -79,7 +80,7 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
                     isHovered && "border-accent shadow-[0_25px_70px_-20px_hsl(var(--accent)/0.35)]",
                     isTouchDevice && "h-92"
                 )}
-                animate={!isTouchDevice ? (isHovered ? { height: "22rem" } : { height: "17rem" }) : undefined}
+                animate={!isTouchDevice ? (isHovered ? { height: "23rem" } : { height: "17rem" }) : undefined}
                 transition={{ duration: 0.1 }}
             >
                 {/* Background */}
@@ -145,7 +146,7 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
                     <div>
                        
                         <motion.h3
-                            className="text-xl lg:text-2xl font-bold tracking-tight font-display"
+                            className="text-xl line-clamp-2 lg:text-2xl font-bold tracking-tight font-display"
                             animate={{
                                 color: isHovered
                                     ? "hsl(var(--accent))"
@@ -168,21 +169,21 @@ const ServiceCard = ({ service, index }: ServiceCardProps) => {
                             transition={{ duration: 0.25 }}
                             className="text-muted-foreground my-auto leading-relaxed text-base pointer-events-none line-clamp-3"
                         >
-                            {service.description}
+                            <LinkProcessor text={service.description} />
                         </motion.p>
                         :
                         <p
                             className="text-muted-foreground my-auto leading-relaxed text-base pointer-events-none line-clamp-3">
-                            {service.description}
+                            <LinkProcessor text={service.description} />
                         </p>
                     }
 
                     {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mt-auto">
+                    <div className="grid grid-cols-2 gap-2 mt-auto">
                         {service.items.slice(0, 3).map((feature) => (
                             <span
                                 key={feature}
-                                className="text-[10px] tracking-wider px-2 py-1 bg-muted/50 text-muted-foreground border border-border/50 group-hover:border-accent/30 group-hover:text-foreground transition-all"
+                                className="text-[10px] tracking-wider px-2 py-1 bg-muted/50 text-muted-foreground border border-border/50 group-hover:border-accent/30 group-hover:text-foreground transition-all truncate"
                             >
                                 {feature}
                             </span>

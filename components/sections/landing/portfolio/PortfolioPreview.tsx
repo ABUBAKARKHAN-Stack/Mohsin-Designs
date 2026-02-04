@@ -48,7 +48,7 @@ const PortfolioPreview = () => {
             eyebrow={portfolioPreviewData?.sectionHeading?.eyebrow || "Portfolio"}
             title={portfolioPreviewData?.sectionHeading?.title || "Selected Work"}
             description={portfolioPreviewData?.sectionHeading?.description || "Our portfolio reflects the diversity of brands we've worked with and the depth of challenges we've solved. Each project represents a balance between creativity and purpose."}
-            className="mb-0"
+            className="mb-0 relative z-999"
           />
 
           <motion.div

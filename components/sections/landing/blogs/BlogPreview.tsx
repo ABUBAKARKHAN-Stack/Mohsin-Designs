@@ -34,7 +34,7 @@ const BlogPreview = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
           {blogPosts.map((post, index) => (
-            <BlogCard post={post} index={index} />
+            <BlogCard key={`${post.slug}-${index}`} post={post} index={index} />
           ))}
         </div>
 

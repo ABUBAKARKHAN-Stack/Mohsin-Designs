@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import { ContainerLayout } from "../layout";
+import { LinkProcessor } from "./LinkProcessor";
 
 interface BreadcrumbItem {
   label: string;
@@ -99,7 +100,7 @@ const PageHero = ({ title, titleAccent = ".", subtitle, description, breadcrumbs
             transition={{ delay: 0.3, duration: 0.6 }}
             className="text-xl text-muted-foreground mt-6 max-w-2xl"
           >
-            {description}
+            <LinkProcessor text={description} />
           </motion.p>
         )}
       </ContainerLayout>

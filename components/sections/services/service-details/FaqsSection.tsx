@@ -8,6 +8,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ContainerLayout } from "@/components/layout";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { SectionHeadingType } from "@/types/services.types";
 
 interface FAQ {
@@ -45,7 +46,7 @@ const FAQSection = ({ faqs, faqsSectionHeader }: FAQSectionProps) => {
                         {faqsSectionHeader.title}<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-                        {faqsSectionHeader.description}
+                        <LinkProcessor text={faqsSectionHeader.description} />
                     </p>
                 </motion.div>
 
@@ -77,7 +78,7 @@ const FAQSection = ({ faqs, faqsSectionHeader }: FAQSectionProps) => {
                                 </AccordionTrigger>
                                 <AccordionContent className="pb-6">
                                     <p className="text-muted-foreground leading-relaxed">
-                                        {faq.answer}
+                                        <LinkProcessor text={faq.answer} />
                                     </p>
                                 </AccordionContent>
                             </AccordionItem>

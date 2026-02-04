@@ -1,9 +1,10 @@
 "use client"
 import { ContainerLayout } from "@/components/layout";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { motion } from "motion/react";
 
 interface IntroSectionProps {
-    introTagLine:string
+    introTagLine: string
     introTitle: string;
     introContent: string;
     roleTitle: string;
@@ -37,7 +38,7 @@ const IntroSection = ({ introTitle, introContent, roleTitle, roleContent, introT
                         {introTitle}<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                        {introContent}
+                        <LinkProcessor text={introContent} />
                     </p>
                 </motion.div>
 
@@ -68,7 +69,7 @@ const IntroSection = ({ introTitle, introContent, roleTitle, roleContent, introT
                                         transition={{ duration: 0.5, delay: 0.1 * index }}
                                         className="text-muted-foreground leading-relaxed text-lg"
                                     >
-                                        {paragraph}
+                                        <LinkProcessor text={paragraph} />
                                     </motion.p>
                                 ))}
                             </div>

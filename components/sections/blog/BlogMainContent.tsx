@@ -4,6 +4,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowUpRight, Clock, User } from "lucide-react"
 import { ContainerLayout } from "@/components/layout"
+import { LinkProcessor } from "@/components/ui/LinkProcessor"
 import { urlFor } from "@/sanity/lib/image"
 import Link from "next/link"
 import { AnimatePresence } from "motion/react"
@@ -59,7 +60,7 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
 
     return (
         <section className="lg:py-12.5 py-6.25 relative overflow-hidden">
-            
+
             <ContainerLayout>
                 {/* Categories */}
                 <motion.div
@@ -124,7 +125,7 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                                 {displayFeatured[currentSlide].title}
                                             </h2>
                                             <p className="text-lg text-muted-foreground mb-6 line-clamp-3">
-                                                {displayFeatured[currentSlide].description}
+                                                <LinkProcessor text={displayFeatured[currentSlide].description} />
                                             </p>
                                             <div className="flex items-center gap-6 text-sm text-muted-foreground">
                                                 <div className="flex items-center gap-2">
@@ -230,7 +231,7 @@ export default function BlogMainContent({ posts }: BlogMainContentProps) {
                                     {post.title}
                                 </h3>
                                 <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                                    {post.description}
+                                    <LinkProcessor text={post.description} />
                                 </p>
                                 <div className="flex items-center justify-between text-sm">
                                     <div className="flex items-center gap-2 text-muted-foreground">

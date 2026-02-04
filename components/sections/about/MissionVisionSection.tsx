@@ -1,6 +1,7 @@
 "use client"
 
 import { ContainerLayout } from "@/components/layout";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { useAboutPageContent } from "@/context/AboutPageContentContext";
 import { Compass, Eye, Lightbulb, Target } from "lucide-react";
 import { useScroll, motion, useTransform } from "motion/react";
@@ -111,6 +112,9 @@ export const MissionVisionSection = () => {
                             </>
                         )}
                     </h2>
+                    <p className={"text-lg text-muted-foreground mt-6 max-w-2xl leading-relaxed mx-auto"}>
+                        <LinkProcessor text={mvData?.sectionHeading?.description} />
+                    </p>
                 </motion.div>
 
                 <div className="grid md:grid-cols-2 gap-8 lg:gap-16">
@@ -162,7 +166,9 @@ export const MissionVisionSection = () => {
                             {/* Content */}
                             <div className="space-y-5 relative">
                                 <p className="text-muted-foreground leading-relaxed text-lg">
-                                    {mvData?.mission?.description1 || "To help businesses present themselves with clarity and confidence in the digital world. A strong brand should communicate instantly, build trust naturally, and support long-term growth."}
+                                    <LinkProcessor
+                                        text={mvData?.mission?.description1 || "To help businesses present themselves with clarity and confidence in the digital world. A strong brand should communicate instantly, build trust naturally, and support long-term growth."}
+                                    />
                                 </p>
 
                                 <div className="relative py-4">
@@ -176,7 +182,9 @@ export const MissionVisionSection = () => {
 
                                 {mvData?.mission?.description2 && (
                                     <p className="text-foreground/80 leading-relaxed">
-                                        {mvData.mission.description2}
+                                        <LinkProcessor
+                                            text={mvData.mission.description2}
+                                        />
                                     </p>
                                 )}
 
@@ -256,7 +264,9 @@ export const MissionVisionSection = () => {
                             {/* Content */}
                             <div className="space-y-5 relative">
                                 <p className="text-muted-foreground leading-relaxed text-lg">
-                                    {mvData?.vision?.description1 || "We envision a digital space where businesses are represented honestly, professionally, and strategically."}
+                                    <LinkProcessor
+                                        text={mvData?.vision?.description1 || "We envision a digital space where businesses are represented honestly, professionally, and strategically."}
+                                    />
                                 </p>
 
                                 <div className="relative py-4">
@@ -270,7 +280,9 @@ export const MissionVisionSection = () => {
 
                                 {mvData?.vision?.description2 ? (
                                     <p className="text-foreground/80 leading-relaxed">
-                                        {mvData.vision.description2}
+                                        <LinkProcessor
+                                            text={mvData.vision.description2}
+                                        />
                                     </p>
                                 ) : (
                                     !mvData?.vision && (

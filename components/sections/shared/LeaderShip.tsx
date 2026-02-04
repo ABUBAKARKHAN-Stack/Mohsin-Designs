@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ContainerLayout } from "@/components/layout";
 import { useGlobalContent } from "@/context/GlobalContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 
 const Leadership = () => {
@@ -119,12 +120,6 @@ const Leadership = () => {
               className="mb-8"
             />
 
-            {leadershipData?.sectionHeading?.description && (
-              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-                {leadershipData.sectionHeading.description}
-              </p>
-            )}
-
 
             {/* Agency Structure */}
             <div className="bg-background border border-border/50 p-6 rounded-2xl">
@@ -151,7 +146,9 @@ const Leadership = () => {
                       </div>
                       <div>
                         <h5 className="font-medium">{team.title}</h5>
-                        <p className="text-sm text-muted-foreground">{team.description}</p>
+                        <p className="text-sm text-muted-foreground">
+                          <LinkProcessor text={team.description} />
+                        </p>
                       </div>
                     </motion.div>
                   );

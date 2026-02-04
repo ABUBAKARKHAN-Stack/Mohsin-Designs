@@ -2,6 +2,7 @@
 import { motion } from "motion/react";
 import { Target, Layers, Sparkles } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { SectionHeadingType } from "@/types/services.types";
 
 interface HowWeHelpSectionProps {
@@ -37,7 +38,7 @@ const HowWeHelpSection = ({ points, howWeHelpSectionHeader }: HowWeHelpSectionPr
           </h2>
           {
             howWeHelpSectionHeader.description && <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-              {howWeHelpSectionHeader.description}
+              <LinkProcessor text= {howWeHelpSectionHeader.description} />
             </p>
           }
         </motion.div>
@@ -71,7 +72,7 @@ const HowWeHelpSection = ({ points, howWeHelpSectionHeader }: HowWeHelpSectionPr
                     {point.title}
                   </h3>
                   <p className="relative z-10 text-muted-foreground leading-relaxed">
-                    {point.description}
+                    <LinkProcessor text={point.description} />
                   </p>
 
                   {/* Bottom accent line */}

@@ -1,5 +1,6 @@
 "use client"
 
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { urlFor } from "@/sanity/lib/image";
 import { ServiceData } from "@/types/services.types";
 import { ArrowUpRight } from "lucide-react";
@@ -85,7 +86,7 @@ const ServiceCard = ({ service, index }: { service: {
 
                             {/* Description */}
                             <p className="text-muted-foreground text-base md:text-lg leading-relaxed max-w-md line-clamp-4">
-                                {service.description}
+                                <LinkProcessor text={service.description} />
                             </p>
                         </div>
 
@@ -102,7 +103,7 @@ const ServiceCard = ({ service, index }: { service: {
                                         className="flex items-center gap-2 md:gap-3 text-sm md:text-base text-muted-foreground hover:text-foreground group-hover:translate-x-1 transition-all duration-300"
                                     >
                                         <span className="w-1.5 h-1.5 rounded-full bg-accent/40 group-hover:bg-accent group-hover:scale-125 transition-all duration-300" />
-                                        <span>{item}</span>
+                                        <span className="line-clamp-2">{item}</span>
                                     </motion.li>
                                 ))}
                             </ul>

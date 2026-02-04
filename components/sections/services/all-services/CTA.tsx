@@ -2,6 +2,7 @@
 
 import { ContainerLayout } from "@/components/layout";
 import AnimatedBadge from "@/components/ui/animated-badge";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { ServiceCTA } from "@/types/services.types";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react"
@@ -94,7 +95,7 @@ const CTA = ({
                                     transition={{ delay: 0.2 }}
                                     className="text-muted-foreground text-lg md:text-xl leading-relaxed"
                                 >
-                                    {cta.description}
+                                    <LinkProcessor text={cta.description} />
                                 </motion.p>
                             </div>
 

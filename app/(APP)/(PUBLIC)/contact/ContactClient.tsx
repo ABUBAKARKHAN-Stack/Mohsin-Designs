@@ -14,6 +14,7 @@ import SectionHeading from "@/components/ui/section-heading"
 import { submitDynamicForm } from "@/app/actions/formActions"
 import { errorToast, successToast } from "@/lib/toastNotifications"
 import { useSiteSettings } from "@/context/SiteSettingsContext"
+import { LinkProcessor } from "@/components/ui/LinkProcessor"
 
 interface ContactClientProps {
     pageData: any
@@ -189,7 +190,10 @@ export default function ContactClient({ pageData }: ContactClientProps) {
                                 <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
                                     <div className="mb-8">
                                         <h3 className="text-xl sm:text-2xl font-display font-bold mb-2">{contactForm.formHeading || "Send us a message"}</h3>
-                                        <p className="text-muted-foreground">{contactForm.formDescription || "Fill out the form below."}</p>
+                                        <p className="text-muted-foreground">
+
+                                            <LinkProcessor text={contactForm.formDescription || "Fill out the form below."} />
+                                        </p>
                                     </div>
 
                                     {formConfig?.fields?.map((field: any) => (
@@ -267,7 +271,9 @@ export default function ContactClient({ pageData }: ContactClientProps) {
                                         align="left"
                                     />
                                     <p className="text-muted-foreground mt-6 max-w-md">
-                                        {faqs.sectionHeading?.description || "Everything you need to know about working with us."}
+                                        <LinkProcessor
+                                        text={faqs.sectionHeading?.description || "Everything you need to know about working with us."}
+                                        />
                                     </p>
                                 </motion.div>
 
@@ -294,7 +300,7 @@ export default function ContactClient({ pageData }: ContactClientProps) {
                                                         {faq.question}
                                                     </AccordionTrigger>
                                                     <AccordionContent className="text-muted-foreground leading-relaxed pb-6">
-                                                        {faq.answer}
+                                                        <LinkProcessor text={faq.answer} />
                                                     </AccordionContent>
                                                 </AccordionItem>
                                             </motion.div>

@@ -3,6 +3,7 @@ import { ContainerLayout } from "@/components/layout";
 import { CheckCircle2 } from "lucide-react";
 import { motion } from "motion/react";
 import { getIconByName } from "@/lib/icon-mapper";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 type WhyWorkWithUsProps = {
   sectionHeading: {
@@ -39,7 +40,7 @@ const WhyWorkWithUs = ({ sectionHeading, guaranteePoints, benefits }: WhyWorkWit
               {sectionHeading.title}
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-              {sectionHeading.description}
+              <LinkProcessor text={sectionHeading.description} />
             </p>
 
             <div className="space-y-4">
@@ -81,7 +82,7 @@ const WhyWorkWithUs = ({ sectionHeading, guaranteePoints, benefits }: WhyWorkWit
                         {benefit.title}
                       </h3>
                       <p className="text-muted-foreground text-sm leading-relaxed">
-                        {benefit.description}
+                        <LinkProcessor text={benefit.description} />
                       </p>
                     </div>
                   </div>

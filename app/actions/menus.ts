@@ -93,6 +93,14 @@ export async function updateMenu(id: string, data: MenuValues) {
         }
 
         await adminClient.patch(id).set(doc).commit()
+
+        // Auto-delete drafts to keep Sanity Studio in sync
+        try {
+            await adminClient.delete(`drafts.${id}`)
+        } catch (e) {
+            // Ignore if draft doesn't exist
+        }
+
         revalidatePath('/admin/menus')
         revalidatePath(`/admin/menus/${id}`)
         return { success: true }

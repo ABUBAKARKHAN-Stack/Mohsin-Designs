@@ -82,6 +82,14 @@ export async function updateSiteSettings(data: SiteSettingsValues) {
         }
 
         await adminClient.createOrReplace(updateData)
+
+        // Auto-delete drafts to keep Sanity Studio in sync
+        try {
+            await adminClient.delete('drafts.siteSettings')
+        } catch (e) {
+            // Ignore if draft doesn't exist
+        }
+
         return { success: true }
     } catch (error: any) {
         console.error("Failed to update site settings:", error)

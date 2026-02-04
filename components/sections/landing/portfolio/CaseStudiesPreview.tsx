@@ -8,6 +8,7 @@ import { ContainerLayout } from "@/components/layout";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useLandingPageContent } from "@/context/LandingPageContentContext";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { urlFor } from "@/sanity/lib/image";
 import { getIconByName } from "@/lib/icon-mapper";
 
@@ -198,7 +199,7 @@ const CaseStudiesPreview = () => {
 
                                     {/* Testimonial */}
                                     <blockquote className="text-muted-foreground italic border-l-2 border-accent/30 pl-4">
-                                        "{caseStudy.testimonial}"
+                                        "<LinkProcessor text={caseStudy.testimonial} />"
                                     </blockquote>
 
                                     <Link

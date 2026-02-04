@@ -5,6 +5,7 @@ import { ArrowUpRight, Clock } from "lucide-react";
 import { motion } from "motion/react"
 import Image from "next/image";
 import Link from "next/link";
+import { LinkProcessor } from "../ui/LinkProcessor";
 
 type Props = {
     post: BlogData;
@@ -13,7 +14,6 @@ type Props = {
 const BlogCard = ({ post, index }: Props) => {
     return (
         <motion.article
-            key={`${post.slug}-${index}`}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
@@ -49,7 +49,7 @@ const BlogCard = ({ post, index }: Props) => {
                 </h3>
 
                 {/* Excerpt */}
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{post.description}</p>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-2"><LinkProcessor text={post.description} />  </p>
 
                 {/* Footer */}
                 <div className="flex items-center justify-between text-sm pt-4 border-t border-border/50">

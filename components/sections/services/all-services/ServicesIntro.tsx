@@ -1,5 +1,6 @@
 "use client"
 import { ContainerLayout } from "@/components/layout";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -97,7 +98,9 @@ const ServicesIntro = ({ badgeText, heading, headingAccent, description }: Servi
             transition={{ delay: 0.2 }}
             className="text-muted-foreground text-lg md:text-xl lg:text-2xl leading-relaxed text-center max-w-3xl mx-auto mb-12"
           >
-            {description}
+            <LinkProcessor
+              text={description}
+            />
           </motion.p>
 
         </div>

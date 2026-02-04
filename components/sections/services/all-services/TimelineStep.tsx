@@ -2,6 +2,7 @@
 
 import { useScroll, useTransform, motion } from "motion/react";
 import { getIconByName } from "@/lib/icon-mapper";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 const TimelineStep = ({
     step,
@@ -156,7 +157,7 @@ const TimelineStep = ({
                         </div>
 
                         <p className={`text-muted-foreground leading-relaxed text-base relative z-10 ${isEven ? 'lg:text-right' : ''}`}>
-                            {step.description}
+                            <LinkProcessor text={step.description} />
                         </p>
 
                         {/* Bottom accent line */}

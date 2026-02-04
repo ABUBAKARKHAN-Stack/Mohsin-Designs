@@ -24,7 +24,7 @@ const AreasWeServe = ({
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start end", "end start"],
-    });
+    });    
 
     const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
     const globeRotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
@@ -106,7 +106,7 @@ const AreasWeServe = ({
                         </div>
                         <div className="text-center">
                             <div className="text-4xl font-display font-bold text-accent">
-                                {areas.reduce((total, area) => total += area.clients, 0)}+
+                                {areas.reduce((total, area) => total += +area.clients, 0)}+
                             </div>
                             <div className="text-sm text-muted-foreground">Clients</div>
                         </div>

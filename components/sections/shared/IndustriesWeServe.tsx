@@ -1,10 +1,11 @@
 "use client"
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import SectionHeading from "@/components/ui/section-heading";
 import { ContainerLayout } from "@/components/layout";
 import { useGlobalContent } from "@/context/GlobalContentContext";
 import { getIconByName } from "@/lib/icon-mapper";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 
 const IndustriesWeServe = () => {
@@ -82,7 +83,7 @@ const IndustriesWeServe = () => {
                                     </div>
 
                                     <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-2">
-                                        {industry.description}
+                                        <LinkProcessor text={industry.description} />
                                     </p>
                                 </div>
                             </motion.div>

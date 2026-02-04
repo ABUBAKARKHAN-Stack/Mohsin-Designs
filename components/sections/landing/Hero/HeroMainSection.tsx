@@ -6,6 +6,7 @@ import MagneticButton from "@/components/MagneticButton";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import { useLandingPageContent } from "@/context/LandingPageContentContext";
 import { useGlobalContent } from "@/context/GlobalContentContext";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 type Props = {
     y: MotionValue<number>
@@ -19,7 +20,7 @@ const HeroMainSection = ({
 
     const heroData = landingPageContent?.hero
     const featuredServices = heroData?.featuredServices;
-    
+
     return (
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start mb-12 lg:mb-16">
 
@@ -76,7 +77,7 @@ const HeroMainSection = ({
                 >
                     {heroData?.descriptionParagraphs?.map((paragraph, index) => (
                         <p key={index} className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                            {paragraph.text}
+                            <LinkProcessor text={paragraph.text} />
                         </p>
                     ))}
                 </motion.div>

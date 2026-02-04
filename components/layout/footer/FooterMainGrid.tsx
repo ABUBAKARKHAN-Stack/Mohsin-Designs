@@ -8,19 +8,11 @@ import Link from "next/link";
 import Logo from "@/components/ui/logo";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
+import { resolveUrl } from "@/lib/menu-utils";
+
 const FooterMainGrid = () => {
 
     const { settings } = useSiteSettings()
-
-    //* Helper to resolve dynamic URLs
-    const resolveUrl = (item: any) => {
-        if (item.type === 'custom') return item.url || '#';
-        if (item.type === 'reference' && item.reference) {
-            if (item.reference._type === 'service') return `/services/${item.reference.slug}`;
-            return `/${item.reference.slug}`;
-        }
-        return '#';
-    };
 
 
     return (

@@ -6,6 +6,7 @@ import { Sparkles } from "lucide-react"
 import { motion, useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
 import DynamicForm from "./DynamicForm"
+import { LinkProcessor } from "@/components/ui/LinkProcessor"
 
 interface PageCTAProps {
     cta: {
@@ -96,7 +97,7 @@ export default function PageCTA({ cta }: PageCTAProps) {
                                         transition={{ delay: 0.2 }}
                                         className="text-muted-foreground text-lg md:text-xl leading-relaxed"
                                     >
-                                        {cta.sectionHeading.description}
+                                        <LinkProcessor text={cta.sectionHeading.description} />
                                     </motion.p>
                                 )}
                             </div>

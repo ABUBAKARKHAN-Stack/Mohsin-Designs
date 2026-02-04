@@ -50,9 +50,16 @@ export function FormInput({
             name={name}
             render={({ field }) => (
                 <FormItem className={compact ? "space-y-1" : "space-y-2"}>
-                    <FormLabel className={compact ? "text-[11px] uppercase tracking-wider text-muted-foreground font-bold italic" : ""}>
-                        {label}
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                        <FormLabel className={compact ? "text-[11px] uppercase tracking-wider text-muted-foreground font-bold italic" : ""}>
+                            {label}
+                        </FormLabel>
+                        {isActuallyTextarea && !compact && (
+                            <span className="text-[10px] text-muted-foreground italic font-medium px-2 py-0.5 bg-muted/50 rounded-full">
+                                Hint: &quot;/url &lt;Label&gt;&quot;
+                            </span>
+                        )}
+                    </div>
                     <FormControl>
                         {isActuallyTextarea ? (
                             <Textarea

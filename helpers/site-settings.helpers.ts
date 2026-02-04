@@ -42,8 +42,7 @@ const SITE_SETTINGS_QUERY = `{
       "url": url,
       "reference": reference-> {
         _type,
-        "title": title,
-        "items": items[],
+        "title": coalesce(title.en, title),
         "slug": slug.current
       },
       "children": children[] {
@@ -53,7 +52,7 @@ const SITE_SETTINGS_QUERY = `{
         "url": url,
         "reference": reference-> {
           _type,
-          "title": title,
+          "title": coalesce(title.en, title),
           "slug": slug.current
         },
         "children": children[] {
@@ -63,7 +62,7 @@ const SITE_SETTINGS_QUERY = `{
           "url": url,
           "reference": reference-> {
             _type,
-            "title": title,
+            "title": coalesce(title.en, title),
             "slug": slug.current
           }
         }
@@ -80,7 +79,7 @@ const SITE_SETTINGS_QUERY = `{
       "url": url,
       "reference": reference-> {
         _type,
-        "title": title,
+        "title": coalesce(title.en, title),
         "slug": slug.current
       },
       "children": children[] {
@@ -90,7 +89,7 @@ const SITE_SETTINGS_QUERY = `{
         "url": url,
         "reference": reference-> {
           _type,
-          "title": title,
+          "title": coalesce(title.en, title),
           "slug": slug.current
         },
         "children": children[] {
@@ -100,7 +99,7 @@ const SITE_SETTINGS_QUERY = `{
           "url": url,
           "reference": reference-> {
             _type,
-            "title": title,
+            "title": coalesce(title.en, title),
             "slug": slug.current
           }
         }

@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { ArrowUpRight, AlertCircle, Lightbulb, TrendingUp } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
 import { CaseStudy, SectionHeadingType } from "@/types/services.types";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 
 interface CaseStudiesSectionProps {
@@ -33,7 +34,7 @@ const CaseStudiesSection = ({ caseStudies, caseStudiesSectionHeader }: CaseStudi
             {caseStudiesSectionHeader.title}<span className="text-accent">.</span>
           </h2>
           <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-            {caseStudiesSectionHeader.description}
+            <LinkProcessor text={caseStudiesSectionHeader.description} />
           </p>
         </motion.div>
 
@@ -74,7 +75,7 @@ const CaseStudiesSection = ({ caseStudies, caseStudiesSectionHeader }: CaseStudi
                       <span className="text-sm font-medium uppercase tracking-wider">Problem</span>
                     </div>
                     <p className="text-muted-foreground leading-relaxed text-sm">
-                      {caseStudy.problem}
+                      <LinkProcessor text={caseStudy.problem} />
                     </p>
                   </div>
 
@@ -85,7 +86,7 @@ const CaseStudiesSection = ({ caseStudies, caseStudiesSectionHeader }: CaseStudi
                       <span className="text-sm font-medium uppercase tracking-wider">Solution</span>
                     </div>
                     <p className="text-muted-foreground leading-relaxed text-sm">
-                      {caseStudy.solution}
+                      <LinkProcessor text={caseStudy.solution} />
                     </p>
                   </div>
 
@@ -96,7 +97,7 @@ const CaseStudiesSection = ({ caseStudies, caseStudiesSectionHeader }: CaseStudi
                       <span className="text-sm font-medium uppercase tracking-wider">Result</span>
                     </div>
                     <p className="text-muted-foreground leading-relaxed text-sm">
-                      {caseStudy.result}
+                      <LinkProcessor text={caseStudy.result} />
                     </p>
                   </div>
                 </div>

@@ -9,9 +9,10 @@ import {
 } from "@/components/ui/accordion";
 import SectionHeading from "@/components/ui/section-heading";
 import { ArrowRight } from "lucide-react";
-import { ContainerLayout } from "@/components/layout";
-import { useGlobalContent } from "@/context/GlobalContentContext";
-import Link from "next/link";
+import { ContainerLayout } from "@/components/layout"
+import { useGlobalContent } from "@/context/GlobalContentContext"
+import { LinkProcessor } from "@/components/ui/LinkProcessor"
+import Link from "next/link"
 
 
 const FAQs = () => {
@@ -21,7 +22,7 @@ const FAQs = () => {
   const faqItems = faqsData?.faqItems;
 
   if (!faqsData || !faqItems || faqItems.length === 0) return null;
-  
+
 
   return (
     <section className="lg:py-12.5 py-6.25  bg-secondary/1">
@@ -41,7 +42,8 @@ const FAQs = () => {
               align="left"
             />
             <p className="text-muted-foreground mt-6 max-w-md">
-              {faqsData?.sectionHeading?.description || "Everything you need to know about working with us. Can't find what you're looking for? Feel free to reach out."}
+              <LinkProcessor text={faqsData?.sectionHeading?.description || "Everything you need to know about working with us. Can't find what you're looking for? Feel free to reach out."}
+              />
             </p>
             <motion.div
               whileHover={{ x: 5 }}
@@ -82,7 +84,7 @@ const FAQs = () => {
                       {faq.question}
                     </AccordionTrigger>
                     <AccordionContent className="text-muted-foreground leading-relaxed pb-6">
-                      {faq.answer}
+                      <LinkProcessor text={faq.answer} />
                     </AccordionContent>
                   </AccordionItem>
                 </motion.div>

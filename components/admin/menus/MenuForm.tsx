@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { useForm, useFieldArray } from "react-hook-form"
+import { useState, useRef, useEffect, useMemo } from "react"
+import { useForm, useFieldArray, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { menuSchema, MenuValues } from "@/lib/validations/menu"
 import { Button } from "@/components/ui/button"
@@ -49,6 +49,28 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
         control: form.control,
         name: "items"
     })
+
+    const watchedItems = useWatch({
+        control: form.control,
+        name: "items"
+    })
+
+    const usedReferenceIds = useMemo(() => {
+        const ids = new Set<string>()
+        const extractIds = (items: any[]) => {
+            if (!items) return
+            items.forEach(item => {
+                if (item.type === 'reference' && item.reference?._ref) {
+                    ids.add(item.reference._ref)
+                }
+                if (item.children && item.children.length > 0) {
+                    extractIds(item.children)
+                }
+            })
+        }
+        extractIds(watchedItems)
+        return ids
+    }, [watchedItems])
 
     const bottomRef = useRef<HTMLDivElement>(null)
     const prevLengthRef = useRef(fields.length)
@@ -170,24 +192,49 @@ export function MenuForm({ initialData, linkableContent }: MenuFormProps) {
                     </div>
 
                     <div className=" space-y-6">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <h2 className="text-xl font-bold flex items-center gap-2">
                                 Menu Items
                                 <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">{fields.length}</span>
                             </h2>
-                            <Button
-                                type="button"
-                                size="sm"
-                                onClick={() => append({
-                                    label: "",
-                                    description: "",
-                                    type: "reference",
-                                    children: []
-                                })}
-                                className="bg-primary hover:bg-primary/90"
-                            >
-                                <Plus className="h-4 w-4 mr-2" /> Add Top-level Item
-                            </Button>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-1">Quick Add:</span>
+                                {linkableContent.pages.filter(p => ["Home", "About", "Services", "Portfolio", "Blog", "Contact"].includes(p.title)).map(p => (
+                                    <Button
+                                        key={p._id}
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={usedReferenceIds.has(p._id)}
+                                        className="h-7 text-[10px] px-2 rounded-full border-primary/20 hover:border-primary/20 hover:bg-accent/5 hover:text-accent disabled:opacity-30 disabled:grayscale transition-all"
+                                        onClick={() => append({
+                                            label: p.title,
+                                            type: "reference",
+                                            reference: {
+                                                _type: "reference",
+                                                _ref: p._id
+                                            },
+                                            children: []
+                                        })}
+                                    >
+                                        <Plus className="h-3 w-3 mr-1" /> {p.title}
+                                    </Button>
+                                ))}
+                                <div className="h-6 w-px bg-border mx-2 hidden sm:block" />
+                                <Button
+                                    type="button"
+                                    size="sm"
+                                    onClick={() => append({
+                                        label: "",
+                                        description: "",
+                                        type: "reference",
+                                        children: []
+                                    })}
+                                    className="bg-primary hover:bg-primary/90"
+                                >
+                                    <Plus className="h-4 w-4 mr-2" /> Add Top-level Item
+                                </Button>
+                            </div>
                         </div>
 
                         <div className="space-y-4">

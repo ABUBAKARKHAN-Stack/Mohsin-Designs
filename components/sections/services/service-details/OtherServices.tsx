@@ -1,5 +1,6 @@
 "use client"
 import { ContainerLayout } from "@/components/layout"
+import { LinkProcessor } from "@/components/ui/LinkProcessor"
 import { SectionHeadingType, ServiceLightWeight } from "@/types/services.types"
 import { ArrowUpRight } from "lucide-react"
 import { motion } from "motion/react"
@@ -39,7 +40,7 @@ const OtherServices = ({
                         </h2>
                         {otherServicesSectionHeader?.description && (
                             <p className="text-muted-foreground mt-4 leading-relaxed">
-                                {otherServicesSectionHeader?.description}
+                                <LinkProcessor text={otherServicesSectionHeader?.description} />
                             </p>
                         )}
                     </div>
@@ -91,7 +92,7 @@ const OtherServices = ({
                                             {s.title}
                                         </h3>
                                         <p className="text-muted-foreground line-clamp-4 text-sm leading-relaxed mb-6">
-                                            {s.description}
+                                            <LinkProcessor text={s.description} />
                                         </p>
                                         <span className="inline-flex items-center gap-2 text-sm font-medium text-accent opacity-0 group-hover:opacity-100 transition-opacity">
                                             Learn More<ArrowUpRight className="h-4 w-4" />

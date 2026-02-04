@@ -19,6 +19,7 @@ import { submitContactForm } from "@/app/actions/submitContactForm";
 import { getForm, submitDynamicForm } from "@/app/actions/formActions";
 import { successToast, errorToast } from "@/lib/toastNotifications";
 import { useState, useEffect } from "react";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 const CTA = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -143,7 +144,7 @@ const CTA = () => {
             <div className="text-foreground/70 text-lg leading-relaxed mb-8 max-w-lg space-y-4">
               {
                 ctaData.description?.split("\n").map((line, index) => (
-                  <p key={index}>{line}</p>
+                  <p key={index}><LinkProcessor text={line} /></p>
                 ))
               }
             </div>
@@ -160,7 +161,7 @@ const CTA = () => {
                   className="flex items-center gap-3 text-foreground/80"
                 >
                   <CheckCircle2 className="w-5 h-5 text-accent shrink-0" />
-                  <span>{benefit?.text}</span>
+                  <LinkProcessor text={benefit?.text} />
                 </motion.div>
               ))}
             </div>

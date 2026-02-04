@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { Check, Award, Users, Clock, Shield } from "lucide-react";
 import { ContainerLayout } from "@/components/layout";
 import { SectionHeadingType } from "@/types/services.types";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 
 interface ServiceBenefitsProps {
   benifitsSectionHeading: SectionHeadingType;
@@ -44,8 +45,8 @@ const ServiceBenefitsSection = ({
             <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-10">
               {benifitsSectionHeading.title}<span className="text-accent">.</span>
             </h2>
-            <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-              {benifitsSectionHeading.description}
+            <p className="text-lg text-muted-foreground my-6 max-w-2xl mx-auto">
+              <LinkProcessor text={benifitsSectionHeading.description} />
             </p>
 
             <div className="space-y-4">
@@ -82,8 +83,8 @@ const ServiceBenefitsSection = ({
             <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-10">
               {whyChooseUsSectionHeading.title}<span className="text-accent">.</span>
             </h2>
-            <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-              {whyChooseUsSectionHeading.description}
+            <p className="text-lg text-muted-foreground my-6 max-w-2xl mx-auto">
+              <LinkProcessor text={whyChooseUsSectionHeading.description} />
             </p>
 
 
@@ -108,7 +109,7 @@ const ServiceBenefitsSection = ({
                           {point.title}
                         </h3>
                         <p className="text-muted-foreground leading-relaxed text-sm">
-                          {point.description}
+                          <LinkProcessor text={point.description} />
                         </p>
                       </div>
                     </div>

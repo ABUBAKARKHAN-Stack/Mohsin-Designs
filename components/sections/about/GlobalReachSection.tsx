@@ -2,6 +2,7 @@
 
 
 import { ContainerLayout } from "@/components/layout";
+import { LinkProcessor } from "@/components/ui/LinkProcessor";
 import { useAboutPageContent } from "@/context/AboutPageContentContext";
 import { Globe2 } from "lucide-react";
 import { motion } from "motion/react";
@@ -32,10 +33,14 @@ export const GlobalReachSection = () => {
                         </h2>
                         <div className="text-muted-foreground text-lg leading-relaxed mb-6 space-y-4">
                             <p>
-                                {grData?.description1 || "Mohsin Designs serves clients across multiple continents through a remote-first model. Our global exposure allows us to understand diverse audiences, cultural expectations, and digital behaviors."}
+                                <LinkProcessor
+                                    text={grData?.description1 || "Mohsin Designs serves clients across multiple continents through a remote-first model. Our global exposure allows us to understand diverse audiences, cultural expectations, and digital behaviors."}
+                                />
                             </p>
                             <p>
-                                {grData?.description2 || "Despite geographic differences, our commitment remains consistent: clear communication, professional execution, and reliable results."}
+                                <LinkProcessor
+                                    text={grData?.description2 || "Despite geographic differences, our commitment remains consistent: clear communication, professional execution, and reliable results."}
+                                />
                             </p>
                         </div>
 
@@ -96,7 +101,7 @@ export const GlobalReachSection = () => {
                         </div>
                     </motion.div>
                 </div>
-                
+
             </ContainerLayout>
         </section>
     );

@@ -26,7 +26,25 @@ export async function getMenuById(id: string) {
     try {
         const query = `*[_type == "menu" && _id == $id][0] {
             ...,
-            "slug": slug.current
+            "slug": slug.current,
+            items[] {
+                ...,
+                "label": coalesce(label.en, label),
+                "description": coalesce(description.en, description),
+                "url": coalesce(url.en, url),
+                children[] {
+                    ...,
+                    "label": coalesce(label.en, label),
+                    "description": coalesce(description.en, description),
+                    "url": coalesce(url.en, url),
+                    children[] {
+                        ...,
+                        "label": coalesce(label.en, label),
+                        "description": coalesce(description.en, description),
+                        "url": coalesce(url.en, url)
+                    }
+                }
+            }
         }`
         const { data } = await sanityFetch({ query, params: { id } })
         return data
@@ -75,6 +93,14 @@ export async function updateMenu(id: string, data: MenuValues) {
         }
 
         await adminClient.patch(id).set(doc).commit()
+
+        // Auto-delete drafts to keep Sanity Studio in sync
+        try {
+            await adminClient.delete(`drafts.${id}`)
+        } catch (e) {
+            // Ignore if draft doesn't exist
+        }
+
         revalidatePath('/admin/menus')
         revalidatePath(`/admin/menus/${id}`)
         return { success: true }
@@ -97,8 +123,28 @@ export async function deleteMenu(id: string) {
 
 export async function getLinkableContent() {
     try {
-        const servicesQuery = `*[_type == "service"] { _id, title }`
-        const pagesQuery = `*[_type == "page"] { _id, title }`
+        const servicesQuery = `*[_type == "service"] { _id, "title": coalesce(title.en, title) }`
+        const pagesQuery = `*[
+            _type == "page" || 
+            _type == "landingPageContent" || 
+            _type == "aboutPageContent" || 
+            _type == "servicesPageContent" || 
+            _type == "portfolioPageContent" || 
+            _type == "blogPageContent" || 
+            _type == "contactPageContent"
+        ] { 
+            _id, 
+            _type,
+            "title": select(
+                _type == "landingPageContent" => "Home",
+                _type == "aboutPageContent" => "About",
+                _type == "servicesPageContent" => "Services",
+                _type == "portfolioPageContent" => "Portfolio",
+                _type == "blogPageContent" => "Blog",
+                _type == "contactPageContent" => "Contact",
+                coalesce(title.en, title)
+            )
+        }`
 
         const [services, pages] = await Promise.all([
             sanityFetch({ query: servicesQuery }),

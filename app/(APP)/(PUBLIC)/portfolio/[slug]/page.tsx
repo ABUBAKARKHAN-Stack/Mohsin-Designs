@@ -12,6 +12,7 @@ import {
     BeforeAfter,
     ProjectHeroImage
 } from "@/components/sections/portfolio/project-details"
+import { LinkProcessor } from "@/components/ui/LinkProcessor"
 
 interface Props {
     params: Promise<{
@@ -137,7 +138,7 @@ export default async function PortfolioDetailsPage({ params }: Props) {
                             <div className="md:col-span-2">
                                 <h2 className="text-3xl font-display font-bold mb-6">The Challenge</h2>
                                 <p className="text-lg text-muted-foreground leading-relaxed">
-                                    {project.description}
+                                    <LinkProcessor text={project.description} />
                                 </p>
 
                                 {/* Tags */}
@@ -194,7 +195,7 @@ export default async function PortfolioDetailsPage({ params }: Props) {
                             <Quote className="absolute top-8 left-8 h-12 w-12 text-accent/10" />
                             <div className="relative z-10 text-center max-w-2xl mx-auto">
                                 <p className="text-xl md:text-2xl font-display italic leading-relaxed mb-8">
-                                    "{caseStudy.testimonial}"
+                                    "<LinkProcessor text={caseStudy.testimonial} />"
                                 </p>
                                 <div className="flex items-center justify-center gap-4 text-accent">
                                     <div className="h-px w-8 bg-accent/30" />

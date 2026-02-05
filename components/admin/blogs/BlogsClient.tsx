@@ -314,7 +314,7 @@ export function BlogsClient({ posts }: BlogsClientProps) {
                                         <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                                             <div className="flex items-center justify-end gap-1">
                                                 <Button variant="ghost" size="icon" className="h-8 w-8" asChild title="View on Site">
-                                                    <Link href={`/admin/blogs/${post._id}`} target="_blank">
+                                                    <Link href={`/admin/blogs/${post._id}`}>
                                                         <Eye className="h-4 w-4" />
                                                     </Link>
                                                 </Button>

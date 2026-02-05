@@ -119,6 +119,55 @@ export async function getProjectById(id: string) {
     }
 }
 
+export async function getProjectForView(id: string) {
+    try {
+        const baseId = id.replace(/^(drafts\.)+/, '');
+        const query = `*[_type == "project" && (_id == $baseId || _id == "drafts." + $baseId)] {
+            ...,
+            "slug": slug.current,
+            "mainImageUrl": mainImage.asset->url,
+            "caseStudy": {
+                ...,
+                "beforeImageUrl": caseStudy.beforeImage.asset->url,
+                "afterImageUrl": caseStudy.afterImage.asset->url,
+                "results": caseStudy.results[] {
+                    ...,
+                    "icon": icon,
+                    "value": value,
+                    "label": label
+                }
+            }
+        }`
+        const results = await adminClient.fetch(query, { baseId }, {
+            perspective: "raw",
+            useCdn: false
+        })
+
+        const draft = results.find((s: any) => s._id.startsWith('drafts.'));
+        const published = results.find((s: any) => !s._id.startsWith('drafts.'));
+
+        if (!draft && !published) return null;
+
+        const latest = draft || published;
+
+        // Safely extract values (handling potential localization objects)
+        const getVal = (val: any) => typeof val === 'string' ? val : (val?.en || val?.ar || (val && typeof val === 'object' ? Object.values(val)[0] : null));
+
+        return {
+            ...latest,
+            _id: baseId,
+            displayTitle: getVal(latest.title) || "Untitled Project",
+            displayDescription: getVal(latest.description) || "",
+            displayCategory: getVal(latest.category) || "",
+            status: draft ? 'Draft' : 'Published',
+            hasPublished: !!published
+        }
+    } catch (error) {
+        console.error("Failed to fetch project for view:", error)
+        return null
+    }
+}
+
 export async function createProject(data: ProjectValues, id?: string) {
     try {
         const validated = projectSchema.parse(data)
@@ -163,10 +212,12 @@ export async function createProject(data: ProjectValues, id?: string) {
             const result = await adminClient.createOrReplace(docWithId)
             await adminClient.delete(`drafts.${id}`).catch(() => { })
             revalidatePath('/admin/portfolio')
+            revalidatePath(`/portfolio/${validated.slug.current}`)
             return { success: true, id: result._id }
         } else {
             const result = await adminClient.create(doc)
             revalidatePath('/admin/portfolio')
+            revalidatePath(`/portfolio/${validated.slug.current}`)
             return { success: true, id: result._id }
         }
     } catch (error: any) {
@@ -232,6 +283,9 @@ export async function updateProject(id: string, data: ProjectValues) {
         await adminClient.delete(`drafts.${id}`).catch(() => { })
 
         revalidatePath('/admin/portfolio')
+        if (validated.slug?.current) {
+            revalidatePath(`/portfolio/${validated.slug.current}`)
+        }
         return { success: true }
     } catch (error: any) {
         console.error("Failed to update project:", error)

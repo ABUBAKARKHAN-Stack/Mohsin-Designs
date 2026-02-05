@@ -152,6 +152,7 @@ export async function saveServiceDraft(id: string, data: Partial<ServiceFormValu
         await patch.commit();
 
         revalidatePath('/admin/services')
+        revalidatePath(`/admin/services/${id}`)
         return { success: true }
     } catch (error: any) {
         console.error("Failed to save service draft:", error)

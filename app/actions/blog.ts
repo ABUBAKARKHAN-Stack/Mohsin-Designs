@@ -114,27 +114,38 @@ export async function getPostById(id: string) {
 
 export async function getPostForView(id: string) {
     try {
-        const query = `*[_type == "post" && (_id == $id || _id == "drafts." + $id)] | order(_updatedAt desc)[0] {
-            _id,
-            title,
-            description,
+        const baseId = id.replace(/^(drafts\.)+/, '');
+        const query = `*[_type == "post" && (_id == $baseId || _id == "drafts." + $baseId)] {
+            ...,
             "slug": slug.current,
-            author,
-            "location": location->title,
-            publishedAt,
-            featured,
-            readTime,
-            "service": service->{title},
+            "locations": locations[]->title,
+            "service": service->title,
             "categories": categories[]->title,
-            "mainImageUrl": mainImage.asset->url,
-            body,
-            _updatedAt
+            "mainImageUrl": mainImage.asset->url
         }`
-        const result = await adminClient.fetch(query, { id }, {
+        const results = await adminClient.fetch(query, { baseId }, {
             perspective: "raw",
             useCdn: false
         })
-        return result
+
+        const draft = results.find((s: any) => s._id.startsWith('drafts.'));
+        const published = results.find((s: any) => !s._id.startsWith('drafts.'));
+
+        if (!draft && !published) return null;
+
+        const latest = draft || published;
+
+        // Safely extract title and description (handling potential localization objects)
+        const getVal = (val: any) => typeof val === 'string' ? val : (val?.en || val?.ar || (val && typeof val === 'object' ? Object.values(val)[0] : null));
+
+        return {
+            ...latest,
+            _id: baseId,
+            displayTitle: getVal(latest.title) || "Untitled Post",
+            displayDescription: getVal(latest.description) || "",
+            status: draft ? 'Draft' : 'Published',
+            hasPublished: !!published
+        }
     } catch (error) {
         console.error("Failed to fetch post for view:", error)
         return null

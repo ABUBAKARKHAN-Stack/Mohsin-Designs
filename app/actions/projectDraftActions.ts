@@ -2,6 +2,7 @@
 
 import { projectSchema, ProjectValues } from "@/lib/validations/project"
 import { adminClient } from "@/sanity/lib/admin-client"
+import { revalidatePath } from "next/cache";
 
 const sanitizeSanityData = (data: any): any => {
     if (Array.isArray(data)) {
@@ -136,6 +137,8 @@ export async function saveProjectDraft(id: string | undefined, data: Partial<Pro
 
         await adminClient.createIfNotExists({ _id: draftId, _type: 'project' });
         await patch.commit();
+
+        revalidatePath(`/admin/portfolio/${id}`)
 
         return { success: true }
     } catch (error: any) {

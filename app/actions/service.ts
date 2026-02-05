@@ -274,6 +274,8 @@ export async function updateService(id: string, data: ServiceFormValues) {
         }
 
         revalidatePath('/admin/services')
+        revalidatePath(`/services/${baseId}`)
+
         return { success: true, id: baseId }
     } catch (error: any) {
         console.error("Failed to update service:", error)

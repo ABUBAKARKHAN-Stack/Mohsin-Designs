@@ -20,7 +20,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Trash2, Edit as EditIcon, Search, Loader2, Calendar, Copy, Clock, Search as SearchIcon } from "lucide-react"
+import { Trash2, Edit as EditIcon, Search, Loader2, Calendar, Copy, Search as SearchIcon, EyeIcon } from "lucide-react"
 import Link from "next/link"
 import { useState, useMemo } from "react"
 import { deleteService, deleteMultipleServices, duplicateService } from "@/app/actions/service"
@@ -283,7 +283,7 @@ export function ServicesClient({ services }: ServicesClientProps) {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="hidden md:table-cell text-muted-foreground font-mono text-xs">
-                                        {service.slug}
+                                        {service.slug || "Slug is missing"}
                                     </TableCell>
                                     <TableCell className="hidden sm:table-cell">
                                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -293,6 +293,11 @@ export function ServicesClient({ services }: ServicesClientProps) {
                                     </TableCell>
                                     <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                                         <div className="flex items-center justify-end gap-1">
+                                              <Button variant="ghost" size="icon" className="h-8 w-8" asChild title="View">
+                                                <Link href={`/admin/services/${service._id}`}>
+                                                    <EyeIcon className="h-4 w-4" />
+                                                </Link>
+                                            </Button>
                                             <Button variant="ghost" size="icon" className="h-8 w-8" asChild title="Edit">
                                                 <Link href={`/admin/services/edit/${service._id}`}>
                                                     <EditIcon className="h-4 w-4" />

@@ -2,6 +2,7 @@
 
 import { blogPostSchema, BlogPostValues } from "@/lib/validations/blog"
 import { adminClient } from "@/sanity/lib/admin-client"
+import { revalidatePath } from "next/cache";
 
 const sanitizeSanityData = (data: any): any => {
     if (Array.isArray(data)) {
@@ -24,28 +25,6 @@ const sanitizeSanityData = (data: any): any => {
     return data;
 };
 
-const flattenToPatch = (obj: any, prefix = ""): any => {
-    const patch: any = {};
-
-    const recurse = (obj: any, prefix = "") => {
-        if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return;
-
-        for (const key in obj) {
-            if (key === '_id' || key === '_type') continue;
-            const val = obj[key];
-            const fullKey = prefix ? `${prefix}.${key}` : key;
-
-            if (val !== null && typeof val === 'object' && !Array.isArray(val) && !val._type) {
-                recurse(val, fullKey);
-            } else {
-                patch[fullKey] = val;
-            }
-        }
-    };
-
-    recurse(obj, prefix);
-    return patch;
-};
 
 export async function saveBlogDraft(id: string, data: Partial<BlogPostValues>) {
     try {
@@ -149,9 +128,10 @@ export async function saveBlogDraft(id: string, data: Partial<BlogPostValues>) {
 
         const patch = adminClient.patch(draftId).set(toSet);
         if (toUnset.length > 0) patch.unset(toUnset);
-        const result = await patch.commit();
+        await patch.commit();
 
-        console.log("Blog draft successfully patched:", result._id);
+        revalidatePath(`/admin/blogs/${id}`)
+
         return { success: true }
     } catch (error: any) {
         console.error("CRITICAL ERROR: Failed to save blog draft:", error);
